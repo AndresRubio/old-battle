@@ -3,6 +3,10 @@ import { getArmy } from '../data/armies'
 import { rosterTotalPoints } from '../rules/points'
 import { useLang, t, armyName } from '../i18n/lang'
 
+// Donation links. Replace these placeholders with your real handles/URLs.
+const KOFI_URL = 'https://ko-fi.com/yourhandle'
+const BUY_ME_A_COFFEE_URL = 'https://buymeacoffee.com/yourhandle'
+
 interface Props {
   rosters: Roster[]
   onNew: () => void
@@ -60,6 +64,19 @@ export function Home({ rosters, onNew, onOpen, onDelete }: Props) {
           })}
         </ul>
       )}
+
+      <section className="donate-card">
+        <h3 className="donate-title">{t('supportTitle', lang)}</h3>
+        <p className="muted donate-blurb">{t('supportBlurb', lang)}</p>
+        <div className="donate-links">
+          <a className="btn btn-primary" href={KOFI_URL} target="_blank" rel="noopener noreferrer">
+            {t('donateKofi', lang)}
+          </a>
+          <a className="btn" href={BUY_ME_A_COFFEE_URL} target="_blank" rel="noopener noreferrer">
+            {t('donateCoffee', lang)}
+          </a>
+        </div>
+      </section>
     </div>
   )
 }

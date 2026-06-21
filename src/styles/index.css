@@ -221,6 +221,35 @@ h1, h2, h3 {
   margin: 0 0 0.5rem;
 }
 
+/* ---- Support / donate callout ---- */
+.donate-card {
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--gold);
+  border-radius: 10px;
+  background: var(--bg-card);
+  text-align: center;
+}
+.donate-title {
+  font-family: var(--font-display);
+  color: var(--gold);
+  margin: 0;
+}
+.donate-blurb {
+  max-width: 46ch;
+  margin: 0.5rem auto 1.25rem;
+}
+.donate-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+.donate-links .btn {
+  text-decoration: none;
+}
+
 .roster-list {
   list-style: none;
   margin: 0;
