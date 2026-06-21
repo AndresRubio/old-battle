@@ -1,0 +1,64 @@
+/* Self-hosted webfonts (latin) so the retro theme works offline in the APK. */
+@font-face{
+  font-family:'Cinzel';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url('../fonts/cinzel-500.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Cinzel';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url('../fonts/cinzel-600.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Cinzel';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url('../fonts/cinzel-700.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Cinzel Decorative';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url('../fonts/cinzel-decorative-700.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Cinzel Decorative';
+  font-style:normal;
+  font-weight:900;
+  font-display:swap;
+  src:url('../fonts/cinzel-decorative-900.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Spectral';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url('../fonts/spectral-400.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Spectral';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url('../fonts/spectral-500.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Spectral';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url('../fonts/spectral-600.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Spectral';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url('../fonts/spectral-700.woff2') format('woff2');
+}

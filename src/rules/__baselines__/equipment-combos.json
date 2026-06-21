@@ -1,0 +1,218 @@
+{
+  "bretonnia/br-general": [
+    "equip-armour-multiple",
+    "equip-barding-no-mount",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "bretonnia/br-battle-standard": [
+    "equip-armour-multiple",
+    "equip-barding-no-mount",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "bretonnia/br-hero": [
+    "equip-armour-multiple",
+    "equip-barding-no-mount",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "bretonnia/br-men-at-arms": [
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-lord": [
+    "equip-armour-multiple",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-hero": [
+    "equip-armour-multiple",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-champion": [
+    "equip-armour-multiple",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-battle-standard": [
+    "equip-armour-multiple"
+  ],
+  "chaos/ch-beastlord": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-beast-chieftain": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-warriors": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-marauders": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-ogres": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-gors": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-minotaurs": [
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-chariot": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-beast-chariot": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos/ch-dragon-ogres": [
+    "equip-melee-multiple"
+  ],
+  "chaos-dwarfs/cd-black-orcs": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos-dwarfs/cd-orcs": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "chaos-dwarfs/cd-goblins": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "dwarfs/dw-warriors": [
+    "equip-melee-multiple"
+  ],
+  "dwarfs/dw-quarrellers": [
+    "equip-greatweapon-shield"
+  ],
+  "empire/emp-ogres": [
+    "equip-melee-multiple"
+  ],
+  "lizardmen/lz-skink-warriors": [
+    "equip-missile-multiple"
+  ],
+  "orcs-and-goblins/og-big-uns": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "orcs-and-goblins/og-orc-boyz": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "orcs-and-goblins/og-black-orcs": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "orcs-and-goblins/og-savage-orcs": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "orcs-and-goblins/og-goblins": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "orcs-and-goblins/og-forest-goblins": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "orcs-and-goblins/og-night-goblins": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "orcs-and-goblins/og-ogres": [
+    "equip-melee-multiple"
+  ],
+  "skaven/sk-stormvermin": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "skaven/sk-sewer-runners": [
+    "equip-missile-multiple"
+  ],
+  "undead/ud-skeletal-cavalry": [
+    "equip-melee-multiple"
+  ],
+  "undead/ud-skeleton-warriors": [
+    "equip-armour-multiple",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple",
+    "equip-missile-multiple"
+  ],
+  "undead/ud-zombies": [
+    "equip-greatweapon-shield"
+  ],
+  "vampire-counts/vc-vampire-lord": [
+    "equip-armour-multiple",
+    "equip-barding-no-mount",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "vampire-counts/vc-vampire-count": [
+    "equip-armour-multiple",
+    "equip-barding-no-mount",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "vampire-counts/vc-vampire-neonate": [
+    "equip-armour-multiple",
+    "equip-barding-no-mount",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "vampire-counts/vc-great-necromancer": [
+    "equip-barding-no-mount",
+    "equip-melee-multiple"
+  ],
+  "vampire-counts/vc-master-necromancer": [
+    "equip-barding-no-mount",
+    "equip-melee-multiple"
+  ],
+  "vampire-counts/vc-necromancer-paladin": [
+    "equip-barding-no-mount",
+    "equip-melee-multiple"
+  ],
+  "vampire-counts/vc-necromancer": [
+    "equip-barding-no-mount",
+    "equip-melee-multiple"
+  ],
+  "vampire-counts/vc-vampire-bsb": [
+    "equip-armour-multiple",
+    "equip-barding-no-mount",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "vampire-counts/vc-wight-bsb": [
+    "equip-armour-multiple",
+    "equip-barding-no-mount",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "vampire-counts/vc-wight-lord": [
+    "equip-armour-multiple",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "vampire-counts/vc-grave-guard": [
+    "equip-melee-multiple"
+  ],
+  "vampire-counts/vc-skeletons": [
+    "equip-armour-multiple",
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "wood-elves/we-wild-rider-knights": [
+    "equip-melee-multiple"
+  ],
+  "wood-elves/we-war-chariot": [
+    "equip-missile-multiple"
+  ]
+}
