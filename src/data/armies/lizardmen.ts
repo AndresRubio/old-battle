@@ -67,8 +67,16 @@ const TERRADON_MOUNT: MountOption = {
   specialRules: ['Flying'],
 }
 
+// Stegadon howdah — Skink characters may ride one (army-list +225). Reuses the
+// Stegadon bestiary statline.
+const STEGADON_MOUNT: MountOption = {
+  id: 'mount-stegadon', name: 'Stegadon howdah', nameEs: 'Howdah de Estegadón',
+  points: 225, statLine: { M: 6, WS: 2, BS: 0, S: 7, T: 6, W: 6, I: 2, A: 5, Ld: 6 },
+  specialRules: ['Impact Hits — D6 Strength 5 hits automatically on the charge', 'Causes fear'],
+}
+
 const SAURUS_HERO_MOUNTS: MountOption[] = [COLD_ONE_MOUNT, TERRADON_MOUNT]
-const SKINK_MOUNTS: MountOption[] = [COLD_ONE_MOUNT, TERRADON_MOUNT]
+const SKINK_MOUNTS: MountOption[] = [COLD_ONE_MOUNT, TERRADON_MOUNT, STEGADON_MOUNT]
 
 // --- Fixed (non-selectable) mounts parsed from the character rule text. Cost is
 //     already baked into the model's points, so these are display-only profiles. ---
