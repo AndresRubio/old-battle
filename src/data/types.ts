@@ -71,6 +71,10 @@ export interface UnitProfile {
   characterRank?: CharacterRank
   canBeGeneral?: boolean
   canBeBSB?: boolean
+  /** True for units that ARE the army Battle Standard Bearer inherently (the
+   *  dedicated battle-standard character units). Such an entry may carry a magic
+   *  banner without the per-entry isBSB toggle. See FAQ v2.20 §23.2. */
+  isBSB?: boolean
   /**
    * Named "special character" (e.g. Zhatan, Grombrindal). Display-only: they
    * still count under their `role` for composition. When omitted it is inferred
@@ -138,6 +142,11 @@ export interface MagicItem {
    * appear only once per army. See Warhammer Magia p.33.
    */
   duplicable?: boolean
+  /**
+   * Head-slot exclusivity group. A character may wear at most one 'crown' and at
+   * most one 'helm' (one of each is allowed). See FAQ v2.20 §19.5.
+   */
+  exclusiveGroup?: 'crown' | 'helm'
 }
 
 export interface SelectionRules {

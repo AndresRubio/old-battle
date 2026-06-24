@@ -94,6 +94,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
+    isBSB: true,
     max: 1,
     options: KNIGHT_EQUIP,
     specialRules: [

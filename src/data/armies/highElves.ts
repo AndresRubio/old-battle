@@ -84,6 +84,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     canBeBSB: true,
+    isBSB: true,
     max: 1,
     specialRules: [
       'Army Battle Standard (0-1)',

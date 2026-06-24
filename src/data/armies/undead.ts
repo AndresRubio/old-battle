@@ -133,6 +133,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
+    isBSB: true,
     max: 1,
     specialRules: [
       'Army Battle Standard (an Undead Knight)',

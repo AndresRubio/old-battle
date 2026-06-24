@@ -304,6 +304,36 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
             })
           }
         }
+        // FAQ v2.20 §19.5: a character may wear at most one crown and one helm.
+        const groupCounts = new Map<'crown' | 'helm', number>()
+        for (const id of e.magicItemIds) {
+          const g = findMagicItem(army, id)?.exclusiveGroup
+          if (g) groupCounts.set(g, (groupCounts.get(g) ?? 0) + 1)
+        }
+        for (const [g, n] of groupCounts) {
+          if (n > 1) {
+            violations.push({
+              severity: 'warning',
+              rule: 'magic-items-exclusive-group',
+              message: es
+                ? `${un}: un personaje sólo puede llevar ${g === 'crown' ? 'una corona' : 'un yelmo'}.`
+                : `${unit.name}: a character may carry only one ${g}.`,
+              entryId: e.id,
+            })
+          }
+        }
+        // FAQ v2.20 §23.2: only a Battle Standard Bearer may carry a magic banner.
+        const carriesBanner = e.magicItemIds.some((id) => findMagicItem(army, id)?.category === 'banner')
+        if (carriesBanner && !(e.isBSB || unit.isBSB)) {
+          violations.push({
+            severity: 'warning',
+            rule: 'magic-items-banner-bsb',
+            message: es
+              ? `${un}: sólo el Portaestandarte de Batalla puede portar un estandarte mágico.`
+              : `${unit.name}: only a Battle Standard Bearer may carry a magic standard.`,
+            entryId: e.id,
+          })
+        }
       }
     }
 

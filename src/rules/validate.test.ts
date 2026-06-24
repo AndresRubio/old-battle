@@ -270,6 +270,53 @@ describe('validateRoster — magic items', () => {
   })
 })
 
+describe('magic banners require a BSB (magic-items-banner-bsb)', () => {
+  // FAQ v2.20 §23.2: only a Battle Standard Bearer may carry a magic banner.
+  // `mi-battle-standard` is a COMMON banner item available to every army.
+  const empire = getArmy('empire')!
+  const banner = 'mi-battle-standard'
+  // A normal (non-BSB) character that can carry magic items.
+  const generalUnit = empire.units.find((u) => u.canBeGeneral && u.isCharacter)!.id
+  const bsbUnit = 'emp-battle-standard'
+
+  const ros = (entries: RosterEntry[]): Roster => ({
+    id: 'r',
+    name: 't',
+    armyId: 'empire',
+    pointsLimit: 3000,
+    entries,
+  })
+  const ch = (id: string, unitId: string, over: Partial<RosterEntry> = {}): RosterEntry => ({
+    id,
+    unitId,
+    size: 1,
+    optionIds: [],
+    magicItemIds: [banner],
+    ...over,
+  })
+
+  it('warns when a non-BSB character carries a magic banner', () => {
+    const r = ros([ch('c1', generalUnit, { isGeneral: true })])
+    const banners = validateRoster(r, empire).filter((v) => v.rule === 'magic-items-banner-bsb')
+    expect(banners.length).toBe(1)
+  })
+
+  it('allows a magic banner on a dedicated battle-standard unit (unit.isBSB)', () => {
+    const r = ros([
+      ch('gen', generalUnit, { isGeneral: true, magicItemIds: [] }),
+      ch('bsb', bsbUnit),
+    ])
+    const banners = validateRoster(r, empire).filter((v) => v.rule === 'magic-items-banner-bsb')
+    expect(banners.length).toBe(0)
+  })
+
+  it('allows a magic banner on a character flagged as BSB (entry.isBSB)', () => {
+    const r = ros([ch('c1', generalUnit, { isGeneral: true, isBSB: true })])
+    const banners = validateRoster(r, empire).filter((v) => v.rule === 'magic-items-banner-bsb')
+    expect(banners.length).toBe(0)
+  })
+})
+
 describe('validateRoster — clean list', () => {
   it('produces no violations for a legal 1000pt list', () => {
     const r = roster(1000, [
@@ -348,6 +395,48 @@ describe('magic-item uniqueness', () => {
   it('clean roster → no violation', () => {
     const r = ros('empire', [ch('a', empChar, ['mi-sword-of-strength']), ch('b', empChar, ['mi-dispel-scroll'])])
     expect(uniqueViolations(r)).toHaveLength(0)
+  })
+  // FAQ v2.20 §19.3: Power/Destroy scrolls + Healing/Strength potions are "unlimited"...
+  it('allows two Power Scrolls', () => {
+    const r = ros('empire', [ch('a', empChar, ['mi-power-scroll']), ch('b', empChar, ['mi-power-scroll'])])
+    expect(uniqueViolations(r)).toHaveLength(0)
+  })
+  it('allows two Healing Potions', () => {
+    const r = ros('empire', [ch('a', empChar, ['mi-healing-potion']), ch('b', empChar, ['mi-healing-potion'])])
+    expect(uniqueViolations(r)).toHaveLength(0)
+  })
+  // ...but every OTHER scroll stays unique (e.g. the Skaven Warp Storm Scroll).
+  it('still flags two Warp Storm Scrolls (non-exception scroll)', () => {
+    const skaven = getArmy('skaven')!
+    const skChar = skaven.units.find((u) => u.isCharacter)!.id
+    const r = ros('skaven', [ch('a', skChar, ['mi-warp-storm-scroll']), ch('b', skChar, ['mi-warp-storm-scroll'])])
+    expect(uniqueViolations(r, skaven)).toHaveLength(1)
+  })
+})
+
+// FAQ v2.20 §19.5: at most one crown and one helm per character (one of each is fine).
+describe('crown/helm exclusivity (magic-items-exclusive-group)', () => {
+  const empire = getArmy('empire')!
+  const lord = empire.units.find((u) => u.isCharacter && u.characterRank === 'lord')!.id
+  const groupViolations = (items: string[]) =>
+    validateRoster(
+      { id: 'r', name: 't', armyId: 'empire', pointsLimit: 2000, entries: [
+        { id: 'a', unitId: lord, size: 1, optionIds: [], magicItemIds: items, isGeneral: true },
+      ] },
+      empire,
+    ).filter((v) => v.rule === 'magic-items-exclusive-group')
+
+  it('flags two crowns on one character', () => {
+    expect(groupViolations(['mi-crown-of-sorcery', 'mi-crown-of-power'])).toHaveLength(1)
+  })
+  it('flags two helms on one character', () => {
+    expect(groupViolations(['mi-dragon-helm', 'mi-golden-crown-of-atrazar'])).toHaveLength(1)
+  })
+  it('allows one crown plus one helm', () => {
+    expect(groupViolations(['mi-crown-of-power', 'mi-dragon-helm'])).toHaveLength(0)
+  })
+  it('allows a single crown', () => {
+    expect(groupViolations(['mi-crown-of-sorcery'])).toHaveLength(0)
   })
 })
 
@@ -541,6 +630,20 @@ describe('dependency/ratio batch (data)', () => {
     const requires = (r: Roster) => validateRoster(r, de).filter((v) => v.rule === 'unit-requires')
     expect(requires(ros('dark-elves', [e('1', 'de-kouran')]))).toHaveLength(1)
     expect(requires(ros('dark-elves', [e('1', 'de-kouran'), e('2', 'de-black-guard', 10)]))).toHaveLength(0)
+  })
+
+  it('Dark Elves: Assassin requires a host unit (FAQ §33.5)', () => {
+    const de = getArmy('dark-elves')!
+    const requires = (r: Roster) => validateRoster(r, de).filter((v) => v.rule === 'unit-requires')
+    expect(requires(ros('dark-elves', [e('1', 'de-assassin')]))).toHaveLength(1)
+    expect(requires(ros('dark-elves', [e('1', 'de-assassin'), e('2', 'de-corsairs', 10)]))).toHaveLength(0)
+  })
+
+  it('Skaven: Assassins require a Sewer (Gutter) Runner unit (FAQ §35.3)', () => {
+    const sk = getArmy('skaven')!
+    const requires = (r: Roster) => validateRoster(r, sk).filter((v) => v.rule === 'unit-requires')
+    expect(requires(ros('skaven', [e('1', 'sk-assassins')]))).toHaveLength(1)
+    expect(requires(ros('skaven', [e('1', 'sk-assassins'), e('2', 'sk-sewer-runners', 5)]))).toHaveLength(0)
   })
 
   it('Orcs & Goblins: Rock Lobber (Small) requires an orc unit', () => {

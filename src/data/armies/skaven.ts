@@ -64,6 +64,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
+    isBSB: true,
     max: 1,
     specialRules: ['0-1', 'Army Battle Standard', 'Equipped with sword & battle standard', 'May carry one magic standard'],
   },
@@ -611,6 +612,8 @@ export const SKAVEN: Army = {
     dependencies: [
       { unitId: 'sk-skrolk', requiresAnyOf: ['sk-plague-monks'], labelEn: 'Lord Skrolk, Plaguelord of Clan Pestilens', labelEs: 'Lord Skrolk, Señor de la Plaga del Clan Pestilens' },
       { unitId: 'sk-queek', requiresAnyOf: ['sk-clanrats', 'sk-stormvermin'], labelEn: 'Warlord Queek Headtaker', labelEs: 'Señor de la Guerra Queek Cazacabezas' },
+      // FAQ v2.20 §35.3: Assassins cannot be fielded on their own — only within a Sewer (Gutter) Runner unit.
+      { unitId: 'sk-assassins', requiresAnyOf: ['sk-sewer-runners'], labelEn: 'Assassins of Clan Eshin', labelEs: 'Asesinos del Clan Eshin' },
     ],
   },
 }

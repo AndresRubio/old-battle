@@ -64,6 +64,16 @@ describe('army data integrity', () => {
         }
       })
 
+      it('marks dedicated battle-standard units with isBSB', () => {
+        // FAQ v2.20 §23.2: dedicated battle-standard units carry a magic banner
+        // without the per-entry toggle, so they must be flagged isBSB === true.
+        for (const u of army.units) {
+          if (/battle-standard|-bsb/.test(u.id)) {
+            expect(u.isBSB, `${u.id} should have isBSB === true`).toBe(true)
+          }
+        }
+      })
+
       it('exposes no special-character item without an army restriction', () => {
         // A `special` item with no restrictedTo would appear in every army.
         const unrestrictedSpecials = army.magicItems.filter(
@@ -82,8 +92,26 @@ describe('magic-item catalog completeness', () => {
     expect(ids.has('mi-warrior-familiar')).toBe(true)
   })
   it('marks exactly the documented exceptions as duplicable', () => {
+    // FAQ v2.20 §19.3: Dispel/Power/Destroy scrolls and Healing/Strength potions are
+    // "unlimited" (plus Familiars). All OTHER scrolls/potions stay unique.
     const dup = COMMON_MAGIC_ITEMS.filter((i) => i.duplicable).map((i) => i.id).sort()
-    expect(dup).toEqual(['mi-dispel-scroll', 'mi-power-familiar', 'mi-warrior-familiar', 'mi-wizard-familiar'].sort())
+    expect(dup).toEqual(
+      [
+        'mi-dispel-scroll',
+        'mi-power-familiar',
+        'mi-warrior-familiar',
+        'mi-wizard-familiar',
+        'mi-scroll-of-magic-destruction',
+        'mi-power-scroll',
+        'mi-healing-potion',
+        'mi-potion-of-strength',
+      ].sort(),
+    )
+  })
+  it('marks the army-pool duplicable exceptions (Runefang, Rune of Stone)', () => {
+    // FAQ §19.3 (Runefangs) and §27.5 (armour Rune of Stone) are uniqueness exceptions.
+    expect(ARMY_MAGIC_ITEMS['empire'].find((i) => i.id === 'mi-runefang')?.duplicable).toBe(true)
+    expect(ARMY_MAGIC_ITEMS['dwarfs'].find((i) => i.id === 'mi-rune-of-stone')?.duplicable).toBe(true)
   })
   it('flags chaos-restricted duplicable items (Chaos Familiar, Chaos Armour) in the chaos pool', () => {
     const chaos = ARMY_MAGIC_ITEMS['chaos']

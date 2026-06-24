@@ -251,6 +251,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
+    isBSB: true,
     max: 1,
     specialRules: [
       'Undead',
@@ -283,6 +284,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
+    isBSB: true,
     max: 1,
     specialRules: [
       'Undead',

@@ -84,6 +84,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
+    isBSB: true,
     max: 1, // book p.56 "0-1 ESTANDARTE DE BATALLA"
     specialRules: ['0-1', 'Army Battle Standard', 'May carry one magic standard'],
   },

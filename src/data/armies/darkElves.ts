@@ -58,6 +58,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
+    isBSB: true,
     specialRules: ['Army Battle Standard', 'Re-roll break tests within 12"'],
   },
   {
@@ -477,6 +478,8 @@ export const DARK_ELVES: Army = {
       { unitId: 'de-hellebron', requiresAnyOf: ['de-witch-elves'], labelEn: 'Crone Hellebron', labelEs: 'Hellebron' },
       { unitId: 'de-kouran', requiresAnyOf: ['de-black-guard'], labelEn: 'Kouran, Captain of the Black Guard', labelEs: 'Kouran, Capitán de la Guardia Negra' },
       { unitId: 'de-tullaris', requiresAnyOf: ['de-executioners'], labelEn: 'Tullaris of Har Ganeth', labelEs: 'Tullaris de Har Ganeth' },
+      // FAQ v2.20 §33.5: Assassins may only be fielded hidden in one of these units.
+      { unitId: 'de-assassin', requiresAnyOf: ['de-executioners', 'de-black-guard', 'de-scouts', 'de-corsairs', 'de-warriors', 'de-spearmen', 'de-city-guard', 'de-crossbowmen'], labelEn: 'Assassin', labelEs: 'Asesino' },
     ],
   },
 }

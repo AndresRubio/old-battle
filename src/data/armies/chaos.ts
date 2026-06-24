@@ -137,6 +137,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     canBeBSB: true,
+    isBSB: true,
     max: 1,
     options: [
       SHIELD_1, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
@@ -213,6 +214,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     canBeBSB: true,
+    isBSB: true,
     max: 1,
     options: [SHIELD_1, LIGHT_ARMOUR_2],
     specialRules: ['0-1 Army Battle Standard', 'Beast', 'May carry one magic standard'],
@@ -800,6 +802,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     canBeBSB: true,
+    isBSB: true,
     max: 1,
     specialRules: [
       '0-1 per Daemon lord host',
