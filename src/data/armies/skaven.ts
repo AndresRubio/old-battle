@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, StatLine, UnitProfile } from '../types'
+import type { Army, EquipmentOption, MountOption, StatLine, UnitProfile } from '../types'
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
@@ -40,6 +40,42 @@ const SK_WIZARD_LEVELS: EquipmentOption[] = [
   { id: 'wizard-l3', name: 'Wizard Level 3 (Master of Sorcerers)', pointsPerModel: 134, magicItemSlotsDelta: 2 },
 ]
 
+// --- Character mounts. The Warlord, Warlock Engineer and Grey Seer entries
+//     each say "may ride a monster" (the Grey Seer may also take a Screaming
+//     Bell, which is a separate war-machine unit below — not a rideable mount
+//     here). Monster mounts reuse the bestiary statlines and points defined in
+//     the units list below, so no new values are introduced. ---
+const CHIMERA_MOUNT: MountOption = {
+  id: 'mount-quimera', name: 'Chimera', nameEs: 'Quimera',
+  points: 250, statLine: { M: 6, WS: 4, BS: 0, S: 7, T: 6, W: 6, I: 4, A: 6, Ld: 8 },
+  specialRules: ['Large target'],
+}
+const BASILISK_MOUNT: MountOption = {
+  id: 'mount-basilisk', name: 'Basilisk', nameEs: 'Basilisco',
+  points: 150, statLine: { M: 4, WS: 3, BS: 0, S: 4, T: 4, W: 2, I: 4, A: 3, Ld: 6 },
+  specialRules: ['Large target'],
+}
+const HYDRA_MOUNT: MountOption = {
+  id: 'mount-hydra', name: 'Hydra', nameEs: 'Hidra',
+  points: 225, statLine: { M: 6, WS: 3, BS: 0, S: 5, T: 6, W: 7, I: 3, A: 5, Ld: 6 },
+  specialRules: ['Large target'],
+}
+const MANTICORE_MOUNT: MountOption = {
+  id: 'mount-manticore', name: 'Manticore', nameEs: 'Mantícora',
+  points: 200, statLine: { M: 6, WS: 6, BS: 0, S: 7, T: 5, W: 5, I: 4, A: 4, Ld: 8 },
+  specialRules: ['Large target'],
+}
+const WINGED_SERPENT_MOUNT: MountOption = {
+  id: 'mount-winged-serpent', name: 'Winged Serpent', nameEs: 'Serpiente Alada',
+  points: 180, statLine: { M: 6, WS: 5, BS: 0, S: 5, T: 6, W: 4, I: 3, A: 3, Ld: 5 },
+  specialRules: ['Flying'],
+}
+
+/** Monsters a Skaven character ("may ride a monster") may take as a mount. */
+const SK_MONSTER_MOUNTS: MountOption[] = [
+  CHIMERA_MOUNT, BASILISK_MOUNT, HYDRA_MOUNT, MANTICORE_MOUNT, WINGED_SERPENT_MOUNT,
+]
+
 const units: UnitProfile[] = [
   // ===== Characters (0-50%) =====
   {
@@ -52,6 +88,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mounts: SK_MONSTER_MOUNTS,
     specialRules: ['Army General', 'Equipped with sword', 'May ride a monster', 'Up to 3 magic items'],
   },
   {
@@ -122,6 +159,7 @@ const units: UnitProfile[] = [
     characterRank: 'wizard1',
     canBeGeneral: false,
     options: SK_WIZARD_LEVELS,
+    mounts: SK_MONSTER_MOUNTS,
     specialRules: ['Wizard (Skaven magic)', 'Equipped with sword', 'May ride a monster', 'Usually wears no armour'],
   },
   {
@@ -134,6 +172,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard4',
     canBeGeneral: false,
+    mounts: SK_MONSTER_MOUNTS,
     specialRules: [
       'Always a Level 4 wizard (Skaven magic)',
       'Equipped with sword',

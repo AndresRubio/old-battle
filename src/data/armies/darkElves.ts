@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, StatLine, UnitProfile } from '../types'
+import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitProfile } from '../types'
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 import { SHIELD } from '../unitOptions'
@@ -34,6 +34,66 @@ const DE_WIZARD_LEVELS: EquipmentOption[] = [
   { id: 'wizard-l4', name: 'Wizard Level 4 (Supreme Sorcerer)', pointsPerModel: 269, magicItemSlotsDelta: 3 },
 ]
 
+// --- Character mounts (army list: "may ride a Cold One, a Dark Steed or a
+//     monster"). Monster mounts reuse the bestiary statlines/rule-tags defined
+//     in the units list below. The generic Cold One / Dark Steed are the same
+//     beasts ridden by the Cold One Knights / Dark Riders cavalry regiments
+//     (whose own statLines in this file are the elf rider, not the mount), so
+//     their profiles are given here. Costs from the riding text (+N pts). ---
+// Cold One profile (same beast as the Cold One Knights mount; cf. Lizardmen
+// bestiary): M8 WS3 BS0 S4 T4 W1 I1 A2 Ld3. Causes fear + stupidity.
+const COLD_ONE_MOUNT: MountOption = {
+  id: 'mount-cold-one', name: 'Cold One', nameEs: 'Caballo Frío',
+  points: 10, statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 1, A: 2, Ld: 3 },
+  specialRules: ['Causes fear', 'Stupidity', 'Scaly skin (5+ save)'],
+}
+// Dark Steed — the fast horse ridden by the Dark Riders (5+ save base).
+const DARK_STEED_MOUNT: MountOption = {
+  id: 'mount-dark-steed', name: 'Dark Steed', nameEs: 'Corcel Oscuro',
+  points: 3, statLine: { M: 9, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 },
+}
+// Monster mounts — statLines/rule-tags reused from the bestiary entries below.
+const DARK_PEGASUS_MOUNT: MountOption = {
+  id: 'mount-dark-pegasus', name: 'Dark Pegasus', nameEs: 'Pegaso Oscuro',
+  points: 50, statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 },
+  specialRules: ['Flying'],
+}
+const MANTICORE_MOUNT: MountOption = {
+  id: 'mount-manticore', name: 'Manticore', nameEs: 'Mantícora',
+  points: 200, statLine: { M: 6, WS: 6, BS: 0, S: 7, T: 7, W: 5, I: 4, A: 4, Ld: 8 },
+  specialRules: ['Large target', 'Terror', 'Flying'],
+}
+const HYDRA_MOUNT: MountOption = {
+  id: 'mount-war-hydra', name: 'War Hydra', nameEs: 'Hidra de Guerra',
+  points: 225, statLine: { M: 6, WS: 4, BS: 0, S: 5, T: 6, W: 7, I: 3, A: 5, Ld: 8 },
+  specialRules: ['Large target', 'Terror', 'Breathe fire', 'Scaly skin (5+ save)'],
+}
+const BLACK_DRAGON_MOUNT: MountOption = {
+  id: 'mount-black-dragon', name: 'Black Dragon', nameEs: 'Dragón Negro',
+  points: 450, statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 6, W: 7, I: 8, A: 7, Ld: 7 },
+  specialRules: ['Large target', 'Terror', 'Flying', 'Breath weapon'],
+}
+
+/** Mount list for Dark Elf lords/heroes ("a Cold One, a Dark Steed or a monster"). */
+const LORD_MOUNTS: MountOption[] = [
+  COLD_ONE_MOUNT, DARK_STEED_MOUNT, DARK_PEGASUS_MOUNT, MANTICORE_MOUNT, HYDRA_MOUNT, BLACK_DRAGON_MOUNT,
+]
+
+// --- Fixed (non-selectable) mounts for special characters who always ride one.
+//     Display-only: the cost is already baked into the model's points. ---
+const MANTICORE_PROFILE: ProfileBlock = {
+  name: 'Manticore', nameEs: 'Mantícora', statLine: MANTICORE_MOUNT.statLine!, specialRules: MANTICORE_MOUNT.specialRules,
+}
+const BLACK_DRAGON_PROFILE: ProfileBlock = {
+  name: 'Black Dragon (Bracchus)', nameEs: 'Dragón Negro (Bracchus)',
+  statLine: BLACK_DRAGON_MOUNT.statLine!, specialRules: BLACK_DRAGON_MOUNT.specialRules,
+}
+const BLACK_PEGASUS_PROFILE: ProfileBlock = {
+  name: 'Black Pegasus (Sulephet)', nameEs: 'Pegaso Negro (Sulephet)',
+  statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 },
+  specialRules: ['Flying'],
+}
+
 const units: UnitProfile[] = [
   // ===== Characters (0-50%) =====
   {
@@ -46,6 +106,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mounts: LORD_MOUNTS,
     specialRules: ['Sword', 'May ride Cold One (+10), Dark Steed (+3) or a monster'],
   },
   {
@@ -70,6 +131,8 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 6, BS: 6, S: 4, T: 4, W: 2, I: 8, A: 3, Ld: 9 }),
     isCharacter: true,
     characterRank: 'hero',
+    mounts: LORD_MOUNTS,
+    specialRules: ['May ride a Cold One (+10), Dark Steed (+3) or a monster'],
   },
   {
     id: 'de-witch-hero',
@@ -114,7 +177,8 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     options: DE_WIZARD_LEVELS,
-    specialRules: ['Wizard (Dark Magic)', 'Cannot cast if wearing armour'],
+    mounts: LORD_MOUNTS,
+    specialRules: ['Wizard (Dark Magic)', 'Cannot cast if wearing armour', 'May ride a Cold One (+10), Dark Steed (+3) or a monster'],
   },
   {
     id: 'de-assassin',
@@ -152,6 +216,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard4',
     max: 1,
+    profiles: [BLACK_PEGASUS_PROFILE],
     specialRules: ['Special character', 'Great Sorceress (Level 4)', 'Rides the Black Pegasus Sulephet', 'Fixed magic items'],
   },
   {
@@ -165,6 +230,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    profiles: [MANTICORE_PROFILE],
     specialRules: ['Special character', 'Requires a Witch Elf regiment', 'Frenzy', 'Rides a Manticore', 'Fixed magic items'],
   },
   {
@@ -177,6 +243,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     max: 1,
+    profiles: [BLACK_DRAGON_PROFILE],
     specialRules: ['Special character', 'Beastmaster', 'Rides the Black Dragon Bracchus', 'Fixed magic items'],
   },
   {
@@ -442,15 +509,6 @@ const units: UnitProfile[] = [
     pointsPerModel: 150,
     statLine: { M: 4, WS: 3, BS: 0, S: 4, T: 4, W: 2, I: 4, A: 3, Ld: 6 },
     specialRules: ['Terror', 'Petrifying gaze'],
-  },
-  {
-    id: 'de-black-pegasus',
-    name: 'Black Pegasus',
-    nameEs: 'Pegaso Negro',
-    role: 'monster',
-    pointsPerModel: 50,
-    statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 },
-    specialRules: ['Flying', 'Character mount'],
   },
   {
     id: 'de-giant-scorpion',

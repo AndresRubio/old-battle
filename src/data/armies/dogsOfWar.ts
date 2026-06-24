@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, UnitProfile } from '../types'
+import type { Army, EquipmentOption, MountOption, ProfileBlock, UnitProfile } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
 // Dogs of War — data transcribed from "Warhammer Armies: Dogs of War"
@@ -21,6 +21,37 @@ import { COMMON_MAGIC_ITEMS } from '../magicItems'
 // --- Generic character options (per-model costs, pp.28-29). ---
 const LANCE_2: EquipmentOption = { id: 'lance', name: 'Lance', pointsPerModel: 2 }
 const PISTOL_2: EquipmentOption = { id: 'pistol', name: 'Pistol', pointsPerModel: 2 }
+
+// --- Character mounts (pp.28-29). Mercenary Heroes/Hireling Wizards ride a
+//     Warhorse (included in the base cost = 0 pts) and may upgrade it to a
+//     Barded Warhorse for +4 pts. Barding only improves the save, so both share
+//     the generic warhorse statline. ---
+const WARHORSE_STATS = { M: 8, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 } as const
+const WARHORSE_MOUNT: MountOption = {
+  id: 'mount-warhorse', name: 'Warhorse', nameEs: 'Caballo de Guerra',
+  points: 0, statLine: { ...WARHORSE_STATS },
+}
+const BARDED_WARHORSE_MOUNT: MountOption = {
+  id: 'mount-barded-warhorse', name: 'Barded Warhorse', nameEs: 'Caballo de Guerra con Barda',
+  points: 4, statLine: { ...WARHORSE_STATS },
+  specialRules: ['Barding (better armour save)'],
+}
+const HERO_MOUNTS: MountOption[] = [WARHORSE_MOUNT, BARDED_WARHORSE_MOUNT]
+
+// --- Fixed (non-selectable) mounts parsed from the special-character rule text.
+//     Display-only: the cost is already baked into the model's points. ---
+const FIXED_WARHORSE_PROFILE: ProfileBlock = {
+  name: 'Warhorse', nameEs: 'Caballo de Guerra', statLine: { ...WARHORSE_STATS },
+}
+const FIXED_BARDED_WARHORSE_PROFILE: ProfileBlock = {
+  name: 'Barded Warhorse', nameEs: 'Caballo de Guerra con Barda',
+  statLine: { ...WARHORSE_STATS }, specialRules: ['Barding (better armour save)'],
+}
+const DEATHFANG_PROFILE: ProfileBlock = {
+  name: 'Deathfang (Great Green Dragon)', nameEs: 'Colmillo de la Muerte (Gran Dragón Verde)',
+  statLine: { M: 6, WS: 7, BS: 0, S: 7, T: 7, W: 8, I: 5, A: 8, Ld: 8 },
+  specialRules: ['Flying', 'Causes terror', 'Large target', 'Dragon breath weapon'],
+}
 
 // Hireling Wizard level upgrades — costs cumulative from L1 base (p.29):
 // L1=59, L2=121 (delta +62), L3=193 (delta +134 from L1), L4=290 (delta +231 from L1).
@@ -45,6 +76,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     options: [LANCE_2, PISTOL_2],
+    profiles: [FIXED_BARDED_WARHORSE_PROFILE],
     specialRules: [
       'Sword, heavy armour & shield; rides a barded warhorse (2+ save mounted, 4+ on foot)',
       'May take a lance +2 pts and/or a pistol +2 pts',
@@ -82,11 +114,12 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     options: [],
+    mounts: HERO_MOUNTS,
     specialRules: [
-      'Sword/mace & hand weapon; rides a warhorse',
+      'Sword/mace & hand weapon; rides a warhorse (may upgrade to a barded warhorse +4)',
       'May take: add. hand weapon +1, lance +2, halberd +2 (dismounted), spear +1, double-handed weapon +2',
       'May take: bow +2, crossbow +3, pistol +2; shield +1, light armour +2 or heavy armour +3',
-      'May ride a barded warhorse +4; may dismount and fight on foot (-3 pts)',
+      'May dismount and fight on foot (-3 pts)',
       'Up to 2 magic items',
     ],
   },
@@ -100,9 +133,10 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     options: DOW_WIZARD_LEVELS,
+    mounts: HERO_MOUNTS,
     specialRules: [
       'Wizard (Battle Magic) — 1 spell per level; 1 magic item per magic level',
-      'Sword/mace; rides a warhorse (may take barding +4)',
+      'Sword/mace; rides a warhorse (may upgrade to a barded warhorse +4)',
       'May not wear armour (barding for mount only)',
       'May dismount and fight on foot (-3 pts)',
     ],
@@ -120,6 +154,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    profiles: [FIXED_BARDED_WARHORSE_PROFILE],
     specialRules: [
       'Special character — replaces the Mercenary General (0-1)',
       'Mace, lance, heavy armour & shield; rides a barded warhorse',
@@ -138,6 +173,7 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
+    profiles: [FIXED_WARHORSE_PROFILE],
     specialRules: [
       'Special character — a Genius (not a general; cannot lead the army; casts no spells)',
       'Sword; rides a warhorse',
@@ -156,6 +192,7 @@ const units: UnitProfile[] = [
     characterRank: 'wizard3',
     canBeGeneral: false,
     max: 1,
+    profiles: [FIXED_WARHORSE_PROFILE],
     specialRules: [
       'Special character — Hireling Sorceress; replaces the Hireling Wizard (0-1)',
       'Sword; rides a warhorse; 3 Battle Magic spells',
@@ -212,6 +249,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    profiles: [FIXED_WARHORSE_PROFILE],
     specialRules: [
       'Special character — Merchant Prince; replaces the Mercenary General (0-1)',
       'Sword, lance, light armour, crossbow & shield; rides a warhorse',
@@ -341,6 +379,7 @@ const units: UnitProfile[] = [
     pointsPerModel: 750,
     statLine: { M: 5, WS: 6, BS: 6, S: 4, T: 4, W: 2, I: 8, A: 3, Ld: 9 },
     max: 1,
+    profiles: [DEATHFANG_PROFILE],
     specialRules: [
       'Regiment of Renown (0-1) — Asarnil + Deathfang = 750 pts total',
       'Asarnil: heavy ithilmar armour, sword & lance (4+ save); rides Deathfang the Great Green Dragon',

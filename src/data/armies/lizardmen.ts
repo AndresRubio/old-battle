@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, StatLine, UnitProfile } from '../types'
+import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitProfile } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
 // Lizardmen — data transcribed from "Warhammer Armies: Lizardmen" (Spanish ed.
@@ -53,6 +53,36 @@ const SLANN_LEVELS: EquipmentOption[] = [
   { id: 'wizard-l4', name: 'Mage-Priest Lord (Level 4)', pointsPerModel: 435, magicItemSlotsDelta: 3 },
 ]
 
+// --- Character mounts (army list p.74). Saurus & Skink characters may ride a
+//     Cold One (+10) or a Terradon (+35); statlines reuse the bestiary profiles
+//     given in the Cold One Riders (p.76) and Terradons (p.77) entries below. ---
+const COLD_ONE_MOUNT: MountOption = {
+  id: 'mount-cold-one', name: 'Cold One', nameEs: 'Saurio Frío',
+  points: 10, statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 1, A: 2, Ld: 3 },
+  specialRules: ['Cold Ones cause fear and are subject to stupidity'],
+}
+const TERRADON_MOUNT: MountOption = {
+  id: 'mount-terradon', name: 'Terradon (with 2nd Skink rider)', nameEs: 'Terradón (con 2º jinete Skink)',
+  points: 35, statLine: { M: 2, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 2, A: 1, Ld: 3 },
+  specialRules: ['Flying'],
+}
+
+const SAURUS_HERO_MOUNTS: MountOption[] = [COLD_ONE_MOUNT, TERRADON_MOUNT]
+const SKINK_MOUNTS: MountOption[] = [COLD_ONE_MOUNT, TERRADON_MOUNT]
+
+// --- Fixed (non-selectable) mounts parsed from the character rule text. Cost is
+//     already baked into the model's points, so these are display-only profiles. ---
+const HORNED_ONE_PROFILE: ProfileBlock = {
+  name: 'Horned One', nameEs: 'Saurio Cornudo',
+  statLine: { M: 8, WS: 4, BS: 0, S: 4, T: 4, W: 1, I: 1, A: 3, Ld: 3 },
+  specialRules: ['Rare breed of Cold One — causes fear; immune to stupidity while with its rider'],
+}
+const STEGADON_PROFILE: ProfileBlock = {
+  name: 'Stegadon', nameEs: 'Estegadón',
+  statLine: { M: 6, WS: 2, BS: 0, S: 7, T: 6, W: 6, I: 2, A: 5, Ld: 6 },
+  specialRules: ['Impact Hits — D6 Strength 5 hits automatically on the charge', 'Causes fear'],
+}
+
 const units: UnitProfile[] = [
   // ===== Characters (0-50%) =====
 
@@ -94,6 +124,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     canBeGeneral: false,
+    mounts: SAURUS_HERO_MOUNTS,
     specialRules: [
       'Scaly skin save (5+)',
       'Cold-blooded — roll 3D6 for Leadership tests, discard highest',
@@ -112,6 +143,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     canBeGeneral: false,
+    mounts: SKINK_MOUNTS,
     specialRules: [
       'Scaly skin save (6+)',
       'Cold-blooded — roll 3D6 for Leadership tests, discard highest',
@@ -133,6 +165,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard2', // level 1 wizard but allowed 2 magic items (p.73/74)
     canBeGeneral: false,
+    mounts: SKINK_MOUNTS,
     specialRules: [
       'Wizard level 1 — 1 spell from Battle Magic (Skinks do not use High Magic)',
       'May carry 2 magic items (one more than a standard level-1 wizard)',
@@ -155,6 +188,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     canBeGeneral: false,
+    mounts: [COLD_ONE_MOUNT],
     specialRules: [
       'Leads a Saurus regiment',
       'Scaly skin save (5+)',
@@ -174,6 +208,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     canBeGeneral: false,
+    mounts: SKINK_MOUNTS,
     specialRules: [
       'Leads a Skink regiment',
       'Scaly skin save (6+)',
@@ -545,6 +580,7 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
+    profiles: [HORNED_ONE_PROFILE],
     specialRules: [
       'Special character — Skink Hero (no magic items)',
       'Armed with hand weapon, spear, poisoned darts, light armour and shield',
@@ -613,6 +649,7 @@ const units: UnitProfile[] = [
     characterRank: 'wizard4',
     canBeGeneral: true,
     max: 1,
+    profiles: [STEGADON_PROFILE],
     specialRules: [
       'Special character — replaces the Slann General if taken',
       'Mage-Priest Lord with 4 unique Slann geomancy spells (Move the Mountains, Ruination of Cities, Earth Line, Part the Waters)',

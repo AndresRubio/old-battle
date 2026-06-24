@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, StatLine, UnitProfile } from '../types'
+import type { Army, EquipmentOption, MountOption, StatLine, UnitProfile } from '../types'
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 import { SHIELD } from '../unitOptions'
@@ -47,6 +47,30 @@ const CD_WIZARD_LEVELS: EquipmentOption[] = [
   { id: 'wizard-l4', name: 'Wizard Level 4 (Great Sorcerer)', pointsPerModel: 269, magicItemSlotsDelta: 3 },
 ]
 
+// --- Character mounts. Chaos Dwarf Lords/Heroes/Sorcerers are too heavy for
+//     ordinary monsters: the book lets them ride only the Great Taurus or Lammasu
+//     (army list pp.56-57). Statlines & special rules are reused verbatim from the
+//     standalone bestiary entries (cd-great-taurus / cd-lammasu, below), which are
+//     dual-use — they remain selectable as army monsters too. Hobgoblin characters
+//     (Gorduz) may ride a Giant Wolf, the same mount as the Wolf Riders (M22→9").
+const GREAT_TAURUS_MOUNT: MountOption = {
+  id: 'mount-great-taurus', name: 'Great Taurus', nameEs: 'Gran Tauro',
+  points: 225, statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 6, W: 5, I: 7, A: 4, Ld: 8 },
+  specialRules: ['Flying', 'Terror', 'Fiery body (4+ ward save)', 'Fire breath', 'Large target'],
+}
+const LAMMASU_MOUNT: MountOption = {
+  id: 'mount-lammasu', name: 'Lammasu', nameEs: 'Lammasu',
+  points: 200, statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 7, W: 5, I: 6, A: 3, Ld: 8 },
+  specialRules: ['Flying', 'Terror', 'Sorcerous aura — dispels spells on 4+', 'Large target'],
+}
+const GIANT_WOLF_MOUNT: MountOption = {
+  id: 'mount-giant-wolf', name: 'Giant Wolf', nameEs: 'Lobo Gigante',
+  points: 4, statLine: { M: 9, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 3 },
+}
+
+/** Mounts available to Chaos Dwarf characters (Great Taurus or Lammasu). */
+const CD_MONSTER_MOUNTS: MountOption[] = [LAMMASU_MOUNT, GREAT_TAURUS_MOUNT]
+
 const units: UnitProfile[] = [
   // ===== Characters (0-50%) =====
   {
@@ -59,6 +83,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mounts: CD_MONSTER_MOUNTS,
     specialRules: ['Commander', 'Up to 3 magic items', 'May ride a Lammasu (+200) or Great Taurus (+225)'],
   },
   {
@@ -72,6 +97,7 @@ const units: UnitProfile[] = [
     characterRank: 'wizard1',
     canBeGeneral: true,
     options: CD_WIZARD_LEVELS,
+    mounts: CD_MONSTER_MOUNTS,
     specialRules: ['Wizard', 'Uses the Chaos Dwarf spell deck', 'May ride a Lammasu (+200) or Great Taurus (+225)'],
   },
   {
@@ -97,7 +123,8 @@ const units: UnitProfile[] = [
     statLine: chaosDwarf({ WS: 6, BS: 5, S: 4, T: 5, W: 2, I: 4, A: 3, Ld: 10 }),
     isCharacter: true,
     characterRank: 'hero',
-    specialRules: ['Up to 2 magic items', 'May ride a monster'],
+    mounts: CD_MONSTER_MOUNTS,
+    specialRules: ['Up to 2 magic items', 'May ride a Lammasu (+200) or Great Taurus (+225)'],
   },
   {
     id: 'cd-bull-centaur-commander',
@@ -149,6 +176,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    mounts: CD_MONSTER_MOUNTS,
     specialRules: [
       'Special character',
       'Hatred (all enemies)',
@@ -188,6 +216,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: false,
     max: 1,
+    mounts: [GIANT_WOLF_MOUNT],
     specialRules: [
       'Special character (subordinate)',
       'Light armour, shield & hand weapon',

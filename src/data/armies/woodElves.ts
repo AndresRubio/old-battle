@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, StatLine, UnitProfile } from '../types'
+import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitProfile } from '../types'
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
@@ -44,6 +44,85 @@ const WE_WIZARD_LEVELS: EquipmentOption[] = [
   { id: 'wizard-l4', name: 'Wizard Level 4 (Great Mage)', pointsPerModel: 269, magicItemSlotsDelta: 3 },
 ]
 
+// --- Character mounts. The character rule line reads "May ride an Elven Steed
+//     (+3), a War Hawk (+20), a monster, or a War Chariot as third crew (+76)"
+//     (p.63). The Elven Steed uses the generic bestiary profile; the War Hawk is
+//     the Jinetes de Halcón mount (6+ save, Flying); the "monster" options reuse
+//     the bestiary statlines defined in the units list below. The War Chariot is
+//     joined as a third crew member, not a ridden mount, so it stays as rule text. ---
+const ELVEN_STEED_MOUNT: MountOption = {
+  id: 'mount-elven-steed', name: 'Elven Steed', nameEs: 'Corcel Élfico',
+  points: 3, statLine: { M: 9, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 4, A: 1, Ld: 5 },
+}
+const WAR_HAWK_MOUNT: MountOption = {
+  id: 'mount-war-hawk', name: 'War Hawk', nameEs: 'Halcón de Guerra',
+  points: 20, statLine: { M: 2, WS: 4, BS: 0, S: 4, T: 3, W: 2, I: 5, A: 2, Ld: 6 },
+  specialRules: ['Flying'],
+}
+const GIANT_EAGLE_MOUNT: MountOption = {
+  id: 'mount-giant-eagle', name: 'Giant Eagle', nameEs: 'Águila Gigante',
+  points: 75, statLine: { M: 2, WS: 7, BS: 0, S: 5, T: 4, W: 3, I: 5, A: 2, Ld: 8 },
+  specialRules: ['Flying'],
+}
+const UNICORN_MOUNT: MountOption = {
+  id: 'mount-unicorn', name: 'Unicorn', nameEs: 'Unicornio',
+  points: 90, statLine: { M: 9, WS: 4, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 4, Ld: 9 },
+  specialRules: ['Magic resistance'],
+}
+const PEGASUS_MOUNT: MountOption = {
+  id: 'mount-pegasus', name: 'Pegasus', nameEs: 'Pegaso',
+  points: 50, statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 3, W: 4, I: 4, A: 2, Ld: 5 },
+  specialRules: ['Flying'],
+}
+const GRIFFON_MOUNT: MountOption = {
+  id: 'mount-griffon', name: 'Griffon', nameEs: 'Grifo',
+  points: 150, statLine: { M: 6, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 7, A: 4, Ld: 8 },
+  specialRules: ['Flying', 'Large target'],
+}
+const HIPPOGRIFF_MOUNT: MountOption = {
+  id: 'mount-hippogriff', name: 'Hippogriff', nameEs: 'Hipogrifo',
+  points: 145, statLine: { M: 8, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 6, A: 3, Ld: 8 },
+  specialRules: ['Flying', 'Large target'],
+}
+const FOREST_DRAGON_MOUNT: MountOption = {
+  id: 'mount-forest-dragon', name: 'Forest Dragon', nameEs: 'Dragón Forestal',
+  points: 450, statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 6, W: 7, I: 8, A: 7, Ld: 7 },
+  specialRules: ['Flying', 'Terror', 'Large target', 'Breath weapon'],
+}
+const DRAGON_MOUNT: MountOption = {
+  id: 'mount-dragon', name: 'Dragon', nameEs: 'Dragón',
+  points: 450, statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 6, W: 7, I: 8, A: 7, Ld: 7 },
+  specialRules: ['Flying', 'Terror', 'Large target'],
+}
+const GREAT_DRAGON_MOUNT: MountOption = {
+  id: 'mount-great-dragon', name: 'Great Dragon', nameEs: 'Gran Dragón',
+  points: 600, statLine: { M: 6, WS: 7, BS: 0, S: 7, T: 7, W: 8, I: 8, A: 8, Ld: 8 },
+  specialRules: ['Flying', 'Terror', 'Large target', 'Breath weapon'],
+}
+const EMPEROR_DRAGON_MOUNT: MountOption = {
+  id: 'mount-emperor-dragon', name: 'Emperor Dragon', nameEs: 'Dragón Emperador',
+  points: 750, statLine: { M: 6, WS: 8, BS: 0, S: 8, T: 8, W: 9, I: 9, A: 9, Ld: 9 },
+  specialRules: ['Flying', 'Terror', 'Large target', 'Breath weapon'],
+}
+
+/** Mount list for Wood Elf characters ("an Elven Steed, a War Hawk, or a monster"). */
+const WE_MOUNTS: MountOption[] = [
+  ELVEN_STEED_MOUNT, WAR_HAWK_MOUNT, GIANT_EAGLE_MOUNT, UNICORN_MOUNT, PEGASUS_MOUNT,
+  GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, FOREST_DRAGON_MOUNT, DRAGON_MOUNT, GREAT_DRAGON_MOUNT,
+  EMPEROR_DRAGON_MOUNT,
+]
+
+// --- Fixed (non-selectable) mounts for special characters who always ride one.
+//     Display-only: the cost is already baked into the model's points. ---
+const GWANDOR_PROFILE: ProfileBlock = {
+  name: 'Gwandor the Black (Giant Eagle)', nameEs: 'Gwandor el Negro (Águila Gigante)',
+  statLine: GIANT_EAGLE_MOUNT.statLine!, specialRules: GIANT_EAGLE_MOUNT.specialRules,
+}
+const LOTHLANN_STEED_PROFILE: ProfileBlock = {
+  name: 'Elven Steed (with barding)', nameEs: 'Corcel Élfico (con barda)',
+  statLine: ELVEN_STEED_MOUNT.statLine!,
+}
+
 const units: UnitProfile[] = [
   // ===== Characters (0-50%) =====
   {
@@ -56,6 +135,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mounts: WE_MOUNTS,
     specialRules: [
       'Sword',
       'Commander (up to 4 magic items)',
@@ -74,6 +154,7 @@ const units: UnitProfile[] = [
     canBeBSB: true,
     isBSB: true,
     max: 1,
+    mounts: WE_MOUNTS,
     specialRules: [
       '0-1 Army Battle Standard',
       'Sword & Battle Standard',
@@ -90,6 +171,7 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 6, BS: 6, S: 4, T: 4, W: 2, I: 8, A: 3, Ld: 9 }),
     isCharacter: true,
     characterRank: 'hero',
+    mounts: WE_MOUNTS,
     specialRules: [
       'Sword',
       'Up to 2 magic items',
@@ -128,6 +210,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     options: WE_WIZARD_LEVELS,
+    mounts: WE_MOUNTS,
     specialRules: [
       'Wizard (Battle Magic / High Magic)',
       'Cannot cast if wearing armour',
@@ -202,6 +285,7 @@ const units: UnitProfile[] = [
     characterRank: 'wizard3',
     canBeGeneral: true,
     max: 1,
+    profiles: [GWANDOR_PROFILE],
     specialRules: [
       'Special character',
       'Master of Mages (Level 3, Battle Magic)',
@@ -220,6 +304,7 @@ const units: UnitProfile[] = [
     canBeBSB: true,
     characterRank: 'champion',
     max: 1,
+    profiles: [LOTHLANN_STEED_PROFILE],
     specialRules: [
       'Special character (Battle Standard Bearer)',
       'Sword, Light armour & Shield',
@@ -468,6 +553,17 @@ const units: UnitProfile[] = [
     pointsPerModel: 76,
     statLine: { M: 5, WS: 4, BS: 4, S: 3, T: 3, W: 1, I: 6, A: 1, Ld: 8 },
     minSize: 1,
+    profiles: [
+      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 4, W: 3 } },
+      {
+        name: 'Crew (Wood Elf)', nameEs: 'Tripulación (Elfo Silvano)',
+        statLine: elf(), specialRules: ['Light armour (6+ save)'],
+      },
+      {
+        name: '2 Elven Steeds', nameEs: '2 Corceles Élficos',
+        statLine: ELVEN_STEED_MOUNT.statLine!,
+      },
+    ],
     options: [SHIELD_1, LONGBOW_3, JAVELIN_1, SPEAR_2],
     specialRules: [
       'Drawn by 2 Elven Steeds; 2 crew with light armour (6+ save)',

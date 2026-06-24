@@ -347,6 +347,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Automatically destroyed if the General is slain': 'Destruido automáticamente si el General muere',
   'Axes, shields, horned helmets, light chainmail (5+ save)': 'Hachas, escudos, yelmos con cuernos, cota de malla ligera (salvación de 5+)',
   'Barded Bretonnian Warhorse': 'Caballo de Guerra Bretoniano con barda',
+  'Barding (better armour save)': 'Barda (mejor salvación por armadura)',
   'Barded Chaos Steed (Corcel del Caos, M8)': 'Corcel del Caos con barda (M8)',
   'Bats: M8': 'Murciélagos: M8',
   'Battle Standard of Athel Loren (+50)': 'Estandarte de Batalla de Athel Loren (+50)',
