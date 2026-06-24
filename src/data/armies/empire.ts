@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, StatLine, UnitProfile } from '../types'
+import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitProfile } from '../types'
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
@@ -39,6 +39,77 @@ const EMP_WIZARD_LEVELS: EquipmentOption[] = [
   { id: 'wizard-l4', name: 'Wizard Level 4 (Gran Hechicero)', pointsPerModel: 97, magicItemSlotsDelta: 3 },
 ]
 
+// --- Character mounts. Empire characters "may ride a Warhorse (+3) or a Monster"
+// (army list pp.54-58); special characters with armour ride a barded Warhorse
+// (+7 "with metal barding"). Monster mounts reuse the bestiary statlines defined
+// in the monster entries below; points are the "+N pts" values from the rules. ---
+const WARHORSE_STATS: StatLine = { M: 8, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 }
+
+const WARHORSE_MOUNT: MountOption = {
+  id: 'mount-warhorse', name: 'Warhorse', nameEs: 'Caballo de Guerra',
+  points: 3, statLine: WARHORSE_STATS,
+}
+const BARDED_WARHORSE_MOUNT: MountOption = {
+  id: 'mount-barded-warhorse', name: 'Barded Warhorse', nameEs: 'Caballo de Guerra con Barda',
+  points: 7, statLine: WARHORSE_STATS,
+}
+const PEGASUS_MOUNT: MountOption = {
+  id: 'mount-pegasus', name: 'Pegasus', nameEs: 'Pegaso',
+  points: 50, statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 },
+  specialRules: ['Flying'],
+}
+const GRIFFON_MOUNT: MountOption = {
+  id: 'mount-griffon', name: 'Griffon', nameEs: 'Grifo',
+  points: 150, statLine: { M: 6, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 7, A: 4, Ld: 8 },
+  specialRules: ['Large target', 'Terror', 'Flying'],
+}
+const HIPPOGRIFF_MOUNT: MountOption = {
+  id: 'mount-hippogriff', name: 'Hippogriff', nameEs: 'Hipogrifo',
+  points: 145, statLine: { M: 8, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 6, A: 3, Ld: 8 },
+  specialRules: ['Large target', 'Terror', 'Flying'],
+}
+const MANTICORE_MOUNT: MountOption = {
+  id: 'mount-manticore', name: 'Manticore', nameEs: 'Manticora',
+  points: 200, statLine: { M: 6, WS: 6, BS: 0, S: 7, T: 7, W: 5, I: 4, A: 4, Ld: 8 },
+  specialRules: ['Large target', 'Terror', 'Flying'],
+}
+const DRAGON_MOUNT: MountOption = {
+  id: 'mount-dragon', name: 'Dragon', nameEs: 'Dragón',
+  points: 450, statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 6, W: 7, I: 8, A: 7, Ld: 7 },
+  specialRules: ['Large target', 'Terror', 'Flying', 'Breath weapon'],
+}
+const GREAT_DRAGON_MOUNT: MountOption = {
+  id: 'mount-great-dragon', name: 'Great Dragon', nameEs: 'Gran Dragón',
+  points: 600, statLine: { M: 6, WS: 7, BS: 0, S: 7, T: 7, W: 8, I: 8, A: 8, Ld: 8 },
+  specialRules: ['Large target', 'Terror', 'Flying', 'Breath weapon'],
+}
+const EMPEROR_DRAGON_MOUNT: MountOption = {
+  id: 'mount-emperor-dragon', name: 'Emperor Dragon', nameEs: 'Dragón Emperador',
+  points: 750, statLine: { M: 6, WS: 8, BS: 0, S: 8, T: 8, W: 9, I: 6, A: 9, Ld: 9 },
+  specialRules: ['Large target', 'Terror', 'Flying', 'Breath weapon'],
+}
+
+/** Full mount list for fighter lords/heroes ("a Warhorse or a Monster"). */
+const FIGHTER_MOUNTS: MountOption[] = [
+  WARHORSE_MOUNT, PEGASUS_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT,
+  DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT,
+]
+/** Wizards may not wear barding; Warhorse + monsters only (same list as fighters). */
+const WIZARD_MOUNTS: MountOption[] = FIGHTER_MOUNTS
+
+// --- Fixed (non-selectable) mounts for special characters who always ride one.
+// Cost is already baked into the model's points, so these are display-only. ---
+const WARHORSE_PROFILE: ProfileBlock = {
+  name: 'Warhorse', nameEs: 'Caballo de Guerra', statLine: WARHORSE_STATS,
+}
+const BARDED_WARHORSE_PROFILE: ProfileBlock = {
+  name: 'Barded Warhorse', nameEs: 'Caballo de Guerra con Barda', statLine: WARHORSE_STATS,
+}
+const GRIFFON_DEATHCLAW_PROFILE: ProfileBlock = {
+  name: 'Griffon Deathclaw', nameEs: 'Grifo Garra de la Muerte',
+  statLine: GRIFFON_MOUNT.statLine!, specialRules: GRIFFON_MOUNT.specialRules,
+}
+
 const units: UnitProfile[] = [
   // ===== Characters / PERSONAJES (0-50%) =====
 
@@ -52,6 +123,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mounts: FIGHTER_MOUNTS,
     specialRules: [
       'Commander (up to 3 magic items)',
       'Sword',
@@ -70,6 +142,7 @@ const units: UnitProfile[] = [
     canBeBSB: true,
     isBSB: true,
     max: 1,
+    mounts: FIGHTER_MOUNTS,
     specialRules: [
       '0-1 Army Battle Standard',
       'Sword & Battle Standard',
@@ -87,6 +160,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     canBeGeneral: true,
+    mounts: FIGHTER_MOUNTS,
     specialRules: [
       'Héroe (up to 2 magic items)',
       'Sword',
@@ -118,6 +192,7 @@ const units: UnitProfile[] = [
     characterRank: 'wizard1',
     canBeGeneral: false,
     options: EMP_WIZARD_LEVELS,
+    mounts: WIZARD_MOUNTS,
     specialRules: [
       'Wizard (any of the eight Colleges of Magic)',
       'Cannot cast spells if wearing armour',
@@ -138,12 +213,13 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    profiles: [GRIFFON_DEATHCLAW_PROFILE],
     specialRules: [
       'Special character — becomes army General',
       'Heavy armour & sword',
       'Hammer of Sigmar (+100 pts) and Silver Seal (+75 pts) — fixed magic items',
       'One additional magic item',
-      'May ride a Warhorse (+7 pts with metal barding) or a Monster (favourite: Griffon Deathclaw +150 pts)',
+      'Rides his Griffon Deathclaw (favourite mount; +150 pts, included)',
     ],
   },
   {
@@ -157,12 +233,13 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    mounts: [BARDED_WARHORSE_MOUNT],
     specialRules: [
       'Special character — becomes army General',
       'Heavy armour, shield & sword',
       'Immune to psychology; never breaks',
       'Protected by Sigmar: re-roll one failed save per turn; auto-dispel spells on 4-6; Strength 10 Deadly Attack in close combat',
-      'May ride a Warhorse (+7 pts with barding); may not ride a Monster',
+      'May ride a Barded Warhorse (+7 pts); may not ride a Monster',
       'No magic items',
     ],
   },
@@ -177,12 +254,13 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeBSB: true,
     max: 1,
+    mounts: [BARDED_WARHORSE_MOUNT],
     specialRules: [
       'Special character — Paladin of the Emperor',
       'Heavy armour',
       '+50 pts to act as Battle Standard Bearer',
       'Sword of Justice (+50 pts) — fixed magic weapon',
-      'May ride a Warhorse (+7 pts with metal barding)',
+      'May ride a Barded Warhorse (+7 pts)',
       'No other magic items',
     ],
   },
@@ -196,12 +274,20 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard2',
     max: 1,
+    profiles: [
+      {
+        name: 'War Altar (chariot)', nameEs: 'Altar de Guerra (carro)',
+        statLine: { T: 5, W: 4 },
+        specialRules: ['War chariot', 'Drawn by two Barded Warhorses'],
+      },
+      BARDED_WARHORSE_PROFILE,
+    ],
     specialRules: [
       'Special character',
       'Wizard level 2 — draws spells from the War Altar (Winds of Magic + 1D3+1 extra cards)',
       'Staff of Power (+80 pts), Jade Griffon (+75 pts), Horn of Sigismund (+35 pts) — fixed magic items',
       'Three additional magic items',
-      'Rides the War Altar (war chariot drawn by barded Warhorses)',
+      'Rides the War Altar (war chariot drawn by Barded Warhorses)',
     ],
   },
   {
@@ -214,12 +300,13 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard4',
     max: 1,
+    mounts: [BARDED_WARHORSE_MOUNT, PEGASUS_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT, DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT],
     specialRules: [
       'Special character (Thyrus Gormann, Bright Wizard Level 4)',
       'Sword; no armour',
       'Staff of Volans (+75 pts) — must be chosen as one of his magic items',
       'Up to 4 magic items total',
-      'May ride a Warhorse (+7 pts with barding) or a Monster',
+      'May ride a Barded Warhorse (+7 pts) or a Monster',
     ],
   },
   {
@@ -233,12 +320,13 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    mounts: [BARDED_WARHORSE_MOUNT, PEGASUS_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT, DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT],
     specialRules: [
       'Special character — Captain of the Reiksgard',
       'Heavy armour & sword',
       'Runefang (+30 pts) — must be chosen as one of his magic items',
       'Up to 3 magic items total',
-      'May ride a Warhorse (+7 pts with metal barding) or a Monster',
+      'May ride a Barded Warhorse (+7 pts) or a Monster',
     ],
   },
   {
@@ -252,11 +340,12 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    mounts: [BARDED_WARHORSE_MOUNT],
     specialRules: [
       'Special character',
       'Heavy armour & sword',
       'Runefang (+30 pts) and Talisman of Ulric (+25 pts) — fixed magic items',
-      'May ride a Warhorse (+7 pts with metal barding)',
+      'May ride a Barded Warhorse (+7 pts)',
     ],
   },
   {
@@ -270,11 +359,12 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    mounts: [BARDED_WARHORSE_MOUNT],
     specialRules: [
       'Special character',
       'Heavy armour & sword',
       'Runefang (+30 pts) — fixed magic item; Falcon (bonus attack at S3 before combat)',
-      'May ride a Warhorse (+7 pts with metal barding)',
+      'May ride a Barded Warhorse (+7 pts)',
     ],
   },
   {
@@ -288,11 +378,12 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    mounts: [BARDED_WARHORSE_MOUNT],
     specialRules: [
       'Special character',
       'Heavy armour & sword',
       'Runefang (+30 pts) and Dragon Bow (+40 pts) — fixed magic items',
-      'May ride a Warhorse (+7 pts with metal barding)',
+      'May ride a Barded Warhorse (+7 pts)',
     ],
   },
   {
@@ -306,11 +397,12 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    mounts: [BARDED_WARHORSE_MOUNT],
     specialRules: [
       'Special character',
       'Heavy armour; two swords (Runefang +30 pts & long dagger)',
       'Frenzy — 6 attacks when frenzied plus 1 extra for dagger',
-      'May ride a Warhorse (+7 pts with metal barding)',
+      'May ride a Barded Warhorse (+7 pts)',
     ],
   },
   {
@@ -324,12 +416,13 @@ const units: UnitProfile[] = [
     characterRank: 'wizard3',
     canBeGeneral: false,
     max: 1,
+    profiles: [WARHORSE_PROFILE],
     specialRules: [
       'Special character — requires at least one Kislev regiment',
       'Wizard Level 3 (Ice Magic only — own spell deck)',
       'Fearfrost magic sword (+100 pts) — fixed magic item',
       'Up to 3 magic items total',
-      'Rides a Warhorse',
+      'Rides a Warhorse (included)',
     ],
   },
 
@@ -648,6 +741,22 @@ const units: UnitProfile[] = [
     role: 'chariot',
     pointsPerModel: 150,
     statLine: { M: 8, WS: 3, BS: 3, S: 7, T: 5, W: 4, I: 3, A: 1, Ld: 7 },
+    profiles: [
+      {
+        name: 'Chassis', nameEs: 'Chasis',
+        statLine: { T: 5, W: 4 },
+        specialRules: ['Chariot has no armour save'],
+      },
+      {
+        name: 'Crew', nameEs: 'Tripulación',
+        statLine: human({ Ld: 7 }),
+        specialRules: ['6+ armour save'],
+      },
+      {
+        name: 'Draught Warhorses', nameEs: 'Caballos de Tiro',
+        statLine: WARHORSE_STATS,
+      },
+    ],
     specialRules: [
       'War chariot',
       'Crew 6+ save; chariot has no armour save',
@@ -791,15 +900,6 @@ const units: UnitProfile[] = [
     pointsPerModel: 50,
     statLine: { M: 5, WS: 3, BS: 0, S: 5, T: 4, W: 4, I: 1, A: 2, Ld: 7 },
     specialRules: ['Large target', 'Poisoned attacks'],
-  },
-  {
-    id: 'emp-pegasus',
-    name: 'Pegasus',
-    nameEs: 'Pegaso',
-    role: 'monster',
-    pointsPerModel: 50,
-    statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 },
-    specialRules: ['Flying', 'Character mount only'],
   },
   {
     id: 'emp-swarms',

@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, StatLine, UnitProfile } from '../types'
+import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitProfile } from '../types'
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
@@ -47,6 +47,61 @@ const SPEAR_1: EquipmentOption = { id: 'spear', name: 'Lanza', pointsPerModel: 1
 const SPEAR_HALF: EquipmentOption = { id: 'spear', name: 'Lanza', pointsPerModel: 0.5 }
 const SCYTHED_WHEELS: EquipmentOption = { id: 'scythed-wheels', name: 'Ruedas con Cuchillas', pointsPerModel: 20, flat: true }
 
+// --- Character mounts (Reino del Caos pp.100-102; daemonic mounts pp.74-90).
+//     In 5th ed a character's mount cost is added to the model and the pair
+//     counts under the Characters % allowance. Bestiary statlines below. ---
+const CHAOS_STEED_STATS: StatLine = { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 3, A: 1, Ld: 5 }
+const JUGGERNAUT_STATS: StatLine = { M: 7, WS: 5, BS: 0, S: 5, T: 5, W: 3, I: 1, A: 3, Ld: 5 }
+const DISC_STATS: StatLine = { M: 9, WS: 0, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 }
+
+const CHAOS_STEED_MOUNT: MountOption = {
+  id: 'mount-chaos-steed', name: 'Chaos Steed', nameEs: 'Corcel del Caos',
+  points: 4, statLine: CHAOS_STEED_STATS,
+}
+// Daemonic mount of Khorne (Reino del Caos p.74 — Mastín de Khorne / Hound of Khorne).
+const JUGGERNAUT_MOUNT: MountOption = {
+  id: 'mount-juggernaut', name: 'Juggernaut of Khorne', nameEs: 'Devastador de Khorne',
+  points: 70, statLine: JUGGERNAUT_STATS, specialRules: ['Daemonic mount of Khorne', 'Impact hits'],
+}
+const DISC_OF_TZEENTCH_MOUNT: MountOption = {
+  id: 'mount-disc', name: 'Disc of Tzeentch', nameEs: 'Disco de Tzeentch',
+  points: 40, statLine: DISC_STATS, specialRules: ['Daemonic mount of Tzeentch', 'Flying'],
+}
+// The Chaos Dragon (p.120) is also fielded standalone as a monster (ch-chaos-dragon).
+const CHAOS_DRAGON_MOUNT: MountOption = {
+  id: 'mount-chaos-dragon', name: 'Chaos Dragon', nameEs: 'Dragón del Caos',
+  points: 625, statLine: { M: 6, WS: 6, BS: 0, S: 7, T: 7, W: 7, I: 6, A: 8, Ld: 8 },
+  specialRules: ['Large target', 'Causes terror', 'Flying', 'Scaly skin (4+ save)', 'Two breath attacks'],
+}
+
+/** Mounts a generic Chaos lord/hero/champion may ride (Chaos Steed always;
+ *  daemonic mounts require the matching Mark — noted in specialRules). */
+const CHAOS_CHARACTER_MOUNTS: MountOption[] = [
+  CHAOS_STEED_MOUNT, JUGGERNAUT_MOUNT, DISC_OF_TZEENTCH_MOUNT, CHAOS_DRAGON_MOUNT,
+]
+
+// --- Fixed (non-selectable) named mounts baked into a special character's points.
+//     Display-only profiles parsed from the "(M.. WS.. S.. T.. I.. A..)" rule text. ---
+const HOUND_OF_KHORNE_PROFILE: ProfileBlock = {
+  name: 'Hound of Khorne', nameEs: 'Mastín de Khorne',
+  statLine: { M: 8, WS: 6, S: 6, T: 5, I: 10, A: 4 },
+  specialRules: ['Daemonic mount of Khorne'],
+}
+const WSORAYCH_PROFILE: ProfileBlock = {
+  name: "W'Soraych, the Apocalypse Steed", nameEs: 'W\'Soraych, el Corcel del Apocalipsis',
+  statLine: { M: 12, WS: 6, S: 5, T: 4, I: 6, A: 3 },
+  specialRules: ['Barded'],
+}
+const MORDREK_STEED_PROFILE: ProfileBlock = {
+  name: 'Barded Chaos Steed', nameEs: 'Corcel del Caos con Barda',
+  statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 3, A: 1, Ld: 5 },
+  specialRules: ['Barded (1+ armour save)'],
+}
+const BLOODGREED_PROFILE: ProfileBlock = {
+  name: 'Bloodgreed, Chaos Hound', nameEs: 'Fauces Sangrientas, Mastín del Caos',
+  statLine: { M: 6, WS: 6, S: 6, T: 5, W: 3, A: 3 },
+}
+
 // Mark of Chaos upgrades for characters (per-model points, Reino del Caos p.100).
 const MARK_KHORNE: EquipmentOption = { id: 'mark-khorne', name: 'Marca de Khorne', pointsPerModel: 45 }
 const MARK_NURGLE: EquipmentOption = { id: 'mark-nurgle', name: 'Marca de Nurgle', pointsPerModel: 40 }
@@ -92,7 +147,8 @@ const units: UnitProfile[] = [
       SHIELD_1, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
       MARK_KHORNE, MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],
-    specialRules: ['Chaos armour', 'May ride a Chaos Steed (+4) or a daemonic mount with its Mark'],
+    mounts: CHAOS_CHARACTER_MOUNTS,
+    specialRules: ['Chaos armour', 'May ride a Chaos Steed or a daemonic mount matching its Mark'],
   },
   {
     id: 'ch-hero',
@@ -109,7 +165,8 @@ const units: UnitProfile[] = [
       SHIELD_1, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
       MARK_KHORNE, MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],
-    specialRules: ['Chaos armour', 'May ride a Chaos Steed (+4) or a daemonic mount with its Mark'],
+    mounts: CHAOS_CHARACTER_MOUNTS,
+    specialRules: ['Chaos armour', 'May ride a Chaos Steed or a daemonic mount matching its Mark'],
   },
   {
     id: 'ch-champion',
@@ -125,7 +182,8 @@ const units: UnitProfile[] = [
       SHIELD_1, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
       MARK_KHORNE, MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],
-    specialRules: ['Chaos armour', 'May lead a regiment or ride a Chaos Steed (+4)'],
+    mounts: [CHAOS_STEED_MOUNT],
+    specialRules: ['Chaos armour', 'May lead a regiment or ride a Chaos Steed'],
   },
   {
     id: 'ch-battle-standard',
@@ -162,6 +220,7 @@ const units: UnitProfile[] = [
       CHAOS_ARMOUR_10,
       MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],
+    mounts: [CHAOS_STEED_MOUNT, DISC_OF_TZEENTCH_MOUNT, CHAOS_DRAGON_MOUNT],
     specialRules: ['Wizard', 'Chaos Magic or Dark Magic', 'Khorne has no sorcerers'],
   },
 
@@ -237,6 +296,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: false,
     max: 1,
+    profiles: [HOUND_OF_KHORNE_PROFILE],
     specialRules: [
       'Special character',
       'Mark of Khorne — frenzy replaced by Destructor reward',
@@ -283,6 +343,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    profiles: [WSORAYCH_PROFILE],
     specialRules: [
       'Special character',
       'Must be the army General; needs a host of 630+ pts (Warriors/Beastmen/Daemons)',
@@ -328,6 +389,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: false,
     max: 1,
+    profiles: [MORDREK_STEED_PROFILE],
     specialRules: [
       'Special character',
       'Cannot be the General; fights alone (independent, may not lead a unit). Deduct from the 25% allies allowance',
@@ -373,6 +435,15 @@ const units: UnitProfile[] = [
     characterRank: 'wizard4',
     canBeGeneral: true,
     max: 1,
+    mounts: [
+      {
+        id: 'mount-baudros', name: 'Baudros, the Two-Headed Chaos Dragon',
+        nameEs: 'Baudros, el Dragón del Caos de Dos Cabezas',
+        points: 625,
+        statLine: { M: 6, WS: 6, BS: 0, S: 7, T: 7, W: 7, I: 6, A: 8, Ld: 8 },
+        specialRules: ['Large target', 'Causes terror', 'Flying', 'Two heads', 'Breath weapon'],
+      },
+    ],
     specialRules: [
       'Special character',
       'May be the General; needs a host of 521+ pts from the Chaos Warrior hosts',
@@ -463,6 +534,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    profiles: [BLOODGREED_PROFILE],
     specialRules: [
       'Special character — Beastman Warlord',
       'May be the General; needs a Beastmen host of 240+ pts incl. a unit of Chaos Hounds',
@@ -485,6 +557,10 @@ const units: UnitProfile[] = [
     characterRank: 'wizard3',
     canBeGeneral: true,
     max: 1,
+    profiles: [
+      { name: 'Tuskgor Chariot', nameEs: 'Carro de Tuskgors', statLine: { S: 7, T: 7, W: 3 }, specialRules: ['Scythed', 'Impact hits'] },
+      { name: '2 Tuskgors', nameEs: '2 Tuskgors', statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 3, A: 1, Ld: 7 }, specialRules: ['4+ armour save'] },
+    ],
     specialRules: [
       'Special character — Beastman Warlord; always the army General',
       'Needs a Beastmen host of 400+ pts',
@@ -647,9 +723,14 @@ const units: UnitProfile[] = [
     role: 'chariot',
     pointsPerModel: 122,
     statLine: statline({ S: 7, T: 7, W: 3, A: 0 }),
+    profiles: [
+      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
+      { name: '2 Chaos Warriors (crew)', nameEs: '2 Guerreros del Caos (tripulación)', statLine: statline() },
+      { name: '2 Chaos Steeds', nameEs: '2 Corceles del Caos', statLine: CHAOS_STEED_STATS },
+    ],
     options: [SCYTHED_WHEELS, TWO_HAND_2, HALBERD_2, FLAIL_1, SHIELD_1, CHAOS_ARMOUR_7],
     specialRules: [
-      'Chariot — drawn by 2 Chaos Steeds, crew of 2 Chaos Warriors',
+      'Chariot (T7 W3) — drawn by 2 Chaos Steeds, crew of 2 Chaos Warriors',
       'Crew: heavy armour & hand weapon',
       'May take a Mark of Chaos via its general',
     ],
@@ -662,9 +743,14 @@ const units: UnitProfile[] = [
     role: 'chariot',
     pointsPerModel: 80,
     statLine: statline({ S: 5, T: 5, W: 3, A: 0 }),
+    profiles: [
+      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 5, W: 3 } },
+      { name: '2 Chaos Marauders (crew)', nameEs: '2 Bárbaros del Caos (tripulación)', statLine: statline({ WS: 4, BS: 3, S: 4, T: 3, I: 4, A: 2, Ld: 7 }) },
+      { name: '2 War Horses', nameEs: '2 Caballos de Guerra', statLine: { M: 8, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 } },
+    ],
     options: [SCYTHED_WHEELS],
     specialRules: [
-      'Chariot — drawn by 2 War Horses, crew of 2 Chaos Marauders',
+      'Chariot (T5 W3) — drawn by 2 War Horses, crew of 2 Chaos Marauders',
       'Crew: hand weapon & light armour',
     ],
   },
@@ -675,9 +761,14 @@ const units: UnitProfile[] = [
     role: 'chariot',
     pointsPerModel: 88,
     statLine: statline({ S: 7, T: 7, W: 3, A: 0 }),
+    profiles: [
+      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
+      { name: '2 Gor Beastmen (crew)', nameEs: '2 Gors Hombres Bestia (tripulación)', statLine: statline({ M: 4, WS: 4, BS: 3, S: 3, T: 4, W: 2, I: 3, A: 1, Ld: 7 }) },
+      { name: '2 Tuskgors', nameEs: '2 Tuskgors', statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 3, A: 1, Ld: 7 }, specialRules: ['4+ armour save'] },
+    ],
     options: [SCYTHED_WHEELS, TWO_HAND_2, HALBERD_2, LIGHT_ARMOUR_2, SHIELD_1],
     specialRules: [
-      'Chariot — drawn by 2 Tuskgors, crew of 2 Gor Beastmen',
+      'Chariot (T7 W3) — drawn by 2 Tuskgors, crew of 2 Gor Beastmen',
       'Tuskgors: 4+ armour save',
       'Beast',
     ],

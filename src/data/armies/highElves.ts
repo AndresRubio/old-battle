@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, StatLine, UnitProfile } from '../types'
+import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitProfile } from '../types'
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
@@ -56,6 +56,81 @@ const HE_WIZARD_LEVELS: EquipmentOption[] = [
   { id: 'wizard-l4', name: 'Wizard Level 4 (Great Mage / Gran Mago)', pointsPerModel: 269, magicItemSlotsDelta: 3 },
 ]
 
+// --- Character mounts (p.71: "may ride an Elven Steed, a monster or a chariot").
+//     Monster mounts reuse the bestiary statlines defined in the units list below;
+//     the generic Elven Steed uses the standard bestiary profile. Costs from the
+//     army list / monster points. ---
+const ELVEN_STEED_MOUNT: MountOption = {
+  id: 'mount-elven-steed', name: 'Elven Steed', nameEs: 'Corcel Élfico',
+  points: 3, statLine: { M: 9, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 4, A: 1, Ld: 5 },
+}
+const GREAT_EAGLE_MOUNT: MountOption = {
+  id: 'mount-great-eagle', name: 'Great Eagle', nameEs: 'Águila Gigante',
+  points: 75, statLine: { M: 2, WS: 7, BS: 0, S: 5, T: 4, W: 3, I: 5, A: 2, Ld: 8 },
+  specialRules: ['Flying'],
+}
+const GRIFFON_MOUNT: MountOption = {
+  id: 'mount-griffon', name: 'Griffon', nameEs: 'Grifo',
+  points: 150, statLine: { M: 6, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 7, A: 4, Ld: 8 },
+  specialRules: ['Flying', 'Large target', 'Causes terror'],
+}
+const HIPPOGRIFF_MOUNT: MountOption = {
+  id: 'mount-hippogriff', name: 'Hippogriff', nameEs: 'Hipogrifo',
+  points: 145, statLine: { M: 8, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 6, A: 3, Ld: 8 },
+  specialRules: ['Flying', 'Large target'],
+}
+const MANTICORE_MOUNT: MountOption = {
+  id: 'mount-manticore', name: 'Manticore', nameEs: 'Mantícora',
+  points: 200, statLine: { M: 6, WS: 6, BS: 0, S: 7, T: 7, W: 5, I: 4, A: 4, Ld: 8 },
+  specialRules: ['Flying', 'Large target', 'Causes terror'],
+}
+const PEGASUS_MOUNT: MountOption = {
+  id: 'mount-pegasus', name: 'Pegasus', nameEs: 'Pegaso',
+  points: 50, statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 3 },
+  specialRules: ['Flying'],
+}
+const UNICORN_MOUNT: MountOption = {
+  id: 'mount-unicorn', name: 'Unicorn', nameEs: 'Unicornio',
+  points: 90, statLine: { M: 9, WS: 5, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 9 },
+}
+const DRAGON_MOUNT: MountOption = {
+  id: 'mount-dragon', name: 'Dragon', nameEs: 'Dragón',
+  points: 450, statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 6, W: 7, I: 8, A: 7, Ld: 7 },
+  specialRules: ['Flying', 'Causes terror', 'Large target', 'Dragon breath weapon'],
+}
+const GREAT_DRAGON_MOUNT: MountOption = {
+  id: 'mount-great-dragon', name: 'Great Dragon', nameEs: 'Gran Dragón',
+  points: 600, statLine: { M: 6, WS: 7, BS: 0, S: 7, T: 7, W: 8, I: 7, A: 8, Ld: 8 },
+  specialRules: ['Flying', 'Causes terror', 'Large target', 'Dragon breath weapon'],
+}
+const EMPEROR_DRAGON_MOUNT: MountOption = {
+  id: 'mount-emperor-dragon', name: 'Emperor Dragon', nameEs: 'Dragón Emperador',
+  points: 750, statLine: { M: 6, WS: 8, BS: 0, S: 8, T: 8, W: 9, I: 6, A: 9, Ld: 9 },
+  specialRules: ['Flying', 'Causes terror', 'Large target', 'Dragon breath weapon'],
+}
+
+/** Mount list for High Elf princes/heroes ("an Elven Steed or a monster"). */
+const PRINCE_MOUNTS: MountOption[] = [
+  ELVEN_STEED_MOUNT, GREAT_EAGLE_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT,
+  PEGASUS_MOUNT, UNICORN_MOUNT, DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT,
+]
+
+/** Imrik must ride one of the three dragons (p.86). */
+const IMRIK_MOUNTS: MountOption[] = [DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT]
+
+// --- Fixed (non-selectable) mounts parsed from the special-character rule text.
+//     Display-only: the cost is already baked into the model's points. ---
+const STORMWING_PROFILE: ProfileBlock = {
+  name: 'Stormwing (Griffon)', nameEs: 'Ala de Tormenta (Grifo)',
+  statLine: { M: 6, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 7, A: 4, Ld: 8 },
+  specialRules: ['Flying', 'Large target', 'Causes terror'],
+}
+const MALHANDIR_PROFILE: ProfileBlock = {
+  name: 'Malhandir (Elven Steed)', nameEs: 'Malhandir (Corcel Élfico)',
+  statLine: { M: 12, WS: 4, BS: 0, S: 4, T: 3, W: 1, I: 5, A: 2, Ld: 7 },
+  specialRules: ['Dragon Armour barding (2+ save)'],
+}
+
 const units: UnitProfile[] = [
   // ===== Characters (0-50%) =====
   {
@@ -68,6 +143,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mounts: PRINCE_MOUNTS,
     specialRules: [
       'Always strikes first',
       'May ride an Elven Steed (+3 pts), a monster, or a chariot',
@@ -86,6 +162,7 @@ const units: UnitProfile[] = [
     canBeBSB: true,
     isBSB: true,
     max: 1,
+    mounts: PRINCE_MOUNTS,
     specialRules: [
       'Army Battle Standard (0-1)',
       'Always strikes first',
@@ -103,6 +180,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     canBeGeneral: true,
+    mounts: PRINCE_MOUNTS,
     specialRules: [
       'Always strikes first',
       'Up to 2 magic items',
@@ -135,6 +213,7 @@ const units: UnitProfile[] = [
     characterRank: 'wizard1',
     canBeGeneral: false,
     options: HE_WIZARD_LEVELS,
+    mounts: PRINCE_MOUNTS,
     specialRules: [
       'Wizard (High Magic or Battle Magic)',
       'Sword only; may not wear armour or carry other weapons',
@@ -174,6 +253,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    profiles: [STORMWING_PROFILE],
     specialRules: [
       'Special character',
       'Hatred of Goblins',
@@ -291,6 +371,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    profiles: [MALHANDIR_PROFILE],
     specialRules: [
       'Special character',
       'Always strikes first',
@@ -329,6 +410,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    mounts: IMRIK_MOUNTS,
     specialRules: [
       'Special character',
       'Always strikes first',
@@ -617,15 +699,6 @@ const units: UnitProfile[] = [
     specialRules: ['Flying', 'Large target', 'Causes terror'],
   },
   {
-    id: 'he-pegasus',
-    name: 'Pegasus',
-    nameEs: 'Pegaso',
-    role: 'monster',
-    pointsPerModel: 50,
-    statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 3 },
-    specialRules: ['Flying', 'Character mount'],
-  },
-  {
     id: 'he-chimera',
     name: 'Chimera',
     nameEs: 'Quimera',
@@ -633,15 +706,6 @@ const units: UnitProfile[] = [
     pointsPerModel: 250,
     statLine: { M: 6, WS: 4, BS: 0, S: 7, T: 6, W: 6, I: 4, A: 6, Ld: 8 },
     specialRules: ['Flying', 'Large target', 'Causes terror'],
-  },
-  {
-    id: 'he-unicorn',
-    name: 'Unicorn',
-    nameEs: 'Unicornio',
-    role: 'monster',
-    pointsPerModel: 90,
-    statLine: { M: 9, WS: 5, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 9 },
-    specialRules: ['Character mount'],
   },
 ]
 

@@ -149,47 +149,38 @@
   ],
   "vampire-counts/vc-vampire-lord": [
     "equip-armour-multiple",
-    "equip-barding-no-mount",
     "equip-greatweapon-shield",
     "equip-melee-multiple"
   ],
   "vampire-counts/vc-vampire-count": [
     "equip-armour-multiple",
-    "equip-barding-no-mount",
     "equip-greatweapon-shield",
     "equip-melee-multiple"
   ],
   "vampire-counts/vc-vampire-neonate": [
     "equip-armour-multiple",
-    "equip-barding-no-mount",
     "equip-greatweapon-shield",
     "equip-melee-multiple"
   ],
   "vampire-counts/vc-great-necromancer": [
-    "equip-barding-no-mount",
     "equip-melee-multiple"
   ],
   "vampire-counts/vc-master-necromancer": [
-    "equip-barding-no-mount",
     "equip-melee-multiple"
   ],
   "vampire-counts/vc-necromancer-paladin": [
-    "equip-barding-no-mount",
     "equip-melee-multiple"
   ],
   "vampire-counts/vc-necromancer": [
-    "equip-barding-no-mount",
     "equip-melee-multiple"
   ],
   "vampire-counts/vc-vampire-bsb": [
     "equip-armour-multiple",
-    "equip-barding-no-mount",
     "equip-greatweapon-shield",
     "equip-melee-multiple"
   ],
   "vampire-counts/vc-wight-bsb": [
     "equip-armour-multiple",
-    "equip-barding-no-mount",
     "equip-greatweapon-shield",
     "equip-melee-multiple"
   ],

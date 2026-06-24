@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, UnitProfile } from '../types'
+import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitProfile } from '../types'
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
@@ -49,6 +49,82 @@ const GOBLIN_SHAMAN_LEVELS: EquipmentOption[] = [
   { id: 'wizard-l4', name: 'Wizard Level 4 (Gran Shaman)', pointsPerModel: 225, magicItemSlotsDelta: 3 },
 ]
 
+// --- Beast statlines (draught beasts & ridden bestiary). Movement already in
+//     inches (War Boar 18cm→7", Giant Wolf 22cm→9", Giant Spider 18cm→7"). ---
+const WAR_BOAR_STATS: StatLine = { M: 7, WS: 3, BS: 0, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 3 }
+const GIANT_WOLF_STATS: StatLine = { M: 9, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 3 }
+// Giant Spider ridden profile (book p.73 mount row: M18 HA3 HP0 F4 R3 H1 I1 A1 L5).
+const GIANT_SPIDER_STATS: StatLine = { M: 7, WS: 3, BS: 0, S: 4, T: 3, W: 1, I: 1, A: 1, Ld: 5 }
+
+// --- Character mounts. Costs from the per-character OPCIONES lines (War Boar +8,
+//     Giant Wolf +4, Giant Spider +4); monster mounts reuse the bestiary
+//     statlines/special rules of the matching monster entries below. ---
+const WAR_BOAR_MOUNT: MountOption = {
+  id: 'mount-war-boar', name: 'War Boar', nameEs: 'Jabalí de Guerra',
+  points: 8, statLine: WAR_BOAR_STATS, specialRules: ['Boar charge (S+1)'],
+}
+const GIANT_WOLF_MOUNT: MountOption = {
+  id: 'mount-giant-wolf', name: 'Giant Wolf', nameEs: 'Lobo Gigante',
+  points: 4, statLine: GIANT_WOLF_STATS,
+}
+const GIANT_SPIDER_MOUNT: MountOption = {
+  id: 'mount-giant-spider', name: 'Giant Spider', nameEs: 'Araña Gigante',
+  points: 4, statLine: GIANT_SPIDER_STATS,
+  specialRules: ['Move through woods/terrain freely'],
+}
+const WINGED_SERPENT_MOUNT: MountOption = {
+  id: 'mount-winged-serpent', name: 'Winged Serpent', nameEs: 'Serpiente Alada',
+  points: 180, statLine: { M: 6, WS: 5, BS: 0, S: 5, T: 6, W: 4, I: 4, A: 3, Ld: 5 },
+  specialRules: ['Flying', 'Large target'],
+}
+const GRIFFON_MOUNT: MountOption = {
+  id: 'mount-griffon', name: 'Griffon', nameEs: 'Grifo',
+  points: 150, statLine: { M: 6, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 7, A: 4, Ld: 8 },
+  specialRules: ['Flying', 'Large target', 'Terror'],
+}
+const HIPPOGRIFF_MOUNT: MountOption = {
+  id: 'mount-hippogriff', name: 'Hippogriff', nameEs: 'Hipogrifo',
+  points: 145, statLine: { M: 8, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 6, A: 3, Ld: 8 },
+  specialRules: ['Flying', 'Large target'],
+}
+const MANTICORE_MOUNT: MountOption = {
+  id: 'mount-manticore', name: 'Manticore', nameEs: 'Mantícora',
+  points: 200, statLine: { M: 6, WS: 6, BS: 0, S: 7, T: 7, W: 5, I: 4, A: 4, Ld: 8 },
+  specialRules: ['Flying', 'Large target', 'Terror'],
+}
+const CHIMERA_MOUNT: MountOption = {
+  id: 'mount-chimera', name: 'Chimera', nameEs: 'Quimera',
+  points: 250, statLine: { M: 6, WS: 4, BS: 0, S: 7, T: 6, W: 6, I: 4, A: 6, Ld: 8 },
+  specialRules: ['Flying', 'Large target', 'Terror'],
+}
+const DRAGON_MOUNT: MountOption = {
+  id: 'mount-dragon', name: 'Dragon', nameEs: 'Dragón',
+  points: 450, statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 6, W: 7, I: 8, A: 7, Ld: 7 },
+  specialRules: ['Flying', 'Terror', 'Large target', 'Breath weapon'],
+}
+
+/** Monster mounts open to any Orc/Goblin warboss ("or a monster"). */
+const MONSTER_MOUNTS: MountOption[] = [
+  WINGED_SERPENT_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT, CHIMERA_MOUNT, DRAGON_MOUNT,
+]
+const ORC_MOUNTS: MountOption[] = [WAR_BOAR_MOUNT, ...MONSTER_MOUNTS]
+const GOBLIN_MOUNTS: MountOption[] = [GIANT_WOLF_MOUNT, ...MONSTER_MOUNTS]
+const FOREST_GOBLIN_MOUNTS: MountOption[] = [GIANT_SPIDER_MOUNT, ...MONSTER_MOUNTS]
+// Orc Shaman text: "War Boar, Giant Wolf or a monster".
+const ORC_SHAMAN_MOUNTS: MountOption[] = [WAR_BOAR_MOUNT, GIANT_WOLF_MOUNT, ...MONSTER_MOUNTS]
+// Night Goblins never ride a beast — "a monster or chariot only".
+const NIGHT_GOBLIN_MOUNTS: MountOption[] = MONSTER_MOUNTS
+
+// --- Fixed (non-selectable) mounts: cost already baked into the model's points,
+//     so these are display-only profiles. ---
+const WAR_BOAR_PROFILE: ProfileBlock = {
+  name: 'War Boar', nameEs: 'Jabalí de Guerra', statLine: WAR_BOAR_STATS, specialRules: ['Boar charge (S+1)'],
+}
+const WINGED_SERPENT_PROFILE: ProfileBlock = {
+  name: 'Winged Serpent', nameEs: 'Serpiente Alada',
+  statLine: WINGED_SERPENT_MOUNT.statLine!, specialRules: WINGED_SERPENT_MOUNT.specialRules,
+}
+
 const units: UnitProfile[] = [
   // ===== PERSONAJES — Characters (0-50%) =====
 
@@ -64,6 +140,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mounts: ORC_MOUNTS,
     specialRules: ['Immune to Animosity', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -77,6 +154,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mounts: ORC_MOUNTS,
     specialRules: ['Animosity', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -90,6 +168,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mounts: ORC_MOUNTS,
     specialRules: ['Animosity', 'Frenzy (Savage Orcs)', '6+ ward save (war paint)', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -103,6 +182,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mounts: GOBLIN_MOUNTS,
     specialRules: ['Animosity', 'Fear Elves', 'May ride Giant Wolf (+4 pts) or a monster/chariot'],
   },
   {
@@ -116,6 +196,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mounts: FOREST_GOBLIN_MOUNTS,
     specialRules: ['Animosity', 'Fear Elves', 'May ride Giant Spider (+4 pts) or a monster/chariot'],
   },
   {
@@ -129,6 +210,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mounts: NIGHT_GOBLIN_MOUNTS,
     specialRules: ['Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'May ride a monster or chariot only'],
   },
 
@@ -235,6 +317,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 6, BS: 5, S: 5, T: 5, W: 2, I: 2, A: 4, Ld: 9 },
     isCharacter: true,
     characterRank: 'hero',
+    mounts: ORC_MOUNTS,
     specialRules: ['Immune to Animosity', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -247,6 +330,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 5, BS: 5, S: 4, T: 5, W: 2, I: 2, A: 4, Ld: 8 },
     isCharacter: true,
     characterRank: 'hero',
+    mounts: ORC_MOUNTS,
     specialRules: ['Animosity', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -259,6 +343,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 5, BS: 5, S: 4, T: 5, W: 2, I: 2, A: 4, Ld: 8 },
     isCharacter: true,
     characterRank: 'hero',
+    mounts: ORC_MOUNTS,
     specialRules: ['Animosity', 'Frenzy (Savage Orcs)', '6+ ward save (war paint)', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -271,6 +356,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 4, BS: 5, S: 4, T: 4, W: 2, I: 2, A: 4, Ld: 6 },
     isCharacter: true,
     characterRank: 'hero',
+    mounts: GOBLIN_MOUNTS,
     specialRules: ['Animosity', 'Fear Elves', 'May ride Giant Wolf (+4 pts) or a monster/chariot'],
   },
   {
@@ -283,6 +369,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 4, BS: 5, S: 4, T: 4, W: 2, I: 2, A: 4, Ld: 6 },
     isCharacter: true,
     characterRank: 'hero',
+    mounts: FOREST_GOBLIN_MOUNTS,
     specialRules: ['Animosity', 'Fear Elves', 'May ride Giant Spider (+4 pts) or a monster/chariot'],
   },
   {
@@ -295,6 +382,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 4, BS: 5, S: 4, T: 4, W: 2, I: 2, A: 4, Ld: 6 },
     isCharacter: true,
     characterRank: 'hero',
+    mounts: NIGHT_GOBLIN_MOUNTS,
     specialRules: ['Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'May ride a monster or chariot only'],
   },
 
@@ -386,6 +474,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     options: ORC_SHAMAN_LEVELS,
+    mounts: ORC_SHAMAN_MOUNTS,
     specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'May ride War Boar (+8 pts), Giant Wolf or a monster/chariot'],
   },
   {
@@ -399,6 +488,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     options: SAVAGE_ORC_SHAMAN_LEVELS,
+    mounts: ORC_MOUNTS,
     specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Frenzy (Savage Orcs)', '6+ ward save (war paint)', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -412,6 +502,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     options: GOBLIN_SHAMAN_LEVELS,
+    mounts: GOBLIN_MOUNTS,
     specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'May ride Giant Wolf (+4 pts) or a monster/chariot'],
   },
   {
@@ -425,6 +516,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     options: GOBLIN_SHAMAN_LEVELS,
+    mounts: FOREST_GOBLIN_MOUNTS,
     specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'May ride Giant Spider (+4 pts) or a monster/chariot'],
   },
   {
@@ -438,6 +530,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     options: GOBLIN_SHAMAN_LEVELS,
+    mounts: NIGHT_GOBLIN_MOUNTS,
     specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'Eats magic mushrooms (extra power dice)', 'May ride a monster or chariot only'],
   },
 
@@ -454,6 +547,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    profiles: [WINGED_SERPENT_PROFILE],
     specialRules: [
       'Special character (Orc Warboss)',
       'Light armour & shield',
@@ -474,6 +568,7 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
+    mounts: ORC_MOUNTS,
     specialRules: [
       'Special character (Orc Big Boss)',
       'Light armour & shield',
@@ -514,6 +609,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    profiles: [WAR_BOAR_PROFILE],
     specialRules: [
       'Special character (Orc Warboss)',
       'Light armour & Morgor la Mutiladora (great axe, +125 pts, mandatory)',
@@ -533,6 +629,7 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
+    mounts: ORC_MOUNTS,
     specialRules: [
       'Special character (Orc Big Boss)',
       'Light armour, shield & magic sword',
@@ -553,6 +650,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    mounts: ORC_MOUNTS,
     specialRules: [
       'Special character (Black Orc Warboss)',
       'Light armour & an axe in each hand',
@@ -870,6 +968,10 @@ const units: UnitProfile[] = [
     pointsPerModel: 81,
     // PDF p.88: Orc crew M10 HA3 HP3 F3 R4 H1 I2 A1 L7; Boar M18; Chariot S7 R7 —
     statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
+    profiles: [
+      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
+      { name: '2 War Boars', nameEs: '2 Jabalíes de Guerra', statLine: WAR_BOAR_STATS, specialRules: ['Boar charge (S+1)'] },
+    ],
     specialRules: [
       'Requires an Orc unit',
       'Chariot T7 W3; pulled by 2 War Boars; 2 Orc crew (swords & light armour)',
@@ -886,6 +988,10 @@ const units: UnitProfile[] = [
     pointsPerModel: 65,
     // PDF p.88: Goblin crew M10 HA2 HP3 F3 R3 H1 I2 A1 L5; Wolf M22; Chariot S7 R7
     statLine: { M: 4, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
+    profiles: [
+      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
+      { name: '2 Giant Wolves', nameEs: '2 Lobos Gigantes', statLine: GIANT_WOLF_STATS },
+    ],
     specialRules: [
       'Requires a Goblin unit',
       'Chariot T7 W3; pulled by 2 Giant Wolves; 2 Goblin crew (swords & light armour)',
