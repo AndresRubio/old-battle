@@ -3,6 +3,7 @@ import {
   addEntry,
   createRoster,
   removeEntry,
+  selectMount,
   selectWizardLevel,
   setGeneral,
   toggleMagicItem,
@@ -68,6 +69,18 @@ describe('rosterOps', () => {
     expect(r.entries.filter((e) => e.isGeneral).map((e) => e.id)).toEqual(['e1'])
     r = setGeneral(r, 'e2')
     expect(r.entries.filter((e) => e.isGeneral).map((e) => e.id)).toEqual(['e2'])
+  })
+
+  it('selectMount sets and clears the mount (mutually exclusive)', () => {
+    const bret = getArmy('bretonnia')!
+    const brGeneral = bret.units.find((u) => u.id === 'br-general')!
+    let r = addEntry(createRoster('bretonnia', 'A', 2000, 'r1'), brGeneral, 'e1')
+    r = selectMount(r, 'e1', 'mount-pegasus')
+    expect(r.entries[0].mountId).toBe('mount-pegasus')
+    r = selectMount(r, 'e1', 'mount-dragon') // replaces, never accumulates
+    expect(r.entries[0].mountId).toBe('mount-dragon')
+    r = selectMount(r, 'e1', null)
+    expect(r.entries[0].mountId).toBeUndefined()
   })
 
   it('selectWizardLevel keeps only one level option', () => {

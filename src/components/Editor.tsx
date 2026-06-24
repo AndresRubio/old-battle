@@ -5,6 +5,7 @@ import { getArmy } from '../data/armies'
 import {
   addEntry,
   removeEntry,
+  selectMount,
   selectWizardLevel,
   setGeneral,
   toggleMagicItem,
@@ -119,6 +120,7 @@ export function Editor({ rosterId, store, onBack }: Props) {
                   army={army}
                   onChangeSize={(size) => commit((prev) => updateEntry(prev, entry.id, { size }))}
                   onToggleOption={(optionId) => commit((prev) => toggleOption(prev, entry.id, optionId))}
+                  onSelectMount={(mountId) => commit((prev) => selectMount(prev, entry.id, mountId))}
                   onSelectWizardLevel={(optionId) => commit((prev) => selectWizardLevel(prev, entry.id, army, optionId))}
                   onToggleMagicItem={(itemId) => commit((prev) => toggleMagicItem(prev, entry.id, itemId))}
                   onSetGeneral={() => commit((prev) => setGeneral(prev, entry.id))}

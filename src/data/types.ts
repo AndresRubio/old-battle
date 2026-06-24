@@ -55,6 +55,37 @@ export interface EquipmentOption {
   magicItemSlotsDelta?: number
 }
 
+/**
+ * A rideable mount a character may take. In 5th ed the mount's cost is added to
+ * the character and the pair counts toward the Characters % allowance (it is not
+ * a separate roster entry). One mount per character — selection is mutually
+ * exclusive via `RosterEntry.mountId`.
+ */
+export interface MountOption {
+  id: string
+  name: string
+  nameEs?: string
+  /** Flat points added to the character entry when this mount is chosen. */
+  points: number
+  /** The mount's own characteristic profile, shown beneath the rider's. */
+  statLine?: StatLine
+  specialRules?: string[]
+}
+
+/**
+ * A read-only extra characteristic profile shown beneath a unit's main statLine
+ * — e.g. a chariot's crew / chassis / draught beasts, or a special character's
+ * fixed (non-selectable) mount. Display-only: its cost is already baked into the
+ * unit's points, so it never changes the entry total.
+ */
+export interface ProfileBlock {
+  name: string
+  nameEs?: string
+  /** Partial: a chariot chassis only has T/W; absent stats render as "–". */
+  statLine: Partial<StatLine>
+  specialRules?: string[]
+}
+
 export interface UnitProfile {
   id: string
   name: string
@@ -87,6 +118,13 @@ export interface UnitProfile {
   noCommand?: boolean
   specialRules?: string[]
   options?: EquipmentOption[]
+  /** Rideable mounts the character may take (mutually exclusive — one at most). */
+  mounts?: MountOption[]
+  /**
+   * Extra display-only profiles shown beneath the main statLine: a chariot's
+   * crew / chassis / draught beasts, or a special character's fixed mount.
+   */
+  profiles?: ProfileBlock[]
 }
 
 export interface CompositionRules {
@@ -237,6 +275,8 @@ export interface RosterEntry {
   size: number
   optionIds: string[]
   magicItemIds: string[]
+  /** The chosen mount id (from the unit's `mounts`), if any. */
+  mountId?: string
   isGeneral?: boolean
   isBSB?: boolean
 }

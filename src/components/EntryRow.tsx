@@ -1,8 +1,39 @@
 import { useState } from 'react'
-import type { Army, MagicItem, RosterEntry } from '../data/types'
+import type { Army, MagicItem, RosterEntry, StatLine } from '../data/types'
 import { entryPoints, findUnit, magicItemAllowance } from '../rules/points'
-import { useLang, t, unitName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, magicItemName, magicItemDesc } from '../i18n/lang'
+import { useLang, t, type Lang, unitName, mountName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, magicItemName, magicItemDesc } from '../i18n/lang'
 import { findRule, type RuleDef } from '../data/rules'
+
+/** One M/WS/BS/S/T/W/I/A/Ld row, optionally labelled (mount / chariot profile).
+ *  Accepts partial profiles (a chariot chassis only has T/W); absent stats show "–". */
+function StatLineRow({ statLine, lang, label }: { statLine: Partial<StatLine>; lang: Lang; label?: string }) {
+  return (
+    <div className="statline-wrap">
+      {label && <span className="stat-profile-label">{label}</span>}
+      <div className="statline">
+        {(['M', 'WS', 'BS', 'S', 'T', 'W', 'I', 'A', 'Ld'] as const).map((k) => (
+          <span key={k} className="stat">
+            <span className="stat-k">{STAT_LABEL[lang][k]}</span>
+            <span className="stat-v">{statLine[k] ?? '–'}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Special-rule tags as a compact inline list (used for mount/profile blocks). */
+function RuleTags({ rules, lang }: { rules: string[]; lang: Lang }) {
+  return (
+    <ul className="rule-tags rule-tags-inline">
+      {rules.map((rule) => (
+        <li key={rule}>
+          <span className="rule-tag">{ruleText(rule, lang)}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
 import { RuleDialog } from './RuleDialog'
 import { InfoDialog } from './InfoDialog'
 
@@ -11,6 +42,7 @@ interface Props {
   army: Army
   onChangeSize: (size: number) => void
   onToggleOption: (optionId: string) => void
+  onSelectMount: (mountId: string | null) => void
   onSelectWizardLevel: (optionId: string | null) => void
   onToggleMagicItem: (itemId: string) => void
   onSetGeneral: () => void
@@ -22,6 +54,7 @@ export function EntryRow({
   army,
   onChangeSize,
   onToggleOption,
+  onSelectMount,
   onSelectWizardLevel,
   onToggleMagicItem,
   onSetGeneral,
@@ -59,7 +92,9 @@ export function EntryRow({
   const toggleOptions = (unit.options ?? []).filter((o) => !o.id.startsWith('wizard-l'))
   const currentLevel = entry.optionIds.find((id) => id.startsWith('wizard-l')) ?? ''
   const allowance = unit.isCharacter ? magicItemAllowance(entry, unit) : 0
-  const hasOptions = (unit.options?.length ?? 0) > 0 || unit.isCharacter
+  const mounts = unit.mounts ?? []
+  const selectedMount = mounts.find((m) => m.id === entry.mountId)
+  const hasOptions = (unit.options?.length ?? 0) > 0 || mounts.length > 0 || unit.isCharacter
 
   return (
     <li className={`entry ${entry.isGeneral ? 'entry-general' : ''}`}>
@@ -80,16 +115,15 @@ export function EntryRow({
 
       {open && (
         <div className="entry-detail">
-          {unit.statLine && (
-            <div className="statline">
-              {(['M', 'WS', 'BS', 'S', 'T', 'W', 'I', 'A', 'Ld'] as const).map((k) => (
-                <span key={k} className="stat">
-                  <span className="stat-k">{STAT_LABEL[lang][k]}</span>
-                  <span className="stat-v">{unit.statLine![k]}</span>
-                </span>
-              ))}
+          {unit.statLine && <StatLineRow statLine={unit.statLine} lang={lang} />}
+
+          {/* Extra profiles: chariot crew/chassis/draught, or a fixed mount. */}
+          {unit.profiles?.map((p, i) => (
+            <div key={i} className="profile-block">
+              <StatLineRow statLine={p.statLine} lang={lang} label={profileName(p, lang)} />
+              {p.specialRules && p.specialRules.length > 0 && <RuleTags rules={p.specialRules} lang={lang} />}
             </div>
-          )}
+          ))}
 
           {unit.specialRules && unit.specialRules.length > 0 && (
             <div className="special-rules">
@@ -187,6 +221,42 @@ export function EntryRow({
                   </label>
                 ))}
               </div>
+            </div>
+          )}
+
+          {mounts.length > 0 && (
+            <div className="opt-group">
+              <span className="opt-label">{t('mount', lang)}</span>
+              <div className="opt-radios">
+                <label>
+                  <input
+                    type="radio"
+                    name={`${entry.id}-mount`}
+                    checked={!entry.mountId}
+                    onChange={() => onSelectMount(null)}
+                  />
+                  {t('onFoot', lang)}
+                </label>
+                {mounts.map((m) => (
+                  <label key={m.id}>
+                    <input
+                      type="radio"
+                      name={`${entry.id}-mount`}
+                      checked={entry.mountId === m.id}
+                      onChange={() => onSelectMount(m.id)}
+                    />
+                    {mountName(m, lang)} (+{m.points})
+                  </label>
+                ))}
+              </div>
+              {selectedMount?.statLine && (
+                <div className="profile-block">
+                  <StatLineRow statLine={selectedMount.statLine} lang={lang} label={mountName(selectedMount, lang)} />
+                  {selectedMount.specialRules && selectedMount.specialRules.length > 0 && (
+                    <RuleTags rules={selectedMount.specialRules} lang={lang} />
+                  )}
+                </div>
+              )}
             </div>
           )}
 

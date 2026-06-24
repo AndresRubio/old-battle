@@ -87,6 +87,11 @@ export function toggleMagicItem(roster: Roster, entryId: string, itemId: string)
   }
 }
 
+/** Select the character's mount, or clear it with `null`. */
+export function selectMount(roster: Roster, entryId: string, mountId: string | null): Roster {
+  return updateEntry(roster, entryId, { mountId: mountId ?? undefined })
+}
+
 /** Make exactly one entry the General (clears the flag on all others). */
 export function setGeneral(roster: Roster, entryId: string): Roster {
   return {

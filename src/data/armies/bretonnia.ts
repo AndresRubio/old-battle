@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, StatLine, UnitProfile } from '../types'
+import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitProfile } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
 // Bretonnia — data transcribed from "Warhammer Armies: Bretonnia"
@@ -26,10 +26,8 @@ const SHIELD_CHAR: EquipmentOption = { id: 'shield', name: 'Shield', pointsPerMo
 const LIGHT_ARMOUR_CHAR: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 2 }
 const HEAVY_ARMOUR_CHAR: EquipmentOption = { id: 'heavy-armour', name: 'Heavy armour', pointsPerModel: 3 }
 const BARDING: EquipmentOption = { id: 'barding', name: 'Barding for warhorse', pointsPerModel: 4 }
-const WARHORSE: EquipmentOption = { id: 'warhorse', name: 'Bretonnian Warhorse', pointsPerModel: 3 }
 
 const KNIGHT_EQUIP: EquipmentOption[] = [
-  WARHORSE,
   BARDING,
   LANCE,
   DOUBLE_HANDED,
@@ -37,6 +35,76 @@ const KNIGHT_EQUIP: EquipmentOption[] = [
   LIGHT_ARMOUR_CHAR,
   HEAVY_ARMOUR_CHAR,
 ]
+
+// --- Character mounts (p.59: "may ride a Bretonnian Warhorse or a monster";
+// monster mounts use the bestiary statlines below; costs from the army list). ---
+const WARHORSE_MOUNT: MountOption = {
+  id: 'mount-warhorse', name: 'Bretonnian Warhorse', nameEs: 'Caballo de Guerra Bretoniano',
+  points: 3, statLine: { M: 8, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 },
+}
+const PEGASUS_MOUNT: MountOption = {
+  id: 'mount-pegasus', name: 'Pegasus', nameEs: 'Pegaso',
+  points: 50, statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 },
+  specialRules: ['Flying'],
+}
+const GRIFFON_MOUNT: MountOption = {
+  id: 'mount-griffon', name: 'Griffon', nameEs: 'Grifo',
+  points: 150, statLine: { M: 6, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 7, A: 4, Ld: 8 },
+  specialRules: ['Flying', 'Large target'],
+}
+const HIPPOGRIFF_MOUNT: MountOption = {
+  id: 'mount-hippogriff', name: 'Hippogriff', nameEs: 'Hipogrifo',
+  points: 145, statLine: { M: 8, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 6, A: 3, Ld: 8 },
+  specialRules: ['Flying', 'Large target'],
+}
+const MANTICORE_MOUNT: MountOption = {
+  id: 'mount-manticore', name: 'Manticore', nameEs: 'Mantícora',
+  points: 200, statLine: { M: 6, WS: 6, BS: 0, S: 7, T: 7, W: 5, I: 4, A: 4, Ld: 8 },
+  specialRules: ['Flying', 'Large target'],
+}
+const WYVERN_MOUNT: MountOption = {
+  id: 'mount-wyvern', name: 'Wyvern', nameEs: 'Wyvern',
+  points: 180, statLine: { M: 6, WS: 5, BS: 0, S: 5, T: 6, W: 4, I: 4, A: 3, Ld: 5 },
+  specialRules: ['Flying', 'Large target'],
+}
+const DRAGON_MOUNT: MountOption = {
+  id: 'mount-dragon', name: 'Dragon', nameEs: 'Dragón',
+  points: 450, statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 6, W: 7, I: 8, A: 7, Ld: 7 },
+  specialRules: ['Flying', 'Terror', 'Large target', 'Breath weapon'],
+}
+const GREAT_DRAGON_MOUNT: MountOption = {
+  id: 'mount-great-dragon', name: 'Great Dragon', nameEs: 'Gran Dragón',
+  points: 600, statLine: { M: 6, WS: 7, BS: 0, S: 7, T: 7, W: 8, I: 8, A: 8, Ld: 8 },
+  specialRules: ['Flying', 'Terror', 'Large target', 'Breath weapon'],
+}
+const EMPEROR_DRAGON_MOUNT: MountOption = {
+  id: 'mount-emperor-dragon', name: 'Emperor Dragon', nameEs: 'Dragón Emperador',
+  points: 750, statLine: { M: 6, WS: 8, BS: 0, S: 8, T: 8, W: 9, I: 6, A: 9, Ld: 9 },
+  specialRules: ['Flying', 'Terror', 'Large target', 'Breath weapon'],
+}
+
+/** Full mount list for knightly lords/heroes ("a warhorse or a monster"). */
+const KNIGHT_MOUNTS: MountOption[] = [
+  WARHORSE_MOUNT, PEGASUS_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT,
+  WYVERN_MOUNT, DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT,
+]
+
+// --- Fixed (non-selectable) mounts for characters who always ride one. Cost is
+// already included in the model's points, so these are display-only profiles. ---
+const WARHORSE_PROFILE: ProfileBlock = {
+  name: 'Bretonnian Warhorse', nameEs: 'Caballo de Guerra Bretoniano', statLine: WARHORSE_MOUNT.statLine!,
+}
+const HIPPOGRIFF_PROFILE: ProfileBlock = {
+  name: 'Hippogriff', nameEs: 'Hipogrifo', statLine: HIPPOGRIFF_MOUNT.statLine!, specialRules: HIPPOGRIFF_MOUNT.specialRules,
+}
+const PEGASUS_PROFILE: ProfileBlock = {
+  name: 'Pegasus', nameEs: 'Pegaso', statLine: PEGASUS_MOUNT.statLine!, specialRules: PEGASUS_MOUNT.specialRules,
+}
+const UNICORN_PROFILE: ProfileBlock = {
+  name: 'Unicorn', nameEs: 'Unicornio',
+  statLine: { M: 9, WS: 5, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 9 },
+  specialRules: ['Horn attack (S6 charge)', 'Natural dispel (4+)'],
+}
 
 // --- Commoner regiment equipment (p.59 commoner list + per-unit option lines). ---
 // Mounted Squires (p.64): spear +2, bow +4, shield +2, light armour +4.
@@ -77,6 +145,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     options: KNIGHT_EQUIP,
+    mounts: KNIGHT_MOUNTS,
     specialRules: [
       'Knight',
       'Sword (free)',
@@ -97,6 +166,7 @@ const units: UnitProfile[] = [
     isBSB: true,
     max: 1,
     options: KNIGHT_EQUIP,
+    mounts: KNIGHT_MOUNTS,
     specialRules: [
       '0-1',
       'Knight',
@@ -116,6 +186,7 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: true,
     options: KNIGHT_EQUIP,
+    mounts: KNIGHT_MOUNTS,
     specialRules: [
       'Knight',
       'Sword (free)',
@@ -143,6 +214,7 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 4, BS: 4, S: 4, T: 3, I: 4, A: 2 }),
     isCharacter: true,
     characterRank: 'champion',
+    profiles: [WARHORSE_PROFILE],
     specialRules: ['Leads a Knight regiment', 'Always rides a Bretonnian Warhorse (+3)', "Knight's Virtue"],
   },
   {
@@ -154,6 +226,7 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 4, BS: 4, S: 4, T: 3, I: 4, A: 2, Ld: 8 }),
     isCharacter: true,
     characterRank: 'champion',
+    profiles: [WARHORSE_PROFILE],
     specialRules: ['Leads a Questing Knight regiment', 'Always rides a Bretonnian Warhorse (+3)', 'Questing Virtue'],
   },
   {
@@ -165,6 +238,7 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 5, BS: 4, S: 4, T: 3, I: 4, A: 2, Ld: 9 }),
     isCharacter: true,
     characterRank: 'champion',
+    profiles: [WARHORSE_PROFILE],
     specialRules: ['Leads a Grail Knight regiment', 'Always rides a Bretonnian Warhorse (+3)', 'Grail Virtue — immune to psychology'],
   },
   {
@@ -176,12 +250,13 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 3, BS: 3, I: 4 }),
     isCharacter: true,
     characterRank: 'wizard1',
-    options: [WARHORSE, ...BR_WIZARD_LEVELS],
+    options: [...BR_WIZARD_LEVELS],
+    mounts: [WARHORSE_MOUNT, PEGASUS_MOUNT],
     specialRules: [
       'Wizard (one Battle Magic spell per level)',
       'Sword (free)',
       'Cannot cast spells if wearing armour',
-      'May ride a Bretonnian Warhorse (+3) or a monster',
+      'May ride a Bretonnian Warhorse (+3) or a Pegasus',
     ],
   },
 
@@ -357,15 +432,6 @@ const units: UnitProfile[] = [
     specialRules: ['Flying', 'Large target'],
   },
   {
-    id: 'br-pegasus',
-    name: 'Pegasus',
-    nameEs: 'Pegaso',
-    role: 'monster',
-    pointsPerModel: 50,
-    statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 },
-    specialRules: ['Flying', 'Character mount'],
-  },
-  {
     id: 'br-wyvern',
     name: 'Wyvern',
     nameEs: 'Wyvern',
@@ -373,15 +439,6 @@ const units: UnitProfile[] = [
     pointsPerModel: 180,
     statLine: { M: 6, WS: 5, BS: 0, S: 5, T: 6, W: 4, I: 4, A: 3, Ld: 5 },
     specialRules: ['Flying', 'Large target'],
-  },
-  {
-    id: 'br-unicorn',
-    name: 'Unicorn',
-    nameEs: 'Unicornio',
-    role: 'monster',
-    pointsPerModel: 90,
-    statLine: { M: 9, WS: 5, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 9 },
-    specialRules: ['Ridden by the Fay Enchantress only', 'Horn attack (S6 charge)', 'Natural dispel (4+)'],
   },
   {
     id: 'br-swarm',
@@ -405,6 +462,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    profiles: [HIPPOGRIFF_PROFILE],
     specialRules: [
       'Special character',
       'Rides a Hippogriff',
@@ -424,6 +482,7 @@ const units: UnitProfile[] = [
     canBeGeneral: true,
     canBeBSB: true,
     max: 1,
+    profiles: [WARHORSE_PROFILE],
     specialRules: [
       'Special character',
       'May be General and Battle Standard Bearer (fulfils both roles)',
@@ -595,6 +654,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     max: 1,
+    profiles: [PEGASUS_PROFILE],
     specialRules: [
       'Special character',
       'Independent character',
@@ -654,6 +714,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard4',
     max: 1,
+    profiles: [UNICORN_PROFILE],
     specialRules: [
       'Special character',
       'Prophetess of the Lady of the Lake (wizard)',

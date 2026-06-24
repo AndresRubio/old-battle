@@ -10,6 +10,7 @@ import {
   armyName,
   unitName,
   optionText,
+  mountName,
   magicItemName,
   t,
 } from '../i18n/lang'
@@ -48,6 +49,8 @@ export function exportRosterText(roster: Roster, army: Army, lang: Lang = 'en'):
           : optionText(o.name, lang)
         lines.push(`    + ${label}`)
       }
+      const mount = e.mountId ? (unit.mounts ?? []).find((m) => m.id === e.mountId) : undefined
+      if (mount) lines.push(`    + ${mountName(mount, lang)} (+${mount.points} ${t('pts', lang)})`)
       for (const id of e.magicItemIds) {
         const item = findMagicItem(army, id)
         if (item) lines.push(`    * ${magicItemName(item, lang)} (${item.points} ${t('pts', lang)})`)

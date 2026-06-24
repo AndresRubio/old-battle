@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import type { Army, MagicItem, MagicItemCategory, StatLine, UnitProfile, UnitRole } from '../data/types'
+import type { Army, MagicItem, MagicItemCategory, MountOption, ProfileBlock, StatLine, UnitProfile, UnitRole } from '../data/types'
 import { RULE_PHRASE_ES } from './rulePhrases'
 
 export type Lang = 'en' | 'es'
@@ -43,6 +43,10 @@ export const unitName = (u: UnitProfile, lang: Lang): string =>
   lang === 'es' ? u.nameEs ?? u.name : u.name
 export const armyName = (a: Army, lang: Lang): string =>
   lang === 'es' ? a.nameEs ?? a.name : a.name
+export const mountName = (m: MountOption, lang: Lang): string =>
+  lang === 'es' ? m.nameEs ?? m.name : m.name
+export const profileName = (p: ProfileBlock, lang: Lang): string =>
+  lang === 'es' ? p.nameEs ?? p.name : p.name
 
 // --- Bilingual labels ---
 export const ROLE_LABEL: Record<Lang, Record<UnitRole, string>> = {
@@ -221,6 +225,9 @@ const STRINGS = {
   wizardLevel: { en: 'Wizard Level', es: 'Nivel de Hechicero' },
   level1: { en: 'Level 1', es: 'Nivel 1' },
   options: { en: 'Options', es: 'Opciones' },
+  mount: { en: 'Mount', es: 'Montura' },
+  onFoot: { en: 'On foot', es: 'A pie' },
+  profiles: { en: 'Profiles', es: 'Perfiles' },
   magicItems: { en: 'Magic Items', es: 'Objetos Mágicos' },
   noOptions: { en: 'No options for this unit.', es: 'Esta unidad no tiene opciones.' },
   remove: { en: 'Remove', es: 'Quitar' },

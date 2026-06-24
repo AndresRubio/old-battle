@@ -525,6 +525,13 @@ const units: UnitProfile[] = [
     role: 'chariot',
     pointsPerModel: 84,
     statLine: elf({ WS: 5, BS: 4, S: 4, T: 3, W: 1, I: 7, A: 1, Ld: 8 }),
+    profiles: [
+      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
+      {
+        name: '2 Elven Steeds', nameEs: '2 Corceles Élficos',
+        statLine: { M: 9, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 4, A: 1, Ld: 5 },
+      },
+    ],
     specialRules: [
       'Chariot (T7 W3) drawn by 2 Elven Steeds (6+ save base)',
       'Crew: Auriga with light armour, sword & bow',

@@ -622,6 +622,17 @@ h1, h2, h3 {
 .stat-k { font-size: 0.62rem; color: var(--gold); letter-spacing: 0.05em; }
 .stat-v { font-weight: 700; }
 
+/* Extra profile blocks (mount / chariot crew, chassis, draught beasts) */
+.profile-block { display: grid; gap: 0.35rem; }
+.statline-wrap { display: grid; gap: 0.2rem; }
+.stat-profile-label {
+  font-size: 0.68rem;
+  color: var(--gold);
+  letter-spacing: 0.03em;
+  font-style: italic;
+}
+.rule-tags-inline { margin: 0; }
+
 .size-stepper {
   display: flex;
   align-items: center;

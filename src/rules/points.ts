@@ -25,7 +25,14 @@ export function flatOptionPoints(unit: UnitProfile, optionIds: string[]): number
     .reduce((sum, o) => sum + o.pointsPerModel, 0)
 }
 
-/** Total points for a single roster entry: models * (base + per-model options) + flat options + magic items. */
+/** Points from the chosen mount (flat — a character rides one mount). */
+export function mountPoints(unit: UnitProfile, mountId: string | undefined): number {
+  if (!mountId || !unit.mounts) return 0
+  const mount = unit.mounts.find((m) => m.id === mountId)
+  return mount ? mount.points : 0
+}
+
+/** Total points for a single roster entry: models * (base + per-model options) + flat options + mount + magic items. */
 export function entryPoints(entry: RosterEntry, army: Army): number {
   const unit = findUnit(army, entry.unitId)
   if (!unit) return 0
@@ -36,7 +43,7 @@ export function entryPoints(entry: RosterEntry, army: Army): number {
     const item = findMagicItem(army, id)
     return sum + (item ? item.points : 0)
   }, 0)
-  return modelPoints + flatPoints + magicPoints
+  return modelPoints + flatPoints + mountPoints(unit, entry.mountId) + magicPoints
 }
 
 export function rosterTotalPoints(entries: RosterEntry[], army: Army): number {

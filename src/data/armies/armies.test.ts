@@ -32,6 +32,17 @@ describe('army data integrity', () => {
         }
       })
 
+      it('mount ids are unique within a unit and points are non-negative', () => {
+        for (const u of army.units) {
+          if (!u.mounts) continue
+          const mids = u.mounts.map((m) => m.id)
+          expect(new Set(mids).size, `${u.id} has duplicate mount ids`).toBe(mids.length)
+          for (const m of u.mounts) expect(m.points).toBeGreaterThanOrEqual(0)
+          // Only characters ride mounts.
+          expect(u.isCharacter, `${u.id} has mounts but is not a character`).toBe(true)
+        }
+      })
+
       it('magic items have unique ids', () => {
         const ids = army.magicItems.map((i) => i.id)
         expect(new Set(ids).size).toBe(ids.length)
@@ -221,6 +232,33 @@ describe('selectionRules survive army assembly', () => {
     const cap = getArmy('skaven')!.selectionRules?.ratioCaps?.find((c) => c.unitId === 'sk-plague-censer-bearers')
     expect(cap?.absoluteMax).toBe(10)
     expect(cap?.perUnit?.countModels).toBe(true)
+  })
+})
+
+describe('mounts & profiles', () => {
+  it('Bretonnia: General offers a warhorse-or-monster mount list', () => {
+    const general = getArmy('bretonnia')!.units.find((u) => u.id === 'br-general')!
+    const ids = (general.mounts ?? []).map((m) => m.id)
+    expect(ids).toEqual(expect.arrayContaining(['mount-warhorse', 'mount-pegasus', 'mount-dragon']))
+    expect((general.mounts ?? []).find((m) => m.id === 'mount-warhorse')?.statLine?.M).toBe(8)
+  })
+
+  it('Bretonnia: mount-only monsters are no longer standalone monster entries', () => {
+    const ids = new Set(getArmy('bretonnia')!.units.map((u) => u.id))
+    expect(ids.has('br-pegasus')).toBe(false)
+    expect(ids.has('br-unicorn')).toBe(false)
+  })
+
+  it('Bretonnia: a fixed-mount special character carries a display profile', () => {
+    const louen = getArmy('bretonnia')!.units.find((u) => u.id === 'br-louen-leoncoeur')!
+    expect(louen.profiles?.some((p) => /Hippogriff/i.test(p.name))).toBe(true)
+  })
+
+  it('High Elves: the Tiranoc Chariot shows chariot + steed profiles', () => {
+    const chariot = getArmy('high-elves')!.units.find((u) => u.id === 'he-tiranoc-chariot')!
+    const names = (chariot.profiles ?? []).map((p) => p.name)
+    expect(names.some((n) => /Chariot/i.test(n))).toBe(true)
+    expect(names.some((n) => /Steed/i.test(n))).toBe(true)
   })
 })
 

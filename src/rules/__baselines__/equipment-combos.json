@@ -1,19 +1,16 @@
 {
   "bretonnia/br-general": [
     "equip-armour-multiple",
-    "equip-barding-no-mount",
     "equip-greatweapon-shield",
     "equip-melee-multiple"
   ],
   "bretonnia/br-battle-standard": [
     "equip-armour-multiple",
-    "equip-barding-no-mount",
     "equip-greatweapon-shield",
     "equip-melee-multiple"
   ],
   "bretonnia/br-hero": [
     "equip-armour-multiple",
-    "equip-barding-no-mount",
     "equip-greatweapon-shield",
     "equip-melee-multiple"
   ],
