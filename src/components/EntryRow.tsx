@@ -3,6 +3,8 @@ import type { Army, MagicItem, RosterEntry, StatLine } from '../data/types'
 import { entryPoints, findUnit, magicItemAllowance } from '../rules/points'
 import { useLang, t, type Lang, unitName, mountName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, magicItemName, magicItemDesc } from '../i18n/lang'
 import { findRule, type RuleDef } from '../data/rules'
+import { RuleDialog } from './RuleDialog'
+import { InfoDialog } from './InfoDialog'
 
 /** One M/WS/BS/S/T/W/I/A/Ld row, optionally labelled (mount / chariot profile).
  *  Accepts partial profiles (a chariot chassis only has T/W); absent stats show "–". */
@@ -34,8 +36,6 @@ function RuleTags({ rules, lang }: { rules: string[]; lang: Lang }) {
     </ul>
   )
 }
-import { RuleDialog } from './RuleDialog'
-import { InfoDialog } from './InfoDialog'
 
 interface Props {
   entry: RosterEntry

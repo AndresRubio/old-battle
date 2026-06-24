@@ -227,7 +227,6 @@ const STRINGS = {
   options: { en: 'Options', es: 'Opciones' },
   mount: { en: 'Mount', es: 'Montura' },
   onFoot: { en: 'On foot', es: 'A pie' },
-  profiles: { en: 'Profiles', es: 'Perfiles' },
   magicItems: { en: 'Magic Items', es: 'Objetos Mágicos' },
   noOptions: { en: 'No options for this unit.', es: 'Esta unidad no tiene opciones.' },
   remove: { en: 'Remove', es: 'Quitar' },
