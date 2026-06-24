@@ -666,6 +666,20 @@ describe('dependency/ratio batch (data)', () => {
     expect(requires(ros('skaven', [e('1', 'sk-assassins'), e('2', 'sk-sewer-runners', 5)]))).toHaveLength(0)
   })
 
+  it('Chaos: daemons require a same-god character; a Mark satisfies it (FAQ §31.4)', () => {
+    const chaos = getArmy('chaos')!
+    const requires = (r: Roster) => validateRoster(r, chaos).filter((v) => v.rule === 'unit-requires')
+    const lordWith = (mark: string): RosterEntry => ({ id: 'L', unitId: 'ch-lord', size: 1, optionIds: [mark], magicItemIds: [] })
+    // Bloodletters (Khorne) with no Khorne character → warning.
+    expect(requires(ros('chaos', [e('1', 'ch-bloodletters', 10)]))).toHaveLength(1)
+    // Satisfied by a fixed-god Khorne character (a Bloodthirster).
+    expect(requires(ros('chaos', [e('1', 'ch-bloodletters', 10), e('2', 'ch-bloodthirster')]))).toHaveLength(0)
+    // Satisfied by a generic Chaos Lord bearing the Mark of Khorne.
+    expect(requires(ros('chaos', [e('1', 'ch-bloodletters', 10), lordWith('mark-khorne')]))).toHaveLength(0)
+    // A WRONG-god Mark (Slaanesh) does NOT satisfy Khorne daemons.
+    expect(requires(ros('chaos', [e('1', 'ch-bloodletters', 10), lordWith('mark-slaanesh')]))).toHaveLength(1)
+  })
+
   it('Orcs & Goblins: Rock Lobber (Small) requires an orc unit', () => {
     const og = getArmy('orcs-and-goblins')!
     const requires = (r: Roster) => validateRoster(r, og).filter((v) => v.rule === 'unit-requires')

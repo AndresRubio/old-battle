@@ -95,8 +95,11 @@ data tweaks. Each gets a behavioral test in `validate.test.ts` and a survive-ass
 
 ### Phase 5 — Deferred / needs-decision (documented, not built this pass)
 
-- **Chaos daemons require a same-god character** (§31.4/31.7): INVESTIGATED 2026-06-24 — **not
-  faithfully modelable with the current id-only `dependencies` engine.** The generic Chaos characters
+- **Chaos daemons require a same-god character** (§31.4/31.7): RESOLVED 2026-06-24 — extended the
+  dependency engine with `requiresOption` (satisfied if any CHARACTER entry bears that god's Mark
+  option) + `requiresLabel` for the message. Wired 14 daemon deps in chaos.ts (fixed-god chars in
+  `requiresAnyOf`, the Mark in `requiresOption`). The generic `ch-daemon-bsb` is not a satisfier.
+  Historical note (why it was hard): **not modelable with the id-only engine alone** — The generic Chaos characters
   (Lord/Hero/Champion/Sorcerer/BSB/Daemon Prince) carry their god as a *selectable Mark option*, not
   as a fixed unit property, and `ch-daemon-bsb` is one merged entry for all four gods. Since the
   dependency check sees only unit ids (not the chosen Mark), any id-only wiring is either too lenient

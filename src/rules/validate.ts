@@ -214,15 +214,25 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
   // See army.selectionRules.dependencies.
   for (const dep of army.selectionRules?.dependencies ?? []) {
     if ((countByUnit.get(dep.unitId) ?? 0) === 0) continue
-    const satisfied = dep.requiresAnyOf.some((id) => (countByUnit.get(id) ?? 0) > 0)
+    const satisfied =
+      dep.requiresAnyOf.some((id) => (countByUnit.get(id) ?? 0) > 0) ||
+      (dep.requiresOption !== undefined &&
+        roster.entries.some(
+          (e) => e.optionIds.includes(dep.requiresOption!) && findUnit(army, e.unitId)?.isCharacter,
+        ))
     if (!satisfied) {
-      const prereqNames = dep.requiresAnyOf.map((id) => name(id)).join(' / ')
+      const reqText =
+        dep.requiresLabelEn !== undefined
+          ? es
+            ? dep.requiresLabelEs ?? dep.requiresLabelEn
+            : dep.requiresLabelEn
+          : dep.requiresAnyOf.map((id) => name(id)).join(' / ')
       violations.push({
         severity: 'warning',
         rule: 'unit-requires',
         message: es
-          ? `${dep.labelEs}: requiere ${prereqNames} en el ejército.`
-          : `${dep.labelEn}: requires ${prereqNames} in the army.`,
+          ? `${dep.labelEs}: requiere ${reqText} en el ejército.`
+          : `${dep.labelEn}: requires ${reqText} in the army.`,
       })
     }
   }

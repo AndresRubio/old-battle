@@ -1183,6 +1183,37 @@ const units: UnitProfile[] = [
   },
 ]
 
+// FAQ v2.20 §31.4/§31.7: a unit of daemons of a given Chaos god requires a champion-rank-or-higher
+// character of that SAME god — either a fixed-god character (greater daemon / special character)
+// or a generic Chaos character bearing that god's Mark (a selectable option). The generic
+// ch-daemon-bsb (one merged entry for all four gods) is intentionally NOT a satisfier.
+const KHORNE_CHARS = ['ch-bloodthirster', 'ch-arbaal']
+const TZEENTCH_CHARS = ['ch-lord-of-change', 'ch-amon-chakai', 'ch-aekold', 'ch-egrimm']
+const NURGLE_CHARS = ['ch-great-unclean-one', 'ch-valnir']
+const SLAANESH_CHARS = ['ch-keeper-of-secrets', 'ch-azazel', 'ch-dechala']
+
+const KHORNE = { mark: 'mark-khorne', gods: KHORNE_CHARS, reqEn: 'a Khorne character (champion rank or higher)', reqEs: 'un personaje de Khorne (rango paladín o superior)' }
+const TZEENTCH = { mark: 'mark-tzeentch', gods: TZEENTCH_CHARS, reqEn: 'a Tzeentch character (champion rank or higher)', reqEs: 'un personaje de Tzeentch (rango paladín o superior)' }
+const NURGLE = { mark: 'mark-nurgle', gods: NURGLE_CHARS, reqEn: 'a Nurgle character (champion rank or higher)', reqEs: 'un personaje de Nurgle (rango paladín o superior)' }
+const SLAANESH = { mark: 'mark-slaanesh', gods: SLAANESH_CHARS, reqEn: 'a Slaanesh character (champion rank or higher)', reqEs: 'un personaje de Slaanesh (rango paladín o superior)' }
+
+const DAEMON_DEPS = [
+  { unitId: 'ch-bloodthirster', g: KHORNE, labelEn: 'Bloodthirster', labelEs: 'Devorador de Almas de Khorne' },
+  { unitId: 'ch-bloodletters', g: KHORNE, labelEn: 'Bloodletters of Khorne', labelEs: 'Desangradores de Khorne' },
+  { unitId: 'ch-bloodletters-juggernaut', g: KHORNE, labelEn: 'Bloodletters on Juggernauts', labelEs: 'Compañía Infernal de Khorne' },
+  { unitId: 'ch-khorne-hounds', g: KHORNE, labelEn: 'Flesh Hounds of Khorne', labelEs: 'Mastines de Khorne' },
+  { unitId: 'ch-lord-of-change', g: TZEENTCH, labelEn: 'Lord of Change', labelEs: 'Señor de la Transformación de Tzeentch' },
+  { unitId: 'ch-pink-horrors', g: TZEENTCH, labelEn: 'Pink Horrors of Tzeentch', labelEs: 'Horrores Rosa de Tzeentch' },
+  { unitId: 'ch-flamers', g: TZEENTCH, labelEn: 'Flamers of Tzeentch', labelEs: 'Incineradores de Tzeentch' },
+  { unitId: 'ch-great-unclean-one', g: NURGLE, labelEn: 'Great Unclean One', labelEs: 'Gran Inmundicia de Nurgle' },
+  { unitId: 'ch-plaguebearers', g: NURGLE, labelEn: 'Plaguebearers of Nurgle', labelEs: 'Portadores de Plaga de Nurgle' },
+  { unitId: 'ch-nurglings', g: NURGLE, labelEn: 'Nurglings', labelEs: 'Nurgletes' },
+  { unitId: 'ch-beasts-of-nurgle', g: NURGLE, labelEn: 'Beasts of Nurgle', labelEs: 'Bestias de Nurgle' },
+  { unitId: 'ch-keeper-of-secrets', g: SLAANESH, labelEn: 'Keeper of Secrets', labelEs: 'Guardián de los Secretos de Slaanesh' },
+  { unitId: 'ch-daemonettes', g: SLAANESH, labelEn: 'Daemonettes of Slaanesh', labelEs: 'Diablillas de Slaanesh' },
+  { unitId: 'ch-fiends-of-slaanesh', g: SLAANESH, labelEn: 'Fiends of Slaanesh', labelEs: 'Diablos de Slaanesh' },
+]
+
 export const CHAOS: Army = {
   id: 'chaos',
   name: 'Chaos',
@@ -1190,4 +1221,15 @@ export const CHAOS: Army = {
   composition: STANDARD_5E_COMPOSITION,
   units,
   magicItems: COMMON_MAGIC_ITEMS,
+  selectionRules: {
+    dependencies: DAEMON_DEPS.map((d) => ({
+      unitId: d.unitId,
+      requiresAnyOf: d.g.gods,
+      requiresOption: d.g.mark,
+      labelEn: d.labelEn,
+      labelEs: d.labelEs,
+      requiresLabelEn: d.g.reqEn,
+      requiresLabelEs: d.g.reqEs,
+    })),
+  },
 }

@@ -203,6 +203,18 @@ export interface SelectionRules {
     requiresAnyOf: string[]
     labelEn: string
     labelEs: string
+    /**
+     * Also satisfied if any CHARACTER entry has this option id selected (e.g. a
+     * Chaos god Mark). Lets a dependency be met by an option choice, not just a
+     * unit's presence. See FAQ v2.20 §31.4/§31.7 (daemons need a same-god character).
+     */
+    requiresOption?: string
+    /**
+     * Human-readable requirement for the warning message (e.g. "a Khorne
+     * character"). Falls back to the joined names in `requiresAnyOf`.
+     */
+    requiresLabelEn?: string
+    requiresLabelEs?: string
   }[]
 }
 
