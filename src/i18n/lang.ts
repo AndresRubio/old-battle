@@ -107,6 +107,7 @@ export const GROUP_LABEL: Record<Lang, Record<DisplayGroup, string>> = {
 export const CATEGORY_ORDER: MagicItemCategory[] = [
   'weapon',
   'armour',
+  'shield',
   'talisman',
   'ward',
   'arcane',
@@ -120,6 +121,7 @@ export const CATEGORY_LABEL: Record<Lang, Record<MagicItemCategory, string>> = {
   en: {
     weapon: 'Magic Weapon',
     armour: 'Magic Armour',
+    shield: 'Magic Shield',
     ward: 'Talisman / Ward',
     banner: 'Magic Standard',
     boundSpell: 'Bound Spell',
@@ -131,6 +133,7 @@ export const CATEGORY_LABEL: Record<Lang, Record<MagicItemCategory, string>> = {
   es: {
     weapon: 'Arma Mágica',
     armour: 'Armadura Mágica',
+    shield: 'Escudo Mágico',
     ward: 'Talismán / Salvación',
     banner: 'Estandarte Mágico',
     boundSpell: 'Hechizo Ligado',

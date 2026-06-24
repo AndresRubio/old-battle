@@ -440,6 +440,26 @@ describe('crown/helm exclusivity (magic-items-exclusive-group)', () => {
   })
 })
 
+// FAQ v2.20 §19.1: a magic shield is a slot separate from magic armour (one of each allowed).
+describe('magic shield separate from armour (magic-items-category)', () => {
+  const empire = getArmy('empire')!
+  const lord = empire.units.find((u) => u.isCharacter && u.characterRank === 'lord')!.id
+  const catViolations = (items: string[]) =>
+    validateRoster(
+      { id: 'r', name: 't', armyId: 'empire', pointsLimit: 2000, entries: [
+        { id: 'a', unitId: lord, size: 1, optionIds: [], magicItemIds: items, isGeneral: true },
+      ] },
+      empire,
+    ).filter((v) => v.rule === 'magic-items-category')
+
+  it('allows one magic armour plus one magic shield', () => {
+    expect(catViolations(['mi-meteoric-iron-armour', 'mi-enchanted-shield'])).toHaveLength(0)
+  })
+  it('flags two magic shields', () => {
+    expect(catViolations(['mi-enchanted-shield', 'mi-spelled-shield'])).toHaveLength(1)
+  })
+})
+
 describe('ratio caps (unit-ratio-max)', () => {
   const ratioArmy: Army = {
     id: 'ratio',

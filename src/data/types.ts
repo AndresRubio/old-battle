@@ -105,6 +105,7 @@ export interface CompositionRules {
 export type MagicItemCategory =
   | 'weapon'
   | 'armour'
+  | 'shield'
   | 'ward'
   | 'banner'
   | 'boundSpell'
@@ -117,6 +118,7 @@ export type MagicItemCategory =
 export const RESTRICTED_CATEGORIES: ReadonlySet<MagicItemCategory> = new Set([
   'weapon',
   'armour',
+  'shield',
   'ward',
   'banner',
   'boundSpell',
