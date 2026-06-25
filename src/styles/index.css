@@ -667,12 +667,27 @@ h1, h2, h3 {
 }
 
 /* Extra profile blocks (mount / chariot crew, chassis, draught beasts) */
-.profile-block { display: grid; gap: 0.35rem; }
+.profile-block {
+  display: grid;
+  gap: var(--space-2);
+  border-left: 3px solid var(--gold-bright);
+  padding-left: var(--space-3);
+  margin-top: var(--space-2);
+}
 .stat-profile-label {
-  font-size: 0.68rem;
-  color: var(--gold);
-  letter-spacing: 0.03em;
+  font-size: var(--fs-sm);
   font-style: italic;
+  color: var(--gold);
+}
+/* Mount/profile stat strips read lighter than the main line. */
+.profile-block .statline {
+  border-color: var(--divider);
+}
+.profile-block .stat {
+  border-right-color: #e8dcbc;
+}
+.profile-block .stat-v {
+  color: var(--ink-dim);
 }
 .rule-tags-inline { margin: 0; }
 
@@ -699,30 +714,26 @@ h1, h2, h3 {
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  gap: var(--space-2);
 }
 .rule-tag {
-  font-size: 0.8rem;
-  line-height: 1.2;
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
-  background: #f6ece4;
-  border: 1px solid var(--border-strong);
-  color: var(--ink-dim);
+  display: inline-block;
+  background: var(--chip-bg);
+  color: var(--chip-ink);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 3px 10px;
+  font-size: var(--fs-sm);
 }
 .rule-tag-link {
   cursor: pointer;
-  color: var(--ink);
-  transition: background 0.15s, border-color 0.15s;
+  font: inherit;
 }
 .rule-tag-link:hover {
-  background: #f6e0dd;
-  border-color: var(--gold);
+  background: #e2d3b0;
 }
 .rule-info {
   color: var(--gold);
-  font-size: 0.72rem;
-  opacity: 0.8;
 }
 
 /* Rule explanation popup */
