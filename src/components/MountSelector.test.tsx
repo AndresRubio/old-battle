@@ -34,7 +34,7 @@ describe('MountSelector', () => {
   it('marks the selected mount as checked', () => {
     render(<MountSelector mounts={MOUNTS} selectedId="mount-cold-one" onSelect={() => {}} lang="en" name="e1" />)
     const checked = container.querySelector('input[type="radio"]:checked') as HTMLInputElement
-    expect(checked.closest('label')?.textContent).toContain('Cold One')
+    expect(checked.closest('label')?.textContent).toBe('Cold One +10')
   })
 
   it('calls onSelect with the mount id when a mount chip is chosen', () => {
