@@ -635,28 +635,39 @@ h1, h2, h3 {
   display: grid;
   gap: 0.8rem;
 }
+.statline-wrap {
+  display: grid;
+  gap: var(--space-1);
+}
 .statline {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0.3rem;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
 }
 .stat {
-  flex: 1 1 0;
-  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  padding: 0.2rem 0.3rem;
+  padding: var(--space-1) 0;
+  border-right: 1px solid var(--divider);
 }
-.stat-k { font-size: 0.62rem; color: var(--gold); letter-spacing: 0.05em; }
-.stat-v { font-weight: 700; }
+.stat:last-child {
+  border-right: none;
+}
+.stat-k {
+  font-size: var(--fs-xs);
+  letter-spacing: 0.03em;
+  color: var(--gold);
+}
+.stat-v {
+  font-weight: 500;
+  color: var(--ink);
+}
 
 /* Extra profile blocks (mount / chariot crew, chassis, draught beasts) */
 .profile-block { display: grid; gap: 0.35rem; }
-.statline-wrap { display: grid; gap: 0.2rem; }
 .stat-profile-label {
   font-size: 0.68rem;
   color: var(--gold);
@@ -971,8 +982,7 @@ h1, h2, h3 {
   .magic-items { max-height: 50vh; }
 
   /* Fit all 9 characteristics on one row */
-  .statline { gap: 0.2rem; }
-  .stat { padding: 0.2rem 0.1rem; }
+  .stat { padding: 0.15rem 0; }
   .stat-k { font-size: 0.55rem; }
   .stat-v { font-size: 0.9rem; }
 
