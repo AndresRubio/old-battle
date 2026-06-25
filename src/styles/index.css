@@ -21,6 +21,28 @@
   --error: #a82a1d;
   /* Dark leather banner for the header. */
   --banner: linear-gradient(to bottom, #2c1410, #1c0d0a);
+  /* ---- Polish: type scale ---- */
+  --fs-xs: 0.72rem;
+  --fs-sm: 0.82rem;
+  --fs-base: 0.95rem;
+  --fs-lg: 1.1rem;
+  --fs-xl: 1.4rem;
+  --fs-2xl: 2rem;
+  /* ---- Polish: spacing scale ---- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  /* ---- Polish: borders / radius ---- */
+  --divider: #e0d2ac;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  /* Calm chip fill for ability/rule tags. */
+  --chip-bg: #ece0c2;
+  --chip-ink: #5c4a2a;
   --font-body: "Spectral", "Iowan Old Style", Palatino, Georgia, serif;
   --font-display: "Cinzel", Georgia, "Times New Roman", serif;
   --font-black: "Cinzel Decorative", "Cinzel", Georgia, serif;
@@ -162,30 +184,40 @@ h1, h2, h3 {
   border: 1px solid var(--border-strong);
   background: var(--bg-raised);
   color: var(--ink);
-  padding: 0.5rem 0.9rem;
-  border-radius: 6px;
-  font-size: 0.92rem;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-base);
   transition: background 0.15s, border-color 0.15s, transform 0.05s;
 }
 .btn:hover {
   border-color: var(--gold);
 }
+.btn:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 1px;
+}
 .btn:active {
   transform: translateY(1px);
 }
 .btn-primary {
-  background: linear-gradient(to bottom, #9a241a, #771913);
+  background: var(--blood);
   border-color: var(--gold);
   color: #f4ead0;
   font-weight: 700;
   letter-spacing: 0.02em;
 }
 .btn-primary:hover {
-  background: linear-gradient(to bottom, #b12e22, #8a201a);
+  background: var(--blood-bright);
   border-color: var(--gold-bright);
 }
 .btn-ghost {
   background: transparent;
+  border-color: transparent;
+  color: var(--ink-dim);
+}
+.btn-ghost:hover {
+  background: var(--bg-raised);
+  border-color: var(--border);
 }
 .btn-danger:hover {
   border-color: var(--blood-bright);
