@@ -488,9 +488,9 @@ h1, h2, h3 {
 }
 .points-big {
   font-family: var(--font-display);
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: var(--blood);
+  font-size: var(--fs-2xl);
+  font-weight: 600;
+  color: var(--ink);
   line-height: 1;
 }
 .points-total.over .points-big {
