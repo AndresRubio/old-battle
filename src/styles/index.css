@@ -807,6 +807,49 @@ h1, h2, h3 {
   gap: 0.4rem;
   cursor: pointer;
 }
+/* ---- Mount selector chips ---- */
+.mount-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.mount-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.mount-chip input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.mount-chip:hover {
+  border-color: var(--gold);
+}
+.mount-chip:focus-within {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 1px;
+}
+.mount-chip-on {
+  background: var(--blood);
+  border-color: var(--gold);
+  color: #f4ead0;
+  font-weight: 500;
+}
+.mount-cost {
+  color: var(--ink-dim);
+}
+.mount-chip-on .mount-cost {
+  color: #e7cdb0;
+}
+
 .magic-items {
   max-height: 320px;
   overflow-y: auto;

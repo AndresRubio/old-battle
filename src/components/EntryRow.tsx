@@ -5,6 +5,7 @@ import { useLang, t, type Lang, unitName, mountName, profileName, CATEGORY_LABEL
 import { findRule, type RuleDef } from '../data/rules'
 import { RuleDialog } from './RuleDialog'
 import { InfoDialog } from './InfoDialog'
+import { MountSelector } from './MountSelector'
 
 /** One M/WS/BS/S/T/W/I/A/Ld row, optionally labelled (mount / chariot profile).
  *  Accepts partial profiles (a chariot chassis only has T/W); absent stats show "–". */
@@ -227,28 +228,13 @@ export function EntryRow({
           {mounts.length > 0 && (
             <div className="opt-group">
               <span className="opt-label">{t('mount', lang)}</span>
-              <div className="opt-radios">
-                <label>
-                  <input
-                    type="radio"
-                    name={`${entry.id}-mount`}
-                    checked={!entry.mountId}
-                    onChange={() => onSelectMount(null)}
-                  />
-                  {t('onFoot', lang)}
-                </label>
-                {mounts.map((m) => (
-                  <label key={m.id}>
-                    <input
-                      type="radio"
-                      name={`${entry.id}-mount`}
-                      checked={entry.mountId === m.id}
-                      onChange={() => onSelectMount(m.id)}
-                    />
-                    {mountName(m, lang)} (+{m.points})
-                  </label>
-                ))}
-              </div>
+              <MountSelector
+                mounts={mounts}
+                selectedId={entry.mountId}
+                onSelect={onSelectMount}
+                lang={lang}
+                name={entry.id}
+              />
               {selectedMount?.statLine && (
                 <div className="profile-block">
                   <StatLineRow statLine={selectedMount.statLine} lang={lang} label={mountName(selectedMount, lang)} />
