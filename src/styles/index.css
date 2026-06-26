@@ -533,10 +533,12 @@ h1, h2, h3 {
   border-radius: 4px;
   transition: width 0.25s ease;
 }
-.bar-char { background: linear-gradient(90deg, #6b8cff, #4a63c9); }
-.bar-reg { background: linear-gradient(90deg, #5e8c4f, #3f6a34); }
-.bar-wm { background: linear-gradient(90deg, #c98a3a, #9a6522); }
-.bar-mon { background: linear-gradient(90deg, #b0524f, #82332f); }
+/* Warm parchment-palette fills — gold / olive-bronze / copper / blood,
+   distinguishable but in the same earth-tone family as the rest of the UI. */
+.bar-char { background: linear-gradient(90deg, #d7b052, #a07d24); }
+.bar-reg { background: linear-gradient(90deg, #8a8a3a, #5f5e22); }
+.bar-wm { background: linear-gradient(90deg, #c07a36, #8a4f1f); }
+.bar-mon { background: linear-gradient(90deg, #a83a2d, #7a2820); }
 
 /* ---- Validation ---- */
 .validation h3 {
