@@ -11,7 +11,7 @@ interface Props {
 
 export function MountSelector({ mounts, selectedId, onSelect, lang, name }: Props) {
   return (
-    <div className="mount-chips" role="radiogroup">
+    <div className="mount-chips" role="radiogroup" aria-label={t('mount', lang)}>
       <label className={`mount-chip ${!selectedId ? 'mount-chip-on' : ''}`}>
         <input
           type="radio"

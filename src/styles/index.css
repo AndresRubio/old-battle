@@ -1036,7 +1036,7 @@ h1, h2, h3 {
   .opt-checks label, .opt-radios label { padding: 0.2rem 0; }
   .magic-items { max-height: 50vh; }
 
-  /* Fit all 9 characteristics on one row */
+  /* Tighten the stat strip so all 9 columns fit at phone width */
   .stat { padding: 0.15rem 0; }
   .stat-k { font-size: 0.55rem; }
   .stat-v { font-size: 0.9rem; }
