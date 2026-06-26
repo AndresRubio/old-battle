@@ -7,11 +7,13 @@ interface Props {
   onSelect: (mountId: string | null) => void
   lang: Lang
   name: string
+  /** id of the visible group label, for aria-labelledby. */
+  labelId: string
 }
 
-export function MountSelector({ mounts, selectedId, onSelect, lang, name }: Props) {
+export function MountSelector({ mounts, selectedId, onSelect, lang, name, labelId }: Props) {
   return (
-    <div className="mount-chips" role="radiogroup" aria-label={t('mount', lang)}>
+    <div className="mount-chips" role="radiogroup" aria-labelledby={labelId}>
       <label className={`mount-chip ${!selectedId ? 'mount-chip-on' : ''}`}>
         <input
           type="radio"

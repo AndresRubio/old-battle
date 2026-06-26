@@ -227,13 +227,14 @@ export function EntryRow({
 
           {mounts.length > 0 && (
             <div className="opt-group">
-              <span className="opt-label">{t('mount', lang)}</span>
+              <span className="opt-label" id={`${entry.id}-mount-label`}>{t('mount', lang)}</span>
               <MountSelector
                 mounts={mounts}
                 selectedId={entry.mountId}
                 onSelect={onSelectMount}
                 lang={lang}
                 name={entry.id}
+                labelId={`${entry.id}-mount-label`}
               />
               {selectedMount?.statLine && (
                 <div className="profile-block">
