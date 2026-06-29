@@ -53,6 +53,16 @@ export interface EquipmentOption {
   flat?: boolean
   /** Some upgrades (e.g. wizard level, battle standard) change the magic-item allowance. */
   magicItemSlotsDelta?: number
+  /** Human-readable description of the option's in-game effect (shown via the ⓘ control). */
+  description?: string
+  /** Spanish description. Falls back to `description`. */
+  descEs?: string
+  /**
+   * Options sharing one `exclusiveGroup` are mutually exclusive on a single model
+   * (e.g. the four Marks of Chaos: at most one per character). Validated as rule
+   * `options-exclusive-group` (warning).
+   */
+  exclusiveGroup?: string
 }
 
 /**
@@ -70,6 +80,12 @@ export interface MountOption {
   /** The mount's own characteristic profile, shown beneath the rider's. */
   statLine?: StatLine
   specialRules?: string[]
+  /**
+   * Option id the rider must also have for this mount to be legal — e.g. a
+   * daemonic mount requires the matching Mark of Chaos. Validated as rule
+   * `mount-requires-option` (warning).
+   */
+  requiresOption?: string
 }
 
 /**

@@ -789,6 +789,43 @@ h1, h2, h3 {
   max-height: 60vh;
   overflow-y: auto;
 }
+.add-search {
+  width: 100%;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-strong);
+  color: var(--ink);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-base);
+  margin-bottom: 0.9rem;
+}
+.add-search:focus { outline: none; border-color: var(--gold); }
+.picker-unit-group {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold-bright);
+}
+
+/* Magic-item filter (search by name + cap by points) */
+.mi-filter {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+.mi-filter-search { flex: 1 1 auto; min-width: 0; }
+.mi-filter-pts { flex: 0 0 5.5rem; }
+.mi-filter-search,
+.mi-filter-pts {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  color: var(--ink);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+}
+.mi-filter-search:focus,
+.mi-filter-pts:focus { outline: none; border-color: var(--gold); }
 
 .opt-group { display: grid; gap: 0.35rem; }
 .opt-label {

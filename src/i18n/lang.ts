@@ -197,6 +197,8 @@ const STRINGS = {
   },
   addUnits: { en: 'Add Units', es: 'Añadir Unidades' },
   addUnit: { en: '+ Add unit', es: '+ Añadir unidad' },
+  searchUnits: { en: 'Search units…', es: 'Buscar unidades…' },
+  noUnitsMatch: { en: 'No units match your search.', es: 'Ninguna unidad coincide con la búsqueda.' },
   listNotFound: { en: 'This army list could not be found.', es: 'No se ha encontrado esta lista de ejército.' },
   unknownArmy: { en: 'Unknown army', es: 'Ejército desconocido' },
   // SummaryPanel
@@ -228,6 +230,9 @@ const STRINGS = {
   mount: { en: 'Mount', es: 'Montura' },
   onFoot: { en: 'On foot', es: 'A pie' },
   magicItems: { en: 'Magic Items', es: 'Objetos Mágicos' },
+  searchItems: { en: 'Search items…', es: 'Buscar objetos…' },
+  maxPts: { en: 'max pts', es: 'máx ptos' },
+  noItemsMatch: { en: 'No items match the filter.', es: 'Ningún objeto coincide con el filtro.' },
   noOptions: { en: 'No options for this unit.', es: 'Esta unidad no tiene opciones.' },
   remove: { en: 'Remove', es: 'Quitar' },
   unknownUnit: { en: 'Unknown unit', es: 'Unidad desconocida' },
@@ -315,6 +320,12 @@ const OPTION_ES: Record<string, string> = {
 /** Translate an equipment option label. Falls back to the stored name. */
 export const optionText = (name: string, lang: Lang): string =>
   lang === 'es' ? OPTION_ES[name] ?? name : name
+
+/** Resolve an option's localized description (e.g. Marks of Chaos). */
+export const optionDesc = (
+  opt: { description?: string; descEs?: string },
+  lang: Lang,
+): string | undefined => (lang === 'es' ? opt.descEs ?? opt.description : opt.description)
 
 /** Resolve a magic item's localized name / description. */
 export const magicItemName = (item: MagicItem, lang: Lang): string =>

@@ -440,6 +440,79 @@ describe('crown/helm exclusivity (magic-items-exclusive-group)', () => {
   })
 })
 
+// Reino del Caos p.56: a model may bear only one Mark of Chaos (the four marks
+// share exclusiveGroup 'mark'). Validated as options-exclusive-group.
+describe('one Mark of Chaos per model (options-exclusive-group)', () => {
+  const chaos = getArmy('chaos')!
+  // A generic Chaos character that offers all four marks as options.
+  const lord = chaos.units.find((u) => (u.options ?? []).some((o) => o.exclusiveGroup === 'mark'))!.id
+  const markViolations = (optionIds: string[]) =>
+    validateRoster(
+      { id: 'r', name: 't', armyId: 'chaos', pointsLimit: 2000, entries: [
+        { id: 'a', unitId: lord, size: 1, optionIds, magicItemIds: [], isGeneral: true },
+      ] },
+      chaos,
+    ).filter((v) => v.rule === 'options-exclusive-group')
+
+  it('flags two Marks of Chaos on one character', () => {
+    const v = markViolations(['mark-khorne', 'mark-nurgle'])
+    expect(v).toHaveLength(1)
+    expect(v[0].severity).toBe('warning')
+  })
+  it('flags three Marks of Chaos on one character', () => {
+    expect(markViolations(['mark-khorne', 'mark-nurgle', 'mark-slaanesh'])).toHaveLength(1)
+  })
+  it('allows a single Mark of Chaos', () => {
+    expect(markViolations(['mark-khorne'])).toHaveLength(0)
+  })
+  it('allows no Mark of Chaos', () => {
+    expect(markViolations([])).toHaveLength(0)
+  })
+  it('localizes the warning (EN/ES)', () => {
+    const r = { id: 'r', name: 't', armyId: 'chaos', pointsLimit: 2000, entries: [
+      { id: 'a', unitId: lord, size: 1, optionIds: ['mark-khorne', 'mark-nurgle'], magicItemIds: [], isGeneral: true },
+    ] }
+    const en = validateRoster(r, chaos, 'en').find((v) => v.rule === 'options-exclusive-group')!
+    const es = validateRoster(r, chaos, 'es').find((v) => v.rule === 'options-exclusive-group')!
+    expect(en.message).toContain('only one Mark of Chaos')
+    expect(es.message).toContain('una Marca del Caos')
+  })
+})
+
+// Reino del Caos pp.100-101: a daemonic mount requires the matching Mark of Chaos.
+describe('daemonic mount requires its Mark (mount-requires-option)', () => {
+  const chaos = getArmy('chaos')!
+  const mountViolations = (optionIds: string[], mountId: string) =>
+    validateRoster(
+      { id: 'r', name: 't', armyId: 'chaos', pointsLimit: 2000, entries: [
+        { id: 'a', unitId: 'ch-lord', size: 1, optionIds, magicItemIds: [], mountId, isGeneral: true },
+      ] },
+      chaos,
+    ).filter((v) => v.rule === 'mount-requires-option')
+
+  it('flags a Juggernaut without the Mark of Khorne', () => {
+    expect(mountViolations([], 'mount-juggernaut')).toHaveLength(1)
+  })
+  it('allows a Juggernaut with the Mark of Khorne', () => {
+    expect(mountViolations(['mark-khorne'], 'mount-juggernaut')).toHaveLength(0)
+  })
+  it('flags a Disc of Tzeentch without its Mark', () => {
+    expect(mountViolations([], 'mount-disc')).toHaveLength(1)
+  })
+  it('allows the Chaos Steed with no Mark (not a daemonic mount)', () => {
+    expect(mountViolations([], 'mount-chaos-steed')).toHaveLength(0)
+  })
+  it('localizes the warning (EN/ES)', () => {
+    const r = { id: 'r', name: 't', armyId: 'chaos', pointsLimit: 2000, entries: [
+      { id: 'a', unitId: 'ch-lord', size: 1, optionIds: [], magicItemIds: [], mountId: 'mount-juggernaut', isGeneral: true },
+    ] }
+    const en = validateRoster(r, chaos, 'en').find((v) => v.rule === 'mount-requires-option')!
+    const es = validateRoster(r, chaos, 'es').find((v) => v.rule === 'mount-requires-option')!
+    expect(en.message).toContain('requires')
+    expect(es.message).toContain('requiere')
+  })
+})
+
 // FAQ v2.20 §19.1: a magic shield is a slot separate from magic armour (one of each allowed).
 describe('magic shield separate from armour (magic-items-category)', () => {
   const empire = getArmy('empire')!

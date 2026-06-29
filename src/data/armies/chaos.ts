@@ -47,37 +47,56 @@ const SPEAR_1: EquipmentOption = { id: 'spear', name: 'Lanza', pointsPerModel: 1
 const SPEAR_HALF: EquipmentOption = { id: 'spear', name: 'Lanza', pointsPerModel: 0.5 }
 const SCYTHED_WHEELS: EquipmentOption = { id: 'scythed-wheels', name: 'Ruedas con Cuchillas', pointsPerModel: 20, flat: true }
 
-// --- Character mounts (Reino del Caos pp.100-102; daemonic mounts pp.74-90).
-//     In 5th ed a character's mount cost is added to the model and the pair
-//     counts under the Characters % allowance. Bestiary statlines below. ---
+// --- Character mounts (Reino del Caos pp.100-102; mount profiles from the
+//     bestiary pp.74-90 / 114-117). In 5th ed a character's mount cost is added
+//     to the model and the pair counts under the Characters % allowance.
+//     Per pp.100-102 a character may always take a Chaos Steed (+4); a daemonic
+//     mount (Juggernaut/Disc/Steed of Slaanesh/Beast of Nurgle) requires the
+//     matching Mark of Chaos — enforced via `requiresOption`. (A character may
+//     also ride a Grey Infernal monster, but the book treats that monster as an
+//     ALLY against the 25% allowance, not a folded mount, so it is NOT offered
+//     here — field the standalone monster entry instead.) ---
 const CHAOS_STEED_STATS: StatLine = { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 3, A: 1, Ld: 5 }
 const JUGGERNAUT_STATS: StatLine = { M: 7, WS: 5, BS: 0, S: 5, T: 5, W: 3, I: 1, A: 3, Ld: 5 }
 const DISC_STATS: StatLine = { M: 9, WS: 0, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 }
+// Corcel de Slaanesh (p.117): M30→12", WS3 S4 T5 W1 I6 A1 Ld10.
+const STEED_OF_SLAANESH_STATS: StatLine = { M: 12, WS: 3, BS: 0, S: 4, T: 5, W: 1, I: 6, A: 1, Ld: 10 }
+// Bestia de Nurgle (p.115): M8→3", WS3 S3 T5 W3 I3 A1D6 Ld6.
+const BEAST_OF_NURGLE_STATS: StatLine = { M: 3, WS: 3, BS: 0, S: 3, T: 5, W: 3, I: 3, A: 1, Ld: 6 }
 
 const CHAOS_STEED_MOUNT: MountOption = {
   id: 'mount-chaos-steed', name: 'Chaos Steed', nameEs: 'Corcel del Caos',
   points: 4, statLine: CHAOS_STEED_STATS,
 }
-// Daemonic mount of Khorne (Reino del Caos p.74 — Mastín de Khorne / Hound of Khorne).
 const JUGGERNAUT_MOUNT: MountOption = {
   id: 'mount-juggernaut', name: 'Juggernaut of Khorne', nameEs: 'Devastador de Khorne',
-  points: 70, statLine: JUGGERNAUT_STATS, specialRules: ['Daemonic mount of Khorne', 'Impact hits'],
+  points: 70, statLine: JUGGERNAUT_STATS, requiresOption: 'mark-khorne',
+  specialRules: ['Daemonic mount of Khorne (requires the Mark of Khorne)', 'Impact hits'],
 }
 const DISC_OF_TZEENTCH_MOUNT: MountOption = {
   id: 'mount-disc', name: 'Disc of Tzeentch', nameEs: 'Disco de Tzeentch',
-  points: 40, statLine: DISC_STATS, specialRules: ['Daemonic mount of Tzeentch', 'Flying'],
+  points: 15, statLine: DISC_STATS, requiresOption: 'mark-tzeentch',
+  specialRules: ['Daemonic mount of Tzeentch (requires the Mark of Tzeentch)', 'Flying'],
 }
-// The Chaos Dragon (p.120) is also fielded standalone as a monster (ch-chaos-dragon).
-const CHAOS_DRAGON_MOUNT: MountOption = {
-  id: 'mount-chaos-dragon', name: 'Chaos Dragon', nameEs: 'Dragón del Caos',
-  points: 625, statLine: { M: 6, WS: 6, BS: 0, S: 7, T: 7, W: 7, I: 6, A: 8, Ld: 8 },
-  specialRules: ['Large target', 'Causes terror', 'Flying', 'Scaly skin (4+ save)', 'Two breath attacks'],
+const STEED_OF_SLAANESH_MOUNT: MountOption = {
+  id: 'mount-steed-of-slaanesh', name: 'Steed of Slaanesh', nameEs: 'Corcel de Slaanesh',
+  points: 15, statLine: STEED_OF_SLAANESH_STATS, requiresOption: 'mark-slaanesh',
+  specialRules: ['Daemonic mount of Slaanesh (requires the Mark of Slaanesh)'],
+}
+const BEAST_OF_NURGLE_MOUNT: MountOption = {
+  id: 'mount-beast-of-nurgle', name: 'Beast of Nurgle', nameEs: 'Bestia de Nurgle',
+  points: 75, statLine: BEAST_OF_NURGLE_STATS, requiresOption: 'mark-nurgle',
+  specialRules: ['Daemonic mount of Nurgle (requires the Mark of Nurgle)'],
 }
 
-/** Mounts a generic Chaos lord/hero/champion may ride (Chaos Steed always;
- *  daemonic mounts require the matching Mark — noted in specialRules). */
+/** Mounts a generic Chaos lord/hero/champion (and the BSB) may ride: the Chaos
+ *  Steed plus every daemonic mount (each gated to its Mark via requiresOption). */
 const CHAOS_CHARACTER_MOUNTS: MountOption[] = [
-  CHAOS_STEED_MOUNT, JUGGERNAUT_MOUNT, DISC_OF_TZEENTCH_MOUNT, CHAOS_DRAGON_MOUNT,
+  CHAOS_STEED_MOUNT, JUGGERNAUT_MOUNT, DISC_OF_TZEENTCH_MOUNT, STEED_OF_SLAANESH_MOUNT, BEAST_OF_NURGLE_MOUNT,
+]
+/** Sorcerer mounts: as above but no Juggernaut — Khorne has no sorcerers (p.101). */
+const CHAOS_SORCERER_MOUNTS: MountOption[] = [
+  CHAOS_STEED_MOUNT, DISC_OF_TZEENTCH_MOUNT, STEED_OF_SLAANESH_MOUNT, BEAST_OF_NURGLE_MOUNT,
 ]
 
 // --- Fixed (non-selectable) named mounts baked into a special character's points.
@@ -102,11 +121,38 @@ const BLOODGREED_PROFILE: ProfileBlock = {
   statLine: { M: 6, WS: 6, S: 6, T: 5, W: 3, A: 3 },
 }
 
-// Mark of Chaos upgrades for characters (per-model points, Reino del Caos p.100).
-const MARK_KHORNE: EquipmentOption = { id: 'mark-khorne', name: 'Marca de Khorne', pointsPerModel: 45 }
-const MARK_NURGLE: EquipmentOption = { id: 'mark-nurgle', name: 'Marca de Nurgle', pointsPerModel: 40 }
-const MARK_SLAANESH: EquipmentOption = { id: 'mark-slaanesh', name: 'Marca de Slaanesh', pointsPerModel: 35 }
-const MARK_TZEENTCH: EquipmentOption = { id: 'mark-tzeentch', name: 'Marca de Tzeentch', pointsPerModel: 10 }
+// Mark of Chaos upgrades for characters (Reino del Caos pp.56-57 for the
+// effects, p.100/104 for the per-model points). A model may bear only ONE Mark
+// (p.56), so all four share `exclusiveGroup: 'mark'`. Sorcerer-specific variants
+// of the effects are noted in each description (p.103).
+const MARK_KHORNE: EquipmentOption = {
+  id: 'mark-khorne', name: 'Marca de Khorne', pointsPerModel: 45, exclusiveGroup: 'mark',
+  description:
+    'Frenzy, plus free Chaos Armour (4+ save; combines with shield and mount, does not count against the magic-item limit, and does not reduce movement). Khorne has no sorcerers — a wizard may not take this Mark.',
+  descEs:
+    'Furia Asesina y Armadura del Caos gratuita (salvación 4+; se combina con escudo y montura, no cuenta para el límite de objetos mágicos ni reduce el movimiento). Khorne no tiene hechiceros — un mago no puede llevar esta Marca.',
+}
+const MARK_NURGLE: EquipmentOption = {
+  id: 'mark-nurgle', name: 'Marca de Nurgle', pointsPerModel: 40, exclusiveGroup: 'mark',
+  description:
+    '+1 Toughness (Champion → T5; Hero/Lord → T6). On a Sorcerer instead: no lower-level wizard within 15cm of him may cast spells.',
+  descEs:
+    '+1 a la Resistencia (Paladín → R5; Héroe/Comandante → R6). En un Hechicero, en cambio: ningún hechicero de nivel inferior situado a 15 cm o menos puede lanzar hechizos.',
+}
+const MARK_SLAANESH: EquipmentOption = {
+  id: 'mark-slaanesh', name: 'Marca de Slaanesh', pointsPerModel: 35, exclusiveGroup: 'mark',
+  description:
+    'Immune to psychology and never flees close combat — peels off from a fleeing unit to keep fighting. On a Sorcerer instead: no enemy within 30cm may shoot at or cast spells on him.',
+  descEs:
+    'Inmune a la psicología y nunca huye del combate cuerpo a cuerpo — se separa de una unidad que huya para seguir luchando. En un Hechicero, en cambio: ningún enemigo situado a 30 cm o menos puede dispararle ni lanzarle hechizos.',
+}
+const MARK_TZEENTCH: EquipmentOption = {
+  id: 'mark-tzeentch', name: 'Marca de Tzeentch', pointsPerModel: 10, exclusiveGroup: 'mark',
+  description:
+    'Once per battle, re-roll one dice that affects him directly (armour save, to-hit, or a characteristic test), adding or subtracting 1 from the result. A re-roll may not itself be re-rolled.',
+  descEs:
+    'Una vez por batalla, repite una tirada que le afecte directamente (salvación por armadura, impactar o un chequeo de atributo), sumando o restando 1 al resultado. Una tirada repetida no puede volver a repetirse.',
+}
 
 // Chaos Sorcerer level upgrades — Hechicero (L1) 84 → Paladín Hechicero (L2) 166 →
 // Maestro Hechicero (L3) 240 → Gran Hechicero (L4) 356.
@@ -182,8 +228,8 @@ const units: UnitProfile[] = [
       SHIELD_1, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
       MARK_KHORNE, MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],
-    mounts: [CHAOS_STEED_MOUNT],
-    specialRules: ['Chaos armour', 'May lead a regiment or ride a Chaos Steed'],
+    mounts: CHAOS_CHARACTER_MOUNTS,
+    specialRules: ['Chaos armour', 'May lead a regiment; may ride a Chaos Steed or a daemonic mount matching its Mark'],
   },
   {
     id: 'ch-battle-standard',
@@ -201,7 +247,8 @@ const units: UnitProfile[] = [
       SHIELD_1, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
       MARK_KHORNE, MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],
-    specialRules: ['0-1 Army Battle Standard', 'May carry one magic standard', 'Chaos armour'],
+    mounts: CHAOS_CHARACTER_MOUNTS,
+    specialRules: ['0-1 Army Battle Standard', 'May carry one magic standard', 'Chaos armour', 'May ride a Chaos Steed or a daemonic mount matching its Mark'],
   },
 
   // ----- Chaos Sorcerer (Hechiceros del Caos, Reino del Caos pp.75, 101) -----
@@ -220,8 +267,8 @@ const units: UnitProfile[] = [
       CHAOS_ARMOUR_10,
       MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],
-    mounts: [CHAOS_STEED_MOUNT, DISC_OF_TZEENTCH_MOUNT, CHAOS_DRAGON_MOUNT],
-    specialRules: ['Wizard', 'Chaos Magic or Dark Magic', 'Khorne has no sorcerers'],
+    mounts: CHAOS_SORCERER_MOUNTS,
+    specialRules: ['Wizard', 'Chaos Magic or Dark Magic', 'Khorne has no sorcerers', 'May ride a Chaos Steed or a daemonic mount matching its Mark'],
   },
 
   // ----- Beastman Lords & Shamans (Hombres Bestia, Reino del Caos pp.77, 106-107) -----
@@ -637,7 +684,8 @@ const units: UnitProfile[] = [
     pointsPerModel: 12,
     statLine: statline({ M: 6, WS: 4, BS: 0, S: 4, T: 4, W: 1, I: 4, A: 2, Ld: 6 }),
     minSize: 5,
-    specialRules: ['Run in packs', 'No standard or musician (may have a Chaos Warrior keeper +24)'],
+    noCommand: true,
+    specialRules: ['Run in packs', 'No champion, standard or musician (may have a Chaos Warrior keeper, +24)'],
   },
   {
     id: 'ch-ogres',
@@ -710,7 +758,8 @@ const units: UnitProfile[] = [
     pointsPerModel: 12,
     statLine: statline({ M: 6, WS: 4, BS: 0, S: 4, T: 4, W: 1, I: 4, A: 2, Ld: 6 }),
     minSize: 5,
-    specialRules: ['Run in packs', 'No standard or musician (may have a Beastman keeper)'],
+    noCommand: true,
+    specialRules: ['Run in packs', 'No champion, standard or musician (may have a Beastman keeper)'],
   },
 
   // ===================================================================

@@ -13,7 +13,7 @@ import {
   pointsByRole,
   rosterTotalPoints,
 } from './points'
-import { type Lang, unitName, CATEGORY_LABEL } from '../i18n/lang'
+import { type Lang, unitName, mountName, optionText, CATEGORY_LABEL } from '../i18n/lang'
 
 /**
  * Validate a roster against Warhammer 5th edition army-composition and
@@ -344,6 +344,44 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
             entryId: e.id,
           })
         }
+      }
+    }
+
+    // Mutually-exclusive options on one model (e.g. the four Marks of Chaos:
+    // a model may bear only one). See EquipmentOption.exclusiveGroup.
+    const optGroupCounts = new Map<string, number>()
+    for (const oid of e.optionIds) {
+      const grp = unit.options?.find((o) => o.id === oid)?.exclusiveGroup
+      if (grp) optGroupCounts.set(grp, (optGroupCounts.get(grp) ?? 0) + 1)
+    }
+    for (const [grp, n] of optGroupCounts) {
+      if (n < 2) continue
+      const what = grp === 'mark' ? (es ? 'una Marca del Caos' : 'one Mark of Chaos') : grp
+      violations.push({
+        severity: 'warning',
+        rule: 'options-exclusive-group',
+        message: es
+          ? `${un}: una miniatura sólo puede portar ${what} (lleva ${n}).`
+          : `${unit.name}: a model may carry only ${what} (carries ${n}).`,
+        entryId: e.id,
+      })
+    }
+
+    // A mount that requires an option (e.g. a daemonic mount needs the matching
+    // Mark of Chaos). See MountOption.requiresOption.
+    if (e.mountId) {
+      const mount = unit.mounts?.find((m) => m.id === e.mountId)
+      if (mount?.requiresOption && !e.optionIds.includes(mount.requiresOption)) {
+        const reqOpt = unit.options?.find((o) => o.id === mount.requiresOption)
+        const reqName = reqOpt ? optionText(reqOpt.name, lang) : mount.requiresOption
+        violations.push({
+          severity: 'warning',
+          rule: 'mount-requires-option',
+          message: es
+            ? `${un}: ${mountName(mount, lang)} requiere ${reqName}.`
+            : `${unit.name}: ${mountName(mount, lang)} requires ${reqName}.`,
+          entryId: e.id,
+        })
       }
     }
 

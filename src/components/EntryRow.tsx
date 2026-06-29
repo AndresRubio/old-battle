@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import type { Army, MagicItem, RosterEntry, StatLine } from '../data/types'
+import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine } from '../data/types'
 import { entryPoints, findUnit, magicItemAllowance } from '../rules/points'
-import { useLang, t, type Lang, unitName, mountName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, magicItemName, magicItemDesc } from '../i18n/lang'
+import { useLang, t, type Lang, unitName, mountName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc } from '../i18n/lang'
 import { findRule, type RuleDef } from '../data/rules'
 import { RuleDialog } from './RuleDialog'
 import { InfoDialog } from './InfoDialog'
@@ -66,6 +66,9 @@ export function EntryRow({
   const [open, setOpen] = useState(false)
   const [activeRule, setActiveRule] = useState<RuleDef | null>(null)
   const [activeItem, setActiveItem] = useState<MagicItem | null>(null)
+  const [activeOption, setActiveOption] = useState<EquipmentOption | null>(null)
+  const [itemQuery, setItemQuery] = useState('')
+  const [maxPts, setMaxPts] = useState('')
 
   // The entry references a unit that no longer exists in the army data (e.g. a
   // saved roster after a data update). Render an explicit, removable row rather
@@ -219,6 +222,21 @@ export function EntryRow({
                     />
                     {optionText(o.name, lang)} (+{o.pointsPerModel}
                     {isRegiment && !o.flat ? t('perModel', lang) : ''})
+                    {optionDesc(o, lang) && (
+                      <button
+                        type="button"
+                        className="mi-info"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setActiveOption(o)
+                        }}
+                        title={lang === 'es' ? 'Ver efecto' : 'View effect'}
+                        aria-label={lang === 'es' ? 'Ver efecto' : 'View effect'}
+                      >
+                        ⓘ
+                      </button>
+                    )}
                   </label>
                 ))}
               </div>
@@ -252,9 +270,34 @@ export function EntryRow({
               <span className="opt-label">
                 {t('magicItems', lang)} <span className="muted small">({entry.magicItemIds.length}/{allowance})</span>
               </span>
+              <div className="mi-filter">
+                <input
+                  type="search"
+                  className="mi-filter-search"
+                  placeholder={t('searchItems', lang)}
+                  value={itemQuery}
+                  onChange={(e) => setItemQuery(e.target.value)}
+                  aria-label={t('searchItems', lang)}
+                />
+                <input
+                  type="number"
+                  min={0}
+                  step={5}
+                  className="mi-filter-pts"
+                  placeholder={t('maxPts', lang)}
+                  value={maxPts}
+                  onChange={(e) => setMaxPts(e.target.value)}
+                  aria-label={t('maxPts', lang)}
+                />
+              </div>
               <div className="magic-items">
-                {CATEGORY_ORDER.map((cat) => {
-                  const items = army.magicItems.filter((i) => i.category === cat)
+                {(() => {
+                  const q = itemQuery.trim().toLowerCase()
+                  const cap = maxPts.trim() === '' ? Infinity : Number(maxPts)
+                  const matches = (i: MagicItem) =>
+                    i.points <= cap && (q === '' || `${i.name} ${i.nameEs ?? ''}`.toLowerCase().includes(q))
+                  const groups = CATEGORY_ORDER.map((cat) => {
+                  const items = army.magicItems.filter((i) => i.category === cat).filter(matches)
                   if (items.length === 0) return null
                   return (
                     <div key={cat} className="mi-group">
@@ -314,7 +357,11 @@ export function EntryRow({
                       })}
                     </div>
                   )
-                })}
+                  })
+                  return groups.some(Boolean)
+                    ? groups
+                    : <p className="muted small">{t('noItemsMatch', lang)}</p>
+                })()}
               </div>
             </div>
           )}
@@ -330,6 +377,14 @@ export function EntryRow({
           title={magicItemName(activeItem, lang)}
           body={magicItemDesc(activeItem, lang) ?? (lang === 'es' ? 'Sin descripción.' : 'No description.')}
           onClose={() => setActiveItem(null)}
+        />
+      )}
+      {activeOption && (
+        <InfoDialog
+          kicker={t('options', lang)}
+          title={optionText(activeOption.name, lang)}
+          body={optionDesc(activeOption, lang) ?? (lang === 'es' ? 'Sin descripción.' : 'No description.')}
+          onClose={() => setActiveOption(null)}
         />
       )}
     </li>
