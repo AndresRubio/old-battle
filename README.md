@@ -4,6 +4,11 @@ A web app for building **Warhammer Fantasy Battle 5th Edition (1996)** armies. P
 army, set a points limit, add units and characters, and a live **Muster Check** validates your
 roster against the 5th-edition army-composition rules in real time.
 
+**▶ Use it now (no install): https://andresrubio.github.io/old-battle/**
+
+Just open the link in any browser — phone, tablet, or computer. Your army lists are saved
+automatically on your own device.
+
 ![Editor with live validation](.) <!-- screenshot placeholder -->
 
 ## Features
