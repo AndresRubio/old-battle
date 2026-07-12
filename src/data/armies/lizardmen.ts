@@ -1,8 +1,8 @@
 import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitProfile } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
-// Lizardmen — data transcribed from "Warhammer Armies: Lizardmen" (Spanish ed.
-// "Ejércitos Warhammer: Hombres Lagarto"), Games Workshop, 1997, by Nigel
+// Lizardmen — data transcribed from the official Lizardmen army list (Spanish ed.
+// "Hombres Lagarto"), 1997, by Nigel
 // Stillman, the 5th-edition army book. Points, profiles, equipment costs and
 // 0-1/limit rules are taken directly from the book's army list (pp. 69-88) and
 // the bestiary (pp. 56-66).

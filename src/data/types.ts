@@ -1,9 +1,9 @@
-// Core domain types for the Warhammer 5th Edition army builder.
+// Core domain types for the 5th Edition army builder.
 
 /** Battlefield role — drives the 5th edition percentage composition rules. */
 export type UnitRole = 'character' | 'regiment' | 'monster' | 'warmachine' | 'chariot'
 
-/** Standard Warhammer characteristic profile. */
+/** Standard characteristic profile. */
 export interface StatLine {
   M: number
   WS: number
@@ -195,7 +195,7 @@ export interface MagicItem {
   /**
    * True for the documented exceptions to army-wide uniqueness (Dispel Scrolls,
    * Chaos Armour, Familiars). Undefined/false = the item is unique and may
-   * appear only once per army. See Warhammer Magia p.33.
+   * appear only once per army. See the Magic supplement p.33.
    */
   duplicable?: boolean
   /**

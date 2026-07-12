@@ -1,8 +1,8 @@
 import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitProfile } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
-// Bretonnia — data transcribed from "Warhammer Armies: Bretonnia"
-// (Games Workshop, 1996, by Nigel Stillman; reprinted with corrections 1999),
+// Bretonnia — data transcribed from the official Bretonnia army list
+// (1996, by Nigel Stillman; reprinted with corrections 1999),
 // the 5th-edition army book. Points, profiles, equipment costs and 0-1 limits
 // are taken directly from the army list (pp. 56-78) and bestiary statlines.
 //

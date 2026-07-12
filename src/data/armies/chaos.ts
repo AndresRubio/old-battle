@@ -2,14 +2,14 @@ import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitPr
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
-// Chaos — data transcribed from TWO 1998 Spanish Games Workshop books, combined
-// into one cohesive Chaos army for Warhammer Fantasy Battle 5th edition:
-//   • "Ejércitos Warhammer: Reino del Caos" (Tuomas Pirinen & Rick Priestley,
-//     GW 1998) — Bestiary "Bestiario Mortal" / "Grimorius Daemonicus" (pp.74-90)
+// Chaos — data transcribed from TWO 1998 Spanish army books, combined
+// into one cohesive Chaos army for Fantasy Battle 5th edition:
+//   • the official "Reino del Caos" army book (Tuomas Pirinen & Rick Priestley,
+//     1998) — Bestiary "Bestiario Mortal" / "Grimorius Daemonicus" (pp.74-90)
 //     and the three army lists "El Ejército del Caos": Hordas de Guerreros del
 //     Caos (pp.100-105), Hordas de Hombres Bestia (pp.106-110), Legiones
 //     Demoníacas (pp.112-117) and Grey Infernal (pp.118-120).
-//   • "Warhammer: Paladines del Caos" (Tuomas Pirinen, GW 1998) — Señores del
+//   • the official "Paladines del Caos" book (Tuomas Pirinen, 1998) — Señores del
 //     Caos special characters (Arbaal el Invencible p.28, Dechala la Renegada
 //     p.26).
 //

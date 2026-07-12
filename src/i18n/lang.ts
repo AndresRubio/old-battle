@@ -153,8 +153,8 @@ const STRINGS = {
   appTitle: { en: 'Old Battle — 5th Edition', es: 'Old Battle — 5ª Edición' },
   appSub: { en: 'Army Builder', es: 'Creador de Ejércitos' },
   footer: {
-    en: 'Unofficial fan-made tool · not affiliated with Games Workshop · 5th edition (1996) rules',
-    es: 'Herramienta no oficial de aficionados · sin relación con Games Workshop · reglas de 5ª edición (1996)',
+    en: 'Unofficial fan-made tool · not affiliated with any game publisher · 5th edition (1996) rules',
+    es: 'Herramienta no oficial de aficionados · sin relación con ninguna editorial del juego · reglas de 5ª edición (1996)',
   },
   // Home
   yourLists: { en: 'Your Army Lists', es: 'Tus Listas de Ejército' },

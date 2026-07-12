@@ -41,8 +41,9 @@ Thumbs.db
 *.sln
 *.sw?
 
-# Claude Code local settings
-.claude/settings.local.json
+# Claude Code — local config, agents, and internal design docs (not shipped)
+.claude/
+docs/superpowers/
 
 # Scratch artifacts
 .playwright-mcp/

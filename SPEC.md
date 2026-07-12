@@ -1,8 +1,7 @@
 # Warhammer 5th Edition Army Builder — SPEC
 
 ## Vision
-A web app to build **Warhammer Fantasy Battle 5th Edition (1996)** armies, modeled on
-[old-world-builder.com](https://old-world-builder.com/) but for the 5th edition ruleset.
+A web app to build **Warhammer Fantasy Battle 5th Edition (1996)** armies.
 
 The user picks an army, sets a points limit, adds units/characters/magic items, and the app
 **validates the roster against 5th edition army-composition rules and raises warnings** (points
@@ -26,7 +25,7 @@ exceeded, 0-1 / 0-X unit limits broken, etc.). It must feel polished and "surpri
   Start with 2-3 fully-statted armies (Empire, Orcs & Goblins, High Elves) then expand.
 
 ## Tech stack (decided)
-- **React + TypeScript + Vite** SPA (mirrors old-world-builder's PWA approach).
+- **React + TypeScript + Vite** SPA (installable PWA).
 - State: lightweight (React context or Zustand). Persistence: `localStorage` (rosters saved locally).
 - Styling: clean component CSS or Tailwind — pick one and stay consistent.
 - No backend. All army data ships as typed data files in `src/data/`.
@@ -45,7 +44,7 @@ exceeded, 0-1 / 0-X unit limits broken, etc.). It must feel polished and "surpri
 A pure function `validateRoster(roster, army): RuleViolation[]` that checks every 5th ed
 composition rule and returns warnings/errors. This MUST be covered by unit tests (Vitest).
 
-## UI (modeled on old-world-builder)
+## UI
 1. Home: list saved rosters + "New Army List".
 2. New list: choose army + name + points limit.
 3. Editor: left = roster summary with running points total + live validation warnings;

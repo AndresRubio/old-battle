@@ -16,7 +16,7 @@ interface Props {
   onClose: () => void
 }
 
-/** Modal panel that adds units, organised by category tabs (old-world-builder style).
+/** Modal panel that adds units, organised by category tabs (classic army-builder style).
  *  A search box filters across ALL categories so you don't have to browse tab by tab. */
 export function AddUnitDialog({ army, onAdd, onClose }: Props) {
   const [lang] = useLang()

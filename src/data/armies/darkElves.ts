@@ -3,8 +3,8 @@ import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 import { SHIELD } from '../unitOptions'
 
-// Dark Elves — data transcribed from "Ejércitos Warhammer: Elfos Oscuros"
-// (Games Workshop, 1995, by Jervis Johnson), the 4th/5th-edition army book.
+// Dark Elves — data transcribed from the official Dark Elves army list
+// (1995, by Jervis Johnson), the 4th/5th-edition army book.
 // Points, profiles, equipment costs and 0-1 limits are taken directly from
 // the book's army list (pp. 46-68) and bestiary (pp. 33-45).
 //

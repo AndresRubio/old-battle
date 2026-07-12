@@ -1153,7 +1153,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Two-handed rune axe (Rune of Strength +1 S, Rune of Fury +1 A), crossbow, light armour & shield': 'Hacha rúnica a dos manos (Runa de la Fuerza +1 F, Runa de la Furia +1 A), ballesta, armadura ligera y escudo',
   'Two-handed weapon (a scythe)': 'Arma a dos manos (una guadaña)',
   'Two-handed weapon (scythe)': 'Arma a dos manos (guadaña)',
-  'Unbreakable fanatics (see Warhammer rulebook)': 'Fanáticos indesbaratables (consulta el reglamento de Warhammer)',
+  'Unbreakable fanatics (see the rulebook)': 'Fanáticos indesbaratables (consulta el reglamento)',
   'Undead': 'No Muerto',
   'Undead Necromancer': 'Nigromante No Muerto',
   'Undead Paladin — leads a Skeleton, Zombie or Ghoul regiment': 'Paladín No Muerto — lidera un regimiento de Esqueletos, Zombis o Necrófagos',

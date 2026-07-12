@@ -2,8 +2,8 @@ import type { Army, EquipmentOption, StatLine, UnitProfile } from '../types'
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
-// The Dwarfs — data transcribed from "Ejércitos Warhammer: Enanos"
-// (Games Workshop, 1995, by Rick Priestley & Nigel Stillman), the 4th/5th-edition
+// The Dwarfs — data transcribed from the official Dwarfs army list
+// (1995, by Rick Priestley & Nigel Stillman), the 4th/5th-edition
 // army book. Points, profiles, equipment costs and 0-1 limits are taken directly
 // from the book's army list (pp. 80-96): Personajes pp.83-84, Regimientos pp.85-87,
 // Máquinas de Guerra pp.88-89, Monstruos p.89, Personajes Especiales pp.90-96.

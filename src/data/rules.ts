@@ -1,4 +1,4 @@
-// Glossary of Warhammer 5th-edition special rules, shown when a player clicks a
+// Glossary of 5th-edition special rules, shown when a player clicks a
 // unit's ability tag. Descriptions are based on the 1996 Spanish "Manual de
 // Batalla" (rulebook) + army books; refined against the book where possible.
 

@@ -2,8 +2,8 @@ import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitPr
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
-// Wood Elves — data transcribed from "Ejércitos Warhammer: Elfos Silvanos"
-// (Games Workshop, 1996, por Nigel Stillman), the 5th-edition army book.
+// Wood Elves — data transcribed from the official Wood Elves army list
+// (1996, por Nigel Stillman), the 5th-edition army book.
 // Points, profiles, equipment costs and 0-1 limits are taken directly from the
 // book's army list ("Lista de Ejército", pp. 60-80) and the attribute profiles
 // printed alongside each entry.

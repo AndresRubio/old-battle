@@ -2,8 +2,8 @@ import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitPr
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
-// Orcs & Goblins — data transcribed from "Ejércitos Warhammer: Orcos y Goblins"
-// (Games Workshop, 1997, by Rick Priestley), the 4th/5th-edition army book.
+// Orcs & Goblins — data transcribed from the official Orcs & Goblins army list
+// (1997, by Rick Priestley), the 4th/5th-edition army book.
 // Points, profiles, equipment costs and 0-1 limits are taken directly from the
 // book's army list (pp. 76-93) and bestiary (pp. 57-75).
 //

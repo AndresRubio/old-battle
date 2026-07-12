@@ -1,8 +1,8 @@
 import type { Army, EquipmentOption, MountOption, ProfileBlock, UnitProfile } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
-// Dogs of War — data transcribed from "Warhammer Armies: Dogs of War"
-// (Games Workshop, 1998, by Nigel Stillman with Rick Priestley & Tuomas Pirinen),
+// Dogs of War — data transcribed from the official Dogs of War army list
+// (1998, by Nigel Stillman with Rick Priestley & Tuomas Pirinen),
 // the 5th-edition supplement. Points, profiles, equipment costs and 0-1 limits
 // are taken directly from the army list (pp. 28-29 generic characters), the
 // Regiments of Renown (pp. 30-59) and the Special Characters (pp. 60-67).

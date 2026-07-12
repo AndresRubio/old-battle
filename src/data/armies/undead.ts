@@ -2,8 +2,8 @@ import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitPr
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
-// Undead ("No Muertos") — data transcribed from "Ejércitos Warhammer: No Muertos"
-// (Games Workshop, 1995/1997 Spanish edition, by Jervis Johnson & Bill King), the
+// Undead ("No Muertos") — data transcribed from the official Undead army list
+// (1995/1997 Spanish edition, by Jervis Johnson & Bill King), the
 // combined 4th/5th-edition Undead army book (before the Vampire Counts / Tomb
 // Kings split). Points, profiles, equipment costs and 0-1 limits are taken
 // directly from the book's army list (pp. 76-95) and bestiary (pp. 56-69).

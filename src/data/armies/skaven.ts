@@ -2,8 +2,8 @@ import type { Army, EquipmentOption, MountOption, StatLine, UnitProfile } from '
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
-// Skaven — data transcribed from "Ejércitos Warhammer: Skaven"
-// (Games Workshop, 1995, by Andy Chambers), the 4th/5th-edition army book.
+// Skaven — data transcribed from the official Skaven army list
+// (1995, by Andy Chambers), the 4th/5th-edition army book.
 // Points, profiles, equipment costs and 0-1 limits are taken directly from the
 // book's army list (pp. 58-67), monster list (p. 68), special characters
 // (pp. 69-74) and bestiary (pp. 50-57).

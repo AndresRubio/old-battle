@@ -2,8 +2,8 @@ import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitPr
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
-// High Elves — data transcribed from "Ejércitos Warhammer: Altos Elfos"
-// (Games Workshop, 1997, by Andy Chambers, Jes Goodwin, Bill King, Tuomas
+// High Elves — data transcribed from the official High Elves army list
+// (1997, by Andy Chambers, Jes Goodwin, Bill King, Tuomas
 // Pirinen & Rick Priestley), the 5th-edition army book. Points, profiles,
 // equipment costs and 0-1 limits are taken directly from the book's army list
 // (pp. 69-94) and bestiary (pp. 62-68).

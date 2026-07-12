@@ -16,7 +16,7 @@ import {
 import { type Lang, unitName, mountName, optionText, CATEGORY_LABEL } from '../i18n/lang'
 
 /**
- * Validate a roster against Warhammer 5th edition army-composition and
+ * Validate a roster against 5th edition army-composition and
  * magic-item rules. Returns a list of violations (errors + warnings).
  * Messages are localised via `lang` (defaults to English).
  * See research/composition-5e.md and research/magic-items-5e.md.
@@ -390,7 +390,7 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
   }
 
   // --- Magic-item uniqueness across the whole army ------------------------
-  // 5th ed (Warhammer Magia p.33): the same magic item may not be included in
+  // 5th ed (Magic supplement p.33): the same magic item may not be included in
   // an army more than once. Exceptions are flagged `duplicable` on the item
   // (Dispel Scrolls, Chaos Armour, Familiars).
   const itemUsers = new Map<string, number>()

@@ -1,7 +1,6 @@
 # Warhammer 5th Edition — Army Builder
 
-A web app for building **Warhammer Fantasy Battle 5th Edition (1996)** armies, modelled on
-[old-world-builder.com](https://old-world-builder.com/) but for the 5th-edition ruleset. Pick an
+A web app for building **Warhammer Fantasy Battle 5th Edition (1996)** armies. Pick an
 army, set a points limit, add units and characters, and a live **Muster Check** validates your
 roster against the 5th-edition army-composition rules in real time.
 

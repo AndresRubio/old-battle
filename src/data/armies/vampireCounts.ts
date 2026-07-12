@@ -2,8 +2,8 @@ import type { Army, EquipmentOption, MountOption, ProfileBlock, UnitProfile } fr
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
-// Vampire Counts — data transcribed from "Ejércitos Warhammer: Condes Vampiro"
-// (Games Workshop España, 1999, by Tuomas Pirinen & Alessio Cavatore), the
+// Vampire Counts — data transcribed from the official Vampire Counts army list
+// (1999, by Tuomas Pirinen & Alessio Cavatore), the
 // 5th-edition army supplement. Points, profiles, equipment costs and 0-1 limits
 // are taken directly from the army list ("El Ejército de los Condes Vampiro",
 // printed pp.59-67; PDF pages offset +2 from printed folios) and the Liber

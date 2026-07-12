@@ -2,8 +2,8 @@ import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitPr
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
-// The Empire — data transcribed from "Ejércitos Warhammer: El Imperio"
-// (Games Workshop, 1995, Suplemento, ref. 3130 / ISBN 84-88879-30-X), the
+// The Empire — data transcribed from the official Empire army list
+// (1995, Suplemento, ref. 3130 / ISBN 84-88879-30-X), the
 // 4th/5th-edition army book. Points, profiles, equipment costs and 0-1 limits
 // are taken directly from the book's army list ("LA LISTA DE EJÉRCITO",
 // pp. 54-66) and special characters ("PERSONAJES ESPECIALES", pp. 67-74).
@@ -659,7 +659,7 @@ const units: UnitProfile[] = [
     specialRules: [
       '0-1 unit',
       'Flail',
-      'Unbreakable fanatics (see Warhammer rulebook)',
+      'Unbreakable fanatics (see the rulebook)',
     ],
   },
   {
