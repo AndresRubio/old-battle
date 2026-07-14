@@ -94,8 +94,35 @@
   "empire/emp-ogres": [
     "equip-melee-multiple"
   ],
+  "halflings/hf-militia": [
+    "equip-missile-multiple"
+  ],
+  "halflings/hf-housewives": [
+    "equip-melee-multiple"
+  ],
   "lizardmen/lz-skink-warriors": [
     "equip-missile-multiple"
+  ],
+  "norse/no-huscarls": [
+    "equip-melee-multiple"
+  ],
+  "norse/no-bondsmen": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "norse/no-thralls": [
+    "equip-missile-multiple"
+  ],
+  "norse/no-berserkers": [
+    "equip-greatweapon-shield",
+    "equip-melee-multiple"
+  ],
+  "norse/no-norse-dwarfs": [
+    "equip-armour-multiple",
+    "equip-melee-multiple"
+  ],
+  "norse/no-ogres": [
+    "equip-melee-multiple"
   ],
   "orcs-and-goblins/og-big-uns": [
     "equip-greatweapon-shield",

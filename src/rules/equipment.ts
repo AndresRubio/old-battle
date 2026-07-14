@@ -65,6 +65,10 @@ export const IGNORED_OPTION_NAMES: readonly string[] = [
 
   // ── Crew-only upgrades ────────────────────────────────────────────────────
   'Additional Skink crewman',       // lizardmen war-engine crew
+  'Additional Halfling crewman',    // halfling farm-machine crew
+
+  // ── Pack-handler upgrades (extra model, not equipment) ────────────────────
+  'Beastmaster (leads the pack)',   // norse beast packs
 
   // ── Rune / magic-item upgrades ────────────────────────────────────────────
   'Rune of Stone (Paladin)',  // dwarf rune upgrade — magic item, not equipment
@@ -87,7 +91,14 @@ export const IGNORED_OPTION_NAMES: readonly string[] = [
 //   'wizard lord'     — Bretonnia / Dogs of War level 4
 //   'master wizard'   — Bretonnia / Dogs of War level 3
 //   'mage-priest'     — Lizardmen Slann level upgrades
+//   'for the crew' / 'for the rider' / 'for the beastmaster'
+//                     — halfling/norse war-engine & pack upgrades that equip a
+//                       DIFFERENT model than the unit's main profile, so the
+//                       per-model slot families do not apply
 export const IGNORED_OPTION_PATTERNS: readonly string[] = [
+  'for the crew',
+  'for the rider',
+  'for the beastmaster',
   'nivel',
   'wizard level',
   'wizard champion',

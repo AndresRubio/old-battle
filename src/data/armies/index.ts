@@ -15,6 +15,8 @@ import { LIZARDMEN } from './lizardmen'
 import { CHAOS_DWARFS } from './chaosDwarfs'
 import { DOGS_OF_WAR } from './dogsOfWar'
 import { VAMPIRE_COUNTS } from './vampireCounts'
+import { HALFLINGS } from './halflings'
+import { NORSE } from './norse'
 
 /**
  * Give every multi-model regiment a command group (champion / standard /
@@ -50,8 +52,10 @@ export const ARMIES: Army[] = [
   DOGS_OF_WAR,
   DWARFS,
   EMPIRE,
+  HALFLINGS,
   HIGH_ELVES,
   LIZARDMEN,
+  NORSE,
   ORCS_AND_GOBLINS,
   SKAVEN,
   UNDEAD,
