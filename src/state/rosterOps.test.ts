@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import {
   addEntry,
   createRoster,
+  duplicateEntry,
+  moveEntry,
   removeEntry,
   selectMount,
   selectWizardLevel,
@@ -91,6 +93,66 @@ describe('rosterOps', () => {
     expect(r.entries[0].optionIds).toEqual(['wizard-l4'])
     r = selectWizardLevel(r, 'e1', empire, null)
     expect(r.entries[0].optionIds).toEqual([])
+  })
+
+  it('duplicateEntry inserts a copy right after the original', () => {
+    let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), halberdiers, 'e1')
+    r = addEntry(r, general, 'e2')
+    r = duplicateEntry(r, 'e1', 'e1-copy')
+    expect(r.entries.map((e) => e.id)).toEqual(['e1', 'e1-copy', 'e2'])
+  })
+
+  it('duplicateEntry copies size, options, mount and magic items', () => {
+    let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), halberdiers, 'e1')
+    r = updateEntry(r, 'e1', { size: 18 })
+    r = toggleOption(r, 'e1', 'shield')
+    const copy = duplicateEntry(r, 'e1', 'e1-copy').entries[1]
+    expect(copy).toMatchObject({ id: 'e1-copy', unitId: 'emp-halberdiers', size: 18, optionIds: ['shield'] })
+  })
+
+  it('duplicateEntry deep-copies arrays so the copy and original never alias', () => {
+    let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), general, 'e1')
+    r = toggleMagicItem(r, 'e1', 'mi-sword-of-strength')
+    r = duplicateEntry(r, 'e1', 'e1-copy')
+    r = toggleMagicItem(r, 'e1-copy', 'mi-dispel-scroll')
+    // Original unchanged when the copy is edited.
+    expect(r.entries[0].magicItemIds).toEqual(['mi-sword-of-strength'])
+    expect(r.entries[1].magicItemIds).toEqual(['mi-sword-of-strength', 'mi-dispel-scroll'])
+  })
+
+  it('duplicateEntry never marks the copy as General', () => {
+    let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), general, 'e1')
+    r = setGeneral(r, 'e1')
+    r = duplicateEntry(r, 'e1', 'e1-copy')
+    expect(r.entries[0].isGeneral).toBe(true)
+    expect(r.entries[1].isGeneral).toBe(false)
+  })
+
+  it('duplicateEntry is a no-op for a missing entry', () => {
+    const r = addEntry(createRoster('empire', 'A', 1000, 'r1'), halberdiers, 'e1')
+    expect(duplicateEntry(r, 'nope').entries).toHaveLength(1)
+  })
+
+  it('moveEntry moves an entry up and down, swapping neighbours', () => {
+    let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), halberdiers, 'e1')
+    r = addEntry(r, general, 'e2')
+    r = addEntry(r, wizard, 'e3')
+    r = moveEntry(r, 'e3', -1)
+    expect(r.entries.map((e) => e.id)).toEqual(['e1', 'e3', 'e2'])
+    r = moveEntry(r, 'e3', 1)
+    expect(r.entries.map((e) => e.id)).toEqual(['e1', 'e2', 'e3'])
+  })
+
+  it('moveEntry clamps at the ends (no-op)', () => {
+    let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), halberdiers, 'e1')
+    r = addEntry(r, general, 'e2')
+    expect(moveEntry(r, 'e1', -1).entries.map((e) => e.id)).toEqual(['e1', 'e2'])
+    expect(moveEntry(r, 'e2', 1).entries.map((e) => e.id)).toEqual(['e1', 'e2'])
+  })
+
+  it('moveEntry is a no-op for a missing entry', () => {
+    const r = addEntry(createRoster('empire', 'A', 1000, 'r1'), halberdiers, 'e1')
+    expect(moveEntry(r, 'nope', 1).entries.map((e) => e.id)).toEqual(['e1'])
   })
 })
 

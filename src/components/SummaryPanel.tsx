@@ -1,6 +1,5 @@
 import type { Army, Roster } from '../data/types'
 import { summarize } from '../rules/summary'
-import { validateRoster } from '../rules/validate'
 import { useLang, t } from '../i18n/lang'
 
 interface Props {
@@ -29,9 +28,6 @@ export function SummaryPanel({ roster, army }: Props) {
   const [lang] = useLang()
   const s = summarize(roster, army)
   const c = army.composition
-  const violations = validateRoster(roster, army, lang)
-  const errors = violations.filter((v) => v.severity === 'error')
-  const warnings = violations.filter((v) => v.severity === 'warning')
   const overLimit = s.limit > 0 && s.total > s.limit
 
   return (
@@ -49,36 +45,6 @@ export function SummaryPanel({ roster, army }: Props) {
         <Bar label={`${t('regiments', lang)} (≥${c.minRegimentsPct}%)`} value={s.regiments} limit={s.limit} pct={s.regimentsPct} kind="reg" unit={t('pts', lang)} />
         <Bar label={`${t('warMachinesChariots', lang)} (≤${c.maxWarMachinesPct}%)`} value={s.warMachines} limit={s.limit} pct={s.warMachinesPct} kind="wm" unit={t('pts', lang)} />
         <Bar label={`${t('monsters', lang)} (≤${c.maxMonstersPct}%)`} value={s.monsters} limit={s.limit} pct={s.monstersPct} kind="mon" unit={t('pts', lang)} />
-      </div>
-
-      <div className="validation">
-        <h3>
-          {t('musterCheck', lang)}
-          {violations.length === 0 ? (
-            <span className="badge badge-ok">{t('allClear', lang)}</span>
-          ) : (
-            <span className="badge badge-bad">
-              {errors.length} {errors.length !== 1 ? t('errors', lang) : t('error', lang)},{' '}
-              {warnings.length} {warnings.length !== 1 ? t('warnings', lang) : t('warning', lang)}
-            </span>
-          )}
-        </h3>
-        {violations.length === 0 ? (
-          <p className="muted">{t('obeysRules', lang)}</p>
-        ) : (
-          <ul className="violation-list">
-            {errors.map((v, i) => (
-              <li key={`e${i}`} className="violation violation-error">
-                <span className="v-icon">✖</span> {v.message}
-              </li>
-            ))}
-            {warnings.map((v, i) => (
-              <li key={`w${i}`} className="violation violation-warning">
-                <span className="v-icon">▲</span> {v.message}
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
     </div>
   )

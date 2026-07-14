@@ -541,6 +541,16 @@ h1, h2, h3 {
 .bar-mon { background: linear-gradient(90deg, #a83a2d, #7a2820); }
 
 /* ---- Validation ---- */
+/* The Muster Check now sits below the army list as its own card (the summary
+   panel above keeps only the points total + composition bars). */
+.muster-check {
+  margin-top: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
 .validation h3 {
   display: flex;
   align-items: center;
@@ -627,6 +637,27 @@ h1, h2, h3 {
   color: var(--ink-dim);
   font-size: 0.88rem;
   white-space: nowrap;
+}
+.entry-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  flex-shrink: 0;
+}
+/* Compact icon buttons that share the row with the unit name + points. */
+.entry-btn {
+  padding: 0.25rem 0.4rem;
+  font-size: 0.8rem;
+  line-height: 1;
+  min-width: 1.9em;
+}
+.entry-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.entry-btn:disabled:hover {
+  background: transparent;
+  border-color: transparent;
 }
 .btn-sm {
   padding: 0.25rem 0.55rem;
