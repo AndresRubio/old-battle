@@ -280,7 +280,10 @@ const units: UnitProfile[] = [
     name: 'Stürmjarl, Shaman Lord of Ejsgard',
     nameEs: 'Stürmjarl, Señor Chamán de Ejsgard',
     role: 'character',
-    pointsPerModel: 446, // 316 + 100 Gift of Loki + 30 Runes
+    // 446 = 316 + 100 Gift of Loki + 30 Runes as printed in the special-character
+    // entry. NOTE: the Journal's own magic-item cards price these at 50 and 75 —
+    // the source contradicts itself; the printed entry total is kept.
+    pointsPerModel: 446,
     statLine: { M: 4, WS: 5, BS: 4, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 9 },
     isCharacter: true,
     characterRank: 'wizard4',
@@ -290,7 +293,7 @@ const units: UnitProfile[] = [
       'Hand weapon; wears no armour (it would interfere with his spellcasting)',
       'Causes fear; Hatred when in the front rank of a Norse unit',
       'Gift of Loki — may cast Dark Magic; after each casting roll a D6: on a 1 he may do nothing until the next magic phase',
-      'Runes — may re-roll one failed dispel attempt per spell',
+      'Runes — may re-roll a failed attempt to dispel a spell once',
       'Up to 4 magic items, two of which are always his Runes and the Gift of Loki',
     ],
   },
@@ -619,8 +622,9 @@ const units: UnitProfile[] = [
       { name: 'Norse crew (x10)', nameEs: 'Dotación Nórdica (x10)', statLine: { M: 4, WS: 4, BS: 3, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 7 }, specialRules: ['Hand weapons and shields; save 6+'] },
     ],
     options: [
-      { id: 'crew-double-handed', name: 'Double-handed weapons for the crew', pointsPerModel: 2, flat: true },
-      { id: 'crew-spears', name: 'Spears for the crew', pointsPerModel: 1, flat: true },
+      // Printed costs are per model (+2 / +1); charged here for the full crew of ten.
+      { id: 'crew-double-handed', name: 'Double-handed weapons for the crew', pointsPerModel: 20, flat: true },
+      { id: 'crew-spears', name: 'Spears for the crew', pointsPerModel: 10, flat: true },
       { id: 'rider-light-armour', name: 'Light armour for the rider', pointsPerModel: 2, flat: true },
     ],
     specialRules: [
@@ -642,7 +646,8 @@ const units: UnitProfile[] = [
       { name: 'Norse Dwarf crew (x3) + rider', nameEs: 'Dotación Enana (x3) + jinete', statLine: { M: 3, WS: 4, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 9 }, specialRules: ['Hand weapons and shields; save 6+'] },
     ],
     options: [
-      { id: 'crew-light-armour', name: 'Light armour for the Dwarf crew (each)', pointsPerModel: 2, flat: true },
+      // Printed cost is per model (+2); charged here for the full crew of three.
+      { id: 'crew-light-armour', name: 'Light armour for the Dwarf crew', pointsPerModel: 6, flat: true },
       { id: 'rider-light-armour', name: 'Light armour for the rider', pointsPerModel: 2, flat: true },
     ],
     specialRules: [

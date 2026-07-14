@@ -307,7 +307,7 @@ const units: UnitProfile[] = [
     name: 'Giblit the Dwarf',
     nameEs: 'Giblit el Enano',
     role: 'character',
-    pointsPerModel: 30,
+    pointsPerModel: 30, // as printed — a joke bargain balanced by Ld 5 and Stupidity without Legles
     statLine: { M: 3, WS: 6, BS: 5, S: 4, T: 5, W: 2, I: 4, A: 2, Ld: 5 },
     isCharacter: true,
     characterRank: 'hero',
@@ -545,6 +545,9 @@ const units: UnitProfile[] = [
     name: "Lumpin Croop's Fighting Cocks",
     nameEs: 'Los Gallos de Pelea de Lumpin Croop',
     role: 'regiment',
+    // 15/model = the book's 150 pts at the 10-model minimum. The book charges
+    // only +9 per additional Halfling above ten — models above the minimum are
+    // slightly overcosted here (per-model pricing cannot express a flat base).
     pointsPerModel: 15,
     statLine: { M: 4, WS: 3, BS: 5, S: 2, T: 2, W: 1, I: 6, A: 1, Ld: 8 },
     minSize: 10,
@@ -559,21 +562,6 @@ const units: UnitProfile[] = [
       'Motto: Short, Fat and Dangerous to Know',
     ],
   },
-  {
-    id: 'hf-treeman',
-    name: 'Treeman',
-    nameEs: 'Hombre Árbol',
-    role: 'monster',
-    pointsPerModel: 280,
-    statLine: { M: 6, WS: 8, BS: 3, S: 6, T: 7, W: 6, I: 2, A: 4, Ld: 9 },
-    noCommand: true,
-    specialRules: [
-      'One Treeman for every 1,000 points of the army',
-      'Will allow two Halflings to ride upon his shoulders (branches?)',
-      'Full Treeman rules as per the Battle book',
-    ],
-  },
-
   // ===== War Machines (0-25%) =====
   {
     id: 'hf-hot-pot',
@@ -620,9 +608,10 @@ const units: UnitProfile[] = [
     statLine: { M: 7, WS: 0, BS: 0, S: 7, T: 7, W: 4, I: 0, A: 0, Ld: 0 },
     noCommand: true,
     options: [
+      // Each option toggle buys ONE extra animal (book allows up to four in total).
       { id: 'extra-crew', name: 'Additional Halfling crewman', pointsPerModel: 3.5, flat: true },
-      { id: 'extra-sheep', name: 'Extra War Sheep to push (each)', pointsPerModel: 4, flat: true },
-      { id: 'extra-ram', name: 'Extra Battle Ram to push (each)', pointsPerModel: 5, flat: true }, // approx. — cost cut off in the scan; bestiary Battle Ram value
+      { id: 'extra-sheep', name: 'Extra War Sheep to push', pointsPerModel: 4, flat: true },
+      { id: 'extra-ram', name: 'Extra Battle Ram to push', pointsPerModel: 5, flat: true }, // approx. — cost cut off in the scan; bestiary Battle Ram value
       { id: 'crew-bows', name: 'Bows for the crew', pointsPerModel: 1, flat: true },
       { id: 'crew-shields', name: 'Shields for the crew', pointsPerModel: 0.5, flat: true },
     ],
@@ -639,6 +628,20 @@ const units: UnitProfile[] = [
   },
 
   // ===== Monsters (0-25%) =====
+  {
+    id: 'hf-treeman',
+    name: 'Treeman',
+    nameEs: 'Hombre Árbol',
+    role: 'monster',
+    pointsPerModel: 280,
+    statLine: { M: 6, WS: 8, BS: 3, S: 6, T: 7, W: 6, I: 2, A: 4, Ld: 9 },
+    noCommand: true,
+    specialRules: [
+      'One Treeman for every 1,000 points of the army',
+      'Will allow two Halflings to ride upon his shoulders (branches?)',
+      'Full Treeman rules as per the Battle book',
+    ],
+  },
   {
     id: 'hf-baby-dragon',
     name: 'Baby Dragon',
@@ -712,7 +715,6 @@ export const HALFLINGS: Army = {
         labelEn: 'One Treeman per 1,000 points of the army',
         labelEs: 'Un Hombre Árbol por cada 1.000 puntos del ejército',
         perPoints: 1000,
-        floor: 0,
       },
     ],
     dependencies: [

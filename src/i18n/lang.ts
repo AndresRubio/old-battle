@@ -318,6 +318,27 @@ const OPTION_ES: Record<string, string> = {
   'Poisoned arrows / javelins (S4)': 'Flechas / jabalinas envenenadas (F4)',
   'Poisoned arrows / javelin tips (S4)': 'Puntas de flecha / jabalina envenenadas (F4)',
   'Giant bow (range 36", S5, crewed by 2 Skinks)': 'Arco gigante (alcance 36", F5, dotación de 2 Skinks)',
+  // Halflings (Citadel Journal 36)
+  'Quilted jackets (count as light armour)': 'Chaquetas acolchadas (cuentan como armadura ligera)',
+  'Corsets (count as light armour)': 'Corsés (cuentan como armadura ligera)',
+  'Cleavers (double-handed weapons)': 'Cuchillos de carnicero (armas a dos manos)',
+  'Additional hand weapon (+1 Attack)': 'Arma de mano adicional (+1 Ataque)',
+  'Wizard Champion (Level 2)': 'Campeón Hechicero (Nivel 2)',
+  'Additional Halfling crewman': 'Sirviente Mediano adicional',
+  'Extra War Sheep to push': 'Oveja de Guerra adicional para empujar',
+  'Extra Battle Ram to push': 'Carnero de Batalla adicional para empujar',
+  'Bows for the crew': 'Arcos para la dotación',
+  'Shields for the crew': 'Escudos para la dotación',
+  // Norse (Citadel Journal 6-8)
+  'Double-handed weapons': 'Armas a dos manos',
+  'Crossbows': 'Ballestas',
+  'Beastmaster (leads the pack)': 'Bestiario (lidera la manada)',
+  'Light armour for the Beastmaster': 'Armadura ligera para el Bestiario',
+  'Additional hand weapon for the Beastmaster': 'Arma de mano adicional para el Bestiario',
+  'Double-handed weapons for the crew': 'Armas a dos manos para la dotación',
+  'Spears for the crew': 'Lanzas para la dotación',
+  'Light armour for the rider': 'Armadura ligera para el jinete',
+  'Light armour for the Dwarf crew': 'Armadura ligera para la dotación Enana',
 }
 
 /** Translate an equipment option label. Falls back to the stored name. */

@@ -40,9 +40,9 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
   - `types.ts` — all domain types (`Army`, `UnitProfile`, `Roster`, `RosterEntry`, `RuleViolation`,
     `MagicItem`) **plus** the rule constants: `MAGIC_ITEM_ALLOWANCE`, `RESTRICTED_CATEGORIES`,
     `STANDARD_5E_COMPOSITION`. Read this first — everything else builds on it.
-  - `armies/*.ts` — one file per army (14 total: Empire, Orcs & Goblins, High Elves, Dwarfs,
+  - `armies/*.ts` — one file per army (16 total: Empire, Orcs & Goblins, High Elves, Dwarfs,
     Bretonnia, Wood/Dark Elves, Skaven, Undead, Vampire Counts, Chaos, Chaos Dwarfs, Lizardmen,
-    Dogs of War). Each exports a single `Army` constant.
+    Dogs of War, Halflings, Norse). Each exports a single `Army` constant.
   - `armies/index.ts` — **assembly point**. `ARMIES` runs every army through `withCommandGroups`
     (auto-adds champion/standard/musician to multi-model regiments — do NOT hand-add these per unit)
     and `withMagicItems` (each army's pool = `COMMON_MAGIC_ITEMS` + `ARMY_MAGIC_ITEMS[army.id]`).
