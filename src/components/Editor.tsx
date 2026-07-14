@@ -4,6 +4,8 @@ import type { useRosters } from '../state/useRosters'
 import { getArmy } from '../data/armies'
 import {
   addEntry,
+  duplicateEntry,
+  moveEntry,
   removeEntry,
   selectMount,
   selectWizardLevel,
@@ -13,6 +15,7 @@ import {
   updateEntry,
 } from '../state/rosterOps'
 import { SummaryPanel } from './SummaryPanel'
+import { MusterCheck } from './MusterCheck'
 import { AddUnitDialog } from './AddUnitDialog'
 import { EntryRow } from './EntryRow'
 import { ExportDialog } from './ExportDialog'
@@ -113,7 +116,7 @@ export function Editor({ rosterId, store, onBack }: Props) {
             <p className="muted">{t('noUnitsYet', lang)}</p>
           ) : (
             <ul className="entry-list">
-              {roster.entries.map((entry) => (
+              {roster.entries.map((entry, i) => (
                 <EntryRow
                   key={entry.id}
                   entry={entry}
@@ -124,11 +127,17 @@ export function Editor({ rosterId, store, onBack }: Props) {
                   onSelectWizardLevel={(optionId) => commit((prev) => selectWizardLevel(prev, entry.id, army, optionId))}
                   onToggleMagicItem={(itemId) => commit((prev) => toggleMagicItem(prev, entry.id, itemId))}
                   onSetGeneral={() => commit((prev) => setGeneral(prev, entry.id))}
+                  onDuplicate={() => commit((prev) => duplicateEntry(prev, entry.id))}
+                  onMoveUp={() => commit((prev) => moveEntry(prev, entry.id, -1))}
+                  onMoveDown={() => commit((prev) => moveEntry(prev, entry.id, 1))}
+                  canMoveUp={i > 0}
+                  canMoveDown={i < roster.entries.length - 1}
                   onRemove={() => commit((prev) => removeEntry(prev, entry.id))}
                 />
               ))}
             </ul>
           )}
+          {roster.entries.length > 0 && <MusterCheck roster={roster} army={army} />}
         </div>
       </div>
 

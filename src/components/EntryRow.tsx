@@ -47,6 +47,11 @@ interface Props {
   onSelectWizardLevel: (optionId: string | null) => void
   onToggleMagicItem: (itemId: string) => void
   onSetGeneral: () => void
+  onDuplicate: () => void
+  onMoveUp: () => void
+  onMoveDown: () => void
+  canMoveUp: boolean
+  canMoveDown: boolean
   onRemove: () => void
 }
 
@@ -59,6 +64,11 @@ export function EntryRow({
   onSelectWizardLevel,
   onToggleMagicItem,
   onSetGeneral,
+  onDuplicate,
+  onMoveUp,
+  onMoveDown,
+  canMoveUp,
+  canMoveDown,
   onRemove,
 }: Props) {
   const [lang] = useLang()
@@ -112,9 +122,42 @@ export function EntryRow({
           </span>
         </button>
         <span className="entry-pts">{pts} {t('pts', lang)}</span>
-        <button className="btn btn-ghost btn-sm btn-danger" onClick={onRemove} title={t('remove', lang)}>
-          ✕
-        </button>
+        <div className="entry-actions">
+          <button
+            className="btn btn-ghost btn-sm entry-btn"
+            onClick={onMoveUp}
+            disabled={!canMoveUp}
+            title={t('moveUp', lang)}
+            aria-label={t('moveUp', lang)}
+          >
+            ▲
+          </button>
+          <button
+            className="btn btn-ghost btn-sm entry-btn"
+            onClick={onMoveDown}
+            disabled={!canMoveDown}
+            title={t('moveDown', lang)}
+            aria-label={t('moveDown', lang)}
+          >
+            ▼
+          </button>
+          <button
+            className="btn btn-ghost btn-sm entry-btn"
+            onClick={onDuplicate}
+            title={t('duplicate', lang)}
+            aria-label={t('duplicate', lang)}
+          >
+            ⧉
+          </button>
+          <button
+            className="btn btn-ghost btn-sm entry-btn btn-danger"
+            onClick={onRemove}
+            title={t('remove', lang)}
+            aria-label={t('remove', lang)}
+          >
+            ✕
+          </button>
+        </div>
       </div>
 
       {open && (

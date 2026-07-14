@@ -50,6 +50,39 @@ export function removeEntry(roster: Roster, entryId: string): Roster {
   return { ...roster, entries: roster.entries.filter((e) => e.id !== entryId) }
 }
 
+/**
+ * Duplicate an entry, inserting the copy immediately after the original. The
+ * copy is never the General (only one is allowed), and its arrays are cloned so
+ * editing the copy never mutates the original. A verbatim copy of a character's
+ * unique magic items will (correctly) trip the uniqueness check in validation.
+ */
+export function duplicateEntry(roster: Roster, entryId: string, id?: string): Roster {
+  const idx = roster.entries.findIndex((e) => e.id === entryId)
+  if (idx === -1) return roster
+  const src = roster.entries[idx]
+  const copy: RosterEntry = {
+    ...src,
+    id: id ?? genId('entry'),
+    optionIds: [...src.optionIds],
+    magicItemIds: [...src.magicItemIds],
+    isGeneral: false,
+  }
+  const entries = [...roster.entries]
+  entries.splice(idx + 1, 0, copy)
+  return { ...roster, entries }
+}
+
+/** Move an entry one slot up (`dir === -1`) or down (`dir === 1`); clamped at the ends. */
+export function moveEntry(roster: Roster, entryId: string, dir: -1 | 1): Roster {
+  const idx = roster.entries.findIndex((e) => e.id === entryId)
+  if (idx === -1) return roster
+  const target = idx + dir
+  if (target < 0 || target >= roster.entries.length) return roster
+  const entries = [...roster.entries]
+  ;[entries[idx], entries[target]] = [entries[target], entries[idx]]
+  return { ...roster, entries }
+}
+
 export function updateEntry(roster: Roster, entryId: string, patch: Partial<RosterEntry>): Roster {
   return {
     ...roster,
