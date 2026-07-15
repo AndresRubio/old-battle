@@ -243,6 +243,7 @@ const STRINGS = {
   pts: { en: 'pts', es: 'ptos' },
   // ExportDialog
   exportTitle: { en: 'Export Army List', es: 'Exportar Lista de Ejército' },
+  unitDetails: { en: 'Unit Details', es: 'Detalle de Unidades' },
   print: { en: 'Print', es: 'Imprimir' },
   copied: { en: 'Copied!', es: '¡Copiado!' },
   copyClipboard: { en: 'Copy to clipboard', es: 'Copiar al portapapeles' },
