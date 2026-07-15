@@ -61,7 +61,8 @@ const GIANT_SPIDER_STATS: StatLine = { M: 7, WS: 3, BS: 0, S: 4, T: 3, W: 1, I: 
 //     statlines/special rules of the matching monster entries below. ---
 const WAR_BOAR_MOUNT: MountOption = {
   id: 'mount-war-boar', name: 'War Boar', nameEs: 'Jabalí de Guerra',
-  points: 8, statLine: WAR_BOAR_STATS, specialRules: ['Boar charge (S+1)'],
+  points: 8, statLine: WAR_BOAR_STATS,
+  specialRules: ['Boar charge (S+2)', 'Tough hide (+1 armour save)', 'Obstinate boar (-1 Ld to rider)'],
 }
 const GIANT_WOLF_MOUNT: MountOption = {
   id: 'mount-giant-wolf', name: 'Giant Wolf', nameEs: 'Lobo Gigante',
@@ -75,7 +76,7 @@ const GIANT_SPIDER_MOUNT: MountOption = {
 const WINGED_SERPENT_MOUNT: MountOption = {
   id: 'mount-winged-serpent', name: 'Winged Serpent', nameEs: 'Serpiente Alada',
   points: 180, statLine: { M: 6, WS: 5, BS: 0, S: 5, T: 6, W: 4, I: 4, A: 3, Ld: 5 },
-  specialRules: ['Flying', 'Large target'],
+  specialRules: ['Flying', 'Large target', 'Causes terror', 'Tail sting (poison)', 'Scaly skin (5+ save)'],
 }
 const GRIFFON_MOUNT: MountOption = {
   id: 'mount-griffon', name: 'Griffon', nameEs: 'Grifo',
@@ -118,7 +119,8 @@ const NIGHT_GOBLIN_MOUNTS: MountOption[] = MONSTER_MOUNTS
 // --- Fixed (non-selectable) mounts: cost already baked into the model's points,
 //     so these are display-only profiles. ---
 const WAR_BOAR_PROFILE: ProfileBlock = {
-  name: 'War Boar', nameEs: 'Jabalí de Guerra', statLine: WAR_BOAR_STATS, specialRules: ['Boar charge (S+1)'],
+  name: 'War Boar', nameEs: 'Jabalí de Guerra', statLine: WAR_BOAR_STATS,
+  specialRules: ['Boar charge (S+2)', 'Tough hide (+1 armour save)', 'Obstinate boar (-1 Ld to rider)'],
 }
 const WINGED_SERPENT_PROFILE: ProfileBlock = {
   name: 'Winged Serpent', nameEs: 'Serpiente Alada',
@@ -701,7 +703,7 @@ const units: UnitProfile[] = [
     statLine: { M: 7, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
     minSize: 5,
     options: [SPEARS_1, BOW_2],
-    specialRules: ['Animosity', 'Frenzy (Savage Orcs)', 'War Boar mount (save 3+)', '6+ ward save (war paint)'],
+    specialRules: ['Animosity', 'Frenzy (Savage Orcs)', 'War Boar mount (save 3+)', 'Boar charge (S+2)', 'Obstinate boar (-1 Ld to rider)', '6+ ward save (war paint)'],
   },
   {
     id: 'og-orc-boar-boyz',
@@ -713,7 +715,7 @@ const units: UnitProfile[] = [
     statLine: { M: 7, WS: 4, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
     minSize: 5,
     options: [SPEARS_1],
-    specialRules: ['Animosity', 'War Boar mount (save 3+)', 'Light armour & shield'],
+    specialRules: ['Animosity', 'War Boar mount (save 3+)', 'Boar charge (S+2)', 'Obstinate boar (-1 Ld to rider)', 'Light armour & shield'],
   },
   {
     id: 'og-goblin-wolf-riders',
@@ -976,7 +978,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
     profiles: [
       { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
-      { name: '2 War Boars', nameEs: '2 Jabalíes de Guerra', statLine: WAR_BOAR_STATS, specialRules: ['Boar charge (S+1)'] },
+      { name: '2 War Boars', nameEs: '2 Jabalíes de Guerra', statLine: WAR_BOAR_STATS, specialRules: ['Boar charge (S+2)', 'Tough hide (+1 armour save)'] },
     ],
     specialRules: [
       'Requires an Orc unit',
@@ -1152,7 +1154,7 @@ const units: UnitProfile[] = [
     pointsPerModel: 180,
     // PDF p.89: M15 HA5 HP0 F5 R6 H4 I4 A3 L5
     statLine: { M: 6, WS: 5, BS: 0, S: 5, T: 6, W: 4, I: 4, A: 3, Ld: 5 },
-    specialRules: ['Flying', 'Large target'],
+    specialRules: ['Flying', 'Large target', 'Causes terror', 'Tail sting (poison)', 'Scaly skin (5+ save)'],
   },
   {
     id: 'og-dragon',
