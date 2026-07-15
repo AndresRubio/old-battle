@@ -382,6 +382,23 @@ const units: UnitProfile[] = [
     ],
   },
   {
+    id: 'hf-archers',
+    name: 'Archers',
+    nameEs: 'Arqueros',
+    role: 'regiment',
+    pointsPerModel: 4.5,
+    statLine: { M: 4, WS: 2, BS: 4, S: 2, T: 2, W: 1, I: 5, A: 1, Ld: 8 },
+    minSize: 5,
+    // Bow is included in the per-model cost. The equipment/options line is cut
+    // off at the page edge in the scan; light armour (+1) and shields (+1/2) are
+    // the standard Halfling missile-infantry options (as Poachers), used here.
+    options: [LIGHT_ARMOUR_1, SHIELD_HALF],
+    specialRules: [
+      'Excellent archers — hand weapon and bow; any number of Archer units may be included',
+      'Woodsmen — no movement penalty for moving through woods',
+    ],
+  },
+  {
     id: 'hf-lords-of-the-harvest',
     name: 'Lords of the Harvest',
     nameEs: 'Señores de la Cosecha',

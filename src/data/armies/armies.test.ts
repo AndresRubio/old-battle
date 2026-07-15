@@ -163,6 +163,16 @@ describe('Phase 2 selection-rule data fixes', () => {
     const necro = getArmy('undead')!.units.find((u) => u.id === 'ud-necromancer')!
     expect(necro.options!.map((o) => o.id)).not.toContain('wizard-l4')
   })
+
+  it('Halflings: Archers are a selectable regiment, distinct from Poachers', () => {
+    const halflings = getArmy('halflings')!
+    const archers = halflings.units.find((u) => u.id === 'hf-archers')
+    expect(archers, 'Archers unit should exist in the Halfling army').toBeDefined()
+    expect(archers!.role).toBe('regiment')
+    expect(archers!.pointsPerModel).toBe(4.5)
+    // The book lists Archers separately from the skirmishing Poachers.
+    expect(halflings.units.some((u) => u.id === 'hf-poachers')).toBe(true)
+  })
 })
 
 describe('selectionRules survive army assembly', () => {
