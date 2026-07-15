@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import type { Army, MagicItem, MagicItemCategory, MountOption, ProfileBlock, StatLine, UnitProfile, UnitRole } from '../data/types'
+import type { MagicLore, Spell } from '../data/lores'
 import { RULE_PHRASE_ES } from './rulePhrases'
 
 export type Lang = 'en' | 'es'
@@ -225,6 +226,8 @@ const STRINGS = {
   models: { en: 'Models', es: 'Miniaturas' },
   min: { en: 'min', es: 'mín' },
   wizardLevel: { en: 'Wizard Level', es: 'Nivel de Hechicero' },
+  loreOfMagic: { en: 'Lore of Magic', es: 'Saber de Magia' },
+  spells: { en: 'Spells', es: 'Hechizos' },
   level1: { en: 'Level 1', es: 'Nivel 1' },
   options: { en: 'Options', es: 'Opciones' },
   mount: { en: 'Mount', es: 'Montura' },
@@ -357,3 +360,11 @@ export const magicItemName = (item: MagicItem, lang: Lang): string =>
   lang === 'es' ? item.nameEs ?? item.name : item.name
 export const magicItemDesc = (item: MagicItem, lang: Lang): string | undefined =>
   lang === 'es' ? item.descEs ?? item.description : item.description
+
+/** Resolve a lore's / spell's localized name and a spell's localized description. */
+export const loreName = (lore: MagicLore, lang: Lang): string =>
+  lang === 'es' ? lore.nameEs ?? lore.name : lore.name
+export const spellName = (spell: Spell, lang: Lang): string =>
+  lang === 'es' ? spell.nameEs ?? spell.name : spell.name
+export const spellDesc = (spell: Spell, lang: Lang): string =>
+  lang === 'es' ? spell.descEs ?? spell.description : spell.description

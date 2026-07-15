@@ -137,6 +137,7 @@ const units: UnitProfile[] = [
     statLine: skaven({ WS: 8, BS: 8, S: 8, T: 7, W: 7, I: 10, A: 8, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['skaven', 'dark'],
     canBeGeneral: false,
     specialRules: [
       'Greater Daemon',
@@ -157,6 +158,7 @@ const units: UnitProfile[] = [
     statLine: skaven({ WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 5, A: 1, Ld: 5 }),
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['skaven'],
     canBeGeneral: false,
     options: SK_WIZARD_LEVELS,
     mounts: SK_MONSTER_MOUNTS,
@@ -171,6 +173,7 @@ const units: UnitProfile[] = [
     statLine: skaven({ WS: 6, BS: 6, S: 4, T: 4, W: 4, I: 7, A: 4, Ld: 7 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['skaven'],
     canBeGeneral: false,
     mounts: SK_MONSTER_MOUNTS,
     specialRules: [
@@ -202,6 +205,7 @@ const units: UnitProfile[] = [
     statLine: skaven({ WS: 6, BS: 6, S: 4, T: 4, W: 4, I: 7, A: 4, Ld: 7 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['skaven'],
     canBeGeneral: true,
     max: 1,
     specialRules: [
@@ -224,6 +228,7 @@ const units: UnitProfile[] = [
     statLine: skaven({ WS: 6, BS: 4, S: 5, T: 4, W: 3, I: 7, A: 4, Ld: 7 }),
     isCharacter: true,
     characterRank: 'wizard2',
+    lores: ['skaven'],
     canBeGeneral: true,
     max: 1,
     specialRules: [
@@ -248,6 +253,7 @@ const units: UnitProfile[] = [
     statLine: skaven({ WS: 5, BS: 3, S: 4, T: 5, W: 4, I: 8, A: 3, Ld: 9 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['skaven'],
     canBeGeneral: true,
     max: 1,
     specialRules: [

@@ -137,6 +137,7 @@ const units: UnitProfile[] = [
     statLine: { M: 6, WS: 8, BS: 6, S: 7, T: 6, W: 4, I: 9, A: 4, Ld: 10 },
     isCharacter: true,
     characterRank: 'wizard3',
+    lores: ['necromantic', 'battle', 'dark'],
     canBeGeneral: true,
     specialRules: [
       'Undead',
@@ -169,6 +170,7 @@ const units: UnitProfile[] = [
     statLine: { M: 6, WS: 7, BS: 5, S: 6, T: 5, W: 3, I: 8, A: 3, Ld: 9 },
     isCharacter: true,
     characterRank: 'wizard2',
+    lores: ['necromantic', 'battle', 'dark'],
     canBeGeneral: true,
     specialRules: [
       'Undead',
@@ -235,6 +237,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 9 },
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['necromantic', 'battle', 'dark'],
     canBeGeneral: true,
     specialRules: [
       'Living — not Undead; does not cause fear',
@@ -258,6 +261,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 3, S: 4, T: 4, W: 3, I: 5, A: 2, Ld: 8 },
     isCharacter: true,
     characterRank: 'wizard3',
+    lores: ['necromantic', 'battle', 'dark'],
     canBeGeneral: true,
     specialRules: [
       'Living — not Undead; does not cause fear',
@@ -281,6 +285,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 3, S: 4, T: 4, W: 2, I: 4, A: 1, Ld: 8 },
     isCharacter: true,
     characterRank: 'wizard2',
+    lores: ['necromantic', 'battle', 'dark'],
     canBeGeneral: true,
     specialRules: [
       'Living — not Undead; does not cause fear',
@@ -304,6 +309,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 4, A: 1, Ld: 7 },
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['necromantic', 'battle', 'dark'],
     canBeGeneral: true,
     specialRules: [
       'Living — not Undead; does not cause fear',
@@ -475,6 +481,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 10 },
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['necromantic', 'dark'],
     canBeGeneral: true,
     max: 1,
     profiles: [MANTICORE_PROFILE],
@@ -495,6 +502,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 10 },
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['necromantic'],
     canBeGeneral: true,
     max: 1,
     specialRules: [
@@ -535,6 +543,7 @@ const units: UnitProfile[] = [
     statLine: { M: 6, WS: 7, BS: 5, S: 6, T: 5, W: 3, I: 8, A: 3, Ld: 9 },
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['necromantic'],
     canBeGeneral: true,
     max: 1,
     profiles: [MANFRED_NIGHTMARE_PROFILE],
@@ -555,6 +564,7 @@ const units: UnitProfile[] = [
     statLine: { M: 8, WS: 6, BS: 4, S: 6, T: 6, W: 4, I: 7, A: 4, Ld: 10 },
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['necromantic'],
     canBeGeneral: true,
     max: 1,
     profiles: [MELKHIOR_NIGHTMARE_PROFILE],
@@ -577,6 +587,7 @@ const units: UnitProfile[] = [
     statLine: { M: 6, WS: 8, BS: 6, S: 7, T: 6, W: 4, I: 9, A: 4, Ld: 10 },
     isCharacter: true,
     characterRank: 'wizard3',
+    lores: ['necromantic'],
     canBeGeneral: true,
     max: 1,
     specialRules: [
@@ -596,6 +607,7 @@ const units: UnitProfile[] = [
     statLine: { M: 6, WS: 8, BS: 6, S: 7, T: 6, W: 4, I: 9, A: 4, Ld: 10 },
     isCharacter: true,
     characterRank: 'wizard3',
+    lores: ['necromantic'],
     canBeGeneral: true,
     max: 1,
     specialRules: [
@@ -633,6 +645,7 @@ const units: UnitProfile[] = [
     statLine: { M: 8, WS: 9, BS: 6, S: 7, T: 6, W: 4, I: 9, A: 5, Ld: 10 },
     isCharacter: true,
     characterRank: 'wizard3',
+    lores: ['necromantic'],
     canBeGeneral: true,
     canBeBSB: true,
     max: 1,

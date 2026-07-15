@@ -250,6 +250,7 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 3, BS: 3, I: 4 }),
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['battle'],
     options: [...BR_WIZARD_LEVELS],
     mounts: [WARHORSE_MOUNT, PEGASUS_MOUNT],
     specialRules: [
@@ -713,6 +714,7 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 3, BS: 3, S: 3, T: 3, W: 3, I: 6, A: 1, Ld: 9 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['battle'],
     max: 1,
     profiles: [UNICORN_PROFILE],
     specialRules: [

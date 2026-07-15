@@ -95,6 +95,7 @@ const units: UnitProfile[] = [
     statLine: chaosDwarf({ WS: 4, BS: 3, S: 3, T: 5, W: 1, I: 3, A: 1, Ld: 9 }),
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['chaosDwarf'],
     canBeGeneral: true,
     options: CD_WIZARD_LEVELS,
     mounts: CD_MONSTER_MOUNTS,
@@ -194,6 +195,7 @@ const units: UnitProfile[] = [
     statLine: chaosDwarf({ WS: 6, BS: 3, S: 4, T: 5, W: 3, I: 2, A: 3, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['chaosDwarf'],
     canBeGeneral: true,
     max: 1,
     specialRules: [

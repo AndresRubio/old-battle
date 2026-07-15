@@ -261,6 +261,7 @@ const units: UnitProfile[] = [
     statLine: statline({ WS: 6, BS: 6, S: 4, T: 5, W: 1, I: 7, A: 2, Ld: 9 }),
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['tzeentch', 'nurgle', 'slaanesh', 'dark'],
     canBeGeneral: true,
     options: [
       ...CHAOS_WIZARD_LEVELS,
@@ -307,6 +308,7 @@ const units: UnitProfile[] = [
     statLine: statline({ M: 4, WS: 4, BS: 3, S: 3, T: 5, W: 2, I: 4, A: 1, Ld: 7 }),
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['tzeentch', 'nurgle', 'slaanesh', 'dark'],
     options: BEAST_SHAMAN_LEVELS,
     specialRules: ['Wizard', 'Uses the three Chaos spell decks or Dark Magic', 'Beast'],
   },
@@ -480,6 +482,7 @@ const units: UnitProfile[] = [
     statLine: statline({ M: 4, WS: 6, BS: 6, S: 5, T: 5, W: 4, I: 9, A: 4, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['tzeentch', 'battle', 'dark'],
     canBeGeneral: true,
     max: 1,
     mounts: [
@@ -533,6 +536,7 @@ const units: UnitProfile[] = [
     statLine: statline({ M: 8, WS: 9, BS: 9, S: 7, T: 7, W: 8, I: 9, A: 6, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['tzeentch', 'dark', 'battle'],
     canBeGeneral: true,
     max: 1,
     specialRules: [
@@ -555,6 +559,7 @@ const units: UnitProfile[] = [
     statLine: statline({ M: 6, WS: 7, BS: 7, S: 6, T: 5, W: 5, I: 9, A: 6, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard2',
+    lores: ['slaanesh'],
     canBeGeneral: true,
     max: 1,
     specialRules: [
@@ -602,6 +607,7 @@ const units: UnitProfile[] = [
     statLine: statline({ M: 7, WS: 6, BS: 4, S: 4, T: 5, W: 4, I: 5, A: 4, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard3',
+    lores: ['tzeentch', 'nurgle', 'slaanesh', 'dark'],
     canBeGeneral: true,
     max: 1,
     profiles: [
@@ -858,6 +864,7 @@ const units: UnitProfile[] = [
     statLine: statline({ M: 8, WS: 9, BS: 10, S: 7, T: 7, W: 7, I: 10, A: 6, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['tzeentch'],
     canBeGeneral: true,
     max: 1,
     specialRules: [
@@ -1053,6 +1060,7 @@ const units: UnitProfile[] = [
   {
     // p.116: M10→4", WS5, BS5, S4, T3, W1, I6, A2, Ld10. 35 pts/model.
     id: 'ch-pink-horrors',
+    lores: ['tzeentch'],
     name: 'Pink Horrors of Tzeentch',
     nameEs: 'Horrores Rosa de Tzeentch',
     role: 'regiment',
@@ -1090,6 +1098,7 @@ const units: UnitProfile[] = [
     // p.117: Diablilla M10→4", WS6, BS5, S4, T3, W1, I6, A3, Ld10. 35 pts/model.
     // Steed of Slaanesh (Corcel de Slaanesh) M30→12", +25 pts/model.
     id: 'ch-daemonettes',
+    lores: ['slaanesh'],
     name: 'Daemonettes of Slaanesh',
     nameEs: 'Diablillas de Slaanesh',
     role: 'regiment',

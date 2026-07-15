@@ -211,6 +211,7 @@ const units: UnitProfile[] = [
     statLine: elf({ T: 4, I: 7 }),
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['high', 'battle'],
     canBeGeneral: false,
     options: HE_WIZARD_LEVELS,
     mounts: PRINCE_MOUNTS,
@@ -271,6 +272,7 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 10, BS: 10, S: 3, T: 4, W: 4, I: 10, A: 1, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['high', 'battle'],
     canBeGeneral: false,
     max: 1,
     specialRules: [
@@ -312,6 +314,7 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 6, BS: 4, S: 4, T: 4, W: 4, I: 9, A: 4, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['high', 'battle'],
     canBeGeneral: true,
     max: 1,
     specialRules: [
@@ -389,6 +392,7 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 4, BS: 4, S: 4, T: 4, W: 4, I: 9, A: 3, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['high'],
     canBeGeneral: false,
     max: 1,
     specialRules: [

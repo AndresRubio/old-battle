@@ -125,6 +125,11 @@ export function selectMount(roster: Roster, entryId: string, mountId: string | n
   return updateEntry(roster, entryId, { mountId: mountId ?? undefined })
 }
 
+/** Select the wizard's lore of magic, or clear it with `null`. */
+export function selectLore(roster: Roster, entryId: string, loreId: string | null): Roster {
+  return updateEntry(roster, entryId, { loreId: loreId ?? undefined })
+}
+
 /** Make exactly one entry the General (clears the flag on all others). */
 export function setGeneral(roster: Roster, entryId: string): Roster {
   return {

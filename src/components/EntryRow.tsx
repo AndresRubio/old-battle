@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine } from '../data/types'
+import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
 import { entryPoints, findUnit, magicItemAllowance } from '../rules/points'
-import { useLang, t, type Lang, unitName, mountName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc } from '../i18n/lang'
+import { useLang, t, type Lang, unitName, mountName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc } from '../i18n/lang'
 import { findRule, type RuleDef } from '../data/rules'
 import { RuleDialog } from './RuleDialog'
 import { InfoDialog } from './InfoDialog'
@@ -45,6 +46,7 @@ interface Props {
   onToggleOption: (optionId: string) => void
   onSelectMount: (mountId: string | null) => void
   onSelectWizardLevel: (optionId: string | null) => void
+  onSelectLore: (loreId: string | null) => void
   onToggleMagicItem: (itemId: string) => void
   onSetGeneral: () => void
   onDuplicate: () => void
@@ -62,6 +64,7 @@ export function EntryRow({
   onToggleOption,
   onSelectMount,
   onSelectWizardLevel,
+  onSelectLore,
   onToggleMagicItem,
   onSetGeneral,
   onDuplicate,
@@ -77,6 +80,7 @@ export function EntryRow({
   const [activeRule, setActiveRule] = useState<RuleDef | null>(null)
   const [activeItem, setActiveItem] = useState<MagicItem | null>(null)
   const [activeOption, setActiveOption] = useState<EquipmentOption | null>(null)
+  const [activeSpell, setActiveSpell] = useState<{ spell: Spell; loreName: string } | null>(null)
   const [itemQuery, setItemQuery] = useState('')
   const [maxPts, setMaxPts] = useState('')
 
@@ -105,10 +109,12 @@ export function EntryRow({
   const levelOptions = (unit.options ?? []).filter((o) => o.id.startsWith('wizard-l'))
   const toggleOptions = (unit.options ?? []).filter((o) => !o.id.startsWith('wizard-l'))
   const currentLevel = entry.optionIds.find((id) => id.startsWith('wizard-l')) ?? ''
+  const loreIds = unit.lores ?? []
+  const selectedLore = entry.loreId ? getLore(entry.loreId) : undefined
   const allowance = unit.isCharacter ? magicItemAllowance(entry, unit) : 0
   const mounts = unit.mounts ?? []
   const selectedMount = mounts.find((m) => m.id === entry.mountId)
-  const hasOptions = (unit.options?.length ?? 0) > 0 || mounts.length > 0 || unit.isCharacter
+  const hasOptions = (unit.options?.length ?? 0) > 0 || mounts.length > 0 || unit.isCharacter || loreIds.length > 0
 
   return (
     <li className={`entry ${entry.isGeneral ? 'entry-general' : ''}`}>
@@ -249,6 +255,56 @@ export function EntryRow({
                   </label>
                 ))}
               </div>
+            </div>
+          )}
+
+          {loreIds.length > 0 && (
+            <div className="opt-group">
+              <span className="opt-label">{t('loreOfMagic', lang)}</span>
+              <div className="opt-radios">
+                {loreIds.map((id) => {
+                  const lore = MAGIC_LORES[id]
+                  if (!lore) return null
+                  return (
+                    <label key={id}>
+                      <input
+                        type="radio"
+                        name={`${entry.id}-lore`}
+                        checked={entry.loreId === id}
+                        onChange={() => onSelectLore(id)}
+                      />
+                      {loreName(lore, lang)}
+                    </label>
+                  )
+                })}
+              </div>
+
+              {selectedLore && (
+                <div className="spell-list">
+                  <span className="opt-label">{t('spells', lang)}</span>
+                  <ul className="spell-rows">
+                    {selectedLore.spells.map((spell, i) => (
+                      <li key={i} className="spell-row">
+                        <span className="spell-name">{spellName(spell, lang)}</span>
+                        {spell.castingValue != null && (
+                          <span className="spell-cv" title={lang === 'es' ? 'Valor de lanzamiento' : 'Casting value'}>
+                            {spell.castingValue}
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          className="mi-info"
+                          onClick={() => setActiveSpell({ spell, loreName: loreName(selectedLore, lang) })}
+                          title={lang === 'es' ? 'Ver hechizo' : 'View spell'}
+                          aria-label={lang === 'es' ? 'Ver hechizo' : 'View spell'}
+                        >
+                          ⓘ
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           )}
 
@@ -428,6 +484,14 @@ export function EntryRow({
           title={optionText(activeOption.name, lang)}
           body={optionDesc(activeOption, lang) ?? (lang === 'es' ? 'Sin descripción.' : 'No description.')}
           onClose={() => setActiveOption(null)}
+        />
+      )}
+      {activeSpell && (
+        <InfoDialog
+          kicker={activeSpell.loreName}
+          title={spellName(activeSpell.spell, lang)}
+          body={spellDesc(activeSpell.spell, lang)}
+          onClose={() => setActiveSpell(null)}
         />
       )}
     </li>

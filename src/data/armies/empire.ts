@@ -190,6 +190,7 @@ const units: UnitProfile[] = [
     statLine: human({ T: 4, I: 4 }),
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['battle'],
     canBeGeneral: false,
     options: EMP_WIZARD_LEVELS,
     mounts: WIZARD_MOUNTS,
@@ -273,6 +274,7 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 5, BS: 3, S: 4, T: 4, W: 4, I: 3, A: 5, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard2',
+    lores: ['battle'],
     max: 1,
     profiles: [
       {
@@ -299,6 +301,7 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 4, BS: 3, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 9 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['battle'],
     max: 1,
     mounts: [BARDED_WARHORSE_MOUNT, PEGASUS_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT, DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT],
     specialRules: [
@@ -414,6 +417,7 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 4, BS: 3, S: 3, T: 3, W: 3, I: 5, A: 3, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard3',
+    lores: ['ice'],
     canBeGeneral: false,
     max: 1,
     profiles: [WARHORSE_PROFILE],

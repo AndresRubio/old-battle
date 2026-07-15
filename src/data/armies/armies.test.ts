@@ -4,6 +4,7 @@ import { validateRoster } from '../../rules/validate'
 import { entryPoints } from '../../rules/points'
 import type { Roster } from '../types'
 import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
+import { MAGIC_LORES } from '../lores'
 
 describe('army data integrity', () => {
   for (const army of ARMIES) {
@@ -260,6 +261,27 @@ describe('mounts & profiles', () => {
     expect(names.some((n) => /Chariot/i.test(n))).toBe(true)
     expect(names.some((n) => /Steed/i.test(n))).toBe(true)
   })
+})
+
+describe('lores of magic wiring', () => {
+  for (const army of ARMIES) {
+    for (const unit of army.units) {
+      if (unit.lores) {
+        it(`${army.id}/${unit.id}: every lore id resolves and the list is non-empty`, () => {
+          expect(unit.lores!.length).toBeGreaterThan(0)
+          for (const id of unit.lores!) {
+            expect(MAGIC_LORES[id], `${unit.id} references unknown lore '${id}'`).toBeDefined()
+          }
+        })
+      }
+      // Every wizard-rank character must declare at least one lore to choose from.
+      if (unit.characterRank?.startsWith('wizard')) {
+        it(`${army.id}/${unit.id}: wizard declares at least one lore`, () => {
+          expect(unit.lores && unit.lores.length > 0, `${unit.id} is a wizard but has no lores`).toBe(true)
+        })
+      }
+    }
+  }
 })
 
 describe('Empire — sample legal list validates cleanly', () => {
