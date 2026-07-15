@@ -94,6 +94,16 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
       )
     }
   }
+
+  // The unit's magic standard (carried by its standard bearer).
+  const standard = entry.magicStandardId ? findMagicItem(army, entry.magicStandardId) : undefined
+  if (standard) {
+    const desc = magicItemDesc(standard, lang)
+    lines.push(`  ${t('magicStandard', lang)}:`)
+    lines.push(
+      `    * ${magicItemName(standard, lang)} (${standard.points} ${t('pts', lang)})${desc ? ` — ${desc}` : ''}`,
+    )
+  }
   return lines
 }
 
@@ -137,6 +147,8 @@ export function exportRosterText(roster: Roster, army: Army, lang: Lang = 'en'):
         const item = findMagicItem(army, id)
         if (item) lines.push(`    * ${magicItemName(item, lang)} (${item.points} ${t('pts', lang)})`)
       }
+      const std = e.magicStandardId ? findMagicItem(army, e.magicStandardId) : undefined
+      if (std) lines.push(`    * ${magicItemName(std, lang)} (${std.points} ${t('pts', lang)})`)
     }
   }
 

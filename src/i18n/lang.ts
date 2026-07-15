@@ -234,6 +234,13 @@ const STRINGS = {
   rider: { en: 'Rider', es: 'Jinete' },
   onFoot: { en: 'On foot', es: 'A pie' },
   magicItems: { en: 'Magic Items', es: 'Objetos Mágicos' },
+  magicStandard: { en: 'Magic Standard', es: 'Estandarte Mágico' },
+  magicStandardNone: { en: 'No magic standard', es: 'Sin estandarte mágico' },
+  magicStandardNeedsBearer: {
+    en: 'Add a Standard Bearer to carry a magic standard.',
+    es: 'Añade un Portaestandarte para llevar un estandarte mágico.',
+  },
+  magicStandardLimitTbd: { en: 'limit to confirm', es: 'límite por confirmar' },
   searchItems: { en: 'Search items…', es: 'Buscar objetos…' },
   maxPts: { en: 'max pts', es: 'máx ptos' },
   noItemsMatch: { en: 'No items match the filter.', es: 'Ningún objeto coincide con el filtro.' },

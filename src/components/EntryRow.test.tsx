@@ -16,7 +16,7 @@ function entry(unitId: string, over: Partial<RosterEntry> = {}): RosterEntry {
 const noop = () => {}
 const props = {
   onChangeSize: noop, onToggleOption: noop, onSelectMount: noop, onSelectWizardLevel: noop,
-  onSelectLore: noop, onToggleMagicItem: noop, onSetGeneral: noop, onDuplicate: noop,
+  onSelectLore: noop, onToggleMagicItem: noop, onSelectMagicStandard: noop, onSetGeneral: noop, onDuplicate: noop,
   onMoveUp: noop, onMoveDown: noop, canMoveUp: false, canMoveDown: false, onRemove: noop,
 }
 

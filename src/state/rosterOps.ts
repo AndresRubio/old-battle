@@ -97,12 +97,19 @@ export function toggleOption(roster: Roster, entryId: string, optionId: string):
     entries: roster.entries.map((e) => {
       if (e.id !== entryId) return e
       const has = e.optionIds.includes(optionId)
-      return {
-        ...e,
-        optionIds: has ? e.optionIds.filter((o) => o !== optionId) : [...e.optionIds, optionId],
-      }
+      const optionIds = has ? e.optionIds.filter((o) => o !== optionId) : [...e.optionIds, optionId]
+      // A unit magic standard is carried by the standard bearer — dropping the
+      // Standard Bearer command option clears any chosen magic standard.
+      const magicStandardId =
+        optionId === 'standard' && has ? undefined : e.magicStandardId
+      return { ...e, optionIds, magicStandardId }
     }),
   }
+}
+
+/** Select the unit's magic standard (a banner item id), or clear it with `null`. */
+export function selectMagicStandard(roster: Roster, entryId: string, itemId: string | null): Roster {
+  return updateEntry(roster, entryId, { magicStandardId: itemId ?? undefined })
 }
 
 /** Toggle a magic item on a character entry. */

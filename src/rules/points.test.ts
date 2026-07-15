@@ -48,6 +48,20 @@ describe('entryPoints — flat vs per-model options', () => {
   })
 })
 
+describe('entryPoints — unit magic standard', () => {
+  it('adds the chosen magic standard points to a regiment total', () => {
+    // Halberdiers base 7/model × 10 = 70; + Banner of War (25) = 95.
+    const withBanner = mk({ unitId: 'emp-halberdiers', size: 10, magicStandardId: 'mi-banner-of-war' })
+    const plain = mk({ unitId: 'emp-halberdiers', size: 10 })
+    expect(entryPoints(withBanner, empire) - entryPoints(plain, empire)).toBe(25)
+  })
+
+  it('ignores an unknown magic standard id', () => {
+    const bad = mk({ unitId: 'emp-halberdiers', size: 10, magicStandardId: 'nope' })
+    expect(entryPoints(bad, empire)).toBe(entryPoints(mk({ unitId: 'emp-halberdiers', size: 10 }), empire))
+  })
+})
+
 describe('entryPoints — character mounts', () => {
   const general = findUnit(bretonnia, 'br-general')!
 

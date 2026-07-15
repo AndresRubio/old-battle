@@ -8,6 +8,7 @@ import {
   moveEntry,
   removeEntry,
   selectLore,
+  selectMagicStandard,
   selectMount,
   selectWizardLevel,
   setGeneral,
@@ -128,6 +129,7 @@ export function Editor({ rosterId, store, onBack }: Props) {
                   onSelectWizardLevel={(optionId) => commit((prev) => selectWizardLevel(prev, entry.id, army, optionId))}
                   onSelectLore={(loreId) => commit((prev) => selectLore(prev, entry.id, loreId))}
                   onToggleMagicItem={(itemId) => commit((prev) => toggleMagicItem(prev, entry.id, itemId))}
+                  onSelectMagicStandard={(itemId) => commit((prev) => selectMagicStandard(prev, entry.id, itemId))}
                   onSetGeneral={() => commit((prev) => setGeneral(prev, entry.id))}
                   onDuplicate={() => commit((prev) => duplicateEntry(prev, entry.id))}
                   onMoveUp={() => commit((prev) => moveEntry(prev, entry.id, -1))}

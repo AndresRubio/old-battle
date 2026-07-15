@@ -6,6 +6,7 @@ import {
   moveEntry,
   removeEntry,
   selectLore,
+  selectMagicStandard,
   selectMount,
   selectWizardLevel,
   setGeneral,
@@ -20,6 +21,7 @@ const empire = getArmy('empire')!
 const halberdiers = empire.units.find((u) => u.id === 'emp-halberdiers')!
 const general = empire.units.find((u) => u.id === 'emp-general')!
 const wizard = empire.units.find((u) => u.id === 'emp-wizard')!
+const knights = empire.units.find((u) => u.id === 'emp-white-wolf-knights')! // may carry a magic standard
 
 describe('rosterOps', () => {
   it('creates an empty roster with a default name', () => {
@@ -154,6 +156,31 @@ describe('rosterOps', () => {
   it('moveEntry is a no-op for a missing entry', () => {
     const r = addEntry(createRoster('empire', 'A', 1000, 'r1'), halberdiers, 'e1')
     expect(moveEntry(r, 'nope', 1).entries.map((e) => e.id)).toEqual(['e1'])
+  })
+
+  it('selectMagicStandard sets and clears the unit magic standard', () => {
+    let r = addEntry(createRoster('empire', 'A', 2000, 'r1'), knights, 'e1')
+    r = selectMagicStandard(r, 'e1', 'mi-banner-of-war')
+    expect(r.entries[0].magicStandardId).toBe('mi-banner-of-war')
+    r = selectMagicStandard(r, 'e1', null)
+    expect(r.entries[0].magicStandardId).toBeUndefined()
+  })
+
+  it('removing the standard bearer clears the unit magic standard', () => {
+    let r = addEntry(createRoster('empire', 'A', 2000, 'r1'), knights, 'e1')
+    r = toggleOption(r, 'e1', 'standard')
+    r = selectMagicStandard(r, 'e1', 'mi-banner-of-war')
+    r = toggleOption(r, 'e1', 'standard') // drop the standard bearer
+    expect(r.entries[0].optionIds).not.toContain('standard')
+    expect(r.entries[0].magicStandardId).toBeUndefined()
+  })
+
+  it('toggling a non-standard option leaves the magic standard intact', () => {
+    let r = addEntry(createRoster('empire', 'A', 2000, 'r1'), knights, 'e1')
+    r = toggleOption(r, 'e1', 'standard')
+    r = selectMagicStandard(r, 'e1', 'mi-banner-of-war')
+    r = toggleOption(r, 'e1', 'musician')
+    expect(r.entries[0].magicStandardId).toBe('mi-banner-of-war')
   })
 
   it('selectLore sets and clears the loreId on the target entry', () => {

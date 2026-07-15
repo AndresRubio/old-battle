@@ -45,6 +45,37 @@ function withMagicItems(army: Army): Army {
   return { ...army, magicItems: [...COMMON_MAGIC_ITEMS, ...(ARMY_MAGIC_ITEMS[army.id] ?? [])] }
 }
 
+/**
+ * Verified per-unit **magic-standard point caps** (keyed by unit id), transcribed
+ * from the 5th-edition army lists. A regiment allowed a magic standard but ABSENT
+ * from this table gets an undefined cap — the Muster Check then raises a
+ * data-completeness warning ("limit not yet verified against the army book")
+ * rather than silently inventing a number. Fill in values as they are confirmed.
+ */
+export const MAGIC_STANDARD_MAX: Record<string, number> = {
+  // (populated as army-book caps are verified)
+}
+
+/**
+ * Flag every regiment whose army-list entry allows a **magic standard** (detected
+ * from its `specialRules`, e.g. "May carry a magic standard") so the editor can
+ * offer a magic-standard picker. The points cap comes from `MAGIC_STANDARD_MAX`
+ * where verified, otherwise stays `undefined`. A unit that already declares
+ * `magicStandard` explicitly, or that cannot take a command group (`noCommand`),
+ * is left untouched. Non-regiment carriers (the army Battle Standard character) go
+ * through the character magic-item path instead — see FAQ v2.20 §23.2.
+ */
+function withMagicStandards(army: Army): Army {
+  return {
+    ...army,
+    units: army.units.map((u) => {
+      if (u.magicStandard || u.role !== 'regiment' || u.noCommand) return u
+      const allowed = u.specialRules?.some((r) => /magic standard/i.test(r)) ?? false
+      return allowed ? { ...u, magicStandard: { max: MAGIC_STANDARD_MAX[u.id] } } : u
+    }),
+  }
+}
+
 /** All armies available in the builder (sorted alphabetically by name). */
 export const ARMIES: Army[] = [
   BRETONNIA,
@@ -63,7 +94,7 @@ export const ARMIES: Army[] = [
   UNDEAD,
   VAMPIRE_COUNTS,
   WOOD_ELVES,
-].map(withCommandGroups).map(withMagicItems)
+].map(withCommandGroups).map(withMagicStandards).map(withMagicItems)
 
 export function getArmy(id: string): Army | undefined {
   return ARMIES.find((a) => a.id === id)

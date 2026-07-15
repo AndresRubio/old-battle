@@ -43,7 +43,10 @@ export function entryPoints(entry: RosterEntry, army: Army): number {
     const item = findMagicItem(army, id)
     return sum + (item ? item.points : 0)
   }, 0)
-  return modelPoints + flatPoints + mountPoints(unit, entry.mountId) + magicPoints
+  // A unit's magic standard (carried by its standard bearer) adds its own points.
+  const standard = entry.magicStandardId ? findMagicItem(army, entry.magicStandardId) : undefined
+  const standardPoints = standard ? standard.points : 0
+  return modelPoints + flatPoints + mountPoints(unit, entry.mountId) + magicPoints + standardPoints
 }
 
 export function rosterTotalPoints(entries: RosterEntry[], army: Army): number {

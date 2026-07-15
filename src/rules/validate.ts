@@ -347,6 +347,63 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
       }
     }
 
+    // Unit magic standard (carried by a regiment's standard bearer). Only units
+    // the army list allows may take one, up to the book's point cap. See FAQ
+    // v2.20 §23.2 and research/magic-items-5e.md.
+    if (e.magicStandardId) {
+      const item = findMagicItem(army, e.magicStandardId)
+      const itemNm = item ? (es ? item.nameEs ?? item.name : item.name) : e.magicStandardId
+      if (!unit.magicStandard) {
+        violations.push({
+          severity: 'warning',
+          rule: 'magic-standard-not-allowed',
+          message: es
+            ? `${un}: esta unidad no puede llevar un estandarte mágico.`
+            : `${unit.name}: this unit may not carry a magic standard.`,
+          entryId: e.id,
+        })
+      } else {
+        if (!e.optionIds.includes('standard')) {
+          violations.push({
+            severity: 'warning',
+            rule: 'magic-standard-no-bearer',
+            message: es
+              ? `${un}: un estandarte mágico requiere que la unidad lleve un portaestandarte.`
+              : `${unit.name}: a magic standard requires a standard bearer in the unit.`,
+            entryId: e.id,
+          })
+        }
+        if (!item || item.category !== 'banner' || item.special) {
+          violations.push({
+            severity: 'warning',
+            rule: 'magic-standard-invalid-item',
+            message: es
+              ? `${un}: "${itemNm}" no es un estandarte mágico válido para esta unidad.`
+              : `${unit.name}: "${itemNm}" is not a valid magic standard for this unit.`,
+            entryId: e.id,
+          })
+        } else if (unit.magicStandard.max === undefined) {
+          violations.push({
+            severity: 'warning',
+            rule: 'magic-standard-limit-undefined',
+            message: es
+              ? `${un}: el límite de puntos del estandarte mágico aún no está confirmado para esta unidad; verifícalo con el libro de ejército.`
+              : `${unit.name}: the magic-standard point limit is not yet confirmed for this unit; verify it against the army book.`,
+            entryId: e.id,
+          })
+        } else if (item.points > unit.magicStandard.max) {
+          violations.push({
+            severity: 'warning',
+            rule: 'magic-standard-over-limit',
+            message: es
+              ? `${un}: el estandarte mágico cuesta ${item.points} ptos, superando el límite de ${unit.magicStandard.max} ptos de la unidad.`
+              : `${unit.name}: the magic standard costs ${item.points} pts, over the unit's ${unit.magicStandard.max} pt limit.`,
+            entryId: e.id,
+          })
+        }
+      }
+    }
+
     // Mutually-exclusive options on one model (e.g. the four Marks of Chaos:
     // a model may bear only one). See EquipmentOption.exclusiveGroup.
     const optGroupCounts = new Map<string, number>()
@@ -397,6 +454,11 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
   for (const e of roster.entries) {
     for (const id of e.magicItemIds) {
       itemUsers.set(id, (itemUsers.get(id) ?? 0) + 1)
+    }
+    // A unit's magic standard is a magic item too — it shares the army-wide
+    // uniqueness pool with characters' banners (and other units' standards).
+    if (e.magicStandardId) {
+      itemUsers.set(e.magicStandardId, (itemUsers.get(e.magicStandardId) ?? 0) + 1)
     }
   }
   for (const [id, count] of itemUsers) {

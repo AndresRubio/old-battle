@@ -70,6 +70,29 @@ describe('exportRosterText', () => {
       expect(detail).toContain("Increases the character's Strength characteristic by +1.")
     })
 
+    it('lists a unit magic standard in both the summary and the detail block', () => {
+      const withStandard: Roster = {
+        ...roster,
+        entries: [
+          ...roster.entries,
+          {
+            id: '3',
+            unitId: 'emp-white-wolf-knights',
+            size: 5,
+            optionIds: ['standard'],
+            magicItemIds: [],
+            magicStandardId: 'mi-banner-of-war',
+          },
+        ],
+      }
+      const text = exportRosterText(withStandard, empire)
+      const detail = text.slice(text.indexOf('UNIT DETAILS'))
+      const summary = text.slice(0, text.indexOf('UNIT DETAILS'))
+      expect(summary).toContain('Banner of War')
+      expect(detail).toContain('Banner of War')
+      expect(detail).toContain('25 pts')
+    })
+
     it('localizes the detail section in Spanish', () => {
       const text = exportRosterText(roster, empire, 'es')
       expect(text).toContain('DETALLE DE UNIDADES')

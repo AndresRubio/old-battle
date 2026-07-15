@@ -50,6 +50,22 @@ publisher's verbatim prose — see the cited pages for the original wording. No 
 - Magic items limited by **count per character rank** (not points): Champion/L1 wizard = 1,
   Hero/L2 = 2, Lord/L3 = 3, Wizard Lord (L4) = 4, BSB = 1; max one per restricted category.
 - Optional tournament preset: ≤ 2000 pts, wizards ≤ level 3, magic items ≤ 50 pts.
+- **Unit magic standards:** a regiment allowed a magic standard (per its army-list entry — FAQ v2.20
+  §23.2) may take one, carried by its standard bearer, up to the points cap the army book sets for
+  that unit. The engine enforces the cap, the standard-bearer prerequisite, banner-only selection and
+  army-wide uniqueness. See "Magic-standard caps" below on data availability.
+
+### Magic-standard caps (per-unit — not freely available)
+The 5th-edition **per-unit** magic-standard point limits live only in the physical *Warhammer Armies*
+books. They are **not** transcribed by any accessible high-trust source: 5th.whfb.app hosts the core
+rules and per-army FAQ pages but no army lists, and archive.org's book scans are lending-restricted.
+(The familiar "may carry a magic standard worth up to 50 pts" phrasing is **8th-edition** wording and
+is *not* a valid 5th-ed value.) Accordingly `MAGIC_STANDARD_MAX` in `src/data/armies/index.ts` starts
+**empty** — no caps are invented. A regiment the army list allows still offers the magic-standard
+picker, but until its cap is confirmed the Muster Check raises a `magic-standard-limit-undefined`
+warning ("límite por confirmar"). Drop verified per-unit caps into `MAGIC_STANDARD_MAX` as they are
+sourced from the books. (Halflings and Norse had no official 5th-ed army book, so any cap for them is
+a design choice, not a citable rule.)
 
 ## Army data (representative — see note)
 **Important honesty note:** exact 5th-edition army-book points values are **not freely available**

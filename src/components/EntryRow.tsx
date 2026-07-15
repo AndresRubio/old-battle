@@ -48,6 +48,7 @@ interface Props {
   onSelectWizardLevel: (optionId: string | null) => void
   onSelectLore: (loreId: string | null) => void
   onToggleMagicItem: (itemId: string) => void
+  onSelectMagicStandard: (itemId: string | null) => void
   onSetGeneral: () => void
   onDuplicate: () => void
   onMoveUp: () => void
@@ -66,6 +67,7 @@ export function EntryRow({
   onSelectWizardLevel,
   onSelectLore,
   onToggleMagicItem,
+  onSelectMagicStandard,
   onSetGeneral,
   onDuplicate,
   onMoveUp,
@@ -114,7 +116,6 @@ export function EntryRow({
   const allowance = unit.isCharacter ? magicItemAllowance(entry, unit) : 0
   const mounts = unit.mounts ?? []
   const selectedMount = mounts.find((m) => m.id === entry.mountId)
-  const hasOptions = (unit.options?.length ?? 0) > 0 || mounts.length > 0 || unit.isCharacter || loreIds.length > 0
   // Cavalry: pair the rider's own statLine with a mount profile shown as a
   // second row directly beneath it (top = rider, bottom = mount). The mount is
   // a regiment's fixed steed (`unit.mount`) or a character's chosen mount.
@@ -128,6 +129,17 @@ export function EntryRow({
           specialRules: selectedMount.specialRules,
         }
       : undefined)
+  // Unit magic standard: a regiment the army list allows may take one banner,
+  // carried by its standard bearer, up to the book's point cap (undefined = TBD).
+  const standardMax = unit.magicStandard?.max
+  const standardOptions = unit.magicStandard
+    ? army.magicItems.filter(
+        (i) => i.category === 'banner' && !i.special && (standardMax === undefined || i.points <= standardMax),
+      )
+    : []
+  const hasStandardBearer = entry.optionIds.includes('standard')
+  const hasOptions =
+    (unit.options?.length ?? 0) > 0 || mounts.length > 0 || unit.isCharacter || loreIds.length > 0 || !!unit.magicStandard
 
   return (
     <li className={`entry ${entry.isGeneral ? 'entry-general' : ''}`}>
@@ -369,6 +381,71 @@ export function EntryRow({
                   </label>
                 ))}
               </div>
+            </div>
+          )}
+
+          {unit.magicStandard && (
+            <div className="opt-group">
+              <span className="opt-label">
+                {t('magicStandard', lang)}{' '}
+                <span className="muted small">
+                  {standardMax !== undefined
+                    ? `(≤ ${standardMax} ${t('pts', lang)})`
+                    : `(${t('magicStandardLimitTbd', lang)})`}
+                </span>
+              </span>
+              {!hasStandardBearer ? (
+                <p className="muted small">{t('magicStandardNeedsBearer', lang)}</p>
+              ) : (
+                <div className="magic-items">
+                  <label className="mi-item">
+                    <input
+                      type="radio"
+                      name={`${entry.id}-std`}
+                      checked={!entry.magicStandardId}
+                      onChange={() => onSelectMagicStandard(null)}
+                    />
+                    <span className="mi-body">
+                      <span className="mi-head">
+                        <span className="mi-name-wrap">
+                          <span className="mi-name">{t('magicStandardNone', lang)}</span>
+                        </span>
+                      </span>
+                    </span>
+                  </label>
+                  {standardOptions.map((item) => (
+                    <label key={item.id} className="mi-item">
+                      <input
+                        type="radio"
+                        name={`${entry.id}-std`}
+                        checked={entry.magicStandardId === item.id}
+                        onChange={() => onSelectMagicStandard(item.id)}
+                      />
+                      <span className="mi-body">
+                        <span className="mi-head">
+                          <span className="mi-name-wrap">
+                            <span className="mi-name">{magicItemName(item, lang)}</span>
+                            <button
+                              type="button"
+                              className="mi-info"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                setActiveItem(item)
+                              }}
+                              title={lang === 'es' ? 'Ver texto del objeto' : 'View item text'}
+                              aria-label={lang === 'es' ? 'Ver texto del objeto' : 'View item text'}
+                            >
+                              ⓘ
+                            </button>
+                          </span>
+                          <span className="mi-pts">{item.points} {t('pts', lang)}</span>
+                        </span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

@@ -14,6 +14,7 @@ const army: Army = {
     { id: 'armour', name: 'Magic Armour', category: 'armour', points: 25 },
     { id: 'talisman', name: 'Lucky Charm', category: 'talisman', points: 15 },
     { id: 'banner', name: 'War Banner', category: 'banner', points: 25 },
+    { id: 'bigbanner', name: 'Great Banner', category: 'banner', points: 75 },
   ],
   units: [
     {
@@ -42,6 +43,24 @@ const army: Army = {
       minSize: 10,
       maxSize: 30,
       options: [{ id: 'shield', name: 'Shield', pointsPerModel: 1 }],
+    },
+    {
+      id: 'guard',
+      name: 'Guard',
+      role: 'regiment',
+      pointsPerModel: 8,
+      minSize: 5,
+      options: [{ id: 'standard', name: 'Standard Bearer', pointsPerModel: 10, flat: true }],
+      magicStandard: { max: 50 }, // allowed, verified cap
+    },
+    {
+      id: 'militia',
+      name: 'Militia',
+      role: 'regiment',
+      pointsPerModel: 4,
+      minSize: 5,
+      options: [{ id: 'standard', name: 'Standard Bearer', pointsPerModel: 10, flat: true }],
+      magicStandard: {}, // allowed, cap not yet verified
     },
     {
       id: 'cannon',
@@ -788,5 +807,70 @@ describe('dependency/ratio batch (data)', () => {
       e('1', 'dw-slayers', 10), e('2', 'dw-slayers', 10),
       e('3', 'dw-warriors', 10), e('4', 'dw-thunderers', 10),
     ]))).toHaveLength(0)
+  })
+})
+
+describe('validateRoster — unit magic standards', () => {
+  it('warns when a unit magic standard exceeds the army-book point limit', () => {
+    // Guard cap is 50; Great Banner is 75.
+    const r = roster(2000, [
+      entry({ unitId: 'lord', isGeneral: true }),
+      entry({ unitId: 'guard', size: 10, optionIds: ['standard'], magicStandardId: 'bigbanner' }),
+    ])
+    expect(rules(validateRoster(r, army))).toContain('magic-standard-over-limit')
+  })
+
+  it('accepts a magic standard within the limit on a unit with a standard bearer', () => {
+    const r = roster(2000, [
+      entry({ unitId: 'lord', isGeneral: true }),
+      entry({ unitId: 'guard', size: 10, optionIds: ['standard'], magicStandardId: 'banner' }),
+    ])
+    const rs = rules(validateRoster(r, army))
+    expect(rs).not.toContain('magic-standard-over-limit')
+    expect(rs).not.toContain('magic-standard-no-bearer')
+    expect(rs).not.toContain('magic-standard-not-allowed')
+    expect(rs).not.toContain('magic-standard-invalid-item')
+    expect(rs).not.toContain('magic-standard-limit-undefined')
+  })
+
+  it('warns when a magic standard is chosen without a standard bearer', () => {
+    const r = roster(2000, [
+      entry({ unitId: 'lord', isGeneral: true }),
+      entry({ unitId: 'guard', size: 10, optionIds: [], magicStandardId: 'banner' }),
+    ])
+    expect(rules(validateRoster(r, army))).toContain('magic-standard-no-bearer')
+  })
+
+  it('warns when the unit is not allowed a magic standard at all', () => {
+    const r = roster(2000, [
+      entry({ unitId: 'lord', isGeneral: true }),
+      entry({ unitId: 'warriors', size: 10, magicStandardId: 'banner' }),
+    ])
+    expect(rules(validateRoster(r, army))).toContain('magic-standard-not-allowed')
+  })
+
+  it('warns (data completeness) when the unit is allowed but its cap is unverified', () => {
+    const r = roster(2000, [
+      entry({ unitId: 'lord', isGeneral: true }),
+      entry({ unitId: 'militia', size: 10, optionIds: ['standard'], magicStandardId: 'banner' }),
+    ])
+    expect(rules(validateRoster(r, army))).toContain('magic-standard-limit-undefined')
+  })
+
+  it('warns when the chosen magic standard is not a banner item', () => {
+    const r = roster(2000, [
+      entry({ unitId: 'lord', isGeneral: true }),
+      entry({ unitId: 'guard', size: 10, optionIds: ['standard'], magicStandardId: 'sword' }),
+    ])
+    expect(rules(validateRoster(r, army))).toContain('magic-standard-invalid-item')
+  })
+
+  it('flags a duplicate banner shared by a unit standard and a character', () => {
+    const r = roster(2000, [
+      entry({ unitId: 'lord', isGeneral: true, isBSB: true, magicItemIds: ['banner'] }),
+      entry({ unitId: 'guard', size: 10, optionIds: ['standard'], magicStandardId: 'banner' }),
+    ])
+    const dup = validateRoster(r, army).find((v) => v.rule === 'magic-items-unique')
+    expect(dup?.severity).toBe('error')
   })
 })

@@ -132,6 +132,15 @@ export interface UnitProfile {
   max?: number
   /** When true, the regiment may NOT take a command group (e.g. Harpies). */
   noCommand?: boolean
+  /**
+   * Present when this regiment's standard bearer may carry a **magic standard**
+   * (5th ed: only units the army list allows may take one — FAQ v2.20 §23.2).
+   * `max` is the points cap the army book sets for this unit's standard; it is
+   * `undefined` when that value is not yet verified in our data, in which case
+   * the Muster Check raises a data-completeness warning instead of a cap check.
+   * Normally derived from `specialRules` by `withMagicStandards` in armies/index.
+   */
+  magicStandard?: { max?: number }
   specialRules?: string[]
   options?: EquipmentOption[]
   /** Rideable mounts the character may take (mutually exclusive — one at most). */
@@ -306,6 +315,12 @@ export interface RosterEntry {
   magicItemIds: string[]
   /** The chosen mount id (from the unit's `mounts`), if any. */
   mountId?: string
+  /**
+   * The unit's chosen **magic standard** — a `banner` magic item id. At most one
+   * per unit, carried by the regiment's standard bearer. Distinct from a
+   * character's `magicItemIds` (which stays character-only). See UnitProfile.magicStandard.
+   */
+  magicStandardId?: string
   /** The chosen lore of magic (id into MAGIC_LORES), if the unit is a wizard. */
   loreId?: string
   isGeneral?: boolean

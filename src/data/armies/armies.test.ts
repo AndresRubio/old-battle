@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { ARMIES, getArmy } from './index'
+import { ARMIES, getArmy, MAGIC_STANDARD_MAX } from './index'
 import { validateRoster } from '../../rules/validate'
 import { entryPoints } from '../../rules/points'
 import type { Roster } from '../types'
@@ -95,6 +95,39 @@ describe('army data integrity', () => {
       })
     })
   }
+})
+
+describe('unit magic standards', () => {
+  const mentionsStandard = (u: { specialRules?: string[] }) =>
+    u.specialRules?.some((r) => /magic standard/i.test(r)) ?? false
+
+  for (const army of ARMIES) {
+    it(`${army.id}: every regiment whose army list allows a magic standard is flagged`, () => {
+      for (const u of army.units) {
+        if (u.role === 'regiment' && !u.noCommand && mentionsStandard(u)) {
+          expect(u.magicStandard, `${u.id} should be allowed a magic standard`).toBeDefined()
+        }
+      }
+    })
+
+    it(`${army.id}: a magic-standard cap only appears on an allowed regiment`, () => {
+      for (const u of army.units) {
+        if (u.magicStandard) {
+          expect(u.role, `${u.id} has magicStandard but is not a regiment`).toBe('regiment')
+        }
+      }
+    })
+  }
+
+  it('MAGIC_STANDARD_MAX keys all reference a real, allowed regiment', () => {
+    for (const army of ARMIES) {
+      for (const [unitId, max] of Object.entries(MAGIC_STANDARD_MAX)) {
+        const u = army.units.find((x) => x.id === unitId)
+        if (!u) continue // key may belong to another army
+        expect(u.magicStandard?.max, `${unitId} cap should be applied`).toBe(max)
+      }
+    }
+  })
 })
 
 describe('magic-item catalog completeness', () => {
