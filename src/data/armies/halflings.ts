@@ -485,7 +485,7 @@ const units: UnitProfile[] = [
     statLine: { M: 8, WS: 2, BS: 4, S: 2, T: 2, W: 1, I: 5, A: 1, Ld: 8 },
     minSize: 5,
     options: [BOWS_1, SHIELD_HALF],
-    profiles: [{ name: 'War Sheep', nameEs: 'Oveja de Guerra', statLine: { M: 8 }, specialRules: ['Skittish — riders take Break tests at -1 Ld'] }],
+    mount: { name: 'War Sheep', nameEs: 'Oveja de Guerra', statLine: { M: 8 }, specialRules: ['Skittish — riders take Break tests at -1 Ld'] },
     specialRules: [
       'Any number of units; hand weapon, spear and light armour; save 5+',
       'Skittish — the riders suffer -1 Leadership when taking Break Tests',
@@ -501,7 +501,7 @@ const units: UnitProfile[] = [
     minSize: 5,
     max: 1,
     options: [SHIELD_HALF],
-    profiles: [{ name: 'Battle Ram', nameEs: 'Carnero de Batalla', statLine: { ...BATTLE_RAM_STATS }, specialRules: ['Woolly Coat — as barding, +1 save'] }],
+    mount: { name: 'Battle Ram', nameEs: 'Carnero de Batalla', statLine: { ...BATTLE_RAM_STATS }, specialRules: ['Woolly Coat — as barding, +1 save'] },
     specialRules: [
       '0-1 — the Halfling heavy cavalry; hand weapons, spears and light armour; save 4+',
       'May carry a Magic Standard',
@@ -516,7 +516,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 2, BS: 4, S: 2, T: 2, W: 1, I: 5, A: 1, Ld: 8 },
     minSize: 5,
     options: [SHIELD_HALF, BOWS_1, { id: 'spears', name: 'Spears', pointsPerModel: 1 }],
-    profiles: [{ name: 'Goat', nameEs: 'Cabra', statLine: { ...GOAT_STATS }, specialRules: ['Sure Hoofed'] }],
+    mount: { name: 'Goat', nameEs: 'Cabra', statLine: { ...GOAT_STATS }, specialRules: ['Sure Hoofed'] },
     specialRules: [
       'Any number of units; light armour and sword; save 5+',
       'Sure Hoofed — no penalties for moving over difficult terrain; may Skirmish',
@@ -532,7 +532,7 @@ const units: UnitProfile[] = [
     minSize: 5,
     max: 1,
     options: [SPEARS_HALF, SHIELD_HALF],
-    profiles: [{ name: 'Giant Swan', nameEs: 'Cisne Gigante', statLine: { M: 2, WS: 4, BS: 0, S: 3, T: 3, W: 1, I: 5, A: 1, Ld: 6 }, specialRules: ['Flies'] }],
+    mount: { name: 'Giant Swan', nameEs: 'Cisne Gigante', statLine: { M: 2, WS: 4, BS: 0, S: 3, T: 3, W: 1, I: 5, A: 1, Ld: 6 }, specialRules: ['Flies'] },
     specialRules: [
       '0-1 — bows and hand weapons, padded jackets (act as light armour); save 6+',
       "Fly in a 'V' formation — the best of the Moot's bowmen can shoot on the wing",
@@ -553,7 +553,7 @@ const units: UnitProfile[] = [
       SPEARS_HALF,
       SHIELD_HALF,
     ],
-    profiles: [{ name: 'Great Eagle', nameEs: 'Gran Águila', statLine: { M: 2, WS: 7, BS: 0, S: 5, T: 4, W: 3, I: 5, A: 2, Ld: 8 }, specialRules: ['Flies'] }],
+    mount: { name: 'Great Eagle', nameEs: 'Gran Águila', statLine: { M: 2, WS: 7, BS: 0, S: 5, T: 4, W: 3, I: 5, A: 2, Ld: 8 }, specialRules: ['Flies'] },
     specialRules: [
       '0-1 — when the Halflings are in trouble, in flying come the Lords of the Air',
       'Two Halflings may ride and fight on each Eagle; hand weapons, no save',

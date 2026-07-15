@@ -269,6 +269,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 45,
     statLine: human({ WS: 5, BS: 3, S: 4, I: 4, Ld: 9 }),
+    mount: WARHORSE_PROFILE,
     minSize: 5,
     max: 1,
     specialRules: [
@@ -287,6 +288,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 41,
     statLine: human({ WS: 4, BS: 3, S: 4, I: 4, Ld: 8 }),
+    mount: WARHORSE_PROFILE,
     minSize: 5,
     max: 1,
     specialRules: [
@@ -305,6 +307,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 39,
     statLine: human({ WS: 4, S: 4 }),
+    mount: WARHORSE_PROFILE,
     minSize: 5,
     specialRules: [
       'Heavy armour, shield, sword and lance (2+ save)',
@@ -321,6 +324,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 32,
     statLine: human(),
+    mount: WARHORSE_PROFILE,
     minSize: 5,
     specialRules: [
       'Heavy armour, shield, sword and lance (2+ save)',
@@ -339,6 +343,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 10,
     statLine: human(),
+    mount: WARHORSE_PROFILE,
     minSize: 5,
     options: [MS_SPEAR, MS_BOW, MS_SHIELD, MS_LIGHT_ARMOUR],
     specialRules: ['Ride horses (6+ save)', 'Swords', 'Light cavalry — may skirmish'],

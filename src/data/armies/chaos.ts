@@ -649,6 +649,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 66,
     statLine: statline({ M: 8, A: 2 }),
+    mount: { name: 'Barded Chaos Steed', nameEs: 'Corcel del Caos con Barda', statLine: CHAOS_STEED_STATS },
     minSize: 5,
     options: [CHAOS_ARMOUR_14],
     specialRules: [
@@ -678,6 +679,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 31,
     statLine: statline({ M: 8, WS: 4, BS: 4, S: 4, T: 4, I: 4, A: 2, Ld: 7 }),
+    mount: { name: 'Warhorse', nameEs: 'Caballo de Guerra', statLine: { M: 8, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 } },
     minSize: 5,
     options: [FLAIL_2, SHIELD_2],
     specialRules: ['Light armour & hand weapon (5+ save)', 'War Horse mount (Caballo de Guerra, M8)', 'Fast cavalry'],
@@ -981,6 +983,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 90,
     statLine: statline({ M: 7, WS: 5, BS: 5, S: 4, T: 3, W: 1, I: 6, A: 2, Ld: 10 }),
+    mount: { name: 'Juggernaut of Khorne', nameEs: 'Devastador de Khorne', statLine: JUGGERNAUT_STATS, specialRules: ['Impact hits'] },
     minSize: 1,
     specialRules: [
       'Daemon of Khorne',

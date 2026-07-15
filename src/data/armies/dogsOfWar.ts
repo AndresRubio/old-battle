@@ -326,6 +326,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 35,
     statLine: { M: 4, WS: 4, BS: 3, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 7 },
+    mount: FIXED_BARDED_WARHORSE_PROFILE,
     minSize: 5,
     max: 1,
     noCommand: true,

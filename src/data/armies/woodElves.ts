@@ -483,6 +483,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 27,
     statLine: elf({ I: 7 }),
+    mount: { name: 'Elven Steed', nameEs: 'Corcel Élfico', statLine: ELVEN_STEED_MOUNT.statLine! },
     minSize: 5,
     options: [LIGHT_ARMOUR_4, SPEAR_2, CAV_LANCE_4, LONGBOW_2, BARDING_8],
     specialRules: [
@@ -500,6 +501,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 30,
     statLine: elf({ WS: 5, I: 7 }),
+    mount: { name: 'War Hawk', nameEs: 'Halcón de Guerra', statLine: WAR_HAWK_MOUNT.statLine!, specialRules: ['Flying'] },
     minSize: 5,
     options: [SHIELD_2, LIGHT_ARMOUR_4, SPEAR_2, LONGBOW_6],
     specialRules: ['Hand weapon; War Hawk mount (6+ save), Flying', 'Skirmishers (always skirmish)'],

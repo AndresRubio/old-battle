@@ -302,6 +302,7 @@ const units: UnitProfile[] = [
     // Profile p.76: Grt Crested Skink M6 WS2 BS3 S4 T2 W1 I4 A1 Ld6;
     //               Cold One M8 WS3 BS0 S4 T4 W1 I1 A2 Ld3. Combined save 3+.
     statLine: { M: 8, WS: 2, BS: 3, S: 4, T: 2, W: 1, I: 4, A: 1, Ld: 6 },
+    mount: { name: 'Cold One', nameEs: 'Saurio Frío', statLine: COLD_ONE_MOUNT.statLine!, specialRules: ['Causes fear', 'Stupidity'] },
     minSize: 5,
     specialRules: [
       'Great Crested Skinks riding Cold Ones',
@@ -343,6 +344,7 @@ const units: UnitProfile[] = [
     //               Terradon M2 WS3 BS0 S4 T4 W1 I2 A1 Ld3.
     // Each Terradon model has two Skink riders; rider profile shown.
     statLine: { M: 6, WS: 2, BS: 3, S: 3, T: 2, W: 1, I: 4, A: 1, Ld: 6 },
+    mount: { name: 'Terradon', nameEs: 'Terradón', statLine: TERRADON_MOUNT.statLine!, specialRules: ['Flying'] },
     minSize: 1,
     options: [TERRADON_SPEAR_1, TERRADON_JAVELINS_1, TERRADON_SHIELD_1, TERRADON_POISON_HALF],
     specialRules: [

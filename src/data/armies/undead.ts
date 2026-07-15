@@ -359,6 +359,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 18,
     statLine: statLine({ M: 4, WS: 2, BS: 2, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 }),
+    mount: { name: 'Skeletal Steed', nameEs: 'Corcel Esquelético', statLine: SKELETAL_STEED_MOUNT.statLine! },
     minSize: 5,
     options: [LIGHT_ARMOUR_4, SHIELD_2, CAV_LANCE_4, LANCE_2, BOW_4],
     specialRules: [

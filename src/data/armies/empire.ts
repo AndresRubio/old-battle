@@ -97,8 +97,9 @@ const FIGHTER_MOUNTS: MountOption[] = [
 /** Wizards may not wear barding; Warhorse + monsters only (same list as fighters). */
 const WIZARD_MOUNTS: MountOption[] = FIGHTER_MOUNTS
 
-// --- Fixed (non-selectable) mounts for special characters who always ride one.
-// Cost is already baked into the model's points, so these are display-only. ---
+// --- Fixed (non-selectable) mount profiles: the rider's second stat row on
+// cavalry regiments, and special characters who always ride one. Cost is baked
+// into the model's points, so these are display-only. ---
 const WARHORSE_PROFILE: ProfileBlock = {
   name: 'Warhorse', nameEs: 'Caballo de Guerra', statLine: WARHORSE_STATS,
 }
@@ -440,6 +441,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 37,
     statLine: human({ WS: 4, M: 8, I: 4, Ld: 7 }),
+    mount: BARDED_WARHORSE_PROFILE,
     minSize: 5,
     max: 1,
     specialRules: [
@@ -456,6 +458,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 39,
     statLine: human({ WS: 4, M: 8, I: 4, Ld: 7 }),
+    mount: BARDED_WARHORSE_PROFILE,
     minSize: 5,
     max: 1,
     specialRules: [
@@ -472,6 +475,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 39,
     statLine: human({ WS: 4, M: 8, I: 4, Ld: 7 }),
+    mount: BARDED_WARHORSE_PROFILE,
     minSize: 5,
     max: 1,
     specialRules: [
@@ -488,6 +492,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 39,
     statLine: human({ WS: 4, M: 8, I: 4, Ld: 7 }),
+    mount: BARDED_WARHORSE_PROFILE,
     minSize: 5,
     max: 1,
     specialRules: [
@@ -506,6 +511,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 22,
     statLine: human({ M: 8, Ld: 7 }),
+    mount: WARHORSE_PROFILE,
     minSize: 5,
     specialRules: [
       'Light armour & Warhorse (5+ save)',
@@ -519,6 +525,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 28,
     statLine: human({ M: 8, Ld: 7 }),
+    mount: BARDED_WARHORSE_PROFILE,
     minSize: 5,
     max: 1,
     specialRules: [
@@ -631,6 +638,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 25,
     statLine: human({ WS: 4, M: 8, Ld: 7 }),
+    mount: WARHORSE_PROFILE,
     minSize: 5,
     specialRules: [
       'Light armour, shield & Warhorse (no armour save)',
@@ -645,6 +653,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 16,
     statLine: human({ M: 8, Ld: 7 }),
+    mount: WARHORSE_PROFILE,
     minSize: 5,
     specialRules: [
       'Shield, bow & hand weapon (5+ save on horse)',
