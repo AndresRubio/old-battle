@@ -16,24 +16,35 @@ const mk = (over: Partial<RosterEntry> & { unitId: string }): RosterEntry => ({
 
 describe('entryPoints — flat vs per-model options', () => {
   it('multiplies per-model options by size but charges flat options once', () => {
-    // Halberdiers base 7/model. Shield is per-model (+1), command is flat.
-    const entry = mk({ unitId: 'emp-halberdiers', size: 10, optionIds: ['shield', 'champion', 'standard'] })
-    // 10*(7+1)=80  +champion 10 +standard 10 = 100
-    expect(entryPoints(entry, empire)).toBe(100)
+    // Halberdiers base 7/model. Shield is per-model (+1); the standard and
+    // musician are flat and each cost double a rank-and-file model (2×7=14).
+    const entry = mk({ unitId: 'emp-halberdiers', size: 10, optionIds: ['shield', 'standard', 'musician'] })
+    // 10*(7+1)=80  +standard 14 +musician 14 = 108
+    expect(entryPoints(entry, empire)).toBe(108)
   })
 
-  it('command group is auto-added to regiments by the normalizer', () => {
+  it('prices the standard and musician at double the unit base cost (4th/5th ed)', () => {
+    // Halberdiers base 7/model → command models cost 2×7 = 14 each.
+    const halberdiers = empire.units.find((u) => u.id === 'emp-halberdiers')!
+    const cost = (id: string) => (halberdiers.options ?? []).find((o) => o.id === id)?.pointsPerModel
+    expect(cost('standard')).toBe(14)
+    expect(cost('musician')).toBe(14)
+  })
+
+  it('command group (standard + musician, no champion) is auto-added to regiments', () => {
     const halberdiers = empire.units.find((u) => u.id === 'emp-halberdiers')!
     const optionIds = (halberdiers.options ?? []).map((o) => o.id)
-    expect(optionIds).toEqual(expect.arrayContaining(['champion', 'standard', 'musician']))
+    expect(optionIds).toEqual(expect.arrayContaining(['standard', 'musician']))
+    // 4th/5th ed has no unit-champion option — only paladin/hero/commander characters.
+    expect(optionIds).not.toContain('champion')
   })
 
   it('does not add a command group to characters or war machines', () => {
     const general = empire.units.find((u) => u.id === 'emp-general')!
     const cannon = empire.units.find((u) => u.id === 'emp-great-cannon')!
     const ids = (u: typeof general) => (u.options ?? []).map((o) => o.id)
-    expect(ids(general)).not.toContain('champion')
-    expect(ids(cannon)).not.toContain('champion')
+    expect(ids(general)).not.toContain('standard')
+    expect(ids(cannon)).not.toContain('musician')
   })
 })
 

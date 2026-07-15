@@ -20,8 +20,19 @@ export const SHIELD: EquipmentOption = { id: 'shield', name: 'Shields', pointsPe
 export const LIGHT_ARMOUR: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 1 }
 export const SPEARS: EquipmentOption = { id: 'spears', name: 'Spears', pointsPerModel: 1 }
 
-/** Command group — flat per-unit upgrades available to most regiments. */
-export const CHAMPION: EquipmentOption = { id: 'champion', name: 'Champion', pointsPerModel: 10, flat: true }
-export const STANDARD_BEARER: EquipmentOption = { id: 'standard', name: 'Standard Bearer', pointsPerModel: 10, flat: true }
-export const MUSICIAN: EquipmentOption = { id: 'musician', name: 'Musician', pointsPerModel: 5, flat: true }
-export const COMMAND: EquipmentOption[] = [CHAMPION, STANDARD_BEARER, MUSICIAN]
+/**
+ * Command group — flat per-unit upgrades available to most regiments.
+ *
+ * In Warhammer 4th/5th edition a unit's standard bearer and musician each cost
+ * DOUBLE a rank-and-file model (i.e. as two of that unit's miniatures), so the
+ * cost is derived per unit from its base points rather than a fixed charge.
+ * There is NO unit-champion option — champions are separate paladin / hero /
+ * commander character entries bought from the Characters allowance.
+ */
+export function commandOptions(basePointsPerModel: number): EquipmentOption[] {
+  const cost = basePointsPerModel * 2
+  return [
+    { id: 'standard', name: 'Standard Bearer', pointsPerModel: cost, flat: true },
+    { id: 'musician', name: 'Musician', pointsPerModel: cost, flat: true },
+  ]
+}

@@ -44,7 +44,9 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
     Bretonnia, Wood/Dark Elves, Skaven, Undead, Vampire Counts, Chaos, Chaos Dwarfs, Lizardmen,
     Dogs of War, Halflings, Norse). Each exports a single `Army` constant.
   - `armies/index.ts` — **assembly point**. `ARMIES` runs every army through `withCommandGroups`
-    (auto-adds champion/standard/musician to multi-model regiments — do NOT hand-add these per unit)
+    (auto-adds a standard bearer + musician — each priced at 2× the unit's base per-model cost — to
+    multi-model regiments; no unit-champion option exists, champions are separate character entries;
+    do NOT hand-add command options per unit)
     and `withMagicItems` (each army's pool = `COMMON_MAGIC_ITEMS` + `ARMY_MAGIC_ITEMS[army.id]`).
     Use `getArmy(id)` / `ARMY_OPTIONS`. **New armies must be imported and added to the `ARMIES`
     array here**, or they won't exist to the app.
