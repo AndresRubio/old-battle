@@ -17,7 +17,7 @@ export default function App() {
       <header className="app-header">
         <button className="brand" onClick={() => setView({ name: 'home' })}>
           <span className="brand-mark">⚔</span>
-          <span>
+          <span className="brand-text">
             <span className="brand-title">{t('appTitle', lang)}</span>
             <span className="brand-sub">{t('appSub', lang)}</span>
           </span>
