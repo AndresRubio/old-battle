@@ -137,6 +137,13 @@ export interface UnitProfile {
   /** Rideable mounts the character may take (mutually exclusive — one at most). */
   mounts?: MountOption[]
   /**
+   * Cavalry: the steed every model in this regiment rides. When set, the unit's
+   * own `statLine` is the RIDER and this is the mount's profile — the UI renders
+   * them as two labelled rows (rider on top, mount beneath). Display-only: the
+   * mount's cost is already baked into `pointsPerModel`.
+   */
+  mount?: ProfileBlock
+  /**
    * Lore(s) of magic this wizard may choose from (ids into MAGIC_LORES). Multi
    * element = the army book offers a choice ("Battle or High Magic"). Absent for
    * non-casters. Informational only — does not affect points or validation.

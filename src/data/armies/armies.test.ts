@@ -271,6 +271,40 @@ describe('mounts & profiles', () => {
     expect(names.some((n) => /Chariot/i.test(n))).toBe(true)
     expect(names.some((n) => /Steed/i.test(n))).toBe(true)
   })
+
+  // Every model in these regiments is a rider on a mount, so each must expose a
+  // `mount` profile (rendered as the rider's second stat row: rider on top,
+  // mount beneath). Keep this list in step with the army data.
+  const CAVALRY_REGIMENTS = [
+    'br-grail-knights', 'br-questing-knights', 'br-knights-of-the-realm', 'br-knights-errant', 'br-mounted-squires',
+    'ch-knights', 'ch-marauder-horsemen', 'ch-bloodletters-juggernaut',
+    'cd-wolf-riders',
+    'de-cold-one-knights', 'de-dark-riders',
+    'dow-voland',
+    'emp-white-wolf-knights', 'emp-panther-knights', 'emp-blazing-sun-knights', 'emp-reiksgard-knights',
+    'emp-pistoliers', 'emp-engineer-scouts', 'emp-kislev-winged-lancers', 'emp-kislev-horse-archers',
+    'hf-war-sheep-riders', 'hf-battle-ram-riders', 'hf-goat-riders', 'hf-swan-riders', 'hf-eagle-riders',
+    'he-dragon-princes', 'he-silver-helms', 'he-ellyrian-reavers',
+    'lz-cold-one-riders', 'lz-terradons',
+    'og-savage-boar-boyz', 'og-orc-boar-boyz', 'og-goblin-wolf-riders', 'og-forest-goblin-spider-riders',
+    'ud-skeletal-cavalry',
+    'vc-wight-cavalry',
+    'we-wild-rider-knights', 'we-warhawk-riders',
+  ]
+
+  it('every cavalry regiment carries a rider + mount two-row profile', () => {
+    const byId = new Map(ARMIES.flatMap((a) => a.units.map((u) => [u.id, u] as const)))
+    for (const id of CAVALRY_REGIMENTS) {
+      const unit = byId.get(id)
+      expect(unit, `cavalry regiment '${id}' no longer exists`).toBeDefined()
+      // Rider row: the unit's own statLine.
+      expect(unit!.statLine, `${id} is missing the rider statLine`).toBeDefined()
+      // Mount row: a named profile with at least a Movement value.
+      expect(unit!.mount, `${id} is missing its mount profile`).toBeDefined()
+      expect(unit!.mount!.name.length, `${id} mount has no name`).toBeGreaterThan(0)
+      expect(unit!.mount!.statLine.M, `${id} mount has no Movement`).toBeGreaterThan(0)
+    }
+  })
 })
 
 describe('lores of magic wiring', () => {

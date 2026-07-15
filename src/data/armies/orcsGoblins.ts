@@ -701,6 +701,7 @@ const units: UnitProfile[] = [
     // PDF p.82: rider M10 HA3 HP3 F3 R4 H1 I2 A1 L7; Boar M18 HA4 HP0 F3 R4 H1 I3 A1 L3
     // Regiment cavalry: use mount M (18cm = 7")
     statLine: { M: 7, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
+    mount: WAR_BOAR_PROFILE,
     minSize: 5,
     options: [SPEARS_1, BOW_2],
     specialRules: ['Animosity', 'Frenzy (Savage Orcs)', 'War Boar mount (save 3+)', 'Boar charge (S+2)', 'Obstinate boar (-1 Ld to rider)', '6+ ward save (war paint)'],
@@ -713,6 +714,7 @@ const units: UnitProfile[] = [
     pointsPerModel: 27,
     // PDF p.82: rider M10 HA4 HP3 F3 R4 H1 I2 A1 L7; Boar M18 — cavalry M=7"
     statLine: { M: 7, WS: 4, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
+    mount: WAR_BOAR_PROFILE,
     minSize: 5,
     options: [SPEARS_1],
     specialRules: ['Animosity', 'War Boar mount (save 3+)', 'Boar charge (S+2)', 'Obstinate boar (-1 Ld to rider)', 'Light armour & shield'],
@@ -725,6 +727,7 @@ const units: UnitProfile[] = [
     pointsPerModel: 9,
     // PDF p.82: rider M10 HA2 HP3 F3 R3 H1 I2 A1 L5; Wolf M22 — cavalry M=9"
     statLine: { M: 9, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
+    mount: { name: 'Giant Wolf', nameEs: 'Lobo Gigante', statLine: GIANT_WOLF_STATS },
     minSize: 5,
     options: [SPEARS_1, SHORTBOW_1, LIGHT_ARMOUR_2, SHIELD_1],
     specialRules: ['Animosity', 'Fear Elves', 'Giant Wolf mount (save 6+)', 'Fast cavalry'],
@@ -737,6 +740,7 @@ const units: UnitProfile[] = [
     pointsPerModel: 9,
     // PDF p.83: rider M10 HA2 HP3 F3 R3 H1 I2 A1 L5; Spider M18 — cavalry M=7"
     statLine: { M: 7, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
+    mount: { name: 'Giant Spider', nameEs: 'Araña Gigante', statLine: GIANT_SPIDER_STATS },
     minSize: 5,
     options: [SHIELD_1, SPEARS_1, SHORTBOW_1],
     specialRules: ['Animosity', 'Fear Elves', 'Giant Spider mount (save 6+)', 'Move through woods/terrain freely'],

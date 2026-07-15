@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine } from '../data/types'
+import type { Army, EquipmentOption, MagicItem, ProfileBlock, RosterEntry, StatLine } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
 import { entryPoints, findUnit, magicItemAllowance } from '../rules/points'
-import { useLang, t, type Lang, unitName, mountName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc } from '../i18n/lang'
+import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc } from '../i18n/lang'
 import { findRule, type RuleDef } from '../data/rules'
 import { RuleDialog } from './RuleDialog'
 import { InfoDialog } from './InfoDialog'
@@ -115,6 +115,19 @@ export function EntryRow({
   const mounts = unit.mounts ?? []
   const selectedMount = mounts.find((m) => m.id === entry.mountId)
   const hasOptions = (unit.options?.length ?? 0) > 0 || mounts.length > 0 || unit.isCharacter || loreIds.length > 0
+  // Cavalry: pair the rider's own statLine with a mount profile shown as a
+  // second row directly beneath it (top = rider, bottom = mount). The mount is
+  // a regiment's fixed steed (`unit.mount`) or a character's chosen mount.
+  const companionMount: ProfileBlock | undefined =
+    unit.mount ??
+    (selectedMount?.statLine
+      ? {
+          name: selectedMount.name,
+          nameEs: selectedMount.nameEs,
+          statLine: selectedMount.statLine,
+          specialRules: selectedMount.specialRules,
+        }
+      : undefined)
 
   return (
     <li className={`entry ${entry.isGeneral ? 'entry-general' : ''}`}>
@@ -168,7 +181,24 @@ export function EntryRow({
 
       {open && (
         <div className="entry-detail">
-          {unit.statLine && <StatLineRow statLine={unit.statLine} lang={lang} />}
+          {/* Cavalry shows two labelled rows: the rider's statLine on top and
+              the mount's profile directly beneath it. Non-cavalry keeps a single
+              unlabelled row. */}
+          {unit.statLine && (
+            <StatLineRow
+              statLine={unit.statLine}
+              lang={lang}
+              label={companionMount ? t('rider', lang) : undefined}
+            />
+          )}
+          {companionMount && (
+            <div className="profile-block">
+              <StatLineRow statLine={companionMount.statLine} lang={lang} label={profileName(companionMount, lang)} />
+              {companionMount.specialRules && companionMount.specialRules.length > 0 && (
+                <RuleTags rules={companionMount.specialRules} lang={lang} />
+              )}
+            </div>
+          )}
 
           {/* Extra profiles: chariot crew/chassis/draught, or a fixed mount. */}
           {unit.profiles?.map((p, i) => (
@@ -353,14 +383,8 @@ export function EntryRow({
                 name={entry.id}
                 labelId={`${entry.id}-mount-label`}
               />
-              {selectedMount?.statLine && (
-                <div className="profile-block">
-                  <StatLineRow statLine={selectedMount.statLine} lang={lang} label={mountName(selectedMount, lang)} />
-                  {selectedMount.specialRules && selectedMount.specialRules.length > 0 && (
-                    <RuleTags rules={selectedMount.specialRules} lang={lang} />
-                  )}
-                </div>
-              )}
+              {/* The chosen mount's profile is shown as the rider's second stat
+                  row at the top of the entry (see companionMount above). */}
             </div>
           )}
 

@@ -231,6 +231,7 @@ const STRINGS = {
   level1: { en: 'Level 1', es: 'Nivel 1' },
   options: { en: 'Options', es: 'Opciones' },
   mount: { en: 'Mount', es: 'Montura' },
+  rider: { en: 'Rider', es: 'Jinete' },
   onFoot: { en: 'On foot', es: 'A pie' },
   magicItems: { en: 'Magic Items', es: 'Objetos Mágicos' },
   searchItems: { en: 'Search items…', es: 'Buscar objetos…' },

@@ -431,6 +431,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 43,
     statLine: elf({ WS: 5, I: 7 }),
+    mount: { name: 'Barded Elven Steed', nameEs: 'Corcel Élfico con Barda', statLine: ELVEN_STEED_MOUNT.statLine! },
     minSize: 5,
     max: 1,
     specialRules: [
@@ -447,6 +448,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 31,
     statLine: elf({ WS: 5, I: 7 }),
+    mount: { name: 'Elven Steed', nameEs: 'Corcel Élfico', statLine: ELVEN_STEED_MOUNT.statLine! },
     minSize: 5,
     options: [SHIELD_2, HEAVY_ARMOUR_2, BARDING_4],
     specialRules: [
@@ -461,6 +463,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 25,
     statLine: elf(),
+    mount: { name: 'Elven Steed', nameEs: 'Corcel Élfico', statLine: ELVEN_STEED_MOUNT.statLine! },
     minSize: 5,
     options: [BOWS_4, LANCE_2],
     specialRules: [
