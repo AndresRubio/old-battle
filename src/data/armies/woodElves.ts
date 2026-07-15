@@ -209,6 +209,7 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 4, BS: 4, S: 3, T: 4, W: 1, I: 7, A: 1, Ld: 8 }),
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['battle', 'high'],
     options: WE_WIZARD_LEVELS,
     mounts: WE_MOUNTS,
     specialRules: [
@@ -248,6 +249,7 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 4, BS: 4, S: 4, T: 4, W: 4, I: 9, A: 3, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['battle', 'high'],
     max: 1,
     specialRules: [
       'Special character',
@@ -267,6 +269,7 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 4, BS: 4, S: 3, T: 4, W: 1, I: 7, A: 1, Ld: 8 }),
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['battle', 'high'],
     max: 1,
     specialRules: [
       'Special character (Mage)',
@@ -283,6 +286,7 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 6, BS: 6, S: 4, T: 4, W: 3, I: 9, A: 3, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard3',
+    lores: ['battle'],
     canBeGeneral: true,
     max: 1,
     profiles: [GWANDOR_PROFILE],

@@ -137,6 +137,12 @@ export interface UnitProfile {
   /** Rideable mounts the character may take (mutually exclusive — one at most). */
   mounts?: MountOption[]
   /**
+   * Lore(s) of magic this wizard may choose from (ids into MAGIC_LORES). Multi
+   * element = the army book offers a choice ("Battle or High Magic"). Absent for
+   * non-casters. Informational only — does not affect points or validation.
+   */
+  lores?: string[]
+  /**
    * Extra display-only profiles shown beneath the main statLine: a chariot's
    * crew / chassis / draught beasts, or a special character's fixed mount.
    */
@@ -293,6 +299,8 @@ export interface RosterEntry {
   magicItemIds: string[]
   /** The chosen mount id (from the unit's `mounts`), if any. */
   mountId?: string
+  /** The chosen lore of magic (id into MAGIC_LORES), if the unit is a wizard. */
+  loreId?: string
   isGeneral?: boolean
   isBSB?: boolean
 }

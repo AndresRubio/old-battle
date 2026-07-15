@@ -132,6 +132,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 4, A: 1, Ld: 7 },
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['battle'],
     options: DOW_WIZARD_LEVELS,
     mounts: HERO_MOUNTS,
     specialRules: [
@@ -190,6 +191,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 3, S: 4, T: 4, W: 3, I: 5, A: 2, Ld: 7 },
     isCharacter: true,
     characterRank: 'wizard3',
+    lores: ['battle'],
     canBeGeneral: false,
     max: 1,
     profiles: [FIXED_WARHORSE_PROFILE],

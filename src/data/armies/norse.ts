@@ -184,6 +184,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 4, BS: 3, S: 3, T: 4, W: 1, I: 4, A: 1, Ld: 7 },
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['amber', 'ice'],
     specialRules: [
       'Large smelly stick (hand weapon); casts no spells if wearing armour',
       "First spell from the Amber deck; remaining spells from the Amber or Ice decks",
@@ -201,6 +202,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 4, BS: 3, S: 4, T: 4, W: 2, I: 4, A: 1, Ld: 7 },
     isCharacter: true,
     characterRank: 'wizard2',
+    lores: ['amber', 'ice'],
     specialRules: [
       'Level 2 wizard — Amber/Ice magic; causes fear; Hatred when leading a unit',
       'May ride a Monster; 2 magic items',
@@ -215,6 +217,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 5, BS: 4, S: 4, T: 4, W: 3, I: 5, A: 2, Ld: 8 },
     isCharacter: true,
     characterRank: 'wizard3',
+    lores: ['amber', 'ice'],
     specialRules: [
       'Level 3 wizard — Amber/Ice magic; causes fear; Hatred when leading a unit',
       'May ride a Monster; 3 magic items',
@@ -229,6 +232,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 5, BS: 4, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 8 },
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['amber', 'ice'],
     specialRules: [
       'Level 4 wizard — Amber/Ice magic; causes fear; Hatred when leading a unit',
       'May ride a Monster; 4 magic items',
@@ -287,6 +291,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 5, BS: 4, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 9 },
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['dark', 'amber', 'ice'],
     max: 1,
     specialRules: [
       'Special character — Shaman Lord (0-1); cost includes the Gift of Loki (+100) and his Runes (+30)',

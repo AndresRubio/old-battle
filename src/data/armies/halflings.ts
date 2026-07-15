@@ -260,6 +260,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 2, BS: 4, S: 2, T: 3, W: 1, I: 5, A: 1, Ld: 7 },
     isCharacter: true,
     characterRank: 'wizard1',
+    lores: ['battle'],
     options: HF_WIZARD_LEVELS,
     mounts: [MOUNT_BATTLE_RAM],
     specialRules: [
@@ -279,6 +280,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 3, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 8 },
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['battle', 'grey'],
     max: 1,
     specialRules: [
       'Special character — an itinerant wanderer much admired in the Moot (member of The Comradeship)',

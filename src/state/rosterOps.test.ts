@@ -5,6 +5,7 @@ import {
   duplicateEntry,
   moveEntry,
   removeEntry,
+  selectLore,
   selectMount,
   selectWizardLevel,
   setGeneral,
@@ -153,6 +154,14 @@ describe('rosterOps', () => {
   it('moveEntry is a no-op for a missing entry', () => {
     const r = addEntry(createRoster('empire', 'A', 1000, 'r1'), halberdiers, 'e1')
     expect(moveEntry(r, 'nope', 1).entries.map((e) => e.id)).toEqual(['e1'])
+  })
+
+  it('selectLore sets and clears the loreId on the target entry', () => {
+    let r = addEntry(createRoster('empire', 'A', 2000, 'r1'), wizard, 'e1')
+    r = selectLore(r, 'e1', 'battle')
+    expect(r.entries[0].loreId).toBe('battle')
+    r = selectLore(r, 'e1', null)
+    expect(r.entries[0].loreId).toBeUndefined()
   })
 })
 

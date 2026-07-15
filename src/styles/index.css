@@ -878,6 +878,35 @@ h1, h2, h3 {
   gap: 0.4rem;
   cursor: pointer;
 }
+/* ---- Lore-of-magic spell list ---- */
+.spell-list {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid var(--border);
+}
+.spell-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.86rem;
+}
+.spell-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.spell-name { flex: 1; min-width: 0; }
+.spell-cv {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+  min-width: 1.5em;
+  text-align: right;
+}
 /* ---- Mount selector chips ---- */
 .mount-chips {
   display: flex;

@@ -106,6 +106,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 2, S: 4, T: 4, W: 3, I: 2, A: 3, Ld: 8 },
     isCharacter: true,
     characterRank: 'wizard2', // 2 magic items at base level (p.73)
+    lores: ['battle', 'high'],
     canBeGeneral: true,
     options: SLANN_LEVELS,
     specialRules: [
@@ -172,6 +173,7 @@ const units: UnitProfile[] = [
     statLine: skink({ I: 5 }),
     isCharacter: true,
     characterRank: 'wizard2', // level 1 wizard but allowed 2 magic items (p.73/74)
+    lores: ['battle'],
     canBeGeneral: false,
     mounts: SKINK_MOUNTS,
     specialRules: [
@@ -491,6 +493,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 6, BS: 5, S: 6, T: 5, W: 8, I: 6, A: 8, Ld: 10 },
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['battle', 'high'],
     canBeGeneral: false,
     max: 1,
     specialRules: [
@@ -633,6 +636,7 @@ const units: UnitProfile[] = [
     statLine: skink({ I: 5 }),
     isCharacter: true,
     characterRank: 'wizard2', // Skink Shaman: level 1 wizard with 2 magic items
+    lores: ['battle'],
     canBeGeneral: false,
     max: 1,
     specialRules: [
@@ -655,6 +659,7 @@ const units: UnitProfile[] = [
     statLine: { M: 6, WS: 6, BS: 5, S: 7, T: 6, W: 8, I: 6, A: 8, Ld: 10 },
     isCharacter: true,
     characterRank: 'wizard4',
+    lores: ['battle', 'high'],
     canBeGeneral: true,
     max: 1,
     profiles: [STEGADON_PROFILE],

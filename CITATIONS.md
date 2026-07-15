@@ -16,6 +16,32 @@ The army-composition and magic-item rules implemented by the validation engine a
   - Magic Standards — https://5th.whfb.app/magic-items/magic-standards-magic-items
 - **Warhammer Army Book (overview)** — https://en.wikipedia.org/wiki/Warhammer_Army_Book
 
+### Lores of magic (spell lists — `src/data/lores.ts`)
+Each wizard's selectable lore and its spells (name, casting value, effect text) are transcribed from
+the 5th-edition **Warhammer Magic** deck summaries on the same rules index. English is verbatim from
+the source; Spanish is our translation (same convention as the rest of the app's data).
+- Battle Magic — https://5th.whfb.app/spells-summary/battle-magic
+- High Magic — https://5th.whfb.app/spells-summary/high-magic-spells-summary
+- Dark Magic — https://5th.whfb.app/spells-summary/dark-magic-spells-summary
+- Necromantic Magic — https://5th.whfb.app/spells-summary/necromantic-magic
+- Waaagh! Magic — https://5th.whfb.app/spells-summary/waaagh-magic-spells-summary
+- Skaven Magic — https://5th.whfb.app/spells-summary/skaven-magic-spells-summary
+- Chaos Dwarf Magic — https://5th.whfb.app/spells-summary/chaos-dwarf-magic
+- Magic of Tzeentch — https://5th.whfb.app/spells-summary/tzeentch-chaos-spells
+- Magic of Nurgle — https://5th.whfb.app/spells-summary/nurgle-chaos-spells
+- Magic of Slaanesh — https://5th.whfb.app/spells-summary/slaanesh-chaos-spells
+
+Three further lores come from the optional **"Further Ideas & Spells"** chapter of the 1996 Warhammer
+Magic supplement (agree-with-opponent expansion rules), wired to the wizards that use them:
+- Ice Magic (Tzarina Katarin) — https://5th.whfb.app/further-ideas-and-spells/ice-magic-spells
+- Amber Magic (Norse shamans; the Amber College) — https://5th.whfb.app/further-ideas-and-spells/amber-spells
+- Grey Magic (Olorin the Grey Wizard; the Grey College) — https://5th.whfb.app/further-ideas-and-spells/grey-spells
+
+**Accuracy note:** for the ten core lores the English spell text is transcribed *verbatim* from the
+source. For Ice / Amber / Grey the spell **names and casting values are exact**, but the effect text
+is a faithful *mechanical summary* of the source (range, dice, Strength, effect) rather than the
+publisher's verbatim prose — see the cited pages for the original wording. No spell text is invented.
+
 ### Composition rules implemented
 - Characters: up to **50%** of total points.
 - Regiments (rank-and-file): at least **25%** of total points.
