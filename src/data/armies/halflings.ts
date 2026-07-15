@@ -565,13 +565,13 @@ const units: UnitProfile[] = [
   // ===== War Machines (0-25%) =====
   {
     id: 'hf-hot-pot',
-    name: 'Hot Pot',
-    nameEs: 'Olla Hirviente',
+    name: 'Soup Tank',
+    nameEs: 'Tanque de Sopa',
     role: 'warmachine',
     pointsPerModel: 50,
     statLine: { M: 4, WS: 2, BS: 4, S: 2, T: 2, W: 1, I: 5, A: 1, Ld: 8 },
     noCommand: true,
-    profiles: [{ name: 'Hot Pot', nameEs: 'Olla', statLine: { S: 7, T: 3 } }],
+    profiles: [{ name: 'Soup Tank', nameEs: 'Tanque de Sopa', statLine: { S: 7, T: 3 } }],
     specialRules: [
       'Stone-thrower-style catapult hurling boiling stew (full rules: Empire Army Book p.24)',
       'Maximum range 36"; centre model hit at Strength 5, others under the template at Strength 3 on a 4+; no armour saves',
