@@ -768,7 +768,10 @@ const units: UnitProfile[] = [
     pointsPerModel: 180,
     statLine: { M: 6, WS: 5, BS: 0, S: 5, T: 6, W: 4, I: 4, A: 3, Ld: 5 },
     noCommand: true,
-    specialRules: ['Flies', 'Causes terror', 'Tail sting (poison)'],
+    // Same creature as the O&G Winged Serpent (identical profile). Wyverns are
+    // large scaled reptiles with a 5+ scaly-skin armour save (Battle Bestiary
+    // p.85; see FAQ). 'Flies' matches the Norse-file convention for flyers.
+    specialRules: ['Flies', 'Causes terror', 'Large target', 'Tail sting (poison)', 'Scaly skin (5+ save)'],
   },
   {
     id: 'no-giant-scorpion',
