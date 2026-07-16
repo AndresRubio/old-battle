@@ -70,3 +70,5 @@ android/app/src/main/res/raw
 # iOS (if ever added)
 ios/App/Pods
 ios/App/output
+
+source/
