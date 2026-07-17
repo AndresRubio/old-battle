@@ -454,6 +454,7 @@ const units: UnitProfile[] = [
     specialRules: [
       'Always strikes first',
       'Light armour & cavalry lance; Elven Steed (5+ save base)',
+      'May carry a magic standard',
     ],
   },
   {
@@ -492,6 +493,8 @@ const units: UnitProfile[] = [
       'Two-handed Woodsman axe (great weapon); three special attack modes',
       'Woodsmen (no movement penalty in woods)',
       'Bodyguard when the General leads the regiment in person',
+      'Standard bearer & musician cost the same as an ordinary White Lion, not double',
+      'May carry a magic standard (at its normal points cost)',
     ],
   },
   {
@@ -509,6 +512,7 @@ const units: UnitProfile[] = [
       'Always strikes first',
       'Halberds & light armour (6+ save base; 5+ with heavy armour upgrade)',
       'Causes fear (silent guardians)',
+      'May carry a magic standard',
     ],
   },
   {
@@ -527,6 +531,7 @@ const units: UnitProfile[] = [
       'Heavy armour & two-handed Great Sword of Hoeth; strikes in normal initiative order (ignores strike-last rule)',
       'Deflect Shots (-1 to hit vs shooting from front arc)',
       'Shield gives 4+ save vs shooting only',
+      'May carry a magic standard',
     ],
   },
   {
@@ -542,6 +547,7 @@ const units: UnitProfile[] = [
       'Always strikes first',
       'Light armour, shield, spear & bow (5+ save)',
       'Citizen Levy — fight with an extra rank of spears; shoot with two ranks of bows',
+      'May carry a magic standard',
     ],
   },
   {
@@ -557,6 +563,7 @@ const units: UnitProfile[] = [
       'Always strikes first',
       'Light armour, shield & spear (5+ save)',
       'Citizen Levy — fight with an extra rank (two ranks moving, three when stationary)',
+      'May carry a magic standard',
     ],
   },
   {
@@ -625,6 +632,8 @@ const units: UnitProfile[] = [
       'Chariot (T7 W3) drawn by 2 Elven Steeds (6+ save base)',
       'Crew: Auriga with light armour, sword & bow',
       'Always strikes first',
+      'May carry a magic standard',
+      'Its decorative banners are not regimental standards — no combat-resolution bonus',
     ],
     options: [
       CHARIOT_SCYTHED, CHARIOT_SHIELD, CHARIOT_HEAVY_ARMOUR, CHARIOT_LANCE,

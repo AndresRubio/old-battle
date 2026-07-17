@@ -606,6 +606,10 @@ const units: UnitProfile[] = [
     pointsPerModel: 70,
     statLine: { M: 8, WS: 0, BS: 0, S: 6, T: 6, W: 3, I: 0, A: 0, Ld: 0 },
     noCommand: true,
+    // "One Farm Machine in your army can carry a Magic Banner" (printed p.15).
+    // Farm machines move and fight as chariots. The one-per-army half of that rule
+    // is not yet modelled — the engine offers it on each Farm Machine.
+    magicStandard: true,
     options: [
       { id: 'crew-bows', name: 'Bows for the crew', pointsPerModel: 1, flat: true },
       { id: 'crew-shields', name: 'Shields for the crew', pointsPerModel: 0.5, flat: true },
@@ -626,6 +630,9 @@ const units: UnitProfile[] = [
     pointsPerModel: 90,
     statLine: { M: 7, WS: 0, BS: 0, S: 7, T: 7, W: 4, I: 0, A: 0, Ld: 0 },
     noCommand: true,
+    // "One Farm Machine in your army can carry a Magic Banner" (printed p.15).
+    // See the note on hf-shearer: the one-per-army half is not yet modelled.
+    magicStandard: true,
     options: [
       // Each option toggle buys ONE extra animal (book allows up to four in total).
       { id: 'extra-crew', name: 'Additional Halfling crewman', pointsPerModel: 3.5, flat: true },

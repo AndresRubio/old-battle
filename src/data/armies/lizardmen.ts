@@ -365,6 +365,10 @@ const units: UnitProfile[] = [
     nameEs: 'Estegadón y 4 Skinks',
     role: 'monster',
     pointsPerModel: 225,
+    // "Any Stegadon in the army may have a magic standard attached to its howdah"
+    // (printed p.77). Set explicitly: withMagicStandards only auto-derives the flag
+    // for regiments and chariots, and the standard rides the howdah, not a bearer.
+    magicStandard: true,
     // Profile p.64/77: Stegadon M6 WS2 BS0 S7 T6 W6 I2 A5 Ld6.
     //                  Skink crew M6 WS2 BS3 S3 T2 W1 I4 A1 Ld6.
     statLine: { M: 6, WS: 2, BS: 0, S: 7, T: 6, W: 6, I: 2, A: 5, Ld: 6 },

@@ -329,7 +329,7 @@ const units: UnitProfile[] = [
     statLine: elf(),
     minSize: 5,
     options: [ADD_HAND_WEAPON, RXBOW_3],
-    specialRules: ['Sea Dragon Cloak (6+ save, ignores Strength modifiers)'],
+    specialRules: ['Sea Dragon Cloak (6+ save, ignores Strength modifiers)', 'May carry a magic standard'],
   },
   {
     id: 'de-city-guard',
@@ -351,7 +351,7 @@ const units: UnitProfile[] = [
     statLine: elf(),
     minSize: 5,
     options: [LIGHT_ARMOUR_DE],
-    specialRules: ['Two hand weapons', 'Poisoned attacks (+1 S)', 'Frenzy'],
+    specialRules: ['Two hand weapons', 'Poisoned attacks (+1 S)', 'Frenzy', 'May carry a magic standard'],
   },
   {
     id: 'de-scouts',
@@ -374,7 +374,13 @@ const units: UnitProfile[] = [
     mount: { name: 'Cold One', nameEs: 'Caballo Frío', statLine: COLD_ONE_MOUNT.statLine!, specialRules: ['Causes fear', 'Stupidity'] },
     minSize: 5,
     options: [CAV_LANCE_4, RXBOW_6],
-    specialRules: ['Cold One mount (2+ save)', 'Causes fear', 'Stupidity', 'Sword, heavy armour & shield'],
+    specialRules: [
+      'Cold One mount (2+ save)',
+      'Causes fear',
+      'Stupidity',
+      'Sword, heavy armour & shield',
+      'May carry a magic standard',
+    ],
   },
   {
     id: 'de-dark-riders',
@@ -397,7 +403,12 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 5 }),
     minSize: 5,
     max: 1,
-    specialRules: ['0-1 regiment', 'Two-handed draich (D3 wounds per hit)', 'Heavy armour (5+ save)'],
+    specialRules: [
+      '0-1 regiment',
+      'Two-handed draich (D3 wounds per hit)',
+      'Heavy armour (5+ save)',
+      'May carry a magic standard',
+    ],
   },
   {
     id: 'de-black-guard',
@@ -408,7 +419,7 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 5, I: 7 }),
     minSize: 5,
     max: 1,
-    specialRules: ['0-1 regiment', 'Halberds', 'Heavy armour (5+ save)'],
+    specialRules: ['0-1 regiment', 'Halberds', 'Heavy armour (5+ save)', 'May carry a magic standard'],
   },
   {
     id: 'de-harpies',

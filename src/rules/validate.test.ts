@@ -71,6 +71,7 @@ const army: Army = {
       name: 'War Chariot',
       role: 'chariot',
       pointsPerModel: 90,
+      magicStandard: true, // Magia p.42: some war chariots may carry one
     },
   ],
 }
@@ -830,6 +831,17 @@ describe('validateRoster — unit magic standards', () => {
       entry({ unitId: 'guard', size: 10, optionIds: [], magicStandardId: 'banner' }),
     ])
     expect(rules(validateRoster(r, army))).toContain('magic-standard-no-bearer')
+  })
+
+  // Magia p.42: "Algunos carruajes de guerra también pueden portar un estandarte
+  // mágico." A chariot carries it on the chariot itself — there is no standard
+  // bearer model to require, so the bearer prerequisite must not apply.
+  it('lets a chariot carry a magic standard without a standard bearer', () => {
+    const r = roster(2000, [
+      entry({ unitId: 'lord', isGeneral: true }),
+      entry({ unitId: 'chariot', optionIds: [], magicStandardId: 'banner' }),
+    ])
+    expect(validateRoster(r, army).filter((v) => v.rule.startsWith('magic-standard'))).toHaveLength(0)
   })
 
   it('warns when the unit is not allowed a magic standard at all', () => {

@@ -682,7 +682,7 @@ const units: UnitProfile[] = [
     mount: { name: 'Warhorse', nameEs: 'Caballo de Guerra', statLine: { M: 8, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 } },
     minSize: 5,
     options: [FLAIL_2, SHIELD_2],
-    specialRules: ['Light armour & hand weapon (5+ save)', 'War Horse mount (Caballo de Guerra, M8)', 'Fast cavalry'],
+    specialRules: ['Light armour & hand weapon (5+ save)', 'War Horse mount (Caballo de Guerra, M8)', 'Fast cavalry', 'May carry a magic standard'],
   },
   {
     id: 'ch-hounds',
@@ -790,6 +790,7 @@ const units: UnitProfile[] = [
       'Chariot (T7 W3) — drawn by 2 Chaos Steeds, crew of 2 Chaos Warriors',
       'Crew: heavy armour & hand weapon',
       'May take a Mark of Chaos via its general',
+      'May carry a magic standard',
     ],
   },
   {
@@ -809,6 +810,7 @@ const units: UnitProfile[] = [
     specialRules: [
       'Chariot (T5 W3) — drawn by 2 War Horses, crew of 2 Chaos Marauders',
       'Crew: hand weapon & light armour',
+      'May carry a magic standard',
     ],
   },
   {
@@ -828,6 +830,7 @@ const units: UnitProfile[] = [
       'Chariot (T7 W3) — drawn by 2 Tuskgors, crew of 2 Gor Beastmen',
       'Tuskgors: 4+ armour save',
       'Beast',
+      'May carry a magic standard',
     ],
   },
 
@@ -972,7 +975,7 @@ const units: UnitProfile[] = [
     pointsPerModel: 20,
     statLine: statline({ M: 4, WS: 5, BS: 5, S: 4, T: 3, W: 1, I: 6, A: 2, Ld: 10 }),
     minSize: 5,
-    specialRules: ['Daemon of Khorne', 'Daemonic (4+ aura save)', 'Causes fear', 'Hellblade (D3 wounds)'],
+    specialRules: ['Daemon of Khorne', 'Daemonic (4+ aura save)', 'Causes fear', 'Hellblade (D3 wounds)', 'May carry a magic standard'],
   },
   {
     // p.114: Juggernaut M18→7". Bloodletter on Juggernaut 90 pts/model (20+70).
@@ -992,6 +995,7 @@ const units: UnitProfile[] = [
       'Hellblade (D3 wounds)',
       'Mounted on Juggernauts (M7, S5, T5, Impact hits)',
       'No minimum unit size',
+      'May carry a magic standard',
     ],
   },
   {
@@ -1022,6 +1026,7 @@ const units: UnitProfile[] = [
       'Causes fear',
       'Plague Sword (slays mortals on 4+)',
       'Cloud of Flies (-1 to hit them)',
+      'May carry a magic standard',
     ],
   },
   {
@@ -1076,6 +1081,7 @@ const units: UnitProfile[] = [
       'No daemonic aura save',
       'Unit casts as a wizard (level by unit size: 1-5=L1, 6-10=L2, 11-15=L3, 16+=L4)',
       'Division — splits into 2 Blue Horrors when wounded',
+      'May carry a magic standard',
     ],
   },
   {
@@ -1115,6 +1121,7 @@ const units: UnitProfile[] = [
       'Causes fear',
       'Unit casts as a wizard (level by unit size: 1-5=L1, 6-10=L2, 11-15=L3, 16+=L4)',
       'May be mounted on Steeds of Slaanesh (M12, +25 pts/model)',
+      'May carry a magic standard',
     ],
   },
   {

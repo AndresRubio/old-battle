@@ -65,7 +65,11 @@ function withMagicStandards(army: Army): Army {
   return {
     ...army,
     units: army.units.map((u) => {
-      if (u.magicStandard || u.role !== 'regiment' || u.noCommand) return u
+      // Regiments carry it on a standard-bearer model; chariots carry it on the
+      // chariot itself ("Algunos carruajes de guerra también pueden portar un
+      // estandarte mágico" — Magia p.42), so `noCommand` only bars a regiment.
+      const carrier = u.role === 'regiment' || u.role === 'chariot'
+      if (u.magicStandard || !carrier || (u.role === 'regiment' && u.noCommand)) return u
       const allowed = u.specialRules?.some((r) => /magic standard/i.test(r)) ?? false
       return allowed ? { ...u, magicStandard: true } : u
     }),

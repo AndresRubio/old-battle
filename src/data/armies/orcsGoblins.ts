@@ -704,7 +704,7 @@ const units: UnitProfile[] = [
     mount: WAR_BOAR_PROFILE,
     minSize: 5,
     options: [SPEARS_1, BOW_2],
-    specialRules: ['Animosity', 'Frenzy (Savage Orcs)', 'War Boar mount (save 3+)', 'Boar charge (S+2)', 'Obstinate boar (-1 Ld to rider)', '6+ ward save (war paint)'],
+    specialRules: ['Animosity', 'Frenzy (Savage Orcs)', 'War Boar mount (save 3+)', 'Boar charge (S+2)', 'Obstinate boar (-1 Ld to rider)', '6+ ward save (war paint)', 'May carry a magic standard'],
   },
   {
     id: 'og-orc-boar-boyz',
@@ -717,7 +717,7 @@ const units: UnitProfile[] = [
     mount: WAR_BOAR_PROFILE,
     minSize: 5,
     options: [SPEARS_1],
-    specialRules: ['Animosity', 'War Boar mount (save 3+)', 'Boar charge (S+2)', 'Obstinate boar (-1 Ld to rider)', 'Light armour & shield'],
+    specialRules: ['Animosity', 'War Boar mount (save 3+)', 'Boar charge (S+2)', 'Obstinate boar (-1 Ld to rider)', 'Light armour & shield', 'May carry a magic standard'],
   },
   {
     id: 'og-goblin-wolf-riders',
@@ -758,7 +758,7 @@ const units: UnitProfile[] = [
     minSize: 5,
     max: 1,
     options: [SHIELD_1, LIGHT_ARMOUR_2, TWO_HAND_2, ADD_HAND_WEAPON_1, BOW_2],
-    specialRules: ['0-1 unit', 'Animosity', 'Hand weapon'],
+    specialRules: ['0-1 unit', 'Animosity', 'Hand weapon', 'May carry a magic standard'],
   },
   {
     id: 'og-orc-boyz',
@@ -770,7 +770,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
     minSize: 5,
     options: [LIGHT_ARMOUR_2, SHIELD_1, TWO_HAND_2, HALBERD_2, SPEARS_1, ADD_HAND_WEAPON_1],
-    specialRules: ['Animosity', 'Hand weapon'],
+    specialRules: ['Animosity', 'Hand weapon', 'May carry a magic standard'],
   },
   {
     id: 'og-arrer-boyz',
@@ -795,7 +795,7 @@ const units: UnitProfile[] = [
     minSize: 5,
     max: 1,
     options: [TWO_HAND_2, HALBERD_2, SPEARS_1, ADD_HAND_WEAPON_1, SHIELD_1],
-    specialRules: ['0-1 unit', 'Immune to Animosity', 'Light armour & hand weapon'],
+    specialRules: ['0-1 unit', 'Immune to Animosity', 'Light armour & hand weapon', 'May carry a magic standard'],
   },
   {
     id: 'og-savage-orcs',
@@ -807,7 +807,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
     minSize: 5,
     options: [SHIELD_1, TWO_HAND_2, ADD_HAND_WEAPON_1, BOW_2],
-    specialRules: ['Animosity', 'Frenzy (Savage Orcs)', '6+ ward save (war paint)', 'Primitive weapon (no armour)'],
+    specialRules: ['Animosity', 'Frenzy (Savage Orcs)', '6+ ward save (war paint)', 'Primitive weapon (no armour)', 'May carry a magic standard'],
   },
   {
     id: 'og-goblins',
@@ -819,7 +819,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
     minSize: 5,
     options: [SHIELD_HALF, LIGHT_ARMOUR_2, TWO_HAND_1, HALBERD_1, SPEARS_HALF, SHORTBOW_HALF],
-    specialRules: ['Animosity', 'Fear Elves', 'Hand weapon'],
+    specialRules: ['Animosity', 'Fear Elves', 'Hand weapon', 'May carry a magic standard'],
   },
   {
     id: 'og-forest-goblins',
@@ -831,7 +831,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
     minSize: 5,
     options: [SHIELD_HALF, TWO_HAND_1, SPEARS_HALF, SHORTBOW_HALF],
-    specialRules: ['Animosity', 'Fear Elves', 'Hand weapon (war axe or club)'],
+    specialRules: ['Animosity', 'Fear Elves', 'Hand weapon (war axe or club)', 'May carry a magic standard'],
   },
   {
     id: 'og-night-goblins',
@@ -843,7 +843,7 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
     minSize: 5,
     options: [SHIELD_HALF, TWO_HAND_1, HALBERD_1, SPEARS_HALF, SHORTBOW_HALF],
-    specialRules: ['Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'Hand weapon', 'May hide up to 3 Fanatics in unit'],
+    specialRules: ['Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'Hand weapon', 'May hide up to 3 Fanatics in unit', 'May carry a magic standard'],
   },
   {
     id: 'og-squig-hunters',

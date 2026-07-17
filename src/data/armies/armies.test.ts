@@ -110,10 +110,14 @@ describe('unit magic standards', () => {
       }
     })
 
-    it(`${army.id}: a magic standard is only flagged on a regiment`, () => {
+    // Characters never carry a unit magic standard: a BSB spends a normal magic-item
+    // slot on it instead (that path is magicItemIds). Every other role can be a
+    // legitimate carrier — regiments via a standard bearer, and chariots, the
+    // Stegadon howdah and Halfling farm machines on the model itself.
+    it(`${army.id}: a magic standard is never flagged on a character`, () => {
       for (const u of army.units) {
         if (u.magicStandard) {
-          expect(u.role, `${u.id} has magicStandard but is not a regiment`).toBe('regiment')
+          expect(u.role, `${u.id} has magicStandard but is a character`).not.toBe('character')
         }
       }
     })
