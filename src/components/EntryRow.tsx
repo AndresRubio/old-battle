@@ -130,12 +130,10 @@ export function EntryRow({
         }
       : undefined)
   // Unit magic standard: a regiment the army list allows may take one banner,
-  // carried by its standard bearer, up to the book's point cap (undefined = TBD).
-  const standardMax = unit.magicStandard?.max
+  // carried by its standard bearer. The books set no points cap — it costs
+  // whatever its card says — so every non-special banner is offered.
   const standardOptions = unit.magicStandard
-    ? army.magicItems.filter(
-        (i) => i.category === 'banner' && !i.special && (standardMax === undefined || i.points <= standardMax),
-      )
+    ? army.magicItems.filter((i) => i.category === 'banner' && !i.special)
     : []
   const hasStandardBearer = entry.optionIds.includes('standard')
   const hasOptions =
@@ -386,14 +384,7 @@ export function EntryRow({
 
           {unit.magicStandard && (
             <div className="opt-group">
-              <span className="opt-label">
-                {t('magicStandard', lang)}{' '}
-                <span className="muted small">
-                  {standardMax !== undefined
-                    ? `(≤ ${standardMax} ${t('pts', lang)})`
-                    : `(${t('magicStandardLimitTbd', lang)})`}
-                </span>
-              </span>
+              <span className="opt-label">{t('magicStandard', lang)}</span>
               {!hasStandardBearer ? (
                 <p className="muted small">{t('magicStandardNeedsBearer', lang)}</p>
               ) : (

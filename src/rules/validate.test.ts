@@ -51,16 +51,7 @@ const army: Army = {
       pointsPerModel: 8,
       minSize: 5,
       options: [{ id: 'standard', name: 'Standard Bearer', pointsPerModel: 10, flat: true }],
-      magicStandard: { max: 50 }, // allowed, verified cap
-    },
-    {
-      id: 'militia',
-      name: 'Militia',
-      role: 'regiment',
-      pointsPerModel: 4,
-      minSize: 5,
-      options: [{ id: 'standard', name: 'Standard Bearer', pointsPerModel: 10, flat: true }],
-      magicStandard: {}, // allowed, cap not yet verified
+      magicStandard: true, // the army list allows this unit a magic standard
     },
     {
       id: 'cannon',
@@ -811,26 +802,26 @@ describe('dependency/ratio batch (data)', () => {
 })
 
 describe('validateRoster — unit magic standards', () => {
-  it('warns when a unit magic standard exceeds the army-book point limit', () => {
-    // Guard cap is 50; Great Banner is 75.
+  // 5th ed sets NO points cap on a magic standard: every army list prices it at
+  // "el valor en puntos indicado en la carta". So even the priciest banner is legal
+  // on any unit the list allows. See CITATIONS.md — Magic-standard caps.
+  it('accepts an expensive magic standard — the army books set no points cap', () => {
     const r = roster(2000, [
       entry({ unitId: 'lord', isGeneral: true }),
       entry({ unitId: 'guard', size: 10, optionIds: ['standard'], magicStandardId: 'bigbanner' }),
     ])
-    expect(rules(validateRoster(r, army))).toContain('magic-standard-over-limit')
+    expect(validateRoster(r, army).filter((v) => v.rule.startsWith('magic-standard'))).toHaveLength(0)
   })
 
-  it('accepts a magic standard within the limit on a unit with a standard bearer', () => {
+  it('accepts a magic standard on a unit with a standard bearer', () => {
     const r = roster(2000, [
       entry({ unitId: 'lord', isGeneral: true }),
       entry({ unitId: 'guard', size: 10, optionIds: ['standard'], magicStandardId: 'banner' }),
     ])
     const rs = rules(validateRoster(r, army))
-    expect(rs).not.toContain('magic-standard-over-limit')
     expect(rs).not.toContain('magic-standard-no-bearer')
     expect(rs).not.toContain('magic-standard-not-allowed')
     expect(rs).not.toContain('magic-standard-invalid-item')
-    expect(rs).not.toContain('magic-standard-limit-undefined')
   })
 
   it('warns when a magic standard is chosen without a standard bearer', () => {
@@ -847,14 +838,6 @@ describe('validateRoster — unit magic standards', () => {
       entry({ unitId: 'warriors', size: 10, magicStandardId: 'banner' }),
     ])
     expect(rules(validateRoster(r, army))).toContain('magic-standard-not-allowed')
-  })
-
-  it('warns (data completeness) when the unit is allowed but its cap is unverified', () => {
-    const r = roster(2000, [
-      entry({ unitId: 'lord', isGeneral: true }),
-      entry({ unitId: 'militia', size: 10, optionIds: ['standard'], magicStandardId: 'banner' }),
-    ])
-    expect(rules(validateRoster(r, army))).toContain('magic-standard-limit-undefined')
   })
 
   it('warns when the chosen magic standard is not a banner item', () => {

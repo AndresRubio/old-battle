@@ -133,14 +133,13 @@ export interface UnitProfile {
   /** When true, the regiment may NOT take a command group (e.g. Harpies). */
   noCommand?: boolean
   /**
-   * Present when this regiment's standard bearer may carry a **magic standard**
-   * (5th ed: only units the army list allows may take one — FAQ v2.20 §23.2).
-   * `max` is the points cap the army book sets for this unit's standard; it is
-   * `undefined` when that value is not yet verified in our data, in which case
-   * the Muster Check raises a data-completeness warning instead of a cap check.
+   * True when this regiment's standard bearer may carry a **magic standard** —
+   * only units the army list allows may take one (Warhammer Magia p.42).
+   * There is deliberately no points cap: every 5th-ed army list prices the
+   * standard at "el valor en puntos indicado en la carta". See CITATIONS.md.
    * Normally derived from `specialRules` by `withMagicStandards` in armies/index.
    */
-  magicStandard?: { max?: number }
+  magicStandard?: boolean
   specialRules?: string[]
   options?: EquipmentOption[]
   /** Rideable mounts the character may take (mutually exclusive — one at most). */

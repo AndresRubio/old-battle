@@ -50,22 +50,41 @@ publisher's verbatim prose — see the cited pages for the original wording. No 
 - Magic items limited by **count per character rank** (not points): Champion/L1 wizard = 1,
   Hero/L2 = 2, Lord/L3 = 3, Wizard Lord (L4) = 4, BSB = 1; max one per restricted category.
 - Optional tournament preset: ≤ 2000 pts, wizards ≤ level 3, magic items ≤ 50 pts.
-- **Unit magic standards:** a regiment allowed a magic standard (per its army-list entry — FAQ v2.20
-  §23.2) may take one, carried by its standard bearer, up to the points cap the army book sets for
-  that unit. The engine enforces the cap, the standard-bearer prerequisite, banner-only selection and
-  army-wide uniqueness. See "Magic-standard caps" below on data availability.
+- **Unit magic standards:** a regiment whose army-list entry allows a magic standard may take one,
+  carried by its standard bearer, at the points value printed on the item's card — the books set **no
+  per-unit cap**. The engine enforces the standard-bearer prerequisite, banner-only selection and
+  army-wide uniqueness. See "Magic-standard caps" below for the sourcing.
 
-### Magic-standard caps (per-unit — not freely available)
-The 5th-edition **per-unit** magic-standard point limits live only in the physical *Warhammer Armies*
-books. They are **not** transcribed by any accessible high-trust source: 5th.whfb.app hosts the core
-rules and per-army FAQ pages but no army lists, and archive.org's book scans are lending-restricted.
-(The familiar "may carry a magic standard worth up to 50 pts" phrasing is **8th-edition** wording and
-is *not* a valid 5th-ed value.) Accordingly `MAGIC_STANDARD_MAX` in `src/data/armies/index.ts` starts
-**empty** — no caps are invented. A regiment the army list allows still offers the magic-standard
-picker, but until its cap is confirmed the Muster Check raises a `magic-standard-limit-undefined`
-warning ("límite por confirmar"). Drop verified per-unit caps into `MAGIC_STANDARD_MAX` as they are
-sourced from the books. (Halflings and Norse had no official 5th-ed army book, so any cap for them is
-a design choice, not a citable rule.)
+### Magic-standard caps: there are none in 5th edition (sourced 2026-07-17)
+**5th edition sets no per-unit points cap on a magic standard.** Checked against every book in
+`source/` (18 scans, Spanish and English): not one army list states a ceiling. Every entry that grants
+a standard prices it the same way — *"elegido de entre las cartas de estandarte mágico, **por el valor
+en puntos indicado en la carta**"* (e.g. Imperio PDF 61/printed 59; Orcos y Goblins PDF 85/83; Condes
+Vampiro PDF 66/64; Reino del Caos PDF 105/103). The English books match: *"Some regiments are allowed
+magic standards… chosen from the magic items in the Warhammer Magic supplement"* (Bretonnia PDF
+60/printed 58). A sweep for `hasta N puntos` / `up to N points` near a standard returns nothing.
+
+The one sentence that suggests otherwise is *Warhammer Magia* PDF 44 / **printed 42** (vision-verified):
+*"El valor en puntos máximo del estandarte está **habitualmente** limitado, por lo que sólo las
+unidades más veteranas podrán portar los estandartes más poderosos."* Read against the lists, that is
+descriptive prose, not a rule these books implement — "habitualmente" is doing the work, and no list
+follows through with a number. (The familiar "worth up to 50 pts" phrasing is **8th-edition** wording
+and is *not* a valid 5th-ed value.) So `UnitProfile.magicStandard` is a plain allow-flag: no
+`MAGIC_STANDARD_MAX`, no cap check, no "limit unconfirmed" warning.
+
+What the books *do* constrain is **which units** may take one. The preamble is always *"a algunos
+regimientos se les permite portar un estandarte mágico"* — permission is granted **entry by entry**,
+in each unit's `OPCIONES:` / `Options:` block, never army-wide. Two related rules that are real:
+- **Pricing** (Magia printed 42): the standard's points are added to the standard bearer and are
+  **not** doubled — "el valor en puntos del estandarte no debe duplicarse". Book example: High Elf
+  Spearman 12 → bearer 24 → with a 50-pt standard = 24+50 = 74.
+- **Chariots** (Magia printed 42): *"Algunos carruajes de guerra también pueden portar un estandarte
+  mágico… el valor del estandarte deberá añadirse al del carruaje, pero el valor del carruaje no
+  deberá duplicarse."* Confirmed in the lists for O&G, High Elves, Wood Elves, Chaos, Undead and
+  Vampire Counts.
+
+(Halflings and Norse had no official 5th-ed army book, so their entries follow the Hungry Horde and
+Norsca supplements rather than a *Warhammer Armies* volume.)
 
 ## Army data (representative — see note)
 **Important honesty note:** exact 5th-edition army-book points values are **not freely available**

@@ -348,8 +348,9 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
     }
 
     // Unit magic standard (carried by a regiment's standard bearer). Only units
-    // the army list allows may take one, up to the book's point cap. See FAQ
-    // v2.20 §23.2 and research/magic-items-5e.md.
+    // the army list allows may take one. The books set no points ceiling — the
+    // standard simply costs what its card says — so there is no cap to check.
+    // See CITATIONS.md — Magic-standard caps.
     if (e.magicStandardId) {
       const item = findMagicItem(army, e.magicStandardId)
       const itemNm = item ? (es ? item.nameEs ?? item.name : item.name) : e.magicStandardId
@@ -380,24 +381,6 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
             message: es
               ? `${un}: "${itemNm}" no es un estandarte mágico válido para esta unidad.`
               : `${unit.name}: "${itemNm}" is not a valid magic standard for this unit.`,
-            entryId: e.id,
-          })
-        } else if (unit.magicStandard.max === undefined) {
-          violations.push({
-            severity: 'warning',
-            rule: 'magic-standard-limit-undefined',
-            message: es
-              ? `${un}: el límite de puntos del estandarte mágico aún no está confirmado para esta unidad; verifícalo con el libro de ejército.`
-              : `${unit.name}: the magic-standard point limit is not yet confirmed for this unit; verify it against the army book.`,
-            entryId: e.id,
-          })
-        } else if (item.points > unit.magicStandard.max) {
-          violations.push({
-            severity: 'warning',
-            rule: 'magic-standard-over-limit',
-            message: es
-              ? `${un}: el estandarte mágico cuesta ${item.points} ptos, superando el límite de ${unit.magicStandard.max} ptos de la unidad.`
-              : `${unit.name}: the magic standard costs ${item.points} pts, over the unit's ${unit.magicStandard.max} pt limit.`,
             entryId: e.id,
           })
         }

@@ -46,24 +46,20 @@ function withMagicItems(army: Army): Army {
 }
 
 /**
- * Verified per-unit **magic-standard point caps** (keyed by unit id), transcribed
- * from the 5th-edition army lists. A regiment allowed a magic standard but ABSENT
- * from this table gets an undefined cap — the Muster Check then raises a
- * data-completeness warning ("limit not yet verified against the army book")
- * rather than silently inventing a number. Fill in values as they are confirmed.
- */
-export const MAGIC_STANDARD_MAX: Record<string, number> = {
-  // (populated as army-book caps are verified)
-}
-
-/**
  * Flag every regiment whose army-list entry allows a **magic standard** (detected
  * from its `specialRules`, e.g. "May carry a magic standard") so the editor can
- * offer a magic-standard picker. The points cap comes from `MAGIC_STANDARD_MAX`
- * where verified, otherwise stays `undefined`. A unit that already declares
- * `magicStandard` explicitly, or that cannot take a command group (`noCommand`),
- * is left untouched. Non-regiment carriers (the army Battle Standard character) go
- * through the character magic-item path instead — see FAQ v2.20 §23.2.
+ * offer a magic-standard picker.
+ *
+ * There is deliberately no points cap. Every 5th-ed army list grants the standard
+ * at "el valor en puntos indicado en la carta" — the books name no per-unit
+ * ceiling, so the choice is bounded only by which items exist. Permission is
+ * granted entry by entry, never army-wide: the army-list preamble says only that
+ * "a algunos regimientos se les permite portar estandartes mágicos". See
+ * CITATIONS.md — Magic-standard caps.
+ *
+ * A unit that already declares `magicStandard` explicitly, or that cannot take a
+ * command group (`noCommand`), is left untouched. Non-regiment carriers (the army
+ * Battle Standard character) go through the character magic-item path instead.
  */
 function withMagicStandards(army: Army): Army {
   return {
@@ -71,7 +67,7 @@ function withMagicStandards(army: Army): Army {
     units: army.units.map((u) => {
       if (u.magicStandard || u.role !== 'regiment' || u.noCommand) return u
       const allowed = u.specialRules?.some((r) => /magic standard/i.test(r)) ?? false
-      return allowed ? { ...u, magicStandard: { max: MAGIC_STANDARD_MAX[u.id] } } : u
+      return allowed ? { ...u, magicStandard: true } : u
     }),
   }
 }
