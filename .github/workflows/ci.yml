@@ -1,0 +1,33 @@
+name: CI
+
+# Type-checks, tests and builds on every push to main and on every PR.
+# The rules engine is the heart of the app and fully unit-tested, so a red
+# gate here means a roster would validate incorrectly — never merge on red.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: # allows a manual run from the Actions tab
+
+permissions:
+  contents: read
+
+# Only one CI run per ref; a newer push cancels an in-progress one.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit -p tsconfig.app.json
+      - run: npm test
+      - run: npm run build
