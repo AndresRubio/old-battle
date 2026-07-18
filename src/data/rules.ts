@@ -128,6 +128,17 @@ export const RULES: RuleDef[] = [
     es: 'La miniatura (o su unidad) está protegida contra la hechicería, lo que otorga intentos de dispersión o salvaciones adicionales contra los hechizos dirigidos contra ella.',
   },
   {
+    // Must precede 'ward-save': the "5+ ward save" tag also contains "ward save",
+    // so this more specific alias has to match first. Alias 'savage orc unit'
+    // appears only in the two Savage Orc Shaman joining tags (book p.19).
+    id: 'savage-orc-shaman-joined',
+    aliases: ['savage orc unit'],
+    titleEn: 'Savage Orc Shaman (joined to a unit)',
+    titleEs: 'Shaman Orco Salvaje (unido a una Peña)',
+    en: 'When a Savage Orc Shaman joins a unit of Savage Orcs (Warriors or Boar Boyz), he draws one extra magic card each Magic phase, usable only by him; and the tribal war-paint tattoos improve the ward save to 5+ (from 6+) for both the Shaman and the unit’s warriors.',
+    es: 'Cuando un Shaman Orco Salvaje se une a una Peña de Orcos Salvajes (Guerreros o Jinetes de Jabalí), roba una carta de magia adicional cada fase de magia, que sólo él puede usar; y los tatuajes de pintura de guerra mejoran la salvación especial a 5+ (en vez de 6+) tanto para el Shaman como para los guerreros de la Peña.',
+  },
+  {
     id: 'ward-save',
     aliases: ['ward save', 'ward vs', 'salvación especial', 'salvacion especial', 'salvación por protección'],
     titleEn: 'Ward Save',
