@@ -96,6 +96,12 @@ individual figures flagged `APPROX` in the research notes where the exact army-b
 be confirmed. They are suitable for a faithful list-building experience and for exercising the
 (exact) rules engine, but should not be treated as the official points.
 
+### Special rules sourced from the army books (`source/`)
+- **Savage Orc Shaman** (`og-shaman-savage-orc`) — the two "joined to a Savage Orc unit" rules
+  (an extra magic card for him alone; the war-paint ward improves 6+ → 5+ for the Shaman and the
+  unit) are transcribed from *Ejércitos Warhammer: Orcos y Goblins* (1997, ES), **printed p.19**
+  (PDF p.21, offset +2), via `source/transcribed/orcs-goblins.md`. Linear OLD-16.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

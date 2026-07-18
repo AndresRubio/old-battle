@@ -493,7 +493,10 @@ const units: UnitProfile[] = [
     lores: ['waaagh'],
     options: SAVAGE_ORC_SHAMAN_LEVELS,
     mounts: ORC_MOUNTS,
-    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Frenzy (Savage Orcs)', '6+ ward save (war paint)', 'May ride War Boar (+8 pts) or a monster/chariot'],
+    // Book p.19: joining a Savage Orc unit (Warriors or Boar Boyz) grants him an
+    // extra magic card (his alone) and upgrades the war-paint ward to 5+ for both
+    // the Shaman and the unit's warriors.
+    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Frenzy (Savage Orcs)', '6+ ward save (war paint)', 'Joined to a Savage Orc unit: gains an extra magic card (usable only by him)', 'Joined to a Savage Orc unit: 5+ ward save for the Shaman and the unit', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
     id: 'og-shaman-goblin',

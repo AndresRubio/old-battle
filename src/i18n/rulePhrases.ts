@@ -103,6 +103,10 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Immune to Animosity': 'Inmune a la Animosidad',
   'Immune to Animosity & panic from other greenskins': 'Inmune a la Animosidad y al pánico de otros pielverde',
   'Immune to psychology': 'Inmune a la psicología',
+  'Joined to a Savage Orc unit: gains an extra magic card (usable only by him)':
+    'Unido a una Peña de Orcos Salvajes: obtiene una carta de magia adicional (sólo para él)',
+  'Joined to a Savage Orc unit: 5+ ward save for the Shaman and the unit':
+    'Unido a una Peña de Orcos Salvajes: salvación especial 5+ para el Shaman y la Peña',
   'Khorne has no sorcerers': 'Khorne no tiene hechiceros',
   "Knight's Virtue": 'Virtud del Caballero',
   'Large target': 'Objetivo grande',
