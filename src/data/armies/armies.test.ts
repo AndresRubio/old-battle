@@ -391,6 +391,36 @@ describe('mounts & profiles', () => {
     }
   })
 
+  // OLD-17 — book p.81 "Monturas" (Shamanes): Goblin → Giant Wolf +4, Forest
+  // Goblin → Giant Spider +4, Night Goblin → none (monster or chariot only);
+  // "Cualquier Shaman puede montar monstruo o ir en carruaje" — all three ride
+  // the Goblin Wolf Chariot (never the Orc Boar Chariot), and only their own
+  // beast (no cross-contamination between wolf/spider/boar).
+  it('Orcs & Goblins: Goblin, Forest Goblin and Night Goblin Shamans get the Wolf Chariot and their own beast only (p.81)', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const mountIds = (unitId: string) =>
+      (orcs.units.find((u) => u.id === unitId)!.mounts ?? []).map((m) => m.id)
+
+    expect(mountIds('og-shaman-goblin')).toContain('mount-giant-wolf')
+    expect(mountIds('og-shaman-goblin')).toContain('mount-wolf-chariot')
+    expect(mountIds('og-shaman-goblin')).not.toContain('mount-giant-spider')
+    expect(mountIds('og-shaman-goblin')).not.toContain('mount-war-boar')
+
+    expect(mountIds('og-shaman-forest-goblin')).toContain('mount-giant-spider')
+    expect(mountIds('og-shaman-forest-goblin')).toContain('mount-wolf-chariot')
+    expect(mountIds('og-shaman-forest-goblin')).not.toContain('mount-giant-wolf')
+    expect(mountIds('og-shaman-forest-goblin')).not.toContain('mount-war-boar')
+
+    expect(mountIds('og-shaman-night-goblin')).toContain('mount-wolf-chariot')
+    expect(mountIds('og-shaman-night-goblin')).not.toContain('mount-giant-wolf')
+    expect(mountIds('og-shaman-night-goblin')).not.toContain('mount-giant-spider')
+    expect(mountIds('og-shaman-night-goblin')).not.toContain('mount-war-boar')
+
+    for (const id of ['og-shaman-goblin', 'og-shaman-forest-goblin', 'og-shaman-night-goblin']) {
+      expect(mountIds(id), id).not.toContain('mount-boar-chariot')
+    }
+  })
+
   // OLD-9 — book p.80 "Jefes" table: HP4/F5/I3/A2 (Black Orc), HP4/F4/I3/A2 (Orc,
   // Savage Orc), HP4/F4/I3/A2 (Goblin, Forest Goblin, Night Goblin). Regression
   // guard for the mistranscribed HP/F/I values fixed by this issue.
