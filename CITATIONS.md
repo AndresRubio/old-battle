@@ -101,6 +101,9 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   (an extra magic card for him alone; the war-paint ward improves 6+ → 5+ for the Shaman and the
   unit) are transcribed from *Ejércitos Warhammer: Orcos y Goblins* (1997, ES), **printed p.19**
   (PDF p.21, offset +2), via `source/transcribed/orcs-goblins.md`. Linear OLD-16.
+- **Battle Standard Bearers** (all six `og-bsb-*` entries) — I/A were transcribed as I1/A3; the
+  book (printed p.79, via `source/transcribed/orcs-goblins-lista-ejercito.md`) actually gives I3/A2
+  for all six BSBs. Corrected; no other stats or points changed. Linear OLD-6.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
