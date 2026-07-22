@@ -223,8 +223,8 @@ const units: UnitProfile[] = [
     nameEs: 'Portaestandarte de Batalla Orco Negro',
     role: 'character',
     pointsPerModel: 92,
-    // PDF p.79: M10 HA5 HP4 F5 R4 I1 A3 L8
-    statLine: { M: 4, WS: 5, BS: 4, S: 5, T: 4, W: 1, I: 1, A: 3, Ld: 8 },
+    // PDF p.79: M10 HA5 HP4 F5 R4 I3 A2 L8
+    statLine: { M: 4, WS: 5, BS: 4, S: 5, T: 4, W: 1, I: 3, A: 2, Ld: 8 },
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
@@ -238,8 +238,8 @@ const units: UnitProfile[] = [
     nameEs: 'Portaestandarte de Batalla Orco',
     role: 'character',
     pointsPerModel: 83,
-    // PDF p.79: M10 HA4 HP4 F4 R4 I1 A3 L7
-    statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 1, I: 1, A: 3, Ld: 7 },
+    // PDF p.79: M10 HA4 HP4 F4 R4 I3 A2 L7
+    statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 1, I: 3, A: 2, Ld: 7 },
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
@@ -253,8 +253,8 @@ const units: UnitProfile[] = [
     nameEs: 'Portaestandarte de Batalla Orco Salvaje',
     role: 'character',
     pointsPerModel: 95,
-    // PDF p.79: M10 HA4 HP4 F4 R4 I1 A3 L7
-    statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 1, I: 1, A: 3, Ld: 7 },
+    // PDF p.79: M10 HA4 HP4 F4 R4 I3 A2 L7
+    statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 1, I: 3, A: 2, Ld: 7 },
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
@@ -268,8 +268,8 @@ const units: UnitProfile[] = [
     nameEs: 'Portaestandarte de Batalla Goblin',
     role: 'character',
     pointsPerModel: 65,
-    // PDF p.79: M10 HA3 HP4 F4 R3 I1 A3 L5
-    statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 1, A: 3, Ld: 5 },
+    // PDF p.79: M10 HA3 HP4 F4 R3 I3 A2 L5
+    statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 },
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
@@ -283,8 +283,8 @@ const units: UnitProfile[] = [
     nameEs: 'Portaestandarte de Batalla Goblin Silvano',
     role: 'character',
     pointsPerModel: 65,
-    // PDF p.79: M10 HA3 HP4 F4 R3 I1 A3 L5
-    statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 1, A: 3, Ld: 5 },
+    // PDF p.79: M10 HA3 HP4 F4 R3 I3 A2 L5
+    statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 },
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
@@ -298,8 +298,8 @@ const units: UnitProfile[] = [
     nameEs: 'Portaestandarte de Batalla Goblin Nocturno',
     role: 'character',
     pointsPerModel: 65,
-    // PDF p.79: M10 HA3 HP4 F4 R3 I1 A3 L5
-    statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 1, A: 3, Ld: 5 },
+    // PDF p.79: M10 HA3 HP4 F4 R3 I3 A2 L5
+    statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 },
     isCharacter: true,
     characterRank: 'champion',
     canBeBSB: true,
