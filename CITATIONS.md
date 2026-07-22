@@ -151,6 +151,14 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   its own full profile (Shaman F3 H1 I3 A1 L5 / Paladín F4 H2 I3 A1 L5 / Maestro F4 H3 I4 A2 L5 /
   Gran F4 H4 I5 A3 L6), shared by all three goblin variants; the levels are now replacement
   `statLine`s on `GOBLIN_SHAMAN_LEVELS`. No points changed. Linear OLD-13.
+- **Goblin/Forest Goblin/Night Goblin Shaman mounts** (`og-shaman-goblin`,
+  `og-shaman-forest-goblin`, `og-shaman-night-goblin`) — verified against the book's "Shamanes"
+  → "Monturas" paragraph (printed p.81, via `source/transcribed/orcs-goblins-lista-ejercito.md`):
+  Goblin → Giant Wolf +4, Goblin Silvano → Giant Spider +4, Goblin Nocturno → no beast (monster or
+  chariot only); any Shaman may also ride a monster or the Goblin Wolf Chariot (+65), never the
+  Orc Boar Chariot. Data already matched (`GOBLIN_MOUNTS`/`FOREST_GOBLIN_MOUNTS`/
+  `NIGHT_GOBLIN_MOUNTS` from OLD-8/OLD-11); added a regression test pinning the full mount matrix.
+  No data changed. Linear OLD-17.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
