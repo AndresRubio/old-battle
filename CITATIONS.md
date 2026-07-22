@@ -119,6 +119,12 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   HP4/F5/I3/A2 for the Black Orc Boss, HP4/F4/I3/A2 for the Orc and Savage Orc Bosses, and
   HP4/F4/I3/A2 for the Goblin/Forest Goblin/Night Goblin Bosses. Corrected; no other stats or
   points changed. Linear OLD-9.
+- **Orc Shaman mounts** (`og-shaman-orc`) — wrongly offered a Giant Wolf mount; the book's
+  "Shamanes" section (printed p.81, "Monturas" paragraph, via
+  `source/transcribed/orcs-goblins-lista-ejercito.md`) gives Orc/Savage Orc shamans War Boar (+8)
+  or a monster/chariot — the Giant Wolf is the Goblin shaman's mount, not the Orc's. Swapped
+  `og-shaman-orc` onto `ORC_MOUNTS` (War Boar + Orc Boar Chariot + monsters); removed the Giant
+  Wolf and the now-unused `ORC_SHAMAN_MOUNTS` const. Linear OLD-11 (child of OLD-10).
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary

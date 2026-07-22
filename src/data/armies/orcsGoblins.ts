@@ -168,8 +168,6 @@ const MONSTER_MOUNTS: MountOption[] = [
 const ORC_MOUNTS: MountOption[] = [WAR_BOAR_MOUNT, ORC_BOAR_CHARIOT_MOUNT, ...MONSTER_MOUNTS]
 const GOBLIN_MOUNTS: MountOption[] = [GIANT_WOLF_MOUNT, GOBLIN_WOLF_CHARIOT_MOUNT, ...MONSTER_MOUNTS]
 const FOREST_GOBLIN_MOUNTS: MountOption[] = [GIANT_SPIDER_MOUNT, GOBLIN_WOLF_CHARIOT_MOUNT, ...MONSTER_MOUNTS]
-// Orc Shaman text: "War Boar, Giant Wolf or a monster" (OLD-17 owns shaman mounts).
-const ORC_SHAMAN_MOUNTS: MountOption[] = [WAR_BOAR_MOUNT, GIANT_WOLF_MOUNT, ...MONSTER_MOUNTS]
 // Night Goblins never ride a beast — "a monster or chariot only".
 const NIGHT_GOBLIN_MOUNTS: MountOption[] = [GOBLIN_WOLF_CHARIOT_MOUNT, ...MONSTER_MOUNTS]
 
@@ -546,8 +544,8 @@ const units: UnitProfile[] = [
     characterRank: 'wizard1',
     lores: ['waaagh'],
     options: ORC_SHAMAN_LEVELS,
-    mounts: ORC_SHAMAN_MOUNTS,
-    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'May ride War Boar (+8 pts), Giant Wolf or a monster/chariot'],
+    mounts: ORC_MOUNTS,
+    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
     id: 'og-shaman-savage-orc',
