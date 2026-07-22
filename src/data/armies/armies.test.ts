@@ -299,6 +299,20 @@ describe('selectionRules survive army assembly', () => {
       expect(RULE_PHRASE_ES[r], `missing ES translation for "${r}"`).toBeTruthy()
     }
   })
+
+  it('Orcs & Goblins: Forest Goblin Shaman has the book p.19 spider-venom rules', () => {
+    const unit = getArmy('orcs-and-goblins')!.units.find((u) => u.id === 'og-shaman-forest-goblin')!
+    const rules = unit.specialRules ?? []
+    expect(rules).toContain('Spider venom: +1 to the Mental Burst roll; a natural 6 counts as passing the Waaagh! check with no ill effect')
+    expect(rules).toContain('Any failed Waaagh! check makes him stagger 2D6cm in a random direction')
+
+    for (const r of [
+      'Spider venom: +1 to the Mental Burst roll; a natural 6 counts as passing the Waaagh! check with no ill effect',
+      'Any failed Waaagh! check makes him stagger 2D6cm in a random direction',
+    ]) {
+      expect(RULE_PHRASE_ES[r], `missing ES translation for "${r}"`).toBeTruthy()
+    }
+  })
 })
 
 describe('mounts & profiles', () => {

@@ -149,6 +149,17 @@ export const RULES: RuleDef[] = [
     es: 'Un Shaman Goblin Nocturno lleva una Seta Shaman por cada nivel de magia (1/2/3/4 para Shaman/Paladín Shaman/Maestro Shaman/Gran Shaman), cada una utilizable una sola vez por batalla. Al principio de cualquier fase de magia, antes de tirar los Vientos de la Magia, puede comerse una para robar 1D6 cartas de magia adicionales esa fase, que sólo él puede usar. El precio: en la fase en la que haya comido una, si debe hacer un chequeo por ¡Waaagh!, resta 1 al resultado del dado al consultar la Tabla de Estallido Mental. Una seta también le permite lanzar hechizos aunque no haya Orcos ni Goblins a 30 cm — pero si no hay ninguna fuente de energía ¡Waaagh! tan cerca, sigue sin recibir cartas normales de los Vientos de la Magia, sólo el 1D6 de la seta.',
   },
   {
+    // Aliases match both Forest Goblin Shaman tags (book printed p.19 / PDF
+    // p.21). Deliberately not 'waaagh': that word also appears inside the
+    // generic 'Wizard (Waaagh! Magic)' tag shared by every Orc/Goblin caster.
+    id: 'forest-goblin-shaman-venom',
+    aliases: ['spider venom', 'stagger 2d6cm'],
+    titleEn: 'Forest Goblin Shaman (Spider Venom)',
+    titleEs: 'Shaman Goblin Silvano (Veneno de Araña)',
+    en: 'A Forest Goblin Shaman makes Waaagh! checks like any other Goblin Shaman, but the venom of his pet spiders lets him add +1 to his roll on the Mental Burst table. A natural 6 on that roll leaves him unaffected entirely — treated as if he had passed the Waaagh! check even if he had not, with no downside; this means his worst possible result on the table is a 2 ("I think I’m going to…"), and he can never suffer the "Mental Burst" result itself. However, every time he actually fails a Waaagh! check — even one "saved" by that natural 6 — he immediately staggers 2D6cm in a random (scatter-die) direction, stopping at any impassable obstacle; if this brings him into contact with an enemy he is locked in combat and counts as having charged that turn (and again the following turn if already fighting).',
+    es: 'Un Shaman Goblin Silvano hace chequeos por ¡Waaagh! como cualquier otro Shaman Goblin, pero el veneno de sus arañas mascota le permite sumar +1 a su tirada en la Tabla de Estallido Mental. Un resultado natural de 6 en esa tirada le deja completamente indemne: se le trata como si hubiera superado el chequeo por ¡Waaagh!, aunque no lo hubiera hecho, sin ningún efecto negativo; esto significa que su peor resultado posible en la tabla es un 2 ("Creo que voy a…") y jamás puede sufrir el resultado "Estallido Mental". Sin embargo, cada vez que falla de verdad un chequeo por ¡Waaagh! — incluso uno "salvado" por ese natural de 6 — se desplaza de inmediato el equivalente en centímetros de una tirada de 2D6 en una dirección aleatoria (dado de dispersión), deteniéndose ante cualquier obstáculo infranqueable; si con ello contacta con un enemigo queda trabado en combate y cuenta como si hubiera cargado ese turno (y de nuevo el turno siguiente si ya estaba luchando).',
+  },
+  {
     id: 'ward-save',
     aliases: ['ward save', 'ward vs', 'salvación especial', 'salvacion especial', 'salvación por protección'],
     titleEn: 'Ward Save',

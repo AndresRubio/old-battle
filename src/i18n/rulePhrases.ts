@@ -395,6 +395,8 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Cannot march': 'No puede marchar',
   'Carried on the Throne of Power by four bearers; subject to Hatred (all enemies)': 'Transportado en el Trono del Poder por cuatro porteadores; sujeto a Odio (todos los enemigos)',
   'Carries a warp-pistol (S5, -3 save) and warpfire globes': 'Lleva una pistola de disformidad (F5, -3 a la salvación) y globos de fuego de disformidad',
+  'Spider venom: +1 to the Mental Burst roll; a natural 6 counts as passing the Waaagh! check with no ill effect': 'Veneno de araña: +1 a la tirada de Estallido Mental; un natural de 6 cuenta como superar el chequeo por ¡Waaagh! sin efecto negativo',
+  'Any failed Waaagh! check makes him stagger 2D6cm in a random direction': 'Cualquier chequeo por ¡Waaagh! fallado le hace tambalearse 2D6cm en una dirección aleatoria',
   'Carries Shaman Mushrooms (1 per wizard level, each usable once per battle)': 'Lleva Setas Shaman (1 por nivel de magia, cada una utilizable una vez por batalla)',
   'Eats a mushroom before the Magic phase: 1D6 extra magic cards, usable only by him': 'Come una seta antes de la fase de magia: 1D6 cartas de magia adicionales, solo para él',
   'After eating a mushroom, -1 to the Mental Burst roll if he must test that phase': 'Tras comer una seta, -1 al resultado de Estallido Mental si debe chequear esa fase',
