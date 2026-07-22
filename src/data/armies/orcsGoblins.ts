@@ -51,11 +51,20 @@ const SAVAGE_ORC_SHAMAN_LEVELS: EquipmentOption[] = [
   { id: 'wizard-l3', name: 'Wizard Level 3 (Maestro Shaman)', pointsPerModel: 160, magicItemSlotsDelta: 2, statLine: ORC_SHAMAN_L3_STATS },
   { id: 'wizard-l4', name: 'Wizard Level 4 (Gran Shaman)', pointsPerModel: 244, magicItemSlotsDelta: 3, statLine: ORC_SHAMAN_L4_STATS },
 ]
+// Goblin Shaman (all goblin types) full profile per the p.81 "Shamanes
+// Goblins" table (M10cm→4"): Shaman S3 T4 W1 I3 A1 L5 / Paladín S4 T4 W2 I3
+// A1 L5 / Maestro S4 T4 W3 I4 A2 L5 / Gran S4 T4 W4 I5 A3 L6. Level 1 is the
+// unit's base statLine; levels 2-4 carry a replacement `statLine` resolved by
+// `effectiveStatLine`. The table applies to Goblin, Forest Goblin and Night
+// Goblin Shamans alike, so they share these rows.
+const GOBLIN_SHAMAN_L2_STATS: StatLine = { M: 4, WS: 2, BS: 3, S: 4, T: 4, W: 2, I: 3, A: 1, Ld: 5 }
+const GOBLIN_SHAMAN_L3_STATS: StatLine = { M: 4, WS: 2, BS: 3, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 }
+const GOBLIN_SHAMAN_L4_STATS: StatLine = { M: 4, WS: 2, BS: 3, S: 4, T: 4, W: 4, I: 5, A: 3, Ld: 6 }
 // Goblin Shaman (all goblin types): 28 → 83 → 159 → 253  (deltas: +55 / +131 / +225)
 const GOBLIN_SHAMAN_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Wizard Level 2 (Paladín Shaman)', pointsPerModel: 55, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Wizard Level 3 (Maestro Shaman)', pointsPerModel: 131, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Wizard Level 4 (Gran Shaman)', pointsPerModel: 225, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Wizard Level 2 (Paladín Shaman)', pointsPerModel: 55, magicItemSlotsDelta: 1, statLine: GOBLIN_SHAMAN_L2_STATS },
+  { id: 'wizard-l3', name: 'Wizard Level 3 (Maestro Shaman)', pointsPerModel: 131, magicItemSlotsDelta: 2, statLine: GOBLIN_SHAMAN_L3_STATS },
+  { id: 'wizard-l4', name: 'Wizard Level 4 (Gran Shaman)', pointsPerModel: 225, magicItemSlotsDelta: 3, statLine: GOBLIN_SHAMAN_L4_STATS },
 ]
 
 // --- Beast statlines (draught beasts & ridden bestiary). Movement already in
@@ -584,7 +593,8 @@ const units: UnitProfile[] = [
     nameEs: 'Shaman Goblin',
     role: 'character',
     pointsPerModel: 28,
-    // PDF p.81 Goblin Shaman row: M10 HA2 HP3 F3 R4 I1 A3 L5 (from Goblins bestiary p.63)
+    // Book p.81 "Shamanes Goblins", level-1 "Shaman" row: M10 HA2 HP3 F3 R4
+    // H1 I3 A1 L5. Levels 2-4 replace the whole profile (GOBLIN_SHAMAN_LEVELS).
     statLine: { M: 4, WS: 2, BS: 3, S: 3, T: 4, W: 1, I: 3, A: 1, Ld: 5 },
     isCharacter: true,
     characterRank: 'wizard1',
@@ -599,7 +609,8 @@ const units: UnitProfile[] = [
     nameEs: 'Shaman Goblin Silvano',
     role: 'character',
     pointsPerModel: 28,
-    // PDF p.81: same Goblin Shaman profile
+    // Book p.81 "Shamanes Goblins" table: same rows as the Goblin Shaman
+    // (level 1 base here; levels 2-4 via GOBLIN_SHAMAN_LEVELS).
     statLine: { M: 4, WS: 2, BS: 3, S: 3, T: 4, W: 1, I: 3, A: 1, Ld: 5 },
     isCharacter: true,
     characterRank: 'wizard1',
@@ -614,7 +625,8 @@ const units: UnitProfile[] = [
     nameEs: 'Shaman Goblin Nocturno',
     role: 'character',
     pointsPerModel: 28,
-    // PDF p.81: same Goblin Shaman profile (Night Goblin Shaman row)
+    // Book p.81 "Shamanes Goblins" table: same rows as the Goblin Shaman
+    // (level 1 base here; levels 2-4 via GOBLIN_SHAMAN_LEVELS).
     statLine: { M: 4, WS: 2, BS: 3, S: 3, T: 4, W: 1, I: 3, A: 1, Ld: 5 },
     isCharacter: true,
     characterRank: 'wizard1',

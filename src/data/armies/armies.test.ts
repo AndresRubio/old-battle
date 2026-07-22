@@ -400,6 +400,29 @@ describe('mounts & profiles', () => {
     }
   })
 
+  // OLD-13 — book p.81 "Shamanes Goblins" table: each wizard level has its
+  // own full profile (Shaman / Paladín / Maestro / Gran Shaman), shared by
+  // the Goblin, Forest Goblin and Night Goblin Shamans alike. Level 1 is the
+  // unit's base statLine; levels 2-4 are replacement statLines on the
+  // wizard-level options.
+  it('Orcs & Goblins: Goblin, Forest Goblin and Night Goblin Shaman statlines scale per the book p.81 table', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const rows = {
+      l1: { M: 4, WS: 2, BS: 3, S: 3, T: 4, W: 1, I: 3, A: 1, Ld: 5 },
+      l2: { M: 4, WS: 2, BS: 3, S: 4, T: 4, W: 2, I: 3, A: 1, Ld: 5 },
+      l3: { M: 4, WS: 2, BS: 3, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 },
+      l4: { M: 4, WS: 2, BS: 3, S: 4, T: 4, W: 4, I: 5, A: 3, Ld: 6 },
+    }
+    for (const id of ['og-shaman-goblin', 'og-shaman-forest-goblin', 'og-shaman-night-goblin']) {
+      const shaman = orcs.units.find((u) => u.id === id)!
+      const level = (opt: string) => (shaman.options ?? []).find((o) => o.id === opt)
+      expect(shaman.statLine, `${id} base (level 1)`).toEqual(rows.l1)
+      expect(level('wizard-l2')?.statLine, `${id} wizard-l2`).toEqual(rows.l2)
+      expect(level('wizard-l3')?.statLine, `${id} wizard-l3`).toEqual(rows.l3)
+      expect(level('wizard-l4')?.statLine, `${id} wizard-l4`).toEqual(rows.l4)
+    }
+  })
+
   // p.79 "Monturas: mismas que el Señor de la Guerra" — every BSB shares its
   // Warlord's mount list (beast + chariot + monsters).
   it('Orcs & Goblins: BSBs get the same mounts as their Warlord', () => {

@@ -132,6 +132,12 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   Shamanes Orcos"; the levels are now replacement `statLine`s on the wizard-level options, and the
   Savage Orc Shaman's base was corrected from the level-2 row (F4/H2) to the level-1 row (F3/H1).
   No points changed. Linear OLD-12.
+- **Goblin/Forest Goblin/Night Goblin Shaman per-level statlines** (`og-shaman-goblin`,
+  `og-shaman-forest-goblin`, `og-shaman-night-goblin`) — the book's "Shamanes Goblins" table
+  (printed p.81, via `source/transcribed/orcs-goblins-lista-ejercito.md`) gives each wizard level
+  its own full profile (Shaman F3 H1 I3 A1 L5 / Paladín F4 H2 I3 A1 L5 / Maestro F4 H3 I4 A2 L5 /
+  Gran F4 H4 I5 A3 L6), shared by all three goblin variants; the levels are now replacement
+  `statLine`s on `GOBLIN_SHAMAN_LEVELS`. No points changed. Linear OLD-13.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
