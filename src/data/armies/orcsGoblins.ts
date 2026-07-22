@@ -104,17 +104,74 @@ const DRAGON_MOUNT: MountOption = {
   specialRules: ['Flying', 'Terror', 'Large target', 'Breath weapon'],
 }
 
+// --- Chariot mounts (book p.88): characters may ride a chariot instead of a
+//     beast/monster. The chariot brings its own crew, draught beasts and
+//     chassis (display profiles) plus its own selectable options — extra crew,
+//     crew shields/short bows (priced per crewman) and scythed wheels. ---
+const CHARIOT_CHASSIS_STATS = { S: 7, T: 7, W: 3, I: 1 } as const
+const ORC_BOAR_CHARIOT_MOUNT: MountOption = {
+  id: 'mount-boar-chariot', name: 'Orc Boar Chariot', nameEs: 'Carruaje de Jabalíes Orco',
+  points: 81,
+  baseCrew: 2,
+  profiles: [
+    {
+      name: '2 Orc crew', nameEs: '2 tripulantes Orcos',
+      // PDF p.88: Orc crew M10 HA3 HP3 F3 R4 H1 I2 A1 L7
+      statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
+      specialRules: ['Swords & light armour'],
+    },
+    {
+      name: '2 War Boars', nameEs: '2 Jabalíes de Guerra',
+      statLine: WAR_BOAR_STATS,
+      specialRules: ['Boar charge (S+2)', 'Tough hide (+1 armour save)'],
+    },
+    { name: 'Chariot', nameEs: 'Carro', statLine: CHARIOT_CHASSIS_STATS },
+  ],
+  options: [
+    { id: 'mount-boar-chariot-crew3', name: '3rd crewman', pointsPerModel: 7.5, flat: true, addsCrewman: true },
+    { id: 'mount-boar-chariot-crew4', name: '4th crewman', pointsPerModel: 7.5, flat: true, addsCrewman: true },
+    { id: 'mount-boar-chariot-shields', name: 'Shields for crew', pointsPerModel: 1, perCrewman: true },
+    { id: 'mount-boar-chariot-bows', name: 'Short bows for crew', pointsPerModel: 1, perCrewman: true },
+    { id: 'mount-boar-chariot-scythes', name: 'Scythed wheels', pointsPerModel: 20, flat: true },
+  ],
+}
+const GOBLIN_WOLF_CHARIOT_MOUNT: MountOption = {
+  id: 'mount-wolf-chariot', name: 'Goblin Wolf Chariot', nameEs: 'Carruaje de Lobos Goblin',
+  points: 65,
+  baseCrew: 2,
+  profiles: [
+    {
+      name: '2 Goblin crew', nameEs: '2 tripulantes Goblins',
+      // PDF p.88: Goblin crew M10 HA2 HP3 F3 R3 H1 I2 A1 L5
+      statLine: { M: 4, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
+      specialRules: ['Swords & light armour'],
+    },
+    { name: '2 Giant Wolves', nameEs: '2 Lobos Gigantes', statLine: GIANT_WOLF_STATS },
+    { name: 'Chariot', nameEs: 'Carro', statLine: CHARIOT_CHASSIS_STATS },
+  ],
+  options: [
+    { id: 'mount-wolf-chariot-crew3', name: '3rd crewman', pointsPerModel: 3.5, flat: true, addsCrewman: true },
+    { id: 'mount-wolf-chariot-crew4', name: '4th crewman', pointsPerModel: 3.5, flat: true, addsCrewman: true },
+    { id: 'mount-wolf-chariot-wolf3', name: '3rd Giant Wolf', pointsPerModel: 4, flat: true },
+    { id: 'mount-wolf-chariot-shields', name: 'Shields for crew', pointsPerModel: 0.5, perCrewman: true },
+    { id: 'mount-wolf-chariot-bows', name: 'Short bows for crew', pointsPerModel: 0.5, perCrewman: true },
+    { id: 'mount-wolf-chariot-scythes', name: 'Scythed wheels', pointsPerModel: 20, flat: true },
+  ],
+}
+
 /** Monster mounts open to any Orc/Goblin warboss ("or a monster"). */
 const MONSTER_MOUNTS: MountOption[] = [
   WINGED_SERPENT_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT, CHIMERA_MOUNT, DRAGON_MOUNT,
 ]
-const ORC_MOUNTS: MountOption[] = [WAR_BOAR_MOUNT, ...MONSTER_MOUNTS]
-const GOBLIN_MOUNTS: MountOption[] = [GIANT_WOLF_MOUNT, ...MONSTER_MOUNTS]
-const FOREST_GOBLIN_MOUNTS: MountOption[] = [GIANT_SPIDER_MOUNT, ...MONSTER_MOUNTS]
-// Orc Shaman text: "War Boar, Giant Wolf or a monster".
+// Character mount lists (p.88): orc characters ride the Boar Chariot, goblin
+// characters (all kinds) the Wolf Chariot.
+const ORC_MOUNTS: MountOption[] = [WAR_BOAR_MOUNT, ORC_BOAR_CHARIOT_MOUNT, ...MONSTER_MOUNTS]
+const GOBLIN_MOUNTS: MountOption[] = [GIANT_WOLF_MOUNT, GOBLIN_WOLF_CHARIOT_MOUNT, ...MONSTER_MOUNTS]
+const FOREST_GOBLIN_MOUNTS: MountOption[] = [GIANT_SPIDER_MOUNT, GOBLIN_WOLF_CHARIOT_MOUNT, ...MONSTER_MOUNTS]
+// Orc Shaman text: "War Boar, Giant Wolf or a monster" (OLD-17 owns shaman mounts).
 const ORC_SHAMAN_MOUNTS: MountOption[] = [WAR_BOAR_MOUNT, GIANT_WOLF_MOUNT, ...MONSTER_MOUNTS]
 // Night Goblins never ride a beast — "a monster or chariot only".
-const NIGHT_GOBLIN_MOUNTS: MountOption[] = MONSTER_MOUNTS
+const NIGHT_GOBLIN_MOUNTS: MountOption[] = [GOBLIN_WOLF_CHARIOT_MOUNT, ...MONSTER_MOUNTS]
 
 // --- Fixed (non-selectable) mounts: cost already baked into the model's points,
 //     so these are display-only profiles. ---
@@ -981,10 +1038,10 @@ const units: UnitProfile[] = [
     nameEs: 'Carruaje de Jabalíes Orco',
     role: 'chariot',
     pointsPerModel: 81,
-    // PDF p.88: Orc crew M10 HA3 HP3 F3 R4 H1 I2 A1 L7; Boar M18; Chariot S7 R7 —
+    // PDF p.88: Orc crew M10 HA3 HP3 F3 R4 H1 I2 A1 L7; Boar M18; Chariot F7 R7 H3 I1
     statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
     profiles: [
-      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
+      { name: 'Chariot', nameEs: 'Carro', statLine: CHARIOT_CHASSIS_STATS },
       { name: '2 War Boars', nameEs: '2 Jabalíes de Guerra', statLine: WAR_BOAR_STATS, specialRules: ['Boar charge (S+2)', 'Tough hide (+1 armour save)'] },
     ],
     specialRules: [
@@ -1001,10 +1058,10 @@ const units: UnitProfile[] = [
     nameEs: 'Carruaje de Lobos Goblin',
     role: 'chariot',
     pointsPerModel: 65,
-    // PDF p.88: Goblin crew M10 HA2 HP3 F3 R3 H1 I2 A1 L5; Wolf M22; Chariot S7 R7
+    // PDF p.88: Goblin crew M10 HA2 HP3 F3 R3 H1 I2 A1 L5; Wolf M22; Chariot F7 R7 H3 I1
     statLine: { M: 4, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
     profiles: [
-      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
+      { name: 'Chariot', nameEs: 'Carro', statLine: CHARIOT_CHASSIS_STATS },
       { name: '2 Giant Wolves', nameEs: '2 Lobos Gigantes', statLine: GIANT_WOLF_STATS },
     ],
     specialRules: [

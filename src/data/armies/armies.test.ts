@@ -33,6 +33,19 @@ describe('army data integrity', () => {
         }
       })
 
+      it('mount-option ids never collide with the unit option namespace', () => {
+        // Mount options share RosterEntry.optionIds with the unit's own options,
+        // so every option id must be unique across the unit's whole namespace
+        // (unit options + every offered mount's options).
+        for (const u of army.units) {
+          const ids = [
+            ...(u.options ?? []).map((o) => o.id),
+            ...(u.mounts ?? []).flatMap((m) => (m.options ?? []).map((o) => o.id)),
+          ]
+          expect(new Set(ids).size, `${u.id} has colliding option ids`).toBe(ids.length)
+        }
+      })
+
       it('mount ids are unique within a unit and points are non-negative', () => {
         for (const u of army.units) {
           if (!u.mounts) continue
@@ -318,6 +331,46 @@ describe('mounts & profiles', () => {
     'vc-wight-cavalry',
     'we-wild-rider-knights', 'we-warhawk-riders',
   ]
+
+  // OLD-8 — O&G characters may ride a chariot as a mount (book p.88).
+  it('Orcs & Goblins: orc characters offer the Boar Chariot, goblins the Wolf Chariot', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const mountIds = (unitId: string) =>
+      (orcs.units.find((u) => u.id === unitId)!.mounts ?? []).map((m) => m.id)
+    expect(mountIds('og-warboss-orc')).toContain('mount-boar-chariot')
+    expect(mountIds('og-warboss-goblin')).toContain('mount-wolf-chariot')
+    expect(mountIds('og-warboss-forest-goblin')).toContain('mount-wolf-chariot')
+    // Night Goblins: "a monster or chariot only" — the chariot but never a beast.
+    expect(mountIds('og-warboss-night-goblin')).toContain('mount-wolf-chariot')
+    expect(mountIds('og-warboss-night-goblin')).not.toContain('mount-giant-wolf')
+    // OLD-17 owns shaman mounts — the Orc Shaman list stays chariot-free.
+    expect(mountIds('og-shaman-orc')).not.toContain('mount-boar-chariot')
+  })
+
+  it('Orcs & Goblins: chariot mounts expose crew/beast/chassis profiles and nested options', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const warboss = orcs.units.find((u) => u.id === 'og-warboss-orc')!
+    const chariot = (warboss.mounts ?? []).find((m) => m.id === 'mount-boar-chariot')!
+    expect(chariot.points).toBe(81)
+    expect((chariot.profiles ?? []).map((p) => p.name)).toEqual(['2 Orc crew', '2 War Boars', 'Chariot'])
+    expect((chariot.profiles ?? []).find((p) => p.name === 'Chariot')?.statLine).toEqual({ S: 7, T: 7, W: 3, I: 1 })
+    expect((chariot.options ?? []).map((o) => o.id)).toEqual([
+      'mount-boar-chariot-crew3',
+      'mount-boar-chariot-crew4',
+      'mount-boar-chariot-shields',
+      'mount-boar-chariot-bows',
+      'mount-boar-chariot-scythes',
+    ])
+  })
+
+  it('Orcs & Goblins: the standalone chariots carry the full chassis row (S7 T7 W3 I1)', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    for (const id of ['og-orc-boar-chariot', 'og-goblin-wolf-chariot']) {
+      const unit = orcs.units.find((u) => u.id === id)!
+      const chassis = (unit.profiles ?? []).find((p) => p.name === 'Chariot')
+      expect(chassis?.statLine, `${id} chassis`).toEqual({ S: 7, T: 7, W: 3, I: 1 })
+    }
+  })
 
   it('every cavalry regiment carries a rider + mount two-row profile', () => {
     const byId = new Map(ARMIES.flatMap((a) => a.units.map((u) => [u.id, u] as const)))

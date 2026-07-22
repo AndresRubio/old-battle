@@ -127,9 +127,25 @@ export function toggleMagicItem(roster: Roster, entryId: string, itemId: string)
   }
 }
 
-/** Select the character's mount, or clear it with `null`. */
-export function selectMount(roster: Roster, entryId: string, mountId: string | null): Roster {
-  return updateEntry(roster, entryId, { mountId: mountId ?? undefined })
+/**
+ * Select the character's mount, or clear it with `null`. Option ids that belong
+ * to a DIFFERENT mount's nested options (e.g. a chariot's extra crew after
+ * switching to a boar) are dropped — they would linger as stale selections.
+ * Unit-own options are always kept.
+ */
+export function selectMount(roster: Roster, entryId: string, army: Army, mountId: string | null): Roster {
+  const entry = roster.entries.find((e) => e.id === entryId)
+  if (!entry) return roster
+  const unit = army.units.find((u) => u.id === entry.unitId)
+  const otherMountOptionIds = new Set(
+    (unit?.mounts ?? [])
+      .filter((m) => m.id !== mountId)
+      .flatMap((m) => (m.options ?? []).map((o) => o.id)),
+  )
+  return updateEntry(roster, entryId, {
+    mountId: mountId ?? undefined,
+    optionIds: entry.optionIds.filter((id) => !otherMountOptionIds.has(id)),
+  })
 }
 
 /** Select the wizard's lore of magic, or clear it with `null`. */

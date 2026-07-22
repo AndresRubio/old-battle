@@ -1,5 +1,5 @@
 import { MAGIC_ITEM_ALLOWANCE } from '../data/types'
-import type { Army, MagicItem, RosterEntry, UnitProfile, UnitRole } from '../data/types'
+import type { Army, MagicItem, MountOption, RosterEntry, UnitProfile, UnitRole } from '../data/types'
 
 export function findUnit(army: Army, unitId: string): UnitProfile | undefined {
   return army.units.find((u) => u.id === unitId)
@@ -32,7 +32,33 @@ export function mountPoints(unit: UnitProfile, mountId: string | undefined): num
   return mount ? mount.points : 0
 }
 
-/** Total points for a single roster entry: models * (base + per-model options) + flat options + mount + magic items. */
+/**
+ * The mount's current crew count: its base crew plus one per selected
+ * `addsCrewman` option — the basis for `perCrewman` option costs.
+ */
+export function mountCrewCount(mount: MountOption, optionIds: string[]): number {
+  const extra = (mount.options ?? []).filter((o) => optionIds.includes(o.id) && o.addsCrewman).length
+  return (mount.baseCrew ?? 0) + extra
+}
+
+/**
+ * Points from the chosen mount's own selected options (e.g. a chariot's extra
+ * crew or scythed wheels). Charged once per entry — never multiplied by unit
+ * size; `perCrewman` options are multiplied by the mount's current crew count.
+ * Selections that belong to a mount the character is NOT riding contribute 0
+ * (and are flagged by validation as `mount-options-stale`).
+ */
+export function mountOptionPoints(unit: UnitProfile, mountId: string | undefined, optionIds: string[]): number {
+  if (!mountId || !unit.mounts) return 0
+  const mount = unit.mounts.find((m) => m.id === mountId)
+  if (!mount?.options) return 0
+  const crew = mountCrewCount(mount, optionIds)
+  return mount.options
+    .filter((o) => optionIds.includes(o.id))
+    .reduce((sum, o) => sum + (o.perCrewman ? o.pointsPerModel * crew : o.pointsPerModel), 0)
+}
+
+/** Total points for a single roster entry: models * (base + per-model options) + flat options + mount (+ its options) + magic items. */
 export function entryPoints(entry: RosterEntry, army: Army): number {
   const unit = findUnit(army, entry.unitId)
   if (!unit) return 0
@@ -46,7 +72,14 @@ export function entryPoints(entry: RosterEntry, army: Army): number {
   // A unit's magic standard (carried by its standard bearer) adds its own points.
   const standard = entry.magicStandardId ? findMagicItem(army, entry.magicStandardId) : undefined
   const standardPoints = standard ? standard.points : 0
-  return modelPoints + flatPoints + mountPoints(unit, entry.mountId) + magicPoints + standardPoints
+  return (
+    modelPoints +
+    flatPoints +
+    mountPoints(unit, entry.mountId) +
+    mountOptionPoints(unit, entry.mountId, entry.optionIds) +
+    magicPoints +
+    standardPoints
+  )
 }
 
 export function rosterTotalPoints(entries: RosterEntry[], army: Army): number {

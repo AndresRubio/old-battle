@@ -154,6 +154,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Boar charge (S+2)': 'Carga de jabalí (F+2)',
   'Tough hide (+1 armour save)': 'Pellejo duro (+1 a la salvación por armadura)',
   'Obstinate boar (-1 Ld to rider)': 'Jabalí obstinado (-1 al L del jinete)',
+  'Swords & light armour': 'Espadas y armadura ligera',
   'May ride a Chaos Steed (+4) or a daemonic mount with its Mark': 'Puede montar un Corcel del Caos (+4) o una montura demoníaca con su Marca',
   'May ride a Lammasu (+200) or Great Taurus (+225)': 'Puede montar un Lammasu (+200) o un Gran Taurus (+225)',
   'May ride a monster': 'Puede montar un monstruo',
