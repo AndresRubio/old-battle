@@ -287,6 +287,8 @@ const units: UnitProfile[] = [
     canBeBSB: true,
     isBSB: true,
     max: 1,
+    // p.79 "Monturas: mismas que el Señor de la Guerra" — same mounts as the Warlord.
+    mounts: ORC_MOUNTS,
     specialRules: ['Army Battle Standard', 'Immune to Animosity', 'One magic item (may be a magic standard)'],
   },
   {
@@ -302,6 +304,8 @@ const units: UnitProfile[] = [
     canBeBSB: true,
     isBSB: true,
     max: 1,
+    // p.79 "Monturas: mismas que el Señor de la Guerra" — same mounts as the Warlord.
+    mounts: ORC_MOUNTS,
     specialRules: ['Army Battle Standard', 'Animosity', 'One magic item (may be a magic standard)'],
   },
   {
@@ -317,6 +321,8 @@ const units: UnitProfile[] = [
     canBeBSB: true,
     isBSB: true,
     max: 1,
+    // p.79 "Monturas: mismas que el Señor de la Guerra" — same mounts as the Warlord.
+    mounts: ORC_MOUNTS,
     specialRules: ['Army Battle Standard', 'Animosity', 'Frenzy (Savage Orcs)', 'One magic item (may be a magic standard)'],
   },
   {
@@ -332,6 +338,8 @@ const units: UnitProfile[] = [
     canBeBSB: true,
     isBSB: true,
     max: 1,
+    // p.79 "Monturas: mismas que el Señor de la Guerra" — same mounts as the Warlord.
+    mounts: GOBLIN_MOUNTS,
     specialRules: ['Army Battle Standard', 'Animosity', 'Fear Elves', 'One magic item (may be a magic standard)'],
   },
   {
@@ -347,6 +355,8 @@ const units: UnitProfile[] = [
     canBeBSB: true,
     isBSB: true,
     max: 1,
+    // p.79 "Monturas: mismas que el Señor de la Guerra" — same mounts as the Warlord.
+    mounts: FOREST_GOBLIN_MOUNTS,
     specialRules: ['Army Battle Standard', 'Animosity', 'Fear Elves', 'One magic item (may be a magic standard)'],
   },
   {
@@ -362,6 +372,8 @@ const units: UnitProfile[] = [
     canBeBSB: true,
     isBSB: true,
     max: 1,
+    // p.79 "Monturas: mismas que el Señor de la Guerra" — same mounts as the Warlord.
+    mounts: NIGHT_GOBLIN_MOUNTS,
     specialRules: ['Army Battle Standard', 'Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'One magic item (may be a magic standard)'],
   },
 

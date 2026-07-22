@@ -347,6 +347,25 @@ describe('mounts & profiles', () => {
     expect(mountIds('og-shaman-orc')).not.toContain('mount-boar-chariot')
   })
 
+  // p.79 "Monturas: mismas que el Señor de la Guerra" — every BSB shares its
+  // Warlord's mount list (beast + chariot + monsters).
+  it('Orcs & Goblins: BSBs get the same mounts as their Warlord', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const mountIds = (unitId: string) =>
+      (orcs.units.find((u) => u.id === unitId)!.mounts ?? []).map((m) => m.id)
+    for (const id of ['og-bsb-black-orc', 'og-bsb-orc', 'og-bsb-savage-orc']) {
+      expect(mountIds(id), id).toEqual(mountIds('og-warboss-orc'))
+      expect(mountIds(id), id).toContain('mount-boar-chariot')
+    }
+    expect(mountIds('og-bsb-goblin')).toEqual(mountIds('og-warboss-goblin'))
+    expect(mountIds('og-bsb-forest-goblin')).toEqual(mountIds('og-warboss-forest-goblin'))
+    expect(mountIds('og-bsb-night-goblin')).toEqual(mountIds('og-warboss-night-goblin'))
+    for (const id of ['og-bsb-goblin', 'og-bsb-forest-goblin', 'og-bsb-night-goblin']) {
+      expect(mountIds(id), id).toContain('mount-wolf-chariot')
+    }
+    expect(mountIds('og-bsb-night-goblin')).not.toContain('mount-giant-wolf')
+  })
+
   it('Orcs & Goblins: chariot mounts expose crew/beast/chassis profiles and nested options', () => {
     const orcs = getArmy('orcs-and-goblins')!
     const warboss = orcs.units.find((u) => u.id === 'og-warboss-orc')!
