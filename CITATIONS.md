@@ -125,6 +125,13 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   or a monster/chariot — the Giant Wolf is the Goblin shaman's mount, not the Orc's. Swapped
   `og-shaman-orc` onto `ORC_MOUNTS` (War Boar + Orc Boar Chariot + monsters); removed the Giant
   Wolf and the now-unused `ORC_SHAMAN_MOUNTS` const. Linear OLD-11 (child of OLD-10).
+- **Orc & Savage Orc Shaman per-level statlines** (`og-shaman-orc`, `og-shaman-savage-orc`) — the
+  book's "Shamanes Orcos" table (printed p.81, via `source/transcribed/orcs-goblins-lista-ejercito.md`)
+  gives each wizard level its own full profile (Shaman F3 H1 I3 A1 / Paladín F4 H2 I3 A1 / Maestro
+  F4 H3 I4 A2 / Gran F4 H4 I5 A3 L8) and notes "Los Orcos Salvajes usan los atributos de los
+  Shamanes Orcos"; the levels are now replacement `statLine`s on the wizard-level options, and the
+  Savage Orc Shaman's base was corrected from the level-2 row (F4/H2) to the level-1 row (F3/H1).
+  No points changed. Linear OLD-12.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary

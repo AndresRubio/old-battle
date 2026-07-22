@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Army, EquipmentOption, MagicItem, ProfileBlock, RosterEntry, StatLine } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
-import { entryPoints, findUnit, magicItemAllowance, mountCrewCount } from '../rules/points'
+import { effectiveStatLine, entryPoints, findUnit, magicItemAllowance, mountCrewCount } from '../rules/points'
 import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc } from '../i18n/lang'
 import { findRule, type RuleDef } from '../data/rules'
 import { RuleDialog } from './RuleDialog'
@@ -108,6 +108,8 @@ export function EntryRow({
 
   const isRegiment = unit.role === 'regiment'
   const pts = entryPoints(entry, army)
+  // Some options (e.g. O&G shaman wizard levels) replace the whole statLine.
+  const statLine = effectiveStatLine(unit, entry.optionIds)
   const levelOptions = (unit.options ?? []).filter((o) => o.id.startsWith('wizard-l'))
   const toggleOptions = (unit.options ?? []).filter((o) => !o.id.startsWith('wizard-l'))
   const currentLevel = entry.optionIds.find((id) => id.startsWith('wizard-l')) ?? ''
@@ -194,9 +196,9 @@ export function EntryRow({
           {/* Cavalry shows two labelled rows: the rider's statLine on top and
               the mount's profile directly beneath it. Non-cavalry keeps a single
               unlabelled row. */}
-          {unit.statLine && (
+          {statLine && (
             <StatLineRow
-              statLine={unit.statLine}
+              statLine={statLine}
               lang={lang}
               label={companionMount ? t('rider', lang) : undefined}
             />

@@ -74,6 +74,12 @@ export interface EquipmentOption {
    * (e.g. a chariot's "3rd crewman"), raising the basis for `perCrewman` costs.
    */
   addsCrewman?: boolean
+  /**
+   * When set, selecting this option REPLACES the unit's base statLine with this
+   * full profile (not a delta) — e.g. O&G shaman wizard levels, where the book
+   * gives each level its own row (p.81). Resolved by `effectiveStatLine`.
+   */
+  statLine?: StatLine
 }
 
 /**

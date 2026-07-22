@@ -1,5 +1,5 @@
 import { MAGIC_ITEM_ALLOWANCE } from '../data/types'
-import type { Army, MagicItem, MountOption, RosterEntry, UnitProfile, UnitRole } from '../data/types'
+import type { Army, MagicItem, MountOption, RosterEntry, StatLine, UnitProfile, UnitRole } from '../data/types'
 
 export function findUnit(army: Army, unitId: string): UnitProfile | undefined {
   return army.units.find((u) => u.id === unitId)
@@ -56,6 +56,22 @@ export function mountOptionPoints(unit: UnitProfile, mountId: string | undefined
   return mount.options
     .filter((o) => optionIds.includes(o.id))
     .reduce((sum, o) => sum + (o.perCrewman ? o.pointsPerModel * crew : o.pointsPerModel), 0)
+}
+
+/**
+ * The unit's characteristic profile after option upgrades. Some options carry a
+ * full replacement `statLine` (e.g. O&G shaman wizard levels — the book gives
+ * each level its own row, p.81): the LAST selected option (in `optionIds`
+ * order) that has one wins; with none selected the base statLine applies.
+ * Stale ids that don't exist on the unit are ignored.
+ */
+export function effectiveStatLine(unit: UnitProfile, optionIds: string[]): StatLine | undefined {
+  let result = unit.statLine
+  for (const id of optionIds) {
+    const opt = unit.options?.find((o) => o.id === id)
+    if (opt?.statLine) result = opt.statLine
+  }
+  return result
 }
 
 /** Total points for a single roster entry: models * (base + per-model options) + flat options + mount (+ its options) + magic items. */

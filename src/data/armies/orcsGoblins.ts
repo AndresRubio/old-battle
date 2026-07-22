@@ -30,17 +30,26 @@ const SHORTBOW_HALF: EquipmentOption = { id: 'short-bow', name: 'Short bow', poi
 const CROSSBOW_1: EquipmentOption = { id: 'crossbow', name: 'Crossbow (instead of Bow)', pointsPerModel: 1 }
 
 // Shaman level upgrades — cumulative costs from the book (p.81).
+// Each level has its own FULL profile per the p.81 "Shamanes Orcos" table
+// (M10cm→4"): Shaman S3 W1 I3 A1 / Paladín S4 W2 I3 A1 / Maestro S4 W3 I4 A2 /
+// Gran S4 W4 I5 A3 L8. Level 1 is the unit's base statLine; levels 2-4 carry a
+// replacement `statLine` resolved by `effectiveStatLine`. Per the p.81 note
+// "Los Orcos Salvajes usan los atributos de los Shamanes Orcos", the Savage Orc
+// Shaman shares the same rows.
+const ORC_SHAMAN_L2_STATS: StatLine = { M: 4, WS: 3, BS: 3, S: 4, T: 5, W: 2, I: 3, A: 1, Ld: 7 }
+const ORC_SHAMAN_L3_STATS: StatLine = { M: 4, WS: 3, BS: 3, S: 4, T: 5, W: 3, I: 4, A: 2, Ld: 7 }
+const ORC_SHAMAN_L4_STATS: StatLine = { M: 4, WS: 3, BS: 3, S: 4, T: 5, W: 4, I: 5, A: 3, Ld: 8 }
 // Orc Shaman:        57 → 118 → 211 → 287  (deltas: +61 / +154 / +230)
 const ORC_SHAMAN_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Wizard Level 2 (Paladín Shaman)', pointsPerModel: 61, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Wizard Level 3 (Maestro Shaman)', pointsPerModel: 154, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Wizard Level 4 (Gran Shaman)', pointsPerModel: 230, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Wizard Level 2 (Paladín Shaman)', pointsPerModel: 61, magicItemSlotsDelta: 1, statLine: ORC_SHAMAN_L2_STATS },
+  { id: 'wizard-l3', name: 'Wizard Level 3 (Maestro Shaman)', pointsPerModel: 154, magicItemSlotsDelta: 2, statLine: ORC_SHAMAN_L3_STATS },
+  { id: 'wizard-l4', name: 'Wizard Level 4 (Gran Shaman)', pointsPerModel: 230, magicItemSlotsDelta: 3, statLine: ORC_SHAMAN_L4_STATS },
 ]
 // Savage Orc Shaman: 59 → 122 → 219 → 303  (deltas: +63 / +160 / +244)
 const SAVAGE_ORC_SHAMAN_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Wizard Level 2 (Paladín Shaman)', pointsPerModel: 63, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Wizard Level 3 (Maestro Shaman)', pointsPerModel: 160, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Wizard Level 4 (Gran Shaman)', pointsPerModel: 244, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Wizard Level 2 (Paladín Shaman)', pointsPerModel: 63, magicItemSlotsDelta: 1, statLine: ORC_SHAMAN_L2_STATS },
+  { id: 'wizard-l3', name: 'Wizard Level 3 (Maestro Shaman)', pointsPerModel: 160, magicItemSlotsDelta: 2, statLine: ORC_SHAMAN_L3_STATS },
+  { id: 'wizard-l4', name: 'Wizard Level 4 (Gran Shaman)', pointsPerModel: 244, magicItemSlotsDelta: 3, statLine: ORC_SHAMAN_L4_STATS },
 ]
 // Goblin Shaman (all goblin types): 28 → 83 → 159 → 253  (deltas: +55 / +131 / +225)
 const GOBLIN_SHAMAN_LEVELS: EquipmentOption[] = [
@@ -536,9 +545,8 @@ const units: UnitProfile[] = [
     nameEs: 'Shaman Orco',
     role: 'character',
     pointsPerModel: 57,
-    // PDF p.81: M10 HA3 HP3 F3 R5 I1 A3 L7 (actually 3 attacks from bestiary p.58 Shaman row)
-    // Army list p.81 Orc Shaman: M10 HA3 HP3 F3 R5 I1 A3 L7 — but bestiary shows I=3 not I=1
-    // Using bestiary p.58 Shaman row: M10 HA3 HP3 F3 R5 I1 A3 L7 (confirmed in list p.81)
+    // Book p.81 "Shamanes Orcos", level-1 "Shaman" row: M10 HA3 HP3 F3 R5 H1
+    // I3 A1 L7. Levels 2-4 replace the whole profile (see ORC_SHAMAN_LEVELS).
     statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 5, W: 1, I: 3, A: 1, Ld: 7 },
     isCharacter: true,
     characterRank: 'wizard1',
@@ -553,8 +561,13 @@ const units: UnitProfile[] = [
     nameEs: 'Shaman Orco Salvaje',
     role: 'character',
     pointsPerModel: 59,
-    // PDF p.81 Savage Orc Shaman row: M10 HA3 HP3 F4 R5 I2 A3 L7 (W=2 from bestiary p.59 Shaman row)
-    statLine: { M: 4, WS: 3, BS: 3, S: 4, T: 5, W: 2, I: 3, A: 1, Ld: 7 },
+    // Book p.81 note: "Los Orcos Salvajes usan los atributos de los Shamanes
+    // Orcos" — the level-1 base is the same "Shaman" row as the Orc Shaman
+    // (M10 HA3 HP3 F3 R5 H1 I3 A1 L7), and levels 2-4 replace the profile via
+    // SAVAGE_ORC_SHAMAN_LEVELS. A previous transcription used S4/W2 (the
+    // level-2 "Paladín Shaman" row, attributed to bestiary p.59) — the army
+    // list's per-level table is authoritative here (OLD-12).
+    statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 5, W: 1, I: 3, A: 1, Ld: 7 },
     isCharacter: true,
     characterRank: 'wizard1',
     lores: ['waaagh'],

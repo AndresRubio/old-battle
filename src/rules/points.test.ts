@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { entryPoints, mountPoints, findUnit } from './points'
+import { effectiveStatLine, entryPoints, mountPoints, findUnit } from './points'
 import { getArmy } from '../data/armies'
-import type { RosterEntry } from '../data/types'
+import type { RosterEntry, UnitProfile } from '../data/types'
 
 const empire = getArmy('empire')!
 const bretonnia = getArmy('bretonnia')!
@@ -193,5 +193,55 @@ describe('entryPoints — chariot mounts with nested options (Orcs & Goblins)', 
       optionIds: ['mount-boar-chariot-scythes', 'mount-boar-chariot-shields'],
     })
     expect(entryPoints(entry, orcs)).toBe(433)
+  })
+})
+
+describe('effectiveStatLine — option statLine replacement (OLD-12)', () => {
+  // Synthetic wizard whose level options carry full replacement profiles, like
+  // the O&G shamans (book p.81: each level has its own row).
+  const base = { M: 4, WS: 3, BS: 3, S: 3, T: 5, W: 1, I: 3, A: 1, Ld: 7 }
+  const l2 = { M: 4, WS: 3, BS: 3, S: 4, T: 5, W: 2, I: 3, A: 1, Ld: 7 }
+  const l3 = { M: 4, WS: 3, BS: 3, S: 4, T: 5, W: 3, I: 4, A: 2, Ld: 7 }
+  const wizard: UnitProfile = {
+    id: 'test-shaman',
+    name: 'Test Shaman',
+    role: 'character',
+    pointsPerModel: 57,
+    statLine: base,
+    isCharacter: true,
+    characterRank: 'wizard1',
+    options: [
+      { id: 'wizard-l2', name: 'Wizard Level 2', pointsPerModel: 61, magicItemSlotsDelta: 1, statLine: l2 },
+      { id: 'wizard-l3', name: 'Wizard Level 3', pointsPerModel: 154, magicItemSlotsDelta: 2, statLine: l3 },
+      { id: 'shield', name: 'Shield', pointsPerModel: 1 },
+    ],
+  }
+
+  it('returns the base statLine when no option is selected', () => {
+    expect(effectiveStatLine(wizard, [])).toEqual(base)
+  })
+
+  it('returns the base statLine when only options without a statLine are selected', () => {
+    expect(effectiveStatLine(wizard, ['shield'])).toEqual(base)
+  })
+
+  it('replaces the whole profile when an option carrying a statLine is selected', () => {
+    expect(effectiveStatLine(wizard, ['wizard-l2'])).toEqual(l2)
+    expect(effectiveStatLine(wizard, ['shield', 'wizard-l3'])).toEqual(l3)
+  })
+
+  it('the last-selected option with a statLine wins', () => {
+    expect(effectiveStatLine(wizard, ['wizard-l2', 'wizard-l3'])).toEqual(l3)
+    expect(effectiveStatLine(wizard, ['wizard-l3', 'wizard-l2'])).toEqual(l2)
+  })
+
+  it('ignores stale option ids that do not exist on the unit', () => {
+    expect(effectiveStatLine(wizard, ['mount-boar-chariot-crew3', 'nope'])).toEqual(base)
+    expect(effectiveStatLine(wizard, ['nope', 'wizard-l2'])).toEqual(l2)
+  })
+
+  it('returns undefined for a unit without a base statLine and no replacing option', () => {
+    const noStats: UnitProfile = { id: 'x', name: 'X', role: 'regiment', pointsPerModel: 5 }
+    expect(effectiveStatLine(noStats, [])).toBeUndefined()
   })
 })
