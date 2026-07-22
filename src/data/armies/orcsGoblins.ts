@@ -315,8 +315,8 @@ const units: UnitProfile[] = [
     nameEs: 'Gran Jefe Orco Negro',
     role: 'character',
     pointsPerModel: 91,
-    // PDF p.80: M10 HA6 HP5 F5 R5 I2 A4 L9
-    statLine: { M: 4, WS: 6, BS: 5, S: 5, T: 5, W: 2, I: 2, A: 4, Ld: 9 },
+    // PDF p.80: M10 HA6 HP5 F5 R5 I4 A3 L9
+    statLine: { M: 4, WS: 6, BS: 5, S: 5, T: 5, W: 2, I: 4, A: 3, Ld: 9 },
     isCharacter: true,
     characterRank: 'hero',
     mounts: ORC_MOUNTS,
@@ -328,8 +328,8 @@ const units: UnitProfile[] = [
     nameEs: 'Gran Jefe Orco',
     role: 'character',
     pointsPerModel: 72,
-    // PDF p.80: M10 HA5 HP5 F4 R5 I2 A4 L8
-    statLine: { M: 4, WS: 5, BS: 5, S: 4, T: 5, W: 2, I: 2, A: 4, Ld: 8 },
+    // PDF p.80: M10 HA5 HP5 F4 R5 I4 A3 L8
+    statLine: { M: 4, WS: 5, BS: 5, S: 4, T: 5, W: 2, I: 4, A: 3, Ld: 8 },
     isCharacter: true,
     characterRank: 'hero',
     mounts: ORC_MOUNTS,
@@ -341,8 +341,8 @@ const units: UnitProfile[] = [
     nameEs: 'Gran Jefe Orco Salvaje',
     role: 'character',
     pointsPerModel: 98,
-    // PDF p.80: M10 HA5 HP5 F4 R5 I2 A4 L8
-    statLine: { M: 4, WS: 5, BS: 5, S: 4, T: 5, W: 2, I: 2, A: 4, Ld: 8 },
+    // PDF p.80: M10 HA5 HP5 F4 R5 I4 A3 L8
+    statLine: { M: 4, WS: 5, BS: 5, S: 4, T: 5, W: 2, I: 4, A: 3, Ld: 8 },
     isCharacter: true,
     characterRank: 'hero',
     mounts: ORC_MOUNTS,
@@ -354,8 +354,8 @@ const units: UnitProfile[] = [
     nameEs: 'Gran Jefe Goblin',
     role: 'character',
     pointsPerModel: 33,
-    // PDF p.80: M10 HA4 HP5 F4 R4 I2 A4 L6
-    statLine: { M: 4, WS: 4, BS: 5, S: 4, T: 4, W: 2, I: 2, A: 4, Ld: 6 },
+    // PDF p.80: M10 HA4 HP5 F4 R4 I4 A3 L6
+    statLine: { M: 4, WS: 4, BS: 5, S: 4, T: 4, W: 2, I: 4, A: 3, Ld: 6 },
     isCharacter: true,
     characterRank: 'hero',
     mounts: GOBLIN_MOUNTS,
@@ -367,8 +367,8 @@ const units: UnitProfile[] = [
     nameEs: 'Gran Jefe Goblin Silvano',
     role: 'character',
     pointsPerModel: 33,
-    // PDF p.80: M10 HA4 HP5 F4 R4 I2 A4 L6
-    statLine: { M: 4, WS: 4, BS: 5, S: 4, T: 4, W: 2, I: 2, A: 4, Ld: 6 },
+    // PDF p.80: M10 HA4 HP5 F4 R4 I4 A3 L6
+    statLine: { M: 4, WS: 4, BS: 5, S: 4, T: 4, W: 2, I: 4, A: 3, Ld: 6 },
     isCharacter: true,
     characterRank: 'hero',
     mounts: FOREST_GOBLIN_MOUNTS,
@@ -380,8 +380,8 @@ const units: UnitProfile[] = [
     nameEs: 'Gran Jefe Goblin Nocturno',
     role: 'character',
     pointsPerModel: 33,
-    // PDF p.80: M10 HA4 HP5 F4 R4 I2 A4 L6
-    statLine: { M: 4, WS: 4, BS: 5, S: 4, T: 4, W: 2, I: 2, A: 4, Ld: 6 },
+    // PDF p.80: M10 HA4 HP5 F4 R4 I4 A3 L6
+    statLine: { M: 4, WS: 4, BS: 5, S: 4, T: 4, W: 2, I: 4, A: 3, Ld: 6 },
     isCharacter: true,
     characterRank: 'hero',
     mounts: NIGHT_GOBLIN_MOUNTS,
