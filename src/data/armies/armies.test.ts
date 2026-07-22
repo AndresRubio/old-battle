@@ -347,6 +347,21 @@ describe('mounts & profiles', () => {
     expect(mountIds('og-shaman-orc')).not.toContain('mount-boar-chariot')
   })
 
+  // OLD-9 — book p.80 "Jefes" table: HP4/F5/I3/A2 (Black Orc), HP4/F4/I3/A2 (Orc,
+  // Savage Orc), HP4/F4/I3/A2 (Goblin, Forest Goblin, Night Goblin). Regression
+  // guard for the mistranscribed HP/F/I values fixed by this issue.
+  it('Orcs & Goblins: Boss (Jefe) statlines match the book p.80 table', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const statLine = (unitId: string) => orcs.units.find((u) => u.id === unitId)!.statLine
+    expect(statLine('og-boss-black-orc')).toEqual({ M: 4, WS: 5, BS: 4, S: 5, T: 4, W: 1, I: 3, A: 2, Ld: 8 })
+    for (const id of ['og-boss-orc', 'og-boss-savage-orc']) {
+      expect(statLine(id), id).toEqual({ M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 1, I: 3, A: 2, Ld: 7 })
+    }
+    for (const id of ['og-boss-goblin', 'og-boss-forest-goblin', 'og-boss-night-goblin']) {
+      expect(statLine(id), id).toEqual({ M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 })
+    }
+  })
+
   // p.79 "Monturas: mismas que el Señor de la Guerra" — every BSB shares its
   // Warlord's mount list (beast + chariot + monsters).
   it('Orcs & Goblins: BSBs get the same mounts as their Warlord', () => {

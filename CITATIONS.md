@@ -113,6 +113,12 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   scythed wheels +20) transcribed from the book's printed p.88 army-list entries. The standalone
   chariot units' chassis rows were also completed from `{T7 W3}` to `{S7 T7 W3 I1}` per the same
   book row. Linear OLD-8.
+- **Bosses** (all six `og-boss-*` entries) — HP/F/I were mistranscribed (Black Orc: I1/A3;
+  Orc & Savage Orc: HP3/F3/I1; Goblin/Forest Goblin/Night Goblin: HP2/F3/I1); the book's "Jefes"
+  table (printed p.80, via `source/transcribed/orcs-goblins-lista-ejercito.md`) actually gives
+  HP4/F5/I3/A2 for the Black Orc Boss, HP4/F4/I3/A2 for the Orc and Savage Orc Bosses, and
+  HP4/F4/I3/A2 for the Goblin/Forest Goblin/Night Goblin Bosses. Corrected; no other stats or
+  points changed. Linear OLD-9.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary

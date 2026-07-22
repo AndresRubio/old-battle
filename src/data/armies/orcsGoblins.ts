@@ -464,8 +464,8 @@ const units: UnitProfile[] = [
     nameEs: 'Jefe Orco Negro',
     role: 'character',
     pointsPerModel: 42,
-    // PDF p.80: M10 HA5 HP4 F5 R4 I1 A3 L8
-    statLine: { M: 4, WS: 5, BS: 4, S: 5, T: 4, W: 1, I: 1, A: 3, Ld: 8 },
+    // Book p.80 "Jefes": M10 HA5 HP4 F5 R4 H1 I3 A2 L8 (was mistranscribed as I1/A3)
+    statLine: { M: 4, WS: 5, BS: 4, S: 5, T: 4, W: 1, I: 3, A: 2, Ld: 8 },
     isCharacter: true,
     characterRank: 'champion',
     specialRules: ['Leads a Black Orc regiment', 'Immune to Animosity'],
@@ -476,8 +476,8 @@ const units: UnitProfile[] = [
     nameEs: 'Jefe Orco',
     role: 'character',
     pointsPerModel: 33,
-    // PDF p.80: M10 HA4 HP3 F3 R4 I1 A2 L7
-    statLine: { M: 4, WS: 4, BS: 3, S: 3, T: 4, W: 1, I: 1, A: 2, Ld: 7 },
+    // Book p.80 "Jefes": M10 HA4 HP4 F4 R4 H1 I3 A2 L7 (was mistranscribed as HP3/F3/I1)
+    statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 1, I: 3, A: 2, Ld: 7 },
     isCharacter: true,
     characterRank: 'champion',
     specialRules: ['Leads an Orc regiment', 'Animosity'],
@@ -488,8 +488,8 @@ const units: UnitProfile[] = [
     nameEs: 'Jefe Orco Salvaje',
     role: 'character',
     pointsPerModel: 45,
-    // PDF p.80: M10 HA4 HP3 F3 R4 I1 A2 L7
-    statLine: { M: 4, WS: 4, BS: 3, S: 3, T: 4, W: 1, I: 1, A: 2, Ld: 7 },
+    // Book p.80 "Jefes": M10 HA4 HP4 F4 R4 H1 I3 A2 L7 (was mistranscribed as HP3/F3/I1)
+    statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 1, I: 3, A: 2, Ld: 7 },
     isCharacter: true,
     characterRank: 'champion',
     specialRules: ['Leads a Savage Orc regiment', 'Animosity', 'Frenzy (Savage Orcs)'],
@@ -500,8 +500,8 @@ const units: UnitProfile[] = [
     nameEs: 'Jefe Goblin',
     role: 'character',
     pointsPerModel: 15,
-    // PDF p.80: M10 HA3 HP2 F3 R3 I1 A2 L5
-    statLine: { M: 4, WS: 3, BS: 2, S: 3, T: 3, W: 1, I: 1, A: 2, Ld: 5 },
+    // Book p.80 "Jefes": M10 HA3 HP4 F4 R3 H1 I3 A2 L5 (was mistranscribed as HP2/F3/I1)
+    statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 },
     isCharacter: true,
     characterRank: 'champion',
     specialRules: ['Leads a Goblin regiment', 'Animosity', 'Fear Elves'],
@@ -512,8 +512,8 @@ const units: UnitProfile[] = [
     nameEs: 'Jefe Goblin Silvano',
     role: 'character',
     pointsPerModel: 15,
-    // PDF p.80: M10 HA3 HP2 F3 R3 I1 A2 L5
-    statLine: { M: 4, WS: 3, BS: 2, S: 3, T: 3, W: 1, I: 1, A: 2, Ld: 5 },
+    // Book p.80 "Jefes": M10 HA3 HP4 F4 R3 H1 I3 A2 L5 (was mistranscribed as HP2/F3/I1)
+    statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 },
     isCharacter: true,
     characterRank: 'champion',
     specialRules: ['Leads a Forest Goblin regiment', 'Animosity', 'Fear Elves'],
@@ -524,8 +524,8 @@ const units: UnitProfile[] = [
     nameEs: 'Jefe Goblin Nocturno',
     role: 'character',
     pointsPerModel: 15,
-    // PDF p.80: M10 HA3 HP2 F3 R3 I1 A2 L5
-    statLine: { M: 4, WS: 3, BS: 2, S: 3, T: 3, W: 1, I: 1, A: 2, Ld: 5 },
+    // Book p.80 "Jefes": M10 HA3 HP4 F4 R3 H1 I3 A2 L5 (was mistranscribed as HP2/F3/I1)
+    statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 },
     isCharacter: true,
     characterRank: 'champion',
     specialRules: ['Leads a Night Goblin regiment', 'Animosity', 'Fear Elves', 'Hatred of Dwarfs'],
