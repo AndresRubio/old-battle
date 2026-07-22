@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Army, EquipmentOption, MagicItem, ProfileBlock, RosterEntry, StatLine } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
-import { entryPoints, findUnit, magicItemAllowance } from '../rules/points'
+import { entryPoints, findUnit, magicItemAllowance, mountCrewCount } from '../rules/points'
 import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc } from '../i18n/lang'
 import { findRule, type RuleDef } from '../data/rules'
 import { RuleDialog } from './RuleDialog'
@@ -212,6 +212,15 @@ export function EntryRow({
 
           {/* Extra profiles: chariot crew/chassis/draught, or a fixed mount. */}
           {unit.profiles?.map((p, i) => (
+            <div key={i} className="profile-block">
+              <StatLineRow statLine={p.statLine} lang={lang} label={profileName(p, lang)} />
+              {p.specialRules && p.specialRules.length > 0 && <RuleTags rules={p.specialRules} lang={lang} />}
+            </div>
+          ))}
+
+          {/* The chosen mount's own profiles (a chariot mount's crew / draught
+              beasts / chassis), beneath the rider like a chariot unit's. */}
+          {selectedMount?.profiles?.map((p, i) => (
             <div key={i} className="profile-block">
               <StatLineRow statLine={p.statLine} lang={lang} label={profileName(p, lang)} />
               {p.specialRules && p.specialRules.length > 0 && <RuleTags rules={p.specialRules} lang={lang} />}
@@ -453,6 +462,43 @@ export function EntryRow({
               />
               {/* The chosen mount's profile is shown as the rider's second stat
                   row at the top of the entry (see companionMount above). */}
+              {/* Nested options of the selected mount (e.g. a chariot's extra
+                  crew, crew shields or scythed wheels). perCrewman costs show
+                  the computed total for the mount's current crew count. */}
+              {selectedMount?.options && selectedMount.options.length > 0 && (
+                <div className="opt-checks mount-opt-checks">
+                  {selectedMount.options.map((o) => {
+                    const cost = o.perCrewman
+                      ? o.pointsPerModel * mountCrewCount(selectedMount, entry.optionIds)
+                      : o.pointsPerModel
+                    return (
+                      <label key={o.id}>
+                        <input
+                          type="checkbox"
+                          checked={entry.optionIds.includes(o.id)}
+                          onChange={() => onToggleOption(o.id)}
+                        />
+                        {optionText(o.name, lang)} (+{cost})
+                        {optionDesc(o, lang) && (
+                          <button
+                            type="button"
+                            className="mi-info"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              setActiveOption(o)
+                            }}
+                            title={lang === 'es' ? 'Ver efecto' : 'View effect'}
+                            aria-label={lang === 'es' ? 'Ver efecto' : 'View effect'}
+                          >
+                            ⓘ
+                          </button>
+                        )}
+                      </label>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           )}
 

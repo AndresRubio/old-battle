@@ -85,3 +85,113 @@ describe('entryPoints — character mounts', () => {
     expect(entryPoints(damsel, bretonnia)).toBe(56)
   })
 })
+
+// OLD-8 — chariot mounts with their own selectable options (O&G book p.88).
+describe('entryPoints — chariot mounts with nested options (Orcs & Goblins)', () => {
+  const orcs = getArmy('orcs-and-goblins')!
+
+  it('adds the base chariot cost like any other mount', () => {
+    // Orc Warboss 110 + Orc Boar Chariot 81 = 191.
+    const entry = mk({ unitId: 'og-warboss-orc', mountId: 'mount-boar-chariot' })
+    expect(entryPoints(entry, orcs)).toBe(191)
+  })
+
+  it('adds flat mount options once (extra crewmen)', () => {
+    // 110 + 81 + 7.5 (3rd crewman) = 198.5
+    const entry = mk({
+      unitId: 'og-warboss-orc',
+      mountId: 'mount-boar-chariot',
+      optionIds: ['mount-boar-chariot-crew3'],
+    })
+    expect(entryPoints(entry, orcs)).toBe(198.5)
+  })
+
+  it('prices perCrewman options by the current crew count (2 base crew)', () => {
+    // Shields at 1/crewman × 2 crew = +2.
+    const entry = mk({
+      unitId: 'og-warboss-orc',
+      mountId: 'mount-boar-chariot',
+      optionIds: ['mount-boar-chariot-shields'],
+    })
+    expect(entryPoints(entry, orcs)).toBe(193)
+  })
+
+  it('perCrewman options scale with 3 crew', () => {
+    // 110 + 81 + 7.5 (3rd crewman) + 3×1 (shields) = 201.5
+    const entry = mk({
+      unitId: 'og-warboss-orc',
+      mountId: 'mount-boar-chariot',
+      optionIds: ['mount-boar-chariot-crew3', 'mount-boar-chariot-shields'],
+    })
+    expect(entryPoints(entry, orcs)).toBe(201.5)
+  })
+
+  it('perCrewman options scale with 4 crew (chariot = 81 + 15 + 4 = 100)', () => {
+    // Both extra crew (2×7.5=15) + shields (4×1=4): 110 + 100 = 210.
+    const entry = mk({
+      unitId: 'og-warboss-orc',
+      mountId: 'mount-boar-chariot',
+      optionIds: ['mount-boar-chariot-crew3', 'mount-boar-chariot-crew4', 'mount-boar-chariot-shields'],
+    })
+    expect(entryPoints(entry, orcs)).toBe(210)
+  })
+
+  it('adds scythed wheels as a flat +20', () => {
+    const entry = mk({
+      unitId: 'og-warboss-orc',
+      mountId: 'mount-boar-chariot',
+      optionIds: ['mount-boar-chariot-scythes'],
+    })
+    expect(entryPoints(entry, orcs)).toBe(211)
+  })
+
+  it('wolf chariot: 3rd Giant Wolf and half-point perCrewman costs', () => {
+    // Goblin Warboss 50 + 65 + 4 (3rd wolf) = 119.
+    const withWolf = mk({
+      unitId: 'og-warboss-goblin',
+      mountId: 'mount-wolf-chariot',
+      optionIds: ['mount-wolf-chariot-wolf3'],
+    })
+    expect(entryPoints(withWolf, orcs)).toBe(119)
+    // 50 + 65 + 2×3.5 (crew) + 4×0.5 (shields) + 4×0.5 (bows) = 126.
+    const loaded = mk({
+      unitId: 'og-warboss-goblin',
+      mountId: 'mount-wolf-chariot',
+      optionIds: [
+        'mount-wolf-chariot-crew3',
+        'mount-wolf-chariot-crew4',
+        'mount-wolf-chariot-shields',
+        'mount-wolf-chariot-bows',
+      ],
+    })
+    expect(entryPoints(loaded, orcs)).toBe(126)
+  })
+
+  it('stale mount-option ids contribute 0 when the mount is deselected or changed', () => {
+    // On foot: chariot options no longer apply — base cost only.
+    const onFoot = mk({
+      unitId: 'og-warboss-orc',
+      optionIds: ['mount-boar-chariot-crew3', 'mount-boar-chariot-shields', 'mount-boar-chariot-scythes'],
+    })
+    expect(entryPoints(onFoot, orcs)).toBe(110)
+    // On a different mount: same — only the War Boar's 8 pts are added.
+    const onBoar = mk({
+      unitId: 'og-warboss-orc',
+      mountId: 'mount-war-boar',
+      optionIds: ['mount-boar-chariot-crew3', 'mount-boar-chariot-shields'],
+    })
+    expect(entryPoints(onBoar, orcs)).toBe(118)
+  })
+
+  it('never multiplies mount options by unit size', () => {
+    // Defensive: even with an (artificial) size > 1, mount options charge once.
+    // 3×110 (models) + 81 (chariot) + 20 (scythes) + 2×1 (shields, 2 crew) = 433.
+    const entry = mk({
+      unitId: 'og-warboss-orc',
+      size: 3,
+      mountId: 'mount-boar-chariot',
+      optionIds: ['mount-boar-chariot-scythes', 'mount-boar-chariot-shields'],
+    })
+    expect(entryPoints(entry, orcs)).toBe(433)
+  })
+})

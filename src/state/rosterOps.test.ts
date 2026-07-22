@@ -80,12 +80,52 @@ describe('rosterOps', () => {
     const bret = getArmy('bretonnia')!
     const brGeneral = bret.units.find((u) => u.id === 'br-general')!
     let r = addEntry(createRoster('bretonnia', 'A', 2000, 'r1'), brGeneral, 'e1')
-    r = selectMount(r, 'e1', 'mount-pegasus')
+    r = selectMount(r, 'e1', bret, 'mount-pegasus')
     expect(r.entries[0].mountId).toBe('mount-pegasus')
-    r = selectMount(r, 'e1', 'mount-dragon') // replaces, never accumulates
+    r = selectMount(r, 'e1', bret, 'mount-dragon') // replaces, never accumulates
     expect(r.entries[0].mountId).toBe('mount-dragon')
-    r = selectMount(r, 'e1', null)
+    r = selectMount(r, 'e1', bret, null)
     expect(r.entries[0].mountId).toBeUndefined()
+  })
+
+  // OLD-8: chariot mounts carry their own nested options — changing mounts
+  // must drop the old mount's option selections (they would be stale).
+  it('selectMount drops option ids that belong to a different mount', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const warboss = orcs.units.find((u) => u.id === 'og-warboss-orc')!
+    let r = addEntry(createRoster('orcs-and-goblins', 'A', 2000, 'r1'), warboss, 'e1')
+    r = selectMount(r, 'e1', orcs, 'mount-boar-chariot')
+    r = toggleOption(r, 'e1', 'mount-boar-chariot-crew3')
+    r = toggleOption(r, 'e1', 'mount-boar-chariot-shields')
+    expect(r.entries[0].optionIds).toEqual(['mount-boar-chariot-crew3', 'mount-boar-chariot-shields'])
+    // Switch to the War Boar: the chariot's options are dropped.
+    r = selectMount(r, 'e1', orcs, 'mount-war-boar')
+    expect(r.entries[0].optionIds).toEqual([])
+    expect(r.entries[0].mountId).toBe('mount-war-boar')
+  })
+
+  it('selectMount(null) drops the dismounted chariot options too', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const warboss = orcs.units.find((u) => u.id === 'og-warboss-goblin')!
+    let r = addEntry(createRoster('orcs-and-goblins', 'A', 2000, 'r1'), warboss, 'e1')
+    r = selectMount(r, 'e1', orcs, 'mount-wolf-chariot')
+    r = toggleOption(r, 'e1', 'mount-wolf-chariot-wolf3')
+    r = selectMount(r, 'e1', orcs, null)
+    expect(r.entries[0].optionIds).toEqual([])
+    expect(r.entries[0].mountId).toBeUndefined()
+  })
+
+  it('selectMount keeps unit-own options when the mount changes', () => {
+    // Chaos Lord: the Mark of Khorne is a unit option, not a mount option — it
+    // must survive a mount change (the Juggernaut even requires it).
+    const chaos = getArmy('chaos')!
+    const lord = chaos.units.find((u) => u.id === 'ch-lord')!
+    let r = addEntry(createRoster('chaos', 'A', 2000, 'r1'), lord, 'e1')
+    r = toggleOption(r, 'e1', 'mark-khorne')
+    r = selectMount(r, 'e1', chaos, 'mount-juggernaut')
+    expect(r.entries[0].optionIds).toEqual(['mark-khorne'])
+    r = selectMount(r, 'e1', chaos, 'mount-chaos-steed')
+    expect(r.entries[0].optionIds).toEqual(['mark-khorne'])
   })
 
   it('selectWizardLevel keeps only one level option', () => {

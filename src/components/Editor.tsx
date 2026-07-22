@@ -125,7 +125,7 @@ export function Editor({ rosterId, store, onBack }: Props) {
                   army={army}
                   onChangeSize={(size) => commit((prev) => updateEntry(prev, entry.id, { size }))}
                   onToggleOption={(optionId) => commit((prev) => toggleOption(prev, entry.id, optionId))}
-                  onSelectMount={(mountId) => commit((prev) => selectMount(prev, entry.id, mountId))}
+                  onSelectMount={(mountId) => commit((prev) => selectMount(prev, entry.id, army, mountId))}
                   onSelectWizardLevel={(optionId) => commit((prev) => selectWizardLevel(prev, entry.id, army, optionId))}
                   onSelectLore={(loreId) => commit((prev) => selectLore(prev, entry.id, loreId))}
                   onToggleMagicItem={(itemId) => commit((prev) => toggleMagicItem(prev, entry.id, itemId))}

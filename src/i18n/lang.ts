@@ -314,6 +314,12 @@ const OPTION_ES: Record<string, string> = {
   'Cavalry lance': 'Lanza de caballería',
   'Cavalry lances': 'Lanzas de caballería',
   'Scythed wheels': 'Ruedas con cuchillas',
+  // Chariot-mount nested options (O&G p.88)
+  '3rd crewman': 'Tercer tripulante',
+  '4th crewman': 'Cuarto tripulante',
+  'Shields for crew': 'Escudos para la tripulación',
+  'Short bows for crew': 'Arcos cortos para la tripulación',
+  '3rd Giant Wolf': 'Tercer Lobo Gigante',
   Champion: 'Campeón',
   'Standard Bearer': 'Portaestandarte',
   Musician: 'Músico',

@@ -107,6 +107,12 @@ be confirmed. They are suitable for a faithful list-building experience and for 
 - **Big Bosses** (all six `og-bigboss-*` entries) — I/A were transcribed as I2/A4; the book
   (printed p.80, via `source/transcribed/orcs-goblins-lista-ejercito.md`) actually gives I4/A3
   for all six Big Bosses. Corrected; no other stats or points changed. Linear OLD-7.
+- **Chariot mounts for characters** (`mount-boar-chariot` 81 pts, `mount-wolf-chariot` 65 pts) —
+  chariot profiles (crew / draught beasts / chassis F7 R7 H3 I1) and option costs (extra crewman
+  +7.5 orc / +3.5 goblin, 3rd Giant Wolf +4, crew shields & short bows +1/+0.5 per crewman,
+  scythed wheels +20) transcribed from the book's printed p.88 army-list entries. The standalone
+  chariot units' chassis rows were also completed from `{T7 W3}` to `{S7 T7 W3 I1}` per the same
+  book row. Linear OLD-8.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary

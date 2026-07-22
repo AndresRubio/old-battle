@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { validateRoster } from './validate'
+import { magicItemAllowance } from './points'
 import { STANDARD_5E_COMPOSITION, type Army, type Roster, type RosterEntry } from '../data/types'
 import { getArmy } from '../data/armies'
 
@@ -867,5 +868,61 @@ describe('validateRoster — unit magic standards', () => {
     ])
     const dup = validateRoster(r, army).find((v) => v.rule === 'magic-items-unique')
     expect(dup?.severity).toBe('error')
+  })
+})
+
+// OLD-8 — chariot-mount nested options: selections left over from a mount the
+// character no longer rides are flagged (they contribute 0 points).
+describe('stale mount options (mount-options-stale)', () => {
+  const orcs = getArmy('orcs-and-goblins')!
+  const ogRoster = (entries: RosterEntry[]): Roster => ({
+    id: 'r',
+    name: 'Waaagh',
+    armyId: 'orcs-and-goblins',
+    pointsLimit: 0,
+    entries,
+  })
+  const stale = (over: Partial<RosterEntry>) =>
+    validateRoster(
+      ogRoster([entry({ unitId: 'og-warboss-orc', isGeneral: true, ...over })]),
+      orcs,
+    ).filter((v) => v.rule === 'mount-options-stale')
+
+  it('accepts chariot options while riding that chariot', () => {
+    expect(
+      stale({ mountId: 'mount-boar-chariot', optionIds: ['mount-boar-chariot-crew3', 'mount-boar-chariot-shields'] }),
+    ).toHaveLength(0)
+  })
+
+  it('warns when chariot options linger after switching to another mount', () => {
+    const v = stale({ mountId: 'mount-war-boar', optionIds: ['mount-boar-chariot-crew3'] })
+    expect(v).toHaveLength(1)
+    expect(v[0].severity).toBe('warning')
+  })
+
+  it('warns when chariot options linger after dismounting entirely', () => {
+    expect(stale({ optionIds: ['mount-boar-chariot-scythes'] })).toHaveLength(1)
+  })
+
+  it('localises the stale-options message', () => {
+    const r = ogRoster([
+      entry({ unitId: 'og-warboss-orc', isGeneral: true, optionIds: ['mount-boar-chariot-scythes'] }),
+    ])
+    const en = validateRoster(r, orcs, 'en').find((v) => v.rule === 'mount-options-stale')
+    const es = validateRoster(r, orcs, 'es').find((v) => v.rule === 'mount-options-stale')
+    expect(en?.message).toMatch(/Orc Boar Chariot/)
+    expect(es?.message).toMatch(/Carruaje de Jabalíes Orco/)
+  })
+
+  it('mount and mount options never change the magic-item allowance', () => {
+    const unit = orcs.units.find((u) => u.id === 'og-warboss-orc')!
+    const onFoot = entry({ unitId: 'og-warboss-orc' })
+    const onChariot = entry({
+      unitId: 'og-warboss-orc',
+      mountId: 'mount-boar-chariot',
+      optionIds: ['mount-boar-chariot-crew3', 'mount-boar-chariot-crew4', 'mount-boar-chariot-shields'],
+    })
+    expect(magicItemAllowance(onChariot, unit)).toBe(magicItemAllowance(onFoot, unit))
+    expect(magicItemAllowance(onChariot, unit)).toBe(3) // lord
   })
 })

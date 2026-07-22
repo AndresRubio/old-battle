@@ -85,3 +85,78 @@ describe('EntryRow cavalry profiles', () => {
     expect(labels()).toEqual(['Rider', 'Warhorse'])
   })
 })
+
+// OLD-8 — a chariot taken as a character's mount renders its own profiles and
+// nested option checkboxes beneath the mount radio list.
+describe('EntryRow chariot mounts (Orcs & Goblins)', () => {
+  const orcs = getArmy('orcs-and-goblins')!
+  const warboss = (over: Partial<RosterEntry> = {}) =>
+    entry('og-warboss-orc', { size: 1, mountId: 'mount-boar-chariot', ...over })
+
+  const mountOptionLabels = () =>
+    Array.from(container.querySelectorAll('.mount-opt-checks label')).map((el) =>
+      (el.textContent ?? '').replace('ⓘ', '').trim(),
+    )
+
+  it('renders the chariot crew / boars / chassis profile rows beneath the rider', () => {
+    setLang('en')
+    render(<EntryRow entry={warboss()} army={orcs} {...props} />)
+    expand()
+    expect(labels()).toEqual(['2 Orc crew', '2 War Boars', 'Chariot'])
+  })
+
+  it('renders the chariot profile labels in Spanish', () => {
+    setLang('es')
+    render(<EntryRow entry={warboss()} army={orcs} {...props} />)
+    expand()
+    expect(labels()).toEqual(['2 tripulantes Orcos', '2 Jabalíes de Guerra', 'Carro'])
+  })
+
+  it('lists the chariot options as checkboxes with their current costs', () => {
+    setLang('en')
+    render(<EntryRow entry={warboss()} army={orcs} {...props} />)
+    expand()
+    // perCrewman shields/bows show the 2-crew computed total (+1 × 2 = +2).
+    expect(mountOptionLabels()).toEqual([
+      '3rd crewman (+7.5)',
+      '4th crewman (+7.5)',
+      'Shields for crew (+2)',
+      'Short bows for crew (+2)',
+      'Scythed wheels (+20)',
+    ])
+  })
+
+  it('recomputes perCrewman costs when extra crew are selected', () => {
+    setLang('en')
+    render(
+      <EntryRow
+        entry={warboss({ optionIds: ['mount-boar-chariot-crew3', 'mount-boar-chariot-crew4'] })}
+        army={orcs}
+        {...props}
+      />,
+    )
+    expand()
+    expect(mountOptionLabels()).toContain('Shields for crew (+4)')
+  })
+
+  it('translates the chariot option labels to Spanish', () => {
+    setLang('es')
+    render(<EntryRow entry={warboss()} army={orcs} {...props} />)
+    expand()
+    expect(mountOptionLabels()).toEqual([
+      'Tercer tripulante (+7.5)',
+      'Cuarto tripulante (+7.5)',
+      'Escudos para la tripulación (+2)',
+      'Arcos cortos para la tripulación (+2)',
+      'Ruedas con cuchillas (+20)',
+    ])
+  })
+
+  it('hides the chariot options and profiles when another mount is selected', () => {
+    setLang('en')
+    render(<EntryRow entry={warboss({ mountId: 'mount-war-boar' })} army={orcs} {...props} />)
+    expand()
+    expect(container.querySelectorAll('.mount-opt-checks').length).toBe(0)
+    expect(labels()).toEqual(['Rider', 'War Boar'])
+  })
+})

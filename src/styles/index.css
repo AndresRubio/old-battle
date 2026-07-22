@@ -962,6 +962,14 @@ h1, h2, h3 {
 .mount-chip-on .mount-cost {
   color: #e7cdb0;
 }
+/* Nested options of the selected mount (e.g. a chariot's crew & wheels),
+   indented beneath the mount chips. */
+.mount-opt-checks {
+  margin-top: var(--space-2);
+  margin-left: var(--space-3);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--border);
+}
 
 .magic-items {
   max-height: 320px;

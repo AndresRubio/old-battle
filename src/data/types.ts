@@ -63,6 +63,17 @@ export interface EquipmentOption {
    * `options-exclusive-group` (warning).
    */
   exclusiveGroup?: string
+  /**
+   * Mount options only: the cost is `pointsPerModel` × the mount's CURRENT crew
+   * count (`MountOption.baseCrew` + one per selected `addsCrewman` option) — e.g.
+   * chariot crew shields priced per crewman. Never multiplied by unit size.
+   */
+  perCrewman?: boolean
+  /**
+   * Mount options only: selecting this option adds one crewman to the mount
+   * (e.g. a chariot's "3rd crewman"), raising the basis for `perCrewman` costs.
+   */
+  addsCrewman?: boolean
 }
 
 /**
@@ -86,6 +97,25 @@ export interface MountOption {
    * `mount-requires-option` (warning).
    */
   requiresOption?: string
+  /**
+   * Selectable add-ons for this mount (e.g. a chariot's extra crew, crew shields
+   * or scythed wheels). Selections live in the entry's shared `optionIds`, so
+   * every option id must be unique across the unit's whole option namespace.
+   * Charged once per entry (never multiplied by unit size); `perCrewman`
+   * options are multiplied by the mount's current crew count instead.
+   */
+  options?: EquipmentOption[]
+  /**
+   * Number of crewmen the mount comes with (chariots: 2) — the basis for
+   * `perCrewman` option costs before any `addsCrewman` selections.
+   */
+  baseCrew?: number
+  /**
+   * Extra display-only profile rows (crew / draught beasts / chassis), rendered
+   * beneath the rider's statLine like a chariot unit's `profiles`. Their cost is
+   * already baked into `points`.
+   */
+  profiles?: ProfileBlock[]
 }
 
 /**

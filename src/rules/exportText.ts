@@ -58,22 +58,32 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
   for (const p of unit.profiles ?? []) {
     lines.push(...statTableLines(p.statLine, lang, profileName(p, lang)))
   }
-  // The chosen mount rides with the character — show its profile too.
+  // The chosen mount rides with the character — show its profile too. A
+  // chariot mount contributes its crew / draught-beast / chassis rows instead
+  // of a single statline.
   const mount = entry.mountId ? (unit.mounts ?? []).find((m) => m.id === entry.mountId) : undefined
   if (mount) {
     const label = `${mountName(mount, lang)} (+${mount.points} ${t('pts', lang)})`
     if (mount.statLine) lines.push(...statTableLines(mount.statLine, lang, label))
     else lines.push(`  · ${label}`)
+    for (const p of mount.profiles ?? []) {
+      lines.push(...statTableLines(p.statLine, lang, profileName(p, lang)))
+    }
   }
 
-  // Selected equipment options (wizard levels labelled as in the summary).
+  // Selected equipment options (wizard levels labelled as in the summary),
+  // plus the chosen mount's own selected options (e.g. a chariot's crew).
   const opts = (unit.options ?? []).filter((o) => entry.optionIds.includes(o.id))
-  if (opts.length > 0) {
-    const labels = opts.map((o) =>
-      o.id.startsWith('wizard-l')
-        ? `${es ? 'Nivel' : 'Level'} ${o.id.replace('wizard-l', '')}`
-        : optionText(o.name, lang),
-    )
+  const mountOpts = (mount?.options ?? []).filter((o) => entry.optionIds.includes(o.id))
+  if (opts.length > 0 || mountOpts.length > 0) {
+    const labels = [
+      ...opts.map((o) =>
+        o.id.startsWith('wizard-l')
+          ? `${es ? 'Nivel' : 'Level'} ${o.id.replace('wizard-l', '')}`
+          : optionText(o.name, lang),
+      ),
+      ...mountOpts.map((o) => optionText(o.name, lang)),
+    ]
     lines.push(`  ${t('options', lang)}: ${labels.join(', ')}`)
   }
 
@@ -142,7 +152,12 @@ export function exportRosterText(roster: Roster, army: Army, lang: Lang = 'en'):
         lines.push(`    + ${label}`)
       }
       const mount = e.mountId ? (unit.mounts ?? []).find((m) => m.id === e.mountId) : undefined
-      if (mount) lines.push(`    + ${mountName(mount, lang)} (+${mount.points} ${t('pts', lang)})`)
+      if (mount) {
+        lines.push(`    + ${mountName(mount, lang)} (+${mount.points} ${t('pts', lang)})`)
+        for (const o of (mount.options ?? []).filter((mo) => e.optionIds.includes(mo.id))) {
+          lines.push(`      + ${optionText(o.name, lang)}`)
+        }
+      }
       for (const id of e.magicItemIds) {
         const item = findMagicItem(army, id)
         if (item) lines.push(`    * ${magicItemName(item, lang)} (${item.points} ${t('pts', lang)})`)

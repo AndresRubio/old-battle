@@ -409,6 +409,28 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
       })
     }
 
+    // Stale mount options: selections that belong to a mount the character is
+    // no longer riding (after a mount change or dismount). They contribute 0
+    // points — flag them so the user can clean the entry up.
+    const staleByMount = (unit.mounts ?? [])
+      .filter((m) => m.id !== e.mountId)
+      .map((m) => ({
+        mount: m,
+        selected: (m.options ?? []).filter((o) => e.optionIds.includes(o.id)),
+      }))
+      .filter((s) => s.selected.length > 0)
+    for (const s of staleByMount) {
+      const optNames = s.selected.map((o) => optionText(o.name, lang)).join(', ')
+      violations.push({
+        severity: 'warning',
+        rule: 'mount-options-stale',
+        message: es
+          ? `${un}: las opciones "${optNames}" pertenecen a ${mountName(s.mount, lang)}, que no es su montura actual.`
+          : `${unit.name}: the options "${optNames}" belong to ${mountName(s.mount, lang)}, which is not its current mount.`,
+        entryId: e.id,
+      })
+    }
+
     // A mount that requires an option (e.g. a daemonic mount needs the matching
     // Mark of Chaos). See MountOption.requiresOption.
     if (e.mountId) {
