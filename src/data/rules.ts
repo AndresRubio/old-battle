@@ -139,6 +139,16 @@ export const RULES: RuleDef[] = [
     es: 'Cuando un Shaman Orco Salvaje se une a una Peña de Orcos Salvajes (Guerreros o Jinetes de Jabalí), roba una carta de magia adicional cada fase de magia, que sólo él puede usar; y los tatuajes de pintura de guerra mejoran la salvación especial a 5+ (en vez de 6+) tanto para el Shaman como para los guerreros de la Peña.',
   },
   {
+    // Alias 'mushroom' matches all four Night Goblin Shaman mushroom tags
+    // (book printed p.18 / PDF p.20).
+    id: 'night-goblin-shaman-mushrooms',
+    aliases: ['mushroom'],
+    titleEn: 'Night Goblin Shaman (Shaman Mushrooms)',
+    titleEs: 'Shaman Goblin Nocturno (Setas Shaman)',
+    en: 'A Night Goblin Shaman carries one Shaman Mushroom per level of magic (1/2/3/4 for Shaman/Paladin Shaman/Master Shaman/Grand Shaman), each usable once per battle. At the start of any Magic phase, before the Winds of Magic are rolled, he may eat one to draw 1D6 extra magic cards for that phase, usable only by him. The price: in a phase where he ate one, if he must make a Waaagh! check, subtract 1 from the die roll when consulting the Mental Burst table. A mushroom also lets him cast even with no Orcs & Goblins within 30cm — but with no Waaagh! energy source that close, he still draws no ordinary Winds of Magic cards, only the 1D6 from the mushroom.',
+    es: 'Un Shaman Goblin Nocturno lleva una Seta Shaman por cada nivel de magia (1/2/3/4 para Shaman/Paladín Shaman/Maestro Shaman/Gran Shaman), cada una utilizable una sola vez por batalla. Al principio de cualquier fase de magia, antes de tirar los Vientos de la Magia, puede comerse una para robar 1D6 cartas de magia adicionales esa fase, que sólo él puede usar. El precio: en la fase en la que haya comido una, si debe hacer un chequeo por ¡Waaagh!, resta 1 al resultado del dado al consultar la Tabla de Estallido Mental. Una seta también le permite lanzar hechizos aunque no haya Orcos ni Goblins a 30 cm — pero si no hay ninguna fuente de energía ¡Waaagh! tan cerca, sigue sin recibir cartas normales de los Vientos de la Magia, sólo el 1D6 de la seta.',
+  },
+  {
     id: 'ward-save',
     aliases: ['ward save', 'ward vs', 'salvación especial', 'salvacion especial', 'salvación por protección'],
     titleEn: 'Ward Save',

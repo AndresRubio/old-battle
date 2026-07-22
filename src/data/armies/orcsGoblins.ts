@@ -633,7 +633,14 @@ const units: UnitProfile[] = [
     lores: ['waaagh'],
     options: GOBLIN_SHAMAN_LEVELS,
     mounts: NIGHT_GOBLIN_MOUNTS,
-    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'Eats magic mushrooms (extra power dice)', 'May ride a monster or chariot only'],
+    // "Shamanes Goblins Nocturnos", book printed p.18 (PDF p.20, offset +2):
+    // carries one Shaman Mushroom per wizard level (each usable once per
+    // battle); eating one at the start of a Magic phase grants 1D6 extra
+    // cards for him alone; that phase, a Waaagh! check (if forced) suffers
+    // -1 on the Mental Burst table; and eating one lets him cast without
+    // Orcs & Goblins nearby, though with no Waaagh! energy within 30cm he
+    // still draws no ordinary Winds of Magic cards.
+    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'Carries Shaman Mushrooms (1 per wizard level, each usable once per battle)', 'Eats a mushroom before the Magic phase: 1D6 extra magic cards, usable only by him', 'After eating a mushroom, -1 to the Mental Burst roll if he must test that phase', 'After eating a mushroom, may cast without Orcs & Goblins nearby (no energy source in 30cm = mushroom cards only)', 'May ride a monster or chariot only'],
   },
 
   // ----- Personajes Especiales (0-1 each) -----
