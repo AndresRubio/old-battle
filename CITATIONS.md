@@ -104,6 +104,9 @@ be confirmed. They are suitable for a faithful list-building experience and for 
 - **Battle Standard Bearers** (all six `og-bsb-*` entries) — I/A were transcribed as I1/A3; the
   book (printed p.79, via `source/transcribed/orcs-goblins-lista-ejercito.md`) actually gives I3/A2
   for all six BSBs. Corrected; no other stats or points changed. Linear OLD-6.
+- **Big Bosses** (all six `og-bigboss-*` entries) — I/A were transcribed as I2/A4; the book
+  (printed p.80, via `source/transcribed/orcs-goblins-lista-ejercito.md`) actually gives I4/A3
+  for all six Big Bosses. Corrected; no other stats or points changed. Linear OLD-7.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
