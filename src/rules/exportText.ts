@@ -1,5 +1,5 @@
 import type { Army, MagicItem, Roster, RosterEntry, StatLine } from '../data/types'
-import { entryPoints, findMagicItem, findUnit } from './points'
+import { effectiveStatLine, entryPoints, findMagicItem, findUnit } from './points'
 import { summarize } from './summary'
 import { validateRoster } from './validate'
 import {
@@ -53,7 +53,9 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
   lines.push('')
   lines.push(`${star}${prefix}${unitName(unit, lang)} — ${entryPoints(entry, army)} ${t('pts', lang)}`)
 
-  if (unit.statLine) lines.push(...statTableLines(unit.statLine, lang))
+  // Some options (e.g. O&G shaman wizard levels) replace the whole statLine.
+  const statLine = effectiveStatLine(unit, entry.optionIds)
+  if (statLine) lines.push(...statTableLines(statLine, lang))
   // Extra display-only profiles: chariot crew / chassis / draught beasts, etc.
   for (const p of unit.profiles ?? []) {
     lines.push(...statTableLines(p.statLine, lang, profileName(p, lang)))
