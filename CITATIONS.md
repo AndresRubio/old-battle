@@ -97,6 +97,12 @@ be confirmed. They are suitable for a faithful list-building experience and for 
 (exact) rules engine, but should not be treated as the official points.
 
 ### Special rules sourced from the army books (`source/`)
+- **Night Goblin Shaman** (`og-shaman-night-goblin`) — replaced the wrong 6th-edition-flavoured
+  "extra power dice" tag with the four actual "Shamanes Goblins Nocturnos" rules (Shaman Mushrooms,
+  1 per wizard level, each usable once per battle; eating one for 1D6 extra magic cards for him
+  alone; a -1 penalty to that phase's Mental Burst roll; casting without Orcs & Goblins nearby but
+  no Winds of Magic cards without a nearby energy source), transcribed from *Ejércitos Warhammer:
+  Orcos y Goblins* (1997, ES), **printed p.18** (PDF p.20, offset +2). Linear OLD-14.
 - **Savage Orc Shaman** (`og-shaman-savage-orc`) — the two "joined to a Savage Orc unit" rules
   (an extra magic card for him alone; the war-paint ward improves 6+ → 5+ for the Shaman and the
   unit) are transcribed from *Ejércitos Warhammer: Orcos y Goblins* (1997, ES), **printed p.19**

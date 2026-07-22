@@ -5,6 +5,7 @@ import { entryPoints } from '../../rules/points'
 import type { Roster } from '../types'
 import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
 import { MAGIC_LORES } from '../lores'
+import { RULE_PHRASE_ES } from '../../i18n/rulePhrases'
 
 describe('army data integrity', () => {
   for (const army of ARMIES) {
@@ -283,6 +284,20 @@ describe('selectionRules survive army assembly', () => {
     const cap = getArmy('skaven')!.selectionRules?.ratioCaps?.find((c) => c.unitId === 'sk-plague-censer-bearers')
     expect(cap?.absoluteMax).toBe(10)
     expect(cap?.perUnit?.countModels).toBe(true)
+  })
+
+  it('Orcs & Goblins: Night Goblin Shaman has the book p.18 mushroom rules, not the old power-dice tag', () => {
+    const unit = getArmy('orcs-and-goblins')!.units.find((u) => u.id === 'og-shaman-night-goblin')!
+    const rules = unit.specialRules ?? []
+    expect(rules).toContain('Carries Shaman Mushrooms (1 per wizard level, each usable once per battle)')
+    expect(rules).toContain('Eats a mushroom before the Magic phase: 1D6 extra magic cards, usable only by him')
+    expect(rules).toContain('After eating a mushroom, -1 to the Mental Burst roll if he must test that phase')
+    expect(rules).toContain('After eating a mushroom, may cast without Orcs & Goblins nearby (no energy source in 30cm = mushroom cards only)')
+    expect(rules.some((r) => /power dice/i.test(r))).toBe(false)
+
+    for (const r of rules.filter((r) => /mushroom/i.test(r))) {
+      expect(RULE_PHRASE_ES[r], `missing ES translation for "${r}"`).toBeTruthy()
+    }
   })
 })
 
