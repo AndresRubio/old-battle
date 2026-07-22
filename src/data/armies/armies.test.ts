@@ -343,8 +343,23 @@ describe('mounts & profiles', () => {
     // Night Goblins: "a monster or chariot only" — the chariot but never a beast.
     expect(mountIds('og-warboss-night-goblin')).toContain('mount-wolf-chariot')
     expect(mountIds('og-warboss-night-goblin')).not.toContain('mount-giant-wolf')
-    // OLD-17 owns shaman mounts — the Orc Shaman list stays chariot-free.
-    expect(mountIds('og-shaman-orc')).not.toContain('mount-boar-chariot')
+    // OLD-11 — book p.81 "Monturas": the Orc Shaman rides the same list as
+    // orc characters (War Boar or a monster/chariot), same as OLD-17's other
+    // goblin shaman variants for their own mounts.
+    expect(mountIds('og-shaman-orc')).toContain('mount-boar-chariot')
+  })
+
+  // OLD-11 — book p.81 "Monturas": Orco/Orco Salvaje shamans ride War Boar (+8)
+  // or a monster/chariot; they never ride a Giant Wolf (that's the Goblin line).
+  it('Orcs & Goblins: Orc and Savage Orc Shamans get War Boar/chariot mounts, never a Giant Wolf (p.81)', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const mountIds = (unitId: string) =>
+      (orcs.units.find((u) => u.id === unitId)!.mounts ?? []).map((m) => m.id)
+    for (const id of ['og-shaman-orc', 'og-shaman-savage-orc']) {
+      expect(mountIds(id), id).toContain('mount-boar-chariot')
+      expect(mountIds(id), id).toContain('mount-war-boar')
+      expect(mountIds(id), id).not.toContain('mount-giant-wolf')
+    }
   })
 
   // OLD-9 — book p.80 "Jefes" table: HP4/F5/I3/A2 (Black Orc), HP4/F4/I3/A2 (Orc,
