@@ -617,7 +617,13 @@ const units: UnitProfile[] = [
     lores: ['waaagh'],
     options: GOBLIN_SHAMAN_LEVELS,
     mounts: FOREST_GOBLIN_MOUNTS,
-    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'May ride Giant Spider (+4 pts) or a monster/chariot'],
+    // "Shamanes Goblins Silvanos", book printed p.19 (PDF p.21, offset +2):
+    // spider venom lets him add +1 to his Mental Burst roll and, on a
+    // natural 6, treats him as if he'd passed the Waaagh! check with no ill
+    // effect (worst possible result is 2, "Estallido Mental" is impossible);
+    // but any failed Waaagh! check (even one "saved" by that natural 6)
+    // makes him stagger 2D6cm in a random (scatter die) direction.
+    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'May ride Giant Spider (+4 pts) or a monster/chariot', 'Spider venom: +1 to the Mental Burst roll; a natural 6 counts as passing the Waaagh! check with no ill effect', 'Any failed Waaagh! check makes him stagger 2D6cm in a random direction'],
   },
   {
     id: 'og-shaman-night-goblin',

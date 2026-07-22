@@ -107,6 +107,13 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   (an extra magic card for him alone; the war-paint ward improves 6+ → 5+ for the Shaman and the
   unit) are transcribed from *Ejércitos Warhammer: Orcos y Goblins* (1997, ES), **printed p.19**
   (PDF p.21, offset +2), via `source/transcribed/orcs-goblins.md`. Linear OLD-16.
+- **Forest Goblin Shaman** (`og-shaman-forest-goblin`) — had no tags at all for its "Shamanes
+  Goblins Silvanos" rules; added the two book rules (spider venom gives +1 to the Mental Burst
+  roll and makes a natural 6 count as passing the Waaagh! check with no ill effect, so the worst
+  possible result is a 2 and "Mental Burst" itself is impossible; any failed Waaagh! check — even
+  one "saved" by that natural 6 — staggers him 2D6cm in a random direction), transcribed from
+  *Ejércitos Warhammer: Orcos y Goblins* (1997, ES), **printed p.19** (PDF p.21, offset +2). Linear
+  OLD-15.
 - **Battle Standard Bearers** (all six `og-bsb-*` entries) — I/A were transcribed as I1/A3; the
   book (printed p.79, via `source/transcribed/orcs-goblins-lista-ejercito.md`) actually gives I3/A2
   for all six BSBs. Corrected; no other stats or points changed. Linear OLD-6.
