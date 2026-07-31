@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import type { Army, EquipmentOption, MagicItem, ProfileBlock, RosterEntry, StatLine } from '../data/types'
+import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
-import { effectiveStatLine, entryPoints, findUnit, magicItemAllowance, mountCrewCount } from '../rules/points'
+import { effectiveStatLine, entryPoints, findUnit, magicItemAllowance, mountOptionCost } from '../rules/points'
+import { companionMountProfile, eligibleMagicStandards } from '../rules/entryView'
 import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel } from '../i18n/lang'
 import { STANDARD_BEARER_ID, isWizardLevelId } from '../data/unitOptions'
 import { findRule, type RuleDef } from '../data/rules'
@@ -120,24 +121,11 @@ export function EntryRow({
   const mounts = unit.mounts ?? []
   const selectedMount = mounts.find((m) => m.id === entry.mountId)
   // Cavalry: pair the rider's own statLine with a mount profile shown as a
-  // second row directly beneath it (top = rider, bottom = mount). The mount is
-  // a regiment's fixed steed (`unit.mount`) or a character's chosen mount.
-  const companionMount: ProfileBlock | undefined =
-    unit.mount ??
-    (selectedMount?.statLine
-      ? {
-          name: selectedMount.name,
-          nameEs: selectedMount.nameEs,
-          statLine: selectedMount.statLine,
-          specialRules: selectedMount.specialRules,
-        }
-      : undefined)
+  // second row directly beneath it (top = rider, bottom = mount).
+  const companionMount = companionMountProfile(unit, selectedMount)
   // Unit magic standard: a regiment the army list allows may take one banner,
-  // carried by its standard bearer. The books set no points cap — it costs
-  // whatever its card says — so every non-special banner is offered.
-  const standardOptions = unit.magicStandard
-    ? army.magicItems.filter((i) => i.category === 'banner' && !i.special)
-    : []
+  // carried by its standard bearer.
+  const standardOptions = eligibleMagicStandards(unit, army)
   const hasStandardBearer = entry.optionIds.includes(STANDARD_BEARER_ID)
   const hasOptions =
     (unit.options?.length ?? 0) > 0 || mounts.length > 0 || unit.isCharacter || loreIds.length > 0 || !!unit.magicStandard
@@ -471,9 +459,7 @@ export function EntryRow({
               {selectedMount?.options && selectedMount.options.length > 0 && (
                 <div className="opt-checks mount-opt-checks">
                   {selectedMount.options.map((o) => {
-                    const cost = o.perCrewman
-                      ? o.pointsPerModel * mountCrewCount(selectedMount, entry.optionIds)
-                      : o.pointsPerModel
+                    const cost = mountOptionCost(selectedMount, o, entry.optionIds)
                     return (
                       <label key={o.id}>
                         <input
