@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { Roster, UnitProfile } from '../data/types'
 import type { useRosters } from '../state/useRosters'
 import { getArmy } from '../data/armies'
@@ -30,24 +30,19 @@ interface Props {
 }
 
 export function Editor({ rosterId, store, onBack }: Props) {
-  const initial = store.get(rosterId)
-  const [roster, setRoster] = useState<Roster | undefined>(initial)
+  // The store is the single source of truth — the editor renders the stored
+  // roster and commits edits through the store's functional `update`, which
+  // both composes same-tick edits and persists.
+  const roster = store.get(rosterId)
   const [showExport, setShowExport] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
-  const { save } = store
+  const { update } = store
   const [lang] = useLang()
 
-  // Functional updates so multiple edits in one tick compose instead of
-  // clobbering each other (each handler builds on the latest state, not the
-  // render-closure snapshot).
-  const commit = useCallback((update: (prev: Roster) => Roster) => {
-    setRoster((prev) => (prev ? update(prev) : prev))
-  }, [])
-
-  // Persist whenever the roster changes (save is stable from useRosters).
-  useEffect(() => {
-    if (roster) save(roster)
-  }, [roster, save])
+  const commit = useCallback(
+    (fn: (prev: Roster) => Roster) => update(rosterId, fn),
+    [update, rosterId],
+  )
 
   if (!roster) {
     return (
