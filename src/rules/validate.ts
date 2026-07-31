@@ -13,6 +13,7 @@ import {
   rosterTotalPoints,
 } from './points'
 import { summarize } from './summary'
+import { STANDARD_BEARER_ID } from '../data/unitOptions'
 import { type Lang, unitName, mountName, optionText, CATEGORY_LABEL } from '../i18n/lang'
 
 /**
@@ -363,7 +364,7 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
       } else {
         // Only a regiment needs a standard-bearer model. A chariot (or a monster
         // with a howdah) carries the standard itself — Magia p.42.
-        if (unit.role === 'regiment' && !e.optionIds.includes('standard')) {
+        if (unit.role === 'regiment' && !e.optionIds.includes(STANDARD_BEARER_ID)) {
           violations.push({
             severity: 'warning',
             rule: 'magic-standard-no-bearer',

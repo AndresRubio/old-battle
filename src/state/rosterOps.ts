@@ -1,4 +1,5 @@
 import type { Army, Roster, RosterEntry, UnitProfile } from '../data/types'
+import { STANDARD_BEARER_ID, isWizardLevelId } from '../data/unitOptions'
 
 let counter = 0
 /**
@@ -101,7 +102,7 @@ export function toggleOption(roster: Roster, entryId: string, optionId: string):
       // A unit magic standard is carried by the standard bearer — dropping the
       // Standard Bearer command option clears any chosen magic standard.
       const magicStandardId =
-        optionId === 'standard' && has ? undefined : e.magicStandardId
+        optionId === STANDARD_BEARER_ID && has ? undefined : e.magicStandardId
       return { ...e, optionIds, magicStandardId }
     }),
   }
@@ -166,7 +167,7 @@ export function selectWizardLevel(roster: Roster, entryId: string, army: Army, o
   const entry = roster.entries.find((e) => e.id === entryId)
   if (!entry) return roster
   const unit = army.units.find((u) => u.id === entry.unitId)
-  const levelIds = (unit?.options ?? []).filter((o) => o.id.startsWith('wizard-l')).map((o) => o.id)
+  const levelIds = (unit?.options ?? []).filter((o) => isWizardLevelId(o.id)).map((o) => o.id)
   const kept = entry.optionIds.filter((o) => !levelIds.includes(o))
   const next = optionId ? [...kept, optionId] : kept
   return updateEntry(roster, entryId, { optionIds: next })

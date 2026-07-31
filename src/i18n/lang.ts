@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react'
 import type { Army, MagicItem, MagicItemCategory, MountOption, ProfileBlock, StatLine, UnitProfile, UnitRole } from '../data/types'
 import type { MagicLore, Spell } from '../data/lores'
 import { RULE_PHRASE_ES } from './rulePhrases'
+import { wizardLevelOf } from '../data/unitOptions'
 
 export type Lang = 'en' | 'es'
 
@@ -361,6 +362,10 @@ const OPTION_ES: Record<string, string> = {
 /** Translate an equipment option label. Falls back to the stored name. */
 export const optionText = (name: string, lang: Lang): string =>
   lang === 'es' ? OPTION_ES[name] ?? name : name
+
+/** Short label for a wizard-level option ("Level 3" / "Nivel 3"). */
+export const wizardLevelLabel = (optionId: string, lang: Lang): string =>
+  `${lang === 'es' ? 'Nivel' : 'Level'} ${wizardLevelOf(optionId) ?? ''}`
 
 /** Resolve an option's localized description (e.g. Marks of Chaos). */
 export const optionDesc = (
