@@ -16,8 +16,10 @@ import {
   magicItemName,
   magicItemDesc,
   ruleText,
+  wizardLevelLabel,
   t,
 } from '../i18n/lang'
+import { isWizardLevelId } from '../data/unitOptions'
 
 /** The nine characteristic columns, in the canonical M/WS/BS/S/T/W/I/A/Ld order. */
 const STAT_KEYS = ['M', 'WS', 'BS', 'S', 'T', 'W', 'I', 'A', 'Ld'] as const
@@ -44,7 +46,6 @@ function statTableLines(statLine: Partial<StatLine>, lang: Lang, label?: string)
 function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
   const unit = findUnit(army, entry.unitId)
   if (!unit) return []
-  const es = lang === 'es'
   const lines: string[] = []
 
   const isRegiment = unit.role === 'regiment'
@@ -80,9 +81,7 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
   if (opts.length > 0 || mountOpts.length > 0) {
     const labels = [
       ...opts.map((o) =>
-        o.id.startsWith('wizard-l')
-          ? `${es ? 'Nivel' : 'Level'} ${o.id.replace('wizard-l', '')}`
-          : optionText(o.name, lang),
+        isWizardLevelId(o.id) ? wizardLevelLabel(o.id, lang) : optionText(o.name, lang),
       ),
       ...mountOpts.map((o) => optionText(o.name, lang)),
     ]
@@ -148,9 +147,7 @@ export function exportRosterText(roster: Roster, army: Army, lang: Lang = 'en'):
 
       const opts = (unit.options ?? []).filter((o) => e.optionIds.includes(o.id))
       for (const o of opts) {
-        const label = o.id.startsWith('wizard-l')
-          ? `${es ? 'Nivel' : 'Level'} ${o.id.replace('wizard-l', '')}`
-          : optionText(o.name, lang)
+        const label = isWizardLevelId(o.id) ? wizardLevelLabel(o.id, lang) : optionText(o.name, lang)
         lines.push(`    + ${label}`)
       }
       const mount = e.mountId ? (unit.mounts ?? []).find((m) => m.id === e.mountId) : undefined

@@ -2,7 +2,8 @@ import { useState } from 'react'
 import type { Army, EquipmentOption, MagicItem, ProfileBlock, RosterEntry, StatLine } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
 import { effectiveStatLine, entryPoints, findUnit, magicItemAllowance, mountCrewCount } from '../rules/points'
-import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc } from '../i18n/lang'
+import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel } from '../i18n/lang'
+import { STANDARD_BEARER_ID, isWizardLevelId } from '../data/unitOptions'
 import { findRule, type RuleDef } from '../data/rules'
 import { RuleDialog } from './RuleDialog'
 import { InfoDialog } from './InfoDialog'
@@ -110,9 +111,9 @@ export function EntryRow({
   const pts = entryPoints(entry, army)
   // Some options (e.g. O&G shaman wizard levels) replace the whole statLine.
   const statLine = effectiveStatLine(unit, entry.optionIds)
-  const levelOptions = (unit.options ?? []).filter((o) => o.id.startsWith('wizard-l'))
-  const toggleOptions = (unit.options ?? []).filter((o) => !o.id.startsWith('wizard-l'))
-  const currentLevel = entry.optionIds.find((id) => id.startsWith('wizard-l')) ?? ''
+  const levelOptions = (unit.options ?? []).filter((o) => isWizardLevelId(o.id))
+  const toggleOptions = (unit.options ?? []).filter((o) => !isWizardLevelId(o.id))
+  const currentLevel = entry.optionIds.find(isWizardLevelId) ?? ''
   const loreIds = unit.lores ?? []
   const selectedLore = entry.loreId ? getLore(entry.loreId) : undefined
   const allowance = unit.isCharacter ? magicItemAllowance(entry, unit) : 0
@@ -137,7 +138,7 @@ export function EntryRow({
   const standardOptions = unit.magicStandard
     ? army.magicItems.filter((i) => i.category === 'banner' && !i.special)
     : []
-  const hasStandardBearer = entry.optionIds.includes('standard')
+  const hasStandardBearer = entry.optionIds.includes(STANDARD_BEARER_ID)
   const hasOptions =
     (unit.options?.length ?? 0) > 0 || mounts.length > 0 || unit.isCharacter || loreIds.length > 0 || !!unit.magicStandard
 
@@ -302,7 +303,7 @@ export function EntryRow({
                       checked={currentLevel === o.id}
                       onChange={() => onSelectWizardLevel(o.id)}
                     />
-                    {(lang === 'es' ? 'Nivel ' : 'Level ') + o.id.replace('wizard-l', '')} (+{o.pointsPerModel})
+                    {wizardLevelLabel(o.id, lang)} (+{o.pointsPerModel})
                   </label>
                 ))}
               </div>
