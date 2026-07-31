@@ -10,6 +10,23 @@ function hasStorage(): boolean {
   }
 }
 
+/**
+ * Minimal shape check for one stored roster. Guards app boot against a
+ * corrupt array element (a null, a truncated object) crashing every screen —
+ * damaged entries are dropped, intact ones survive.
+ */
+function isRoster(x: unknown): x is Roster {
+  if (typeof x !== 'object' || x === null) return false
+  const r = x as Record<string, unknown>
+  return (
+    typeof r.id === 'string' &&
+    typeof r.name === 'string' &&
+    typeof r.armyId === 'string' &&
+    typeof r.pointsLimit === 'number' &&
+    Array.isArray(r.entries)
+  )
+}
+
 /** Load all saved rosters. Returns [] on any error (corrupt data, no storage). */
 export function loadRosters(): Roster[] {
   if (!hasStorage()) return []
@@ -18,7 +35,7 @@ export function loadRosters(): Roster[] {
     if (!raw) return []
     const parsed = JSON.parse(raw)
     if (!Array.isArray(parsed)) return []
-    return parsed as Roster[]
+    return parsed.filter(isRoster)
   } catch {
     return []
   }
@@ -28,8 +45,10 @@ export function saveRosters(rosters: Roster[]): void {
   if (!hasStorage()) return
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(rosters))
-  } catch {
-    // ignore quota / serialization errors
+  } catch (err) {
+    // Quota / serialization failure: the in-memory session keeps working, but
+    // the change won't survive a reload — leave a trace instead of vanishing.
+    console.error('Failed to save army lists to localStorage', err)
   }
 }
 
