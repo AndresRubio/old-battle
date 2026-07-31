@@ -10,9 +10,9 @@ import {
   findMagicItem,
   findUnit,
   magicItemAllowance,
-  pointsByRole,
   rosterTotalPoints,
 } from './points'
+import { summarize } from './summary'
 import { type Lang, unitName, mountName, optionText, CATEGORY_LABEL } from '../i18n/lang'
 
 /**
@@ -79,53 +79,50 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
   }
 
   // --- Percentage composition (against the agreed points limit) -----------
+  // Thresholds and breach verdicts come from summarize() — the same numbers
+  // the summary panel renders, so display and enforcement cannot diverge.
   if (limit > 0) {
-    const byRole = pointsByRole(roster.entries, army)
+    const { caps } = summarize(roster, army)
 
-    const charMax = Math.floor((composition.maxCharactersPct / 100) * limit)
-    if (byRole.character > charMax) {
+    if (caps.characters.breached) {
       violations.push({
         severity: 'warning',
         rule: 'characters-over',
         message: es
-          ? `Los personajes usan ${byRole.character} ptos, superando el tope del ${composition.maxCharactersPct}% (${charMax} ptos).`
-          : `Characters use ${byRole.character} pts, over the ${composition.maxCharactersPct}% cap (${charMax} pts).`,
+          ? `Los personajes usan ${caps.characters.points} ptos, superando el tope del ${caps.characters.capPct}% (${caps.characters.capPoints} ptos).`
+          : `Characters use ${caps.characters.points} pts, over the ${caps.characters.capPct}% cap (${caps.characters.capPoints} pts).`,
       })
     }
 
-    const regMin = Math.ceil((composition.minRegimentsPct / 100) * limit)
-    if (byRole.regiment < regMin) {
+    if (caps.regiments.breached) {
       violations.push({
         severity: 'warning',
         rule: 'regiments-min',
         message: es
-          ? `Los regimientos sólo suman ${byRole.regiment} ptos; se requiere al menos el ${composition.minRegimentsPct}% (${regMin} ptos).`
-          : `Regiments are only ${byRole.regiment} pts; at least ${composition.minRegimentsPct}% (${regMin} pts) is required.`,
+          ? `Los regimientos sólo suman ${caps.regiments.points} ptos; se requiere al menos el ${caps.regiments.capPct}% (${caps.regiments.capPoints} ptos).`
+          : `Regiments are only ${caps.regiments.points} pts; at least ${caps.regiments.capPct}% (${caps.regiments.capPoints} pts) is required.`,
       })
     }
 
-    // War machines (and chariots) have their own 0-25% cap...
-    const warMachines = byRole.warmachine + byRole.chariot
-    const wmMax = Math.floor((composition.maxWarMachinesPct / 100) * limit)
-    if (warMachines > wmMax) {
+    // War machines and chariots share one 0-25% cap...
+    if (caps.warMachines.breached) {
       violations.push({
         severity: 'warning',
         rule: 'warmachines-over',
         message: es
-          ? `Las máquinas de guerra y carros usan ${warMachines} ptos, superando el tope del ${composition.maxWarMachinesPct}% (${wmMax} ptos).`
-          : `War machines & chariots use ${warMachines} pts, over the ${composition.maxWarMachinesPct}% cap (${wmMax} pts).`,
+          ? `Las máquinas de guerra y carros usan ${caps.warMachines.points} ptos, superando el tope del ${caps.warMachines.capPct}% (${caps.warMachines.capPoints} ptos).`
+          : `War machines & chariots use ${caps.warMachines.points} pts, over the ${caps.warMachines.capPct}% cap (${caps.warMachines.capPoints} pts).`,
       })
     }
 
     // ...and monsters have a separate 0-25% cap.
-    const monMax = Math.floor((composition.maxMonstersPct / 100) * limit)
-    if (byRole.monster > monMax) {
+    if (caps.monsters.breached) {
       violations.push({
         severity: 'warning',
         rule: 'monsters-over',
         message: es
-          ? `Los monstruos usan ${byRole.monster} ptos, superando el tope del ${composition.maxMonstersPct}% (${monMax} ptos).`
-          : `Monsters use ${byRole.monster} pts, over the ${composition.maxMonstersPct}% cap (${monMax} pts).`,
+          ? `Los monstruos usan ${caps.monsters.points} ptos, superando el tope del ${caps.monsters.capPct}% (${caps.monsters.capPoints} ptos).`
+          : `Monsters use ${caps.monsters.points} pts, over the ${caps.monsters.capPct}% cap (${caps.monsters.capPoints} pts).`,
       })
     }
   }

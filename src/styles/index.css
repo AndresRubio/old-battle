@@ -534,6 +534,11 @@ h1, h2, h3 {
 .bar-val {
   color: var(--ink-faint);
 }
+/* Cap broken (same verdict the Muster Check warns about) — mark the value. */
+.bar-row.breached .bar-val {
+  color: var(--error);
+  font-weight: 600;
+}
 .bar-track {
   height: 7px;
   background: #ddc9a0;
