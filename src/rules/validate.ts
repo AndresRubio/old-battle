@@ -14,6 +14,7 @@ import {
 } from './points'
 import { summarize } from './summary'
 import { STANDARD_BEARER_ID } from '../data/unitOptions'
+import { isValidMagicStandard } from './entryView'
 import { type Lang, unitName, mountName, optionText, CATEGORY_LABEL } from '../i18n/lang'
 
 /**
@@ -374,7 +375,7 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
             entryId: e.id,
           })
         }
-        if (!item || item.category !== 'banner' || item.special) {
+        if (!item || !isValidMagicStandard(item)) {
           violations.push({
             severity: 'warning',
             rule: 'magic-standard-invalid-item',

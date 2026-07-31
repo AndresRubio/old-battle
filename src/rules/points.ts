@@ -1,5 +1,5 @@
 import { MAGIC_ITEM_ALLOWANCE } from '../data/types'
-import type { Army, MagicItem, MountOption, RosterEntry, StatLine, UnitProfile, UnitRole } from '../data/types'
+import type { Army, EquipmentOption, MagicItem, MountOption, RosterEntry, StatLine, UnitProfile, UnitRole } from '../data/types'
 
 export function findUnit(army: Army, unitId: string): UnitProfile | undefined {
   return army.units.find((u) => u.id === unitId)
@@ -52,10 +52,17 @@ export function mountOptionPoints(unit: UnitProfile, mountId: string | undefined
   if (!mountId || !unit.mounts) return 0
   const mount = unit.mounts.find((m) => m.id === mountId)
   if (!mount?.options) return 0
-  const crew = mountCrewCount(mount, optionIds)
   return mount.options
     .filter((o) => optionIds.includes(o.id))
-    .reduce((sum, o) => sum + (o.perCrewman ? o.pointsPerModel * crew : o.pointsPerModel), 0)
+    .reduce((sum, o) => sum + mountOptionCost(mount, o, optionIds), 0)
+}
+
+/**
+ * Cost of ONE mount option under the current selection: `perCrewman` options
+ * charge per current crew member, everything else is a flat per-entry cost.
+ */
+export function mountOptionCost(mount: MountOption, option: EquipmentOption, optionIds: string[]): number {
+  return option.perCrewman ? option.pointsPerModel * mountCrewCount(mount, optionIds) : option.pointsPerModel
 }
 
 /**
