@@ -63,7 +63,8 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
     options by **substring keyword** on the option name (handles both EN and ES names).
   - `summary.ts` — derived totals/percentages for the UI. `exportText.ts` — plaintext list render.
 - **`src/state/`** — `rosterOps.ts` (pure roster transforms), `storage.ts` (localStorage CRUD),
-  `useRosters.ts` (React hook wrapping storage via `useSyncExternalStore`).
+  `useRosters.ts` (React hook owning the roster collection — the single source of truth the
+  editor commits to via its functional `update(id, fn)`; persists via `storage.ts` on change).
 - **`src/i18n/lang.ts`** — bilingual layer. `useLang()` hook + `t(key, lang)` for UI strings,
   `unitName`/`armyName`/`magicItemName`/`optionText`/`ruleText` resolvers (all fall back to the
   English value), and label maps (`ROLE_LABEL`, `STAT_LABEL`, `CATEGORY_LABEL`). `rulePhrases.ts`
