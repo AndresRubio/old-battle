@@ -6,7 +6,6 @@ import {
   type RuleViolation,
 } from '../data/types'
 import {
-  entryPoints,
   findMagicItem,
   findUnit,
   magicItemAllowance,
@@ -15,7 +14,7 @@ import {
 import { summarize } from './summary'
 import { STANDARD_BEARER_ID } from '../data/unitOptions'
 import { isValidMagicStandard } from './entryView'
-import { type Lang, unitName, mountName, optionText, CATEGORY_LABEL } from '../i18n/lang'
+import { type Lang, unitName, mountName, optionText, magicItemName, CATEGORY_LABEL } from '../i18n/lang'
 
 /**
  * Validate a roster against 5th edition army-composition and
@@ -352,7 +351,7 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
     // See CITATIONS.md — Magic-standard caps.
     if (e.magicStandardId) {
       const item = findMagicItem(army, e.magicStandardId)
-      const itemNm = item ? (es ? item.nameEs ?? item.name : item.name) : e.magicStandardId
+      const itemNm = item ? magicItemName(item, lang) : e.magicStandardId
       if (!unit.magicStandard) {
         violations.push({
           severity: 'warning',
@@ -448,8 +447,6 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
       }
     }
 
-    // Points sanity (defensive — surfaces data bugs)
-    void entryPoints(e, army)
   }
 
   // --- Magic-item uniqueness across the whole army ------------------------
@@ -471,7 +468,7 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
     if (count < 2) continue
     const item = findMagicItem(army, id)
     if (!item || item.duplicable) continue
-    const itemName = es ? (item.nameEs ?? item.name) : item.name
+    const itemName = magicItemName(item, lang)
     violations.push({
       severity: 'error',
       rule: 'magic-items-unique',
