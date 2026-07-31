@@ -3,7 +3,7 @@ import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine } from '..
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
 import { effectiveStatLine, entryPoints, findUnit, magicItemAllowance, mountOptionCost } from '../rules/points'
 import { companionMountProfile, eligibleMagicStandards } from '../rules/entryView'
-import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel } from '../i18n/lang'
+import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel, matchesQuery } from '../i18n/lang'
 import { STANDARD_BEARER_ID, isWizardLevelId } from '../data/unitOptions'
 import { findRule, type RuleDef } from '../data/rules'
 import { RuleDialog } from './RuleDialog'
@@ -520,8 +520,7 @@ export function EntryRow({
                 {(() => {
                   const q = itemQuery.trim().toLowerCase()
                   const cap = maxPts.trim() === '' ? Infinity : Number(maxPts)
-                  const matches = (i: MagicItem) =>
-                    i.points <= cap && (q === '' || `${i.name} ${i.nameEs ?? ''}`.toLowerCase().includes(q))
+                  const matches = (i: MagicItem) => i.points <= cap && matchesQuery(i, q)
                   const groups = CATEGORY_ORDER.map((cat) => {
                   const items = army.magicItems.filter((i) => i.category === cat).filter(matches)
                   if (items.length === 0) return null

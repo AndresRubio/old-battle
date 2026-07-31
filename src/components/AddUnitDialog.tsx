@@ -7,6 +7,7 @@ import {
   unitGroup,
   type DisplayGroup,
   unitName,
+  matchesQuery,
   t,
 } from '../i18n/lang'
 
@@ -30,7 +31,7 @@ export function AddUnitDialog({ army, onAdd, onClose }: Props) {
   // While searching, match by name (EN + ES) across every category; otherwise
   // show just the active tab.
   const units = searching
-    ? army.units.filter((u) => `${u.name} ${u.nameEs ?? ''}`.toLowerCase().includes(q))
+    ? army.units.filter((u) => matchesQuery(u, q))
     : army.units.filter((u) => unitGroup(u) === active)
 
   return (

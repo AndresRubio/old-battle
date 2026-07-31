@@ -363,6 +363,10 @@ const OPTION_ES: Record<string, string> = {
 export const optionText = (name: string, lang: Lang): string =>
   lang === 'es' ? OPTION_ES[name] ?? name : name
 
+/** Case-insensitive EN+ES name match for the unit / magic-item pickers. `q` must already be lowercased. */
+export const matchesQuery = (x: { name: string; nameEs?: string }, q: string): boolean =>
+  q === '' || `${x.name} ${x.nameEs ?? ''}`.toLowerCase().includes(q)
+
 /** Short label for a wizard-level option ("Level 3" / "Nivel 3"). */
 export const wizardLevelLabel = (optionId: string, lang: Lang): string =>
   `${lang === 'es' ? 'Nivel' : 'Level'} ${wizardLevelOf(optionId) ?? ''}`
