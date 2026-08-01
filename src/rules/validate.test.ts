@@ -1,7 +1,13 @@
 import { describe, it, expect } from 'vitest'
 import { validateRoster } from './validate'
 import { magicItemAllowance } from './points'
-import { STANDARD_5E_COMPOSITION, type Army, type Roster, type RosterEntry } from '../data/types'
+import {
+  MAGIC_ITEM_ALLOWANCE,
+  STANDARD_5E_COMPOSITION,
+  type Army,
+  type Roster,
+  type RosterEntry,
+} from '../data/types'
 import { getArmy } from '../data/armies'
 
 // ---- Fixture army -------------------------------------------------------
@@ -924,5 +930,104 @@ describe('stale mount options (mount-options-stale)', () => {
     })
     expect(magicItemAllowance(onChariot, unit)).toBe(magicItemAllowance(onFoot, unit))
     expect(magicItemAllowance(onChariot, unit)).toBe(3) // lord
+  })
+})
+
+// ---- Canonical special cases (Warhammer Magia p.30) ---------------------
+// The allowance chart has two entries beyond the seven generic ranks:
+//   "Wight — 1 (in addition to his Wight Blade)" and
+//   "Slann Mage-Priest — +1 on normal wizard level".
+// Neither needs a dedicated field: the Wight Blade is innate equipment (it
+// never enters the magic-item pool) and the Slann's +1 is folded into its
+// rank. These tests pin that down so the modelling can't silently drift.
+
+describe('Wight Blade does not consume a magic-item slot', () => {
+  const undead = getArmy('undead')!
+  const vc = getArmy('vampire-counts')!
+
+  // Characters whose army-list entry grants them a Wight Blade outright.
+  // (Undead Knights carry one too, but they are a regiment — no allowance.)
+  const bladeBearers = undead.units.filter(
+    (u) => u.characterRank && u.specialRules?.some((r) => r.startsWith('Wight Blade')),
+  )
+
+  it('finds the Wight Blade bearers in the Undead list', () => {
+    expect(bladeBearers.length).toBeGreaterThan(0)
+  })
+
+  it('never offers the plain Wight Blade as a selectable magic item', () => {
+    // Only named special-character blades (Arkhan's, Chaos) are pool items;
+    // the generic Espada Funeraria is equipment, so it costs no slot.
+    for (const a of [undead, vc]) {
+      const generic = a.magicItems.filter(
+        (i) => /^(Wight Blade|Espada Funeraria)$/.test(i.name) || /^(Wight Blade|Espada Funeraria)$/.test(i.nameEs ?? ''),
+      )
+      expect(generic).toEqual([])
+    }
+  })
+
+  it('leaves the bearer the full allowance of its rank', () => {
+    for (const u of bladeBearers) {
+      const expected = MAGIC_ITEM_ALLOWANCE[u.characterRank!]
+      expect(magicItemAllowance(entry({ unitId: u.id }), u)).toBe(expected)
+    }
+  })
+
+  it('accepts a Wight Lord carrying its blade plus one magic item', () => {
+    const lord = vc.units.find((u) => u.id === 'vc-wight-lord')!
+    expect(lord.characterRank).toBe('champion') // army list p.59 — 1 item
+    // Enchanted items are unrestricted, so the count rule is tested in isolation.
+    const item = vc.magicItems.find((i) => i.category === 'enchanted')!
+    const r: Roster = {
+      id: 'r', name: 'Host', armyId: 'vampire-counts', pointsLimit: 0,
+      entries: [
+        entry({ unitId: 'vc-vampire-lord', isGeneral: true }),
+        entry({ unitId: 'vc-wight-lord', magicItemIds: [item.id] }),
+      ],
+    }
+    expect(rules(validateRoster(r, vc))).not.toContain('magic-items-count')
+  })
+
+  it('rejects a Wight Lord carrying two magic items', () => {
+    const two = vc.magicItems.filter((i) => i.category === 'enchanted').slice(0, 2)
+    expect(two).toHaveLength(2)
+    const r: Roster = {
+      id: 'r', name: 'Host', armyId: 'vampire-counts', pointsLimit: 0,
+      entries: [
+        entry({ unitId: 'vc-vampire-lord', isGeneral: true }),
+        entry({ unitId: 'vc-wight-lord', magicItemIds: two.map((i) => i.id) }),
+      ],
+    }
+    expect(rules(validateRoster(r, vc))).toContain('magic-items-count')
+  })
+})
+
+describe('Slann Mage-Priest carries one item above its wizard level', () => {
+  const lizardmen = getArmy('lizardmen')!
+  const slann = lizardmen.units.find((u) => u.id === 'lz-slann')!
+
+  // Book (army list p.73): 2 items at level 1, then 3 / 4 / 5.
+  const byLevel: [string[], number][] = [
+    [[], 2],
+    [['wizard-l2'], 3],
+    [['wizard-l3'], 4],
+    [['wizard-l4'], 5],
+  ]
+
+  it.each(byLevel)('allows %s → %i items', (optionIds, expected) => {
+    expect(magicItemAllowance(entry({ unitId: 'lz-slann', optionIds }), slann)).toBe(expected)
+  })
+
+  it('stays exactly one above the generic wizard ladder', () => {
+    const generic = [
+      MAGIC_ITEM_ALLOWANCE.wizard1,
+      MAGIC_ITEM_ALLOWANCE.wizard2,
+      MAGIC_ITEM_ALLOWANCE.wizard3,
+      MAGIC_ITEM_ALLOWANCE.wizard4,
+    ]
+    const actual = byLevel.map(([optionIds]) =>
+      magicItemAllowance(entry({ unitId: 'lz-slann', optionIds }), slann),
+    )
+    expect(actual).toEqual(generic.map((n) => n + 1))
   })
 })
