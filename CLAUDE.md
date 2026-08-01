@@ -29,7 +29,10 @@ npx vitest run src/rules/validate.test.ts -t "characters over 50%"
 npm run android      # build + cap sync android + cap open android
 ```
 
-There is **no linter** configured and **no git repo** here — don't assume `git`/ESLint commands work.
+There is **no linter** configured — don't assume ESLint commands work. This IS a git repo
+(GitHub remote `old-battle`; work in feature branches, merge to `main`). If worktrees exist under
+`.claude/worktrees/`, run the full suite with
+`npx vitest run --exclude '**/.claude/**' --exclude '**/node_modules/**'` — root vitest scans them.
 
 ## Architecture
 
@@ -47,6 +50,7 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
     (auto-adds a standard bearer + musician — each priced at 2× the unit's base per-model cost — to
     multi-model regiments; no unit-champion option exists, champions are separate character entries;
     do NOT hand-add command options per unit)
+    `withMagicStandards` (flags regiments/chariots whose special rules allow a magic standard),
     and `withMagicItems` (each army's pool = `COMMON_MAGIC_ITEMS` + `ARMY_MAGIC_ITEMS[army.id]`).
     Use `getArmy(id)` / `ARMY_OPTIONS`. **New armies must be imported and added to the `ARMIES`
     array here**, or they won't exist to the app.
@@ -59,10 +63,14 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
     magic-item rules. Messages are built inline with `es ? '…' : '…'` ternaries.
   - `points.ts` — points maths (`entryPoints`, `rosterTotalPoints`, `pointsByRole`,
     `magicItemAllowance`) and the `findUnit`/`findMagicItem` lookups.
-  - `equipment.ts` — equipment-combination validation (weapon/armour/shield/mount "slots"); matches
-    options by **substring keyword** on the option name (handles both EN and ES names).
-  - `summary.ts` — derived totals/percentages for the UI. `exportText.ts` — plaintext list render.
-- **`src/state/`** — `rosterOps.ts` (pure roster transforms), `storage.ts` (localStorage CRUD),
+  - `summary.ts` — `summarize()` owns the four composition caps (`CapStatus`); `validateRoster`
+    and `SummaryPanel` both consume it, so display and enforcement can't diverge.
+  - `entryView.ts` — pure per-entry derivations for EntryRow (magic-standard eligibility,
+    rider+mount profile pairing). `exportText.ts` — plaintext list render.
+  - `equipment.ts` — equipment-combination validation. **Currently unwired** (zero production
+    callers, deliberate YAGNI) — don't call it without deciding to integrate it.
+- **`src/state/`** — `rosterOps.ts` (pure roster transforms), `storage.ts` (localStorage CRUD —
+  shape-validates on load, `saveRosters` returns success and App shows a banner on failure),
   `useRosters.ts` (React hook owning the roster collection — the single source of truth the
   editor commits to via its functional `update(id, fn)`; persists via `storage.ts` on change).
 - **`src/i18n/lang.ts`** — bilingual layer. `useLang()` hook + `t(key, lang)` for UI strings,
@@ -101,9 +109,13 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
 - Points may be **fractional** (e.g. shield at 0.5/model) — don't assume integers.
 - `armies.test.ts` runs integrity checks across **every** army in `ARMIES` (unique ids, a possible
   General, no leaked army-restricted magic items, etc.), so a malformed new army fails the suite.
+- Vitest runs in **jsdom** (`localStorage` always exists — stub it `undefined` to test absence).
+  There is **no @testing-library**; hook tests use a `react-dom` `act` harness — don't add the
+  dependency without asking. Four engine test files hard-code Empire `emp-*` ids and points —
+  changing Empire data means updating those expected values in lockstep.
 
 ## Reference docs
 
 `README.md`, `SPEC.md`, `PROGRESS.md` (build log), `CITATIONS.md` (sources + data-accuracy note),
 `research/` (sourced rules/army notes), and `docs/superpowers/{plans,specs}/` (design docs for
-recent rules-fidelity work). Note: `README.md` still says "three armies" — there are now 14.
+recent rules-fidelity work). Note: `README.md` still says "14 armies" — there are now 16.
