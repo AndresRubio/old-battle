@@ -118,4 +118,4 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
 
 `README.md`, `SPEC.md`, `PROGRESS.md` (build log), `CITATIONS.md` (sources + data-accuracy note),
 `research/` (sourced rules/army notes), and `docs/superpowers/{plans,specs}/` (design docs for
-recent rules-fidelity work). Note: `README.md` still says "14 armies" — there are now 16.
+recent rules-fidelity work).

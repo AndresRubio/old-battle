@@ -12,9 +12,9 @@ automatically on your own device.
 ![Editor with live validation](.) <!-- screenshot placeholder -->
 
 ## Features
-- **14 armies**, fully playable end-to-end: The Empire, Orcs & Goblins, High Elves, Dwarfs,
+- **16 armies**, fully playable end-to-end: The Empire, Orcs & Goblins, High Elves, Dwarfs,
   Bretonnia, Wood Elves, Dark Elves, Skaven, Undead, Vampire Counts, Chaos, Chaos Dwarfs,
-  Lizardmen, and Dogs of War.
+  Lizardmen, Dogs of War, Halflings, and Norse.
 - **Bilingual UI (English / Spanish)** — toggle in the header; unit names, magic items, special
   rules and validation messages are all translated.
 - **Live composition validation** (the headline feature): every change re-checks the 5th-edition
@@ -22,7 +22,7 @@ automatically on your own device.
   - Total points over the limit
   - Characters over 50% of the points limit
   - Regiments below the required 25%
-  - War machines + monsters over 25%
+  - War machines + chariots over 25%, monsters over 25% (separate caps)
   - Missing or duplicate General
   - 0-1 / 0-X unit availability limits
   - Unit size below minimum / above maximum
