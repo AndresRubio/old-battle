@@ -614,6 +614,15 @@ h1, h2, h3 {
 .violation-error .v-icon { color: var(--error); }
 .violation-warning .v-icon { color: var(--warn); }
 
+/* Persistence failure (quota full / storage unavailable) — app-wide banner. */
+.save-warning {
+  font-size: 0.83rem;
+  padding: 0.5rem 0.9rem;
+  background: rgba(192, 57, 43, 0.14);
+  border-left: 3px solid var(--error);
+  line-height: 1.35;
+}
+
 /* ---- Entries ---- */
 .entry-list {
   list-style: none;

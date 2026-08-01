@@ -158,6 +158,10 @@ const STRINGS = {
     en: 'Unofficial fan-made tool · not affiliated with any game publisher · 5th edition (1996) rules',
     es: 'Herramienta no oficial de aficionados · sin relación con ninguna editorial del juego · reglas de 5ª edición (1996)',
   },
+  saveFailed: {
+    en: 'Could not save your lists — device storage is full or unavailable. Changes will be lost when you close the app.',
+    es: 'No se pudieron guardar tus listas: el almacenamiento del dispositivo está lleno o no disponible. Los cambios se perderán al cerrar la aplicación.',
+  },
   // Home
   yourLists: { en: 'Your Army Lists', es: 'Tus Listas de Ejército' },
   homeBlurb: {

@@ -41,6 +41,12 @@ export default function App() {
         </div>
       </header>
 
+      {store.saveFailed && (
+        <div className="save-warning" role="alert">
+          {t('saveFailed', lang)}
+        </div>
+      )}
+
       <main className="app-main">
         {view.name === 'home' && (
           <Home

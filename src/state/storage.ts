@@ -1,4 +1,4 @@
-import type { Roster } from '../data/types'
+import type { Roster, RosterEntry } from '../data/types'
 
 const STORAGE_KEY = 'whfb5e.rosters.v1'
 
@@ -10,10 +10,23 @@ function hasStorage(): boolean {
   }
 }
 
+function isEntry(x: unknown): x is RosterEntry {
+  if (typeof x !== 'object' || x === null) return false
+  const e = x as Record<string, unknown>
+  return (
+    typeof e.id === 'string' &&
+    typeof e.unitId === 'string' &&
+    typeof e.size === 'number' &&
+    Array.isArray(e.optionIds) &&
+    Array.isArray(e.magicItemIds)
+  )
+}
+
 /**
- * Minimal shape check for one stored roster. Guards app boot against a
- * corrupt array element (a null, a truncated object) crashing every screen —
- * damaged entries are dropped, intact ones survive.
+ * Minimal shape check for one stored roster, including each entry. Guards app
+ * boot against a corrupt element (a null, a truncated object, a mangled entry)
+ * crashing every screen — a roster with any damaged entry is dropped whole,
+ * intact rosters survive.
  */
 function isRoster(x: unknown): x is Roster {
   if (typeof x !== 'object' || x === null) return false
@@ -23,7 +36,8 @@ function isRoster(x: unknown): x is Roster {
     typeof r.name === 'string' &&
     typeof r.armyId === 'string' &&
     typeof r.pointsLimit === 'number' &&
-    Array.isArray(r.entries)
+    Array.isArray(r.entries) &&
+    r.entries.every(isEntry)
   )
 }
 
@@ -41,14 +55,18 @@ export function loadRosters(): Roster[] {
   }
 }
 
-export function saveRosters(rosters: Roster[]): void {
-  if (!hasStorage()) return
+/**
+ * Persist all rosters. Returns false when the write failed (quota exhausted,
+ * storage unavailable) so the UI can warn that edits won't survive a reload.
+ */
+export function saveRosters(rosters: Roster[]): boolean {
+  if (!hasStorage()) return false
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(rosters))
+    return true
   } catch (err) {
-    // Quota / serialization failure: the in-memory session keeps working, but
-    // the change won't survive a reload — leave a trace instead of vanishing.
     console.error('Failed to save army lists to localStorage', err)
+    return false
   }
 }
 
@@ -58,6 +76,15 @@ export function upsertRoster(rosters: Roster[], roster: Roster): Roster[] {
   const next = rosters.slice()
   next[idx] = roster
   return next
+}
+
+/**
+ * Apply a functional edit to the roster with the given id; no-op when absent.
+ * `fn` receives the current stored version, so same-tick edits compose.
+ */
+export function updateRoster(rosters: Roster[], id: string, fn: (prev: Roster) => Roster): Roster[] {
+  const current = rosters.find((r) => r.id === id)
+  return current ? upsertRoster(rosters, fn(current)) : rosters
 }
 
 export function deleteRoster(rosters: Roster[], id: string): Roster[] {
