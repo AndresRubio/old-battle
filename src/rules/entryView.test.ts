@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { isValidMagicStandard, eligibleMagicStandards, companionMountProfile } from './entryView'
+import {
+  isValidMagicStandard,
+  eligibleMagicStandards,
+  companionMountProfile,
+  partitionOptions,
+  hasAnyOptions,
+  filterMagicItems,
+} from './entryView'
 import { mountOptionCost } from './points'
 import type { Army, MagicItem, MountOption, UnitProfile } from '../data/types'
 
@@ -88,5 +95,61 @@ describe('mountOptionCost', () => {
 
   it('charges other mount options flat', () => {
     expect(mountOptionCost(chariot, scythes, ['scythes', 'crew3'])).toBe(15)
+  })
+})
+
+describe('partitionOptions', () => {
+  const unit: UnitProfile = {
+    id: 'u', name: 'U', role: 'character', pointsPerModel: 50, isCharacter: true,
+    options: [
+      { id: 'wizard-l2', name: 'Wizard Level 2', pointsPerModel: 35 },
+      { id: 'shield', name: 'Shield', pointsPerModel: 2 },
+      { id: 'wizard-l3', name: 'Wizard Level 3', pointsPerModel: 70 },
+    ],
+  }
+
+  it('splits wizard-level upgrades (radio) from toggle options (checkbox)', () => {
+    const { levelOptions, toggleOptions } = partitionOptions(unit)
+    expect(levelOptions.map((o) => o.id)).toEqual(['wizard-l2', 'wizard-l3'])
+    expect(toggleOptions.map((o) => o.id)).toEqual(['shield'])
+  })
+
+  it('yields empty partitions for a unit with no options', () => {
+    const { levelOptions, toggleOptions } = partitionOptions({ ...unit, options: undefined })
+    expect(levelOptions).toEqual([])
+    expect(toggleOptions).toEqual([])
+  })
+})
+
+describe('hasAnyOptions', () => {
+  const bare: UnitProfile = { id: 'u', name: 'U', role: 'regiment', pointsPerModel: 5 }
+
+  it('is false for a plain regiment with nothing configurable', () => {
+    expect(hasAnyOptions(bare)).toBe(false)
+  })
+
+  it('is true for options, mounts, characters, lores or a magic standard', () => {
+    expect(hasAnyOptions({ ...bare, options: [{ id: 'o', name: 'O', pointsPerModel: 1 }] })).toBe(true)
+    expect(hasAnyOptions({ ...bare, mounts: [{ id: 'm', name: 'M', points: 10 }] })).toBe(true)
+    expect(hasAnyOptions({ ...bare, isCharacter: true })).toBe(true)
+    expect(hasAnyOptions({ ...bare, lores: ['battle'] })).toBe(true)
+    expect(hasAnyOptions({ ...bare, magicStandard: true })).toBe(true)
+  })
+})
+
+describe('filterMagicItems', () => {
+  const items: MagicItem[] = [
+    { id: 'a', name: 'Sword of Might', nameEs: 'Espada de Poder', category: 'weapon', points: 25 },
+    { id: 'b', name: 'Black Amulet', category: 'talisman', points: 90 },
+  ]
+
+  it('matches on either language, case-insensitively', () => {
+    expect(filterMagicItems(items, 'espada', '').map((i) => i.id)).toEqual(['a'])
+    expect(filterMagicItems(items, 'AMULET', '').map((i) => i.id)).toEqual(['b'])
+  })
+
+  it('applies the points ceiling; blank means no cap', () => {
+    expect(filterMagicItems(items, '', '50').map((i) => i.id)).toEqual(['a'])
+    expect(filterMagicItems(items, '', '').map((i) => i.id)).toEqual(['a', 'b'])
   })
 })
