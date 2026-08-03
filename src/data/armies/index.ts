@@ -1,5 +1,6 @@
 import type { Army } from '../types'
 import { commandOptions } from '../unitOptions'
+import { assertArmyIntegrity } from './integrity'
 import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
 import { EMPIRE } from './empire'
 import { ORCS_AND_GOBLINS } from './orcsGoblins'
@@ -94,7 +95,13 @@ export const ARMIES: Army[] = [
   UNDEAD,
   VAMPIRE_COUNTS,
   WOOD_ELVES,
-].map(withCommandGroups).map(withMagicStandards).map(withMagicItems)
+]
+  .map(withCommandGroups)
+  .map(withMagicStandards)
+  .map(withMagicItems)
+  // Fail fast at module load: a malformed army (duplicate ids, mount-option
+  // namespace collision, dangling selection-rule reference…) throws here.
+  .map(assertArmyIntegrity)
 
 export function getArmy(id: string): Army | undefined {
   return ARMIES.find((a) => a.id === id)

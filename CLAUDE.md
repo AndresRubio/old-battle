@@ -60,15 +60,21 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
 - **`src/rules/`** — pure functions only.
   - `validate.ts` — `validateRoster(roster, army, lang): RuleViolation[]`. The core. Checks points
     limit, General, the four percentage caps, 0-X unit limits, `unitGroupCaps`, unit size, and all
-    magic-item rules. Messages are built inline with `es ? '…' : '…'` ternaries.
-  - `points.ts` — points maths (`entryPoints`, `rosterTotalPoints`, `pointsByRole`,
-    `magicItemAllowance`) and the `findUnit`/`findMagicItem` lookups.
+    magic-item rules. Rule logic is language-free: checks raise typed findings and `messages.ts`
+    renders the prose.
+  - `messages.ts` — ALL bilingual violation messages, keyed by rule id with typed params
+    (`RuleParams`, `Finding`, `toViolation`). New rule = new key here + a `raise()` in validate.
+  - `magicItems.ts` — the whole magic-item concept: `MAGIC_ITEM_ALLOWANCE` chart (with the
+    Wight/Slann special-case doc), `RESTRICTED_CATEGORIES`, `magicItemAllowance`, and the
+    per-entry / army-wide item checks. EntryRow and validate consume the same interface.
+  - `points.ts` — points maths (`entryPoints`, `rosterTotalPoints`, `pointsByRole`)
+    and the `findUnit`/`findMagicItem` lookups.
   - `summary.ts` — `summarize()` owns the four composition caps (`CapStatus`); `validateRoster`
     and `SummaryPanel` both consume it, so display and enforcement can't diverge.
   - `entryView.ts` — pure per-entry derivations for EntryRow (magic-standard eligibility,
     rider+mount profile pairing). `exportText.ts` — plaintext list render.
-  - `equipment.ts` — equipment-combination validation. **Currently unwired** (zero production
-    callers, deliberate YAGNI) — don't call it without deciding to integrate it.
+  - (`equipment.ts` was an unwired dead seam — deleted 2026-08; recover from git history if a
+    combination validator is ever actually integrated.)
 - **`src/state/`** — `rosterOps.ts` (pure roster transforms), `storage.ts` (localStorage CRUD —
   shape-validates on load, `saveRosters` returns success and App shows a banner on failure),
   `useRosters.ts` (React hook owning the roster collection — the single source of truth the
@@ -107,8 +113,10 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
   header comment in each `armies/*.ts` for the exact book/page citation). The **rules engine is
   exact**; some individual points values are period-accurate approximations (see `CITATIONS.md`).
 - Points may be **fractional** (e.g. shield at 0.5/model) — don't assume integers.
-- `armies.test.ts` runs integrity checks across **every** army in `ARMIES` (unique ids, a possible
-  General, no leaked army-restricted magic items, etc.), so a malformed new army fails the suite.
+- `armies/integrity.ts` enforces the mechanical data-format invariants (unique ids, mount-option
+  namespace collisions, dangling selection-rule references, leaked army-restricted items) at
+  **module load** — a malformed new army throws the moment `ARMIES` is imported, anywhere.
+  `armies.test.ts` keeps the domain-semantic checks (a possible General, book-accurate statlines…).
 - Vitest runs in **jsdom** (`localStorage` always exists — stub it `undefined` to test absence).
   There is **no @testing-library**; hook tests use a `react-dom` `act` harness — don't add the
   dependency without asking. Four engine test files hard-code Empire `emp-*` ids and points —

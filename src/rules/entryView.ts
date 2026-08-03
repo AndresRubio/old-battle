@@ -1,4 +1,6 @@
-import type { Army, MagicItem, MountOption, ProfileBlock, UnitProfile } from '../data/types'
+import type { Army, EquipmentOption, MagicItem, MountOption, ProfileBlock, UnitProfile } from '../data/types'
+import { isWizardLevelId } from '../data/unitOptions'
+import { matchesQuery } from '../i18n/lang'
 
 /**
  * Pure per-entry derivations the editor renders. Anything the UI needs to
@@ -18,6 +20,43 @@ export function isValidMagicStandard(item: MagicItem): boolean {
  */
 export function eligibleMagicStandards(unit: UnitProfile, army: Army): MagicItem[] {
   return unit.magicStandard ? army.magicItems.filter(isValidMagicStandard) : []
+}
+
+/**
+ * Split a unit's options into the mutually-exclusive wizard-level upgrades
+ * (rendered as a radio group) and everything else (checkboxes). One statement
+ * of the partition, shared by the editor and the plaintext export.
+ */
+export function partitionOptions(unit: UnitProfile): {
+  levelOptions: EquipmentOption[]
+  toggleOptions: EquipmentOption[]
+} {
+  const options = unit.options ?? []
+  return {
+    levelOptions: options.filter((o) => isWizardLevelId(o.id)),
+    toggleOptions: options.filter((o) => !isWizardLevelId(o.id)),
+  }
+}
+
+/** Whether the expanded entry has ANY configurable choice to offer. */
+export function hasAnyOptions(unit: UnitProfile): boolean {
+  return (
+    (unit.options?.length ?? 0) > 0 ||
+    (unit.mounts?.length ?? 0) > 0 ||
+    !!unit.isCharacter ||
+    (unit.lores?.length ?? 0) > 0 ||
+    !!unit.magicStandard
+  )
+}
+
+/**
+ * The magic-item picker's filter: bilingual name search plus an optional
+ * points ceiling (raw input string — '' means no cap).
+ */
+export function filterMagicItems(items: MagicItem[], query: string, maxPts: string): MagicItem[] {
+  const q = query.trim().toLowerCase()
+  const cap = maxPts.trim() === '' ? Infinity : Number(maxPts)
+  return items.filter((i) => i.points <= cap && matchesQuery(i, q))
 }
 
 /**

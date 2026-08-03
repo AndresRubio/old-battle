@@ -7,14 +7,15 @@ import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
 import { MAGIC_LORES } from '../lores'
 import { RULE_PHRASE_ES } from '../../i18n/rulePhrases'
 
+// The mechanical data-format invariants (unique ids, mount-option namespace,
+// selection-rule references, restrictedTo leaks…) are enforced at CONSTRUCTION
+// time by assertArmyIntegrity in the armies/index.ts assembly pipeline — a
+// malformed army throws at module load, so importing ARMIES above is itself
+// the check. See integrity.ts / integrity.test.ts. Only the domain-semantic
+// expectations remain here.
 describe('army data integrity', () => {
   for (const army of ARMIES) {
     describe(army.name, () => {
-      it('has unique unit ids', () => {
-        const ids = army.units.map((u) => u.id)
-        expect(new Set(ids).size).toBe(ids.length)
-      })
-
       it('has at least one possible General', () => {
         expect(army.units.some((u) => u.canBeGeneral)).toBe(true)
       })
@@ -22,72 +23,6 @@ describe('army data integrity', () => {
       it('has core regiments and characters', () => {
         expect(army.units.some((u) => u.role === 'regiment')).toBe(true)
         expect(army.units.some((u) => u.role === 'character')).toBe(true)
-      })
-
-      it('option ids are unique within each unit and points are non-negative', () => {
-        for (const u of army.units) {
-          expect(u.pointsPerModel).toBeGreaterThanOrEqual(0)
-          if (u.options) {
-            const oids = u.options.map((o) => o.id)
-            expect(new Set(oids).size).toBe(oids.length)
-          }
-        }
-      })
-
-      it('mount-option ids never collide with the unit option namespace', () => {
-        // Mount options share RosterEntry.optionIds with the unit's own options,
-        // so every option id must be unique across the unit's whole namespace
-        // (unit options + every offered mount's options).
-        for (const u of army.units) {
-          const ids = [
-            ...(u.options ?? []).map((o) => o.id),
-            ...(u.mounts ?? []).flatMap((m) => (m.options ?? []).map((o) => o.id)),
-          ]
-          expect(new Set(ids).size, `${u.id} has colliding option ids`).toBe(ids.length)
-        }
-      })
-
-      it('mount ids are unique within a unit and points are non-negative', () => {
-        for (const u of army.units) {
-          if (!u.mounts) continue
-          const mids = u.mounts.map((m) => m.id)
-          expect(new Set(mids).size, `${u.id} has duplicate mount ids`).toBe(mids.length)
-          for (const m of u.mounts) expect(m.points).toBeGreaterThanOrEqual(0)
-          // Only characters ride mounts.
-          expect(u.isCharacter, `${u.id} has mounts but is not a character`).toBe(true)
-        }
-      })
-
-      it('magic items have unique ids', () => {
-        const ids = army.magicItems.map((i) => i.id)
-        expect(new Set(ids).size).toBe(ids.length)
-      })
-
-      it('shows no item restricted to a different army', () => {
-        // Every item this army exposes must be either common (no restrictedTo)
-        // or explicitly allowed for this army id. An army-unique item must never
-        // leak into another army's pool.
-        const leaked = army.magicItems.filter(
-          (i) => i.restrictedTo && i.restrictedTo.length > 0 && !i.restrictedTo.includes(army.id),
-        )
-        expect(leaked.map((i) => `${i.id} ${JSON.stringify(i.restrictedTo)}`)).toEqual([])
-      })
-
-      it('ratio-cap ids reference real units', () => {
-        const ids = new Set(army.units.map((u) => u.id))
-        for (const cap of army.selectionRules?.ratioCaps ?? []) {
-          expect(ids.has(cap.unitId)).toBe(true)
-          for (const id of cap.perUnit?.ids ?? []) expect(ids.has(id)).toBe(true)
-        }
-      })
-
-      it('dependency ids reference real units', () => {
-        const ids = new Set(army.units.map((u) => u.id))
-        for (const dep of army.selectionRules?.dependencies ?? []) {
-          expect(ids.has(dep.unitId)).toBe(true)
-          expect(dep.requiresAnyOf.length).toBeGreaterThan(0)
-          for (const id of dep.requiresAnyOf) expect(ids.has(id)).toBe(true)
-        }
       })
 
       it('marks dedicated battle-standard units with isBSB', () => {
@@ -98,14 +33,6 @@ describe('army data integrity', () => {
             expect(u.isBSB, `${u.id} should have isBSB === true`).toBe(true)
           }
         }
-      })
-
-      it('exposes no special-character item without an army restriction', () => {
-        // A `special` item with no restrictedTo would appear in every army.
-        const unrestrictedSpecials = army.magicItems.filter(
-          (i) => i.special && (!i.restrictedTo || i.restrictedTo.length === 0),
-        )
-        expect(unrestrictedSpecials.map((i) => i.id)).toEqual([])
       })
     })
   }

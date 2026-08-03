@@ -5,6 +5,7 @@ import type { ReactElement } from 'react'
 import { EntryRow } from './EntryRow'
 import { getArmy } from '../data/armies'
 import { setLang } from '../i18n/lang'
+import { entryActions } from '../state/rosterOps'
 import type { RosterEntry } from '../data/types'
 
 const army = getArmy('empire')!
@@ -13,12 +14,8 @@ function entry(unitId: string, over: Partial<RosterEntry> = {}): RosterEntry {
   return { id: 'e1', unitId, size: 5, optionIds: [], magicItemIds: [], ...over }
 }
 
-const noop = () => {}
-const props = {
-  onChangeSize: noop, onToggleOption: noop, onSelectMount: noop, onSelectWizardLevel: noop,
-  onSelectLore: noop, onToggleMagicItem: noop, onSelectMagicStandard: noop, onSetGeneral: noop, onDuplicate: noop,
-  onMoveUp: noop, onMoveDown: noop, canMoveUp: false, canMoveDown: false, onRemove: noop,
-}
+// These render-only tests never write, so a no-op commit is enough.
+const props = { actions: entryActions(() => {}, army, 'e1'), canMoveUp: false, canMoveDown: false }
 
 let container: HTMLDivElement
 let root: Root

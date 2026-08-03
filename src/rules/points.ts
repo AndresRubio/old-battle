@@ -1,4 +1,3 @@
-import { MAGIC_ITEM_ALLOWANCE } from '../data/types'
 import type { Army, EquipmentOption, MagicItem, MountOption, RosterEntry, StatLine, UnitProfile, UnitRole } from '../data/types'
 
 export function findUnit(army: Army, unitId: string): UnitProfile | undefined {
@@ -124,13 +123,4 @@ export function pointsByRole(entries: RosterEntry[], army: Army): Record<UnitRol
     totals[unit.role] += entryPoints(entry, army)
   }
   return totals
-}
-
-/** Effective magic-item allowance for a character entry (rank + any option deltas). */
-export function magicItemAllowance(entry: RosterEntry, unit: UnitProfile): number {
-  const base = unit.characterRank ? MAGIC_ITEM_ALLOWANCE[unit.characterRank] : 0
-  const delta = (unit.options ?? [])
-    .filter((o) => entry.optionIds.includes(o.id) && o.magicItemSlotsDelta)
-    .reduce((sum, o) => sum + (o.magicItemSlotsDelta ?? 0), 0)
-  return base + delta
 }

@@ -1,80 +1,50 @@
-import {
-  RESTRICTED_CATEGORIES,
-  type Army,
-  type MagicItemCategory,
-  type Roster,
-  type RuleViolation,
-} from '../data/types'
-import {
-  findMagicItem,
-  findUnit,
-  magicItemAllowance,
-  rosterTotalPoints,
-} from './points'
+import type { Army, Roster, RuleViolation } from '../data/types'
+import { findMagicItem, findUnit, rosterTotalPoints } from './points'
 import { summarize } from './summary'
+import { entryMagicItemFindings, armyItemUniquenessFindings } from './magicItems'
 import { STANDARD_BEARER_ID } from '../data/unitOptions'
 import { isValidMagicStandard } from './entryView'
-import { type Lang, unitName, mountName, optionText, magicItemName, CATEGORY_LABEL } from '../i18n/lang'
+import { toViolation, type Finding, type RuleId, type RuleParams } from './messages'
+import type { Lang } from '../i18n/lang'
 
 /**
  * Validate a roster against 5th edition army-composition and
  * magic-item rules. Returns a list of violations (errors + warnings).
- * Messages are localised via `lang` (defaults to English).
+ *
+ * Rule logic here is language-free: each check raises a typed finding
+ * (rule id + params) and `messages.ts` renders the bilingual prose.
  * See research/composition-5e.md and research/magic-items-5e.md.
  */
 export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): RuleViolation[] {
   const violations: RuleViolation[] = []
   const limit = roster.pointsLimit
   const { composition } = army
-  const es = lang === 'es'
-  const name = (unitId: string) => {
-    const u = findUnit(army, unitId)
-    return u ? unitName(u, lang) : unitId
-  }
+
+  const raise = <K extends RuleId>(
+    severity: Finding['severity'],
+    rule: K,
+    params: RuleParams[K],
+    entryId?: string,
+  ) => violations.push(toViolation({ severity, rule, params, entryId } as Finding, lang))
 
   // --- Points limit -------------------------------------------------------
   const total = rosterTotalPoints(roster.entries, army)
   if (limit > 0 && total > limit) {
-    violations.push({
-      severity: 'error',
-      rule: 'points-over',
-      message: es
-        ? `El ejército suma ${total} ptos, ${total - limit} por encima del límite de ${limit} ptos.`
-        : `Army is ${total} pts, over the ${limit} pt limit by ${total - limit}.`,
-    })
+    raise('error', 'points-over', { total, limit })
   }
 
   // --- General ------------------------------------------------------------
   if (composition.requiresGeneral) {
     const generals = roster.entries.filter((e) => e.isGeneral)
     if (generals.length === 0) {
-      violations.push({
-        severity: 'error',
-        rule: 'no-general',
-        message: es
-          ? 'Todo ejército debe tener un General. Nombra General a un personaje.'
-          : 'Every army must have a General. Nominate one character as the General.',
-      })
+      raise('error', 'no-general', {})
     } else if (generals.length > 1) {
-      violations.push({
-        severity: 'error',
-        rule: 'multiple-generals',
-        message: es
-          ? `Sólo se permite un General (hay ${generals.length}).`
-          : `Only one General is allowed (found ${generals.length}).`,
-      })
+      raise('error', 'multiple-generals', { count: generals.length })
     }
     for (const g of generals) {
       const unit = findUnit(army, g.unitId)
       if (unit && (unit.canBeGeneral === false || !unit.isCharacter)) {
-        violations.push({
-          severity: 'error',
-          rule: 'invalid-general',
-          message: es
-            ? `${unitName(unit, lang)} no puede ser el General del ejército.`
-            : `${unit.name} cannot be the army General.`,
-          entryId: g.id,
-        })
+        raise('error', 'invalid-general', { unit }, g.id)
       }
     }
   }
@@ -86,45 +56,18 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
     const { caps } = summarize(roster, army)
 
     if (caps.characters.breached) {
-      violations.push({
-        severity: 'warning',
-        rule: 'characters-over',
-        message: es
-          ? `Los personajes usan ${caps.characters.points} ptos, superando el tope del ${caps.characters.capPct}% (${caps.characters.capPoints} ptos).`
-          : `Characters use ${caps.characters.points} pts, over the ${caps.characters.capPct}% cap (${caps.characters.capPoints} pts).`,
-      })
+      raise('warning', 'characters-over', { cap: caps.characters })
     }
-
     if (caps.regiments.breached) {
-      violations.push({
-        severity: 'warning',
-        rule: 'regiments-min',
-        message: es
-          ? `Los regimientos sólo suman ${caps.regiments.points} ptos; se requiere al menos el ${caps.regiments.capPct}% (${caps.regiments.capPoints} ptos).`
-          : `Regiments are only ${caps.regiments.points} pts; at least ${caps.regiments.capPct}% (${caps.regiments.capPoints} pts) is required.`,
-      })
+      raise('warning', 'regiments-min', { cap: caps.regiments })
     }
-
     // War machines and chariots share one 0-25% cap...
     if (caps.warMachines.breached) {
-      violations.push({
-        severity: 'warning',
-        rule: 'warmachines-over',
-        message: es
-          ? `Las máquinas de guerra y carros usan ${caps.warMachines.points} ptos, superando el tope del ${caps.warMachines.capPct}% (${caps.warMachines.capPoints} ptos).`
-          : `War machines & chariots use ${caps.warMachines.points} pts, over the ${caps.warMachines.capPct}% cap (${caps.warMachines.capPoints} pts).`,
-      })
+      raise('warning', 'warmachines-over', { cap: caps.warMachines })
     }
-
     // ...and monsters have a separate 0-25% cap.
     if (caps.monsters.breached) {
-      violations.push({
-        severity: 'warning',
-        rule: 'monsters-over',
-        message: es
-          ? `Los monstruos usan ${caps.monsters.points} ptos, superando el tope del ${caps.monsters.capPct}% (${caps.monsters.capPoints} ptos).`
-          : `Monsters use ${caps.monsters.points} pts, over the ${caps.monsters.capPct}% cap (${caps.monsters.capPoints} pts).`,
-      })
+      raise('warning', 'monsters-over', { cap: caps.monsters })
     }
   }
 
@@ -138,13 +81,7 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
   for (const [unitId, count] of countByUnit) {
     const unit = findUnit(army, unitId)
     if (unit && unit.max !== undefined && count > unit.max) {
-      violations.push({
-        severity: 'warning',
-        rule: 'unit-max',
-        message: es
-          ? `${name(unitId)}: sólo se permiten ${unit.max}, pero hay ${count} en la lista.`
-          : `${unit.name}: only ${unit.max} allowed, but ${count} are in the list.`,
-      })
+      raise('warning', 'unit-max', { unit, count })
     }
   }
 
@@ -153,12 +90,11 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
   for (const group of army.selectionRules?.unitGroupCaps ?? []) {
     const groupTotal = group.ids.reduce((sum, id) => sum + (countByUnit.get(id) ?? 0), 0)
     if (groupTotal > group.max) {
-      violations.push({
-        severity: 'warning',
-        rule: 'unit-group-max',
-        message: es
-          ? `${group.labelEs}: sólo se permiten ${group.max} en el ejército, pero hay ${groupTotal} en la lista.`
-          : `${group.labelEn}: only ${group.max} allowed in the army, but ${groupTotal} are in the list.`,
+      raise('warning', 'unit-group-max', {
+        labelEn: group.labelEn,
+        labelEs: group.labelEs,
+        max: group.max,
+        count: groupTotal,
       })
     }
   }
@@ -198,12 +134,11 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
     if (cap.absoluteMax !== undefined) computed = Math.min(computed, cap.absoluteMax)
 
     if (count > computed) {
-      violations.push({
-        severity: 'warning',
-        rule: 'unit-ratio-max',
-        message: es
-          ? `${cap.labelEs}: sólo se permiten ${computed} (hay ${count} en la lista).`
-          : `${cap.labelEn}: only ${computed} allowed (${count} in the list).`,
+      raise('warning', 'unit-ratio-max', {
+        labelEn: cap.labelEn,
+        labelEs: cap.labelEs,
+        allowed: computed,
+        count,
       })
     }
   }
@@ -219,18 +154,12 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
           (e) => e.optionIds.includes(dep.requiresOption!) && findUnit(army, e.unitId)?.isCharacter,
         ))
     if (!satisfied) {
-      const reqText =
-        dep.requiresLabelEn !== undefined
-          ? es
-            ? dep.requiresLabelEs ?? dep.requiresLabelEn
-            : dep.requiresLabelEn
-          : dep.requiresAnyOf.map((id) => name(id)).join(' / ')
-      violations.push({
-        severity: 'warning',
-        rule: 'unit-requires',
-        message: es
-          ? `${dep.labelEs}: requiere ${reqText} en el ejército.`
-          : `${dep.labelEn}: requires ${reqText} in the army.`,
+      raise('warning', 'unit-requires', {
+        labelEn: dep.labelEn,
+        labelEs: dep.labelEs,
+        requiresLabelEn: dep.requiresLabelEn,
+        requiresLabelEs: dep.requiresLabelEs,
+        fallbackUnits: dep.requiresAnyOf.map((id) => findUnit(army, id) ?? id),
       })
     }
   }
@@ -238,111 +167,21 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
   for (const e of roster.entries) {
     const unit = findUnit(army, e.unitId)
     if (!unit) {
-      violations.push({
-        severity: 'error',
-        rule: 'unknown-unit',
-        message: es ? `Unidad desconocida "${e.unitId}" en la lista.` : `Unknown unit "${e.unitId}" in roster.`,
-        entryId: e.id,
-      })
+      raise('error', 'unknown-unit', { unitId: e.unitId }, e.id)
       continue
     }
-    const un = unitName(unit, lang)
 
     // Unit size
     if (unit.minSize !== undefined && e.size < unit.minSize) {
-      violations.push({
-        severity: 'warning',
-        rule: 'min-size',
-        message: es
-          ? `${un}: la unidad tiene ${e.size} miniaturas, por debajo del mínimo de ${unit.minSize}.`
-          : `${unit.name}: unit has ${e.size} models, below the minimum of ${unit.minSize}.`,
-        entryId: e.id,
-      })
+      raise('warning', 'min-size', { unit, size: e.size, minSize: unit.minSize }, e.id)
     }
     if (unit.maxSize !== undefined && e.size > unit.maxSize) {
-      violations.push({
-        severity: 'warning',
-        rule: 'max-size',
-        message: es
-          ? `${un}: la unidad tiene ${e.size} miniaturas, por encima del máximo de ${unit.maxSize}.`
-          : `${unit.name}: unit has ${e.size} models, above the maximum of ${unit.maxSize}.`,
-        entryId: e.id,
-      })
+      raise('warning', 'max-size', { unit, size: e.size, maxSize: unit.maxSize }, e.id)
     }
 
-    // Magic items
-    if (e.magicItemIds.length > 0) {
-      if (!unit.isCharacter) {
-        violations.push({
-          severity: 'error',
-          rule: 'magic-items-noncharacter',
-          message: es
-            ? `${un}: sólo los personajes pueden portar objetos mágicos.`
-            : `${unit.name}: only characters may carry magic items.`,
-          entryId: e.id,
-        })
-      } else {
-        const allowance = magicItemAllowance(e, unit)
-        if (e.magicItemIds.length > allowance) {
-          violations.push({
-            severity: 'warning',
-            rule: 'magic-items-count',
-            message: es
-              ? `${un}: porta ${e.magicItemIds.length} objetos mágicos pero sólo puede llevar ${allowance}.`
-              : `${unit.name}: carries ${e.magicItemIds.length} magic items but may carry only ${allowance}.`,
-            entryId: e.id,
-          })
-        }
-        // One per restricted category
-        const seen = new Map<MagicItemCategory, number>()
-        for (const id of e.magicItemIds) {
-          const item = findMagicItem(army, id)
-          if (!item) continue
-          seen.set(item.category, (seen.get(item.category) ?? 0) + 1)
-        }
-        for (const [cat, n] of seen) {
-          if (n > 1 && RESTRICTED_CATEGORIES.has(cat)) {
-            violations.push({
-              severity: 'warning',
-              rule: 'magic-items-category',
-              message: es
-                ? `${un}: tiene ${n} objetos de tipo "${CATEGORY_LABEL.es[cat]}" pero sólo puede llevar uno.`
-                : `${unit.name}: has ${n} ${cat} items but may have only one.`,
-              entryId: e.id,
-            })
-          }
-        }
-        // FAQ v2.20 §19.5: a character may wear at most one crown and one helm.
-        const groupCounts = new Map<'crown' | 'helm', number>()
-        for (const id of e.magicItemIds) {
-          const g = findMagicItem(army, id)?.exclusiveGroup
-          if (g) groupCounts.set(g, (groupCounts.get(g) ?? 0) + 1)
-        }
-        for (const [g, n] of groupCounts) {
-          if (n > 1) {
-            violations.push({
-              severity: 'warning',
-              rule: 'magic-items-exclusive-group',
-              message: es
-                ? `${un}: un personaje sólo puede llevar ${g === 'crown' ? 'una corona' : 'un yelmo'}.`
-                : `${unit.name}: a character may carry only one ${g}.`,
-              entryId: e.id,
-            })
-          }
-        }
-        // FAQ v2.20 §23.2: only a Battle Standard Bearer may carry a magic banner.
-        const carriesBanner = e.magicItemIds.some((id) => findMagicItem(army, id)?.category === 'banner')
-        if (carriesBanner && !(e.isBSB || unit.isBSB)) {
-          violations.push({
-            severity: 'warning',
-            rule: 'magic-items-banner-bsb',
-            message: es
-              ? `${un}: sólo el Portaestandarte de Batalla puede portar un estandarte mágico.`
-              : `${unit.name}: only a Battle Standard Bearer may carry a magic standard.`,
-            entryId: e.id,
-          })
-        }
-      }
+    // Magic items: count, restricted categories, crown/helm, banner-BSB.
+    for (const finding of entryMagicItemFindings(e, unit, army)) {
+      violations.push(toViolation(finding, lang))
     }
 
     // Unit magic standard (carried by a regiment's standard bearer). Only units
@@ -351,38 +190,21 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
     // See CITATIONS.md — Magic-standard caps.
     if (e.magicStandardId) {
       const item = findMagicItem(army, e.magicStandardId)
-      const itemNm = item ? magicItemName(item, lang) : e.magicStandardId
       if (!unit.magicStandard) {
-        violations.push({
-          severity: 'warning',
-          rule: 'magic-standard-not-allowed',
-          message: es
-            ? `${un}: esta unidad no puede llevar un estandarte mágico.`
-            : `${unit.name}: this unit may not carry a magic standard.`,
-          entryId: e.id,
-        })
+        raise('warning', 'magic-standard-not-allowed', { unit }, e.id)
       } else {
         // Only a regiment needs a standard-bearer model. A chariot (or a monster
         // with a howdah) carries the standard itself — Magia p.42.
         if (unit.role === 'regiment' && !e.optionIds.includes(STANDARD_BEARER_ID)) {
-          violations.push({
-            severity: 'warning',
-            rule: 'magic-standard-no-bearer',
-            message: es
-              ? `${un}: un estandarte mágico requiere que la unidad lleve un portaestandarte.`
-              : `${unit.name}: a magic standard requires a standard bearer in the unit.`,
-            entryId: e.id,
-          })
+          raise('warning', 'magic-standard-no-bearer', { unit }, e.id)
         }
         if (!item || !isValidMagicStandard(item)) {
-          violations.push({
-            severity: 'warning',
-            rule: 'magic-standard-invalid-item',
-            message: es
-              ? `${un}: "${itemNm}" no es un estandarte mágico válido para esta unidad.`
-              : `${unit.name}: "${itemNm}" is not a valid magic standard for this unit.`,
-            entryId: e.id,
-          })
+          raise(
+            'warning',
+            'magic-standard-invalid-item',
+            { unit, item, itemId: e.magicStandardId },
+            e.id,
+          )
         }
       }
     }
@@ -394,17 +216,9 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
       const grp = unit.options?.find((o) => o.id === oid)?.exclusiveGroup
       if (grp) optGroupCounts.set(grp, (optGroupCounts.get(grp) ?? 0) + 1)
     }
-    for (const [grp, n] of optGroupCounts) {
-      if (n < 2) continue
-      const what = grp === 'mark' ? (es ? 'una Marca del Caos' : 'one Mark of Chaos') : grp
-      violations.push({
-        severity: 'warning',
-        rule: 'options-exclusive-group',
-        message: es
-          ? `${un}: una miniatura sólo puede portar ${what} (lleva ${n}).`
-          : `${unit.name}: a model may carry only ${what} (carries ${n}).`,
-        entryId: e.id,
-      })
+    for (const [group, count] of optGroupCounts) {
+      if (count < 2) continue
+      raise('warning', 'options-exclusive-group', { unit, group, count }, e.id)
     }
 
     // Stale mount options: selections that belong to a mount the character is
@@ -418,15 +232,7 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
       }))
       .filter((s) => s.selected.length > 0)
     for (const s of staleByMount) {
-      const optNames = s.selected.map((o) => optionText(o.name, lang)).join(', ')
-      violations.push({
-        severity: 'warning',
-        rule: 'mount-options-stale',
-        message: es
-          ? `${un}: las opciones "${optNames}" pertenecen a ${mountName(s.mount, lang)}, que no es su montura actual.`
-          : `${unit.name}: the options "${optNames}" belong to ${mountName(s.mount, lang)}, which is not its current mount.`,
-        entryId: e.id,
-      })
+      raise('warning', 'mount-options-stale', { unit, mount: s.mount, options: s.selected }, e.id)
     }
 
     // A mount that requires an option (e.g. a daemonic mount needs the matching
@@ -434,48 +240,24 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
     if (e.mountId) {
       const mount = unit.mounts?.find((m) => m.id === e.mountId)
       if (mount?.requiresOption && !e.optionIds.includes(mount.requiresOption)) {
-        const reqOpt = unit.options?.find((o) => o.id === mount.requiresOption)
-        const reqName = reqOpt ? optionText(reqOpt.name, lang) : mount.requiresOption
-        violations.push({
-          severity: 'warning',
-          rule: 'mount-requires-option',
-          message: es
-            ? `${un}: ${mountName(mount, lang)} requiere ${reqName}.`
-            : `${unit.name}: ${mountName(mount, lang)} requires ${reqName}.`,
-          entryId: e.id,
-        })
+        raise(
+          'warning',
+          'mount-requires-option',
+          {
+            unit,
+            mount,
+            requiredOption: unit.options?.find((o) => o.id === mount.requiresOption),
+            requiredOptionId: mount.requiresOption,
+          },
+          e.id,
+        )
       }
     }
-
   }
 
   // --- Magic-item uniqueness across the whole army ------------------------
-  // 5th ed (Magic supplement p.33): the same magic item may not be included in
-  // an army more than once. Exceptions are flagged `duplicable` on the item
-  // (Dispel Scrolls, Chaos Armour, Familiars).
-  const itemUsers = new Map<string, number>()
-  for (const e of roster.entries) {
-    for (const id of e.magicItemIds) {
-      itemUsers.set(id, (itemUsers.get(id) ?? 0) + 1)
-    }
-    // A unit's magic standard is a magic item too — it shares the army-wide
-    // uniqueness pool with characters' banners (and other units' standards).
-    if (e.magicStandardId) {
-      itemUsers.set(e.magicStandardId, (itemUsers.get(e.magicStandardId) ?? 0) + 1)
-    }
-  }
-  for (const [id, count] of itemUsers) {
-    if (count < 2) continue
-    const item = findMagicItem(army, id)
-    if (!item || item.duplicable) continue
-    const itemName = magicItemName(item, lang)
-    violations.push({
-      severity: 'error',
-      rule: 'magic-items-unique',
-      message: es
-        ? `${itemName}: objeto mágico duplicado — cada objeto mágico es único y sólo puede incluirse una vez en el ejército (lo llevan ${count} personajes).`
-        : `${itemName}: duplicate magic item — each magic item is unique and may appear only once per army (carried by ${count} characters).`,
-    })
+  for (const finding of armyItemUniquenessFindings(roster.entries, army)) {
+    violations.push(toViolation(finding, lang))
   }
 
   return violations

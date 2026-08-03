@@ -1,10 +1,18 @@
 import { useState } from 'react'
 import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
-import { effectiveStatLine, entryPoints, findUnit, magicItemAllowance, mountOptionCost } from '../rules/points'
-import { companionMountProfile, eligibleMagicStandards } from '../rules/entryView'
-import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel, matchesQuery } from '../i18n/lang'
-import { STANDARD_BEARER_ID, isWizardLevelId } from '../data/unitOptions'
+import { effectiveStatLine, entryPoints, findUnit, mountOptionCost } from '../rules/points'
+import { magicItemAllowance } from '../rules/magicItems'
+import {
+  companionMountProfile,
+  eligibleMagicStandards,
+  filterMagicItems,
+  hasAnyOptions,
+  partitionOptions,
+} from '../rules/entryView'
+import type { EntryActions } from '../state/rosterOps'
+import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel } from '../i18n/lang'
+import { STANDARD_BEARER_ID } from '../data/unitOptions'
 import { findRule, type RuleDef } from '../data/rules'
 import { RuleDialog } from './RuleDialog'
 import { InfoDialog } from './InfoDialog'
@@ -44,40 +52,13 @@ function RuleTags({ rules, lang }: { rules: string[]; lang: Lang }) {
 interface Props {
   entry: RosterEntry
   army: Army
-  onChangeSize: (size: number) => void
-  onToggleOption: (optionId: string) => void
-  onSelectMount: (mountId: string | null) => void
-  onSelectWizardLevel: (optionId: string | null) => void
-  onSelectLore: (loreId: string | null) => void
-  onToggleMagicItem: (itemId: string) => void
-  onSelectMagicStandard: (itemId: string | null) => void
-  onSetGeneral: () => void
-  onDuplicate: () => void
-  onMoveUp: () => void
-  onMoveDown: () => void
+  /** The entry's whole write interface — see rosterOps.entryActions. */
+  actions: EntryActions
   canMoveUp: boolean
   canMoveDown: boolean
-  onRemove: () => void
 }
 
-export function EntryRow({
-  entry,
-  army,
-  onChangeSize,
-  onToggleOption,
-  onSelectMount,
-  onSelectWizardLevel,
-  onSelectLore,
-  onToggleMagicItem,
-  onSelectMagicStandard,
-  onSetGeneral,
-  onDuplicate,
-  onMoveUp,
-  onMoveDown,
-  canMoveUp,
-  canMoveDown,
-  onRemove,
-}: Props) {
+export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props) {
   const [lang] = useLang()
   const unit = findUnit(army, entry.unitId)
   const [open, setOpen] = useState(false)
@@ -100,7 +81,7 @@ export function EntryRow({
             <span className="v-icon">✖</span> {t('unknownUnit', lang)} “{entry.unitId}”
           </span>
           <span className="entry-pts">—</span>
-          <button className="btn btn-ghost btn-sm btn-danger" onClick={onRemove} title={t('remove', lang)}>
+          <button className="btn btn-ghost btn-sm btn-danger" onClick={actions.remove} title={t('remove', lang)}>
             ✕
           </button>
         </div>
@@ -112,9 +93,8 @@ export function EntryRow({
   const pts = entryPoints(entry, army)
   // Some options (e.g. O&G shaman wizard levels) replace the whole statLine.
   const statLine = effectiveStatLine(unit, entry.optionIds)
-  const levelOptions = (unit.options ?? []).filter((o) => isWizardLevelId(o.id))
-  const toggleOptions = (unit.options ?? []).filter((o) => !isWizardLevelId(o.id))
-  const currentLevel = entry.optionIds.find(isWizardLevelId) ?? ''
+  const { levelOptions, toggleOptions } = partitionOptions(unit)
+  const currentLevel = entry.optionIds.find((id) => levelOptions.some((o) => o.id === id)) ?? ''
   const loreIds = unit.lores ?? []
   const selectedLore = entry.loreId ? getLore(entry.loreId) : undefined
   const allowance = unit.isCharacter ? magicItemAllowance(entry, unit) : 0
@@ -127,8 +107,7 @@ export function EntryRow({
   // carried by its standard bearer.
   const standardOptions = eligibleMagicStandards(unit, army)
   const hasStandardBearer = entry.optionIds.includes(STANDARD_BEARER_ID)
-  const hasOptions =
-    (unit.options?.length ?? 0) > 0 || mounts.length > 0 || unit.isCharacter || loreIds.length > 0 || !!unit.magicStandard
+  const hasOptions = hasAnyOptions(unit)
 
   return (
     <li className={`entry ${entry.isGeneral ? 'entry-general' : ''}`}>
@@ -145,7 +124,7 @@ export function EntryRow({
         <div className="entry-actions">
           <button
             className="btn btn-ghost btn-sm entry-btn"
-            onClick={onMoveUp}
+            onClick={actions.moveUp}
             disabled={!canMoveUp}
             title={t('moveUp', lang)}
             aria-label={t('moveUp', lang)}
@@ -154,7 +133,7 @@ export function EntryRow({
           </button>
           <button
             className="btn btn-ghost btn-sm entry-btn"
-            onClick={onMoveDown}
+            onClick={actions.moveDown}
             disabled={!canMoveDown}
             title={t('moveDown', lang)}
             aria-label={t('moveDown', lang)}
@@ -163,7 +142,7 @@ export function EntryRow({
           </button>
           <button
             className="btn btn-ghost btn-sm entry-btn"
-            onClick={onDuplicate}
+            onClick={actions.duplicate}
             title={t('duplicate', lang)}
             aria-label={t('duplicate', lang)}
           >
@@ -171,7 +150,7 @@ export function EntryRow({
           </button>
           <button
             className="btn btn-ghost btn-sm entry-btn btn-danger"
-            onClick={onRemove}
+            onClick={actions.remove}
             title={t('remove', lang)}
             aria-label={t('remove', lang)}
           >
@@ -248,16 +227,16 @@ export function EntryRow({
           {isRegiment && (
             <div className="size-stepper">
               <span>{t('models', lang)}</span>
-              <button className="btn btn-sm" onClick={() => onChangeSize(Math.max(1, entry.size - 1))}>
+              <button className="btn btn-sm" onClick={() => actions.changeSize(Math.max(1, entry.size - 1))}>
                 −
               </button>
               <input
                 type="number"
                 min={1}
                 value={entry.size}
-                onChange={(e) => onChangeSize(Math.max(1, Number(e.target.value) || 1))}
+                onChange={(e) => actions.changeSize(Math.max(1, Number(e.target.value) || 1))}
               />
-              <button className="btn btn-sm" onClick={() => onChangeSize(entry.size + 1)}>
+              <button className="btn btn-sm" onClick={() => actions.changeSize(entry.size + 1)}>
                 +
               </button>
               {unit.minSize && <span className="muted small">{t('min', lang)} {unit.minSize}</span>}
@@ -265,7 +244,7 @@ export function EntryRow({
           )}
 
           {unit.isCharacter && !entry.isGeneral && unit.canBeGeneral !== false && (
-            <button className="btn btn-sm" onClick={onSetGeneral}>
+            <button className="btn btn-sm" onClick={actions.setGeneral}>
               {t('makeGeneral', lang)}
             </button>
           )}
@@ -279,7 +258,7 @@ export function EntryRow({
                     type="radio"
                     name={`${entry.id}-lvl`}
                     checked={currentLevel === ''}
-                    onChange={() => onSelectWizardLevel(null)}
+                    onChange={() => actions.selectWizardLevel(null)}
                   />
                   {t('level1', lang)}
                 </label>
@@ -289,7 +268,7 @@ export function EntryRow({
                       type="radio"
                       name={`${entry.id}-lvl`}
                       checked={currentLevel === o.id}
-                      onChange={() => onSelectWizardLevel(o.id)}
+                      onChange={() => actions.selectWizardLevel(o.id)}
                     />
                     {wizardLevelLabel(o.id, lang)} (+{o.pointsPerModel})
                   </label>
@@ -311,7 +290,7 @@ export function EntryRow({
                         type="radio"
                         name={`${entry.id}-lore`}
                         checked={entry.loreId === id}
-                        onChange={() => onSelectLore(id)}
+                        onChange={() => actions.selectLore(id)}
                       />
                       {loreName(lore, lang)}
                     </label>
@@ -357,7 +336,7 @@ export function EntryRow({
                     <input
                       type="checkbox"
                       checked={entry.optionIds.includes(o.id)}
-                      onChange={() => onToggleOption(o.id)}
+                      onChange={() => actions.toggleOption(o.id)}
                     />
                     {optionText(o.name, lang)} (+{o.pointsPerModel}
                     {isRegiment && !o.flat ? t('perModel', lang) : ''})
@@ -394,7 +373,7 @@ export function EntryRow({
                       type="radio"
                       name={`${entry.id}-std`}
                       checked={!entry.magicStandardId}
-                      onChange={() => onSelectMagicStandard(null)}
+                      onChange={() => actions.selectMagicStandard(null)}
                     />
                     <span className="mi-body">
                       <span className="mi-head">
@@ -410,7 +389,7 @@ export function EntryRow({
                         type="radio"
                         name={`${entry.id}-std`}
                         checked={entry.magicStandardId === item.id}
-                        onChange={() => onSelectMagicStandard(item.id)}
+                        onChange={() => actions.selectMagicStandard(item.id)}
                       />
                       <span className="mi-body">
                         <span className="mi-head">
@@ -446,7 +425,7 @@ export function EntryRow({
               <MountSelector
                 mounts={mounts}
                 selectedId={entry.mountId}
-                onSelect={onSelectMount}
+                onSelect={actions.selectMount}
                 lang={lang}
                 name={entry.id}
                 labelId={`${entry.id}-mount-label`}
@@ -465,7 +444,7 @@ export function EntryRow({
                         <input
                           type="checkbox"
                           checked={entry.optionIds.includes(o.id)}
-                          onChange={() => onToggleOption(o.id)}
+                          onChange={() => actions.toggleOption(o.id)}
                         />
                         {optionText(o.name, lang)} (+{cost})
                         {optionDesc(o, lang) && (
@@ -518,11 +497,12 @@ export function EntryRow({
               </div>
               <div className="magic-items">
                 {(() => {
-                  const q = itemQuery.trim().toLowerCase()
-                  const cap = maxPts.trim() === '' ? Infinity : Number(maxPts)
-                  const matches = (i: MagicItem) => i.points <= cap && matchesQuery(i, q)
                   const groups = CATEGORY_ORDER.map((cat) => {
-                  const items = army.magicItems.filter((i) => i.category === cat).filter(matches)
+                  const items = filterMagicItems(
+                    army.magicItems.filter((i) => i.category === cat),
+                    itemQuery,
+                    maxPts,
+                  )
                   if (items.length === 0) return null
                   return (
                     <div key={cat} className="mi-group">
@@ -574,7 +554,7 @@ export function EntryRow({
                             <input
                               type="checkbox"
                               checked={entry.magicItemIds.includes(item.id)}
-                              onChange={() => onToggleMagicItem(item.id)}
+                              onChange={() => actions.toggleMagicItem(item.id)}
                             />
                             {info}
                           </label>

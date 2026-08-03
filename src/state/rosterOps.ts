@@ -28,6 +28,16 @@ export function createRoster(armyId: string, name: string, pointsLimit: number, 
   }
 }
 
+/** Rename the roster (blank names keep the previous behaviour of the input — stored as typed). */
+export function renameRoster(roster: Roster, name: string): Roster {
+  return { ...roster, name }
+}
+
+/** Set the points limit, clamped to a non-negative number (the Roster invariant). */
+export function setPointsLimit(roster: Roster, limit: number): Roster {
+  return { ...roster, pointsLimit: Math.max(0, Number(limit) || 0) }
+}
+
 /** Sensible default size when first adding a unit (its minimum, or 1 for single models). */
 export function defaultSize(unit: UnitProfile): number {
   if (unit.role === 'character' || unit.role === 'warmachine' || unit.role === 'monster' || unit.role === 'chariot') {
@@ -171,4 +181,46 @@ export function selectWizardLevel(roster: Roster, entryId: string, army: Army, o
   const kept = entry.optionIds.filter((o) => !levelIds.includes(o))
   const next = optionId ? [...kept, optionId] : kept
   return updateEntry(roster, entryId, { optionIds: next })
+}
+
+/** Everything the editor can do to ONE roster entry. */
+export interface EntryActions {
+  changeSize(size: number): void
+  toggleOption(optionId: string): void
+  selectMount(mountId: string | null): void
+  selectWizardLevel(optionId: string | null): void
+  selectLore(loreId: string | null): void
+  toggleMagicItem(itemId: string): void
+  selectMagicStandard(itemId: string | null): void
+  setGeneral(): void
+  duplicate(): void
+  moveUp(): void
+  moveDown(): void
+  remove(): void
+}
+
+/**
+ * Bind the per-entry transforms above to one entry through the editor's
+ * `commit`. EntryRow's whole write interface is this object — a new entry
+ * capability means a new method here, not a new prop threaded through Editor.
+ */
+export function entryActions(
+  commit: (fn: (prev: Roster) => Roster) => void,
+  army: Army,
+  entryId: string,
+): EntryActions {
+  return {
+    changeSize: (size) => commit((prev) => updateEntry(prev, entryId, { size })),
+    toggleOption: (optionId) => commit((prev) => toggleOption(prev, entryId, optionId)),
+    selectMount: (mountId) => commit((prev) => selectMount(prev, entryId, army, mountId)),
+    selectWizardLevel: (optionId) => commit((prev) => selectWizardLevel(prev, entryId, army, optionId)),
+    selectLore: (loreId) => commit((prev) => selectLore(prev, entryId, loreId)),
+    toggleMagicItem: (itemId) => commit((prev) => toggleMagicItem(prev, entryId, itemId)),
+    selectMagicStandard: (itemId) => commit((prev) => selectMagicStandard(prev, entryId, itemId)),
+    setGeneral: () => commit((prev) => setGeneral(prev, entryId)),
+    duplicate: () => commit((prev) => duplicateEntry(prev, entryId)),
+    moveUp: () => commit((prev) => moveEntry(prev, entryId, -1)),
+    moveDown: () => commit((prev) => moveEntry(prev, entryId, 1)),
+    remove: () => commit((prev) => removeEntry(prev, entryId)),
+  }
 }

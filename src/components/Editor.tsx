@@ -2,20 +2,7 @@ import { useCallback, useState } from 'react'
 import type { Roster, UnitProfile } from '../data/types'
 import type { useRosters } from '../state/useRosters'
 import { getArmy } from '../data/armies'
-import {
-  addEntry,
-  duplicateEntry,
-  moveEntry,
-  removeEntry,
-  selectLore,
-  selectMagicStandard,
-  selectMount,
-  selectWizardLevel,
-  setGeneral,
-  toggleMagicItem,
-  toggleOption,
-  updateEntry,
-} from '../state/rosterOps'
+import { addEntry, entryActions, renameRoster, setPointsLimit } from '../state/rosterOps'
 import { SummaryPanel } from './SummaryPanel'
 import { MusterCheck } from './MusterCheck'
 import { AddUnitDialog } from './AddUnitDialog'
@@ -78,7 +65,7 @@ export function Editor({ rosterId, store, onBack }: Props) {
         <input
           className="list-name-input"
           value={roster.name}
-          onChange={(e) => commit((prev) => ({ ...prev, name: e.target.value }))}
+          onChange={(e) => commit((prev) => renameRoster(prev, e.target.value))}
           aria-label="List name"
         />
         <label className="limit-input">
@@ -88,7 +75,7 @@ export function Editor({ rosterId, store, onBack }: Props) {
             min={0}
             step={50}
             value={roster.pointsLimit}
-            onChange={(e) => commit((prev) => ({ ...prev, pointsLimit: Math.max(0, Number(e.target.value) || 0) }))}
+            onChange={(e) => commit((prev) => setPointsLimit(prev, Number(e.target.value)))}
           />
           <span>{t('pts', lang)}</span>
         </label>
@@ -118,20 +105,9 @@ export function Editor({ rosterId, store, onBack }: Props) {
                   key={entry.id}
                   entry={entry}
                   army={army}
-                  onChangeSize={(size) => commit((prev) => updateEntry(prev, entry.id, { size }))}
-                  onToggleOption={(optionId) => commit((prev) => toggleOption(prev, entry.id, optionId))}
-                  onSelectMount={(mountId) => commit((prev) => selectMount(prev, entry.id, army, mountId))}
-                  onSelectWizardLevel={(optionId) => commit((prev) => selectWizardLevel(prev, entry.id, army, optionId))}
-                  onSelectLore={(loreId) => commit((prev) => selectLore(prev, entry.id, loreId))}
-                  onToggleMagicItem={(itemId) => commit((prev) => toggleMagicItem(prev, entry.id, itemId))}
-                  onSelectMagicStandard={(itemId) => commit((prev) => selectMagicStandard(prev, entry.id, itemId))}
-                  onSetGeneral={() => commit((prev) => setGeneral(prev, entry.id))}
-                  onDuplicate={() => commit((prev) => duplicateEntry(prev, entry.id))}
-                  onMoveUp={() => commit((prev) => moveEntry(prev, entry.id, -1))}
-                  onMoveDown={() => commit((prev) => moveEntry(prev, entry.id, 1))}
+                  actions={entryActions(commit, army, entry.id)}
                   canMoveUp={i > 0}
                   canMoveDown={i < roster.entries.length - 1}
-                  onRemove={() => commit((prev) => removeEntry(prev, entry.id))}
                 />
               ))}
             </ul>
