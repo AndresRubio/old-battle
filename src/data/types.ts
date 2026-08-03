@@ -29,36 +29,6 @@ export type CharacterRank =
   | 'wizard3' // 3 items
   | 'wizard4' // 4 items
 
-/**
- * Map a character rank to its magic-item allowance.
- *
- * The canonical chart (Warhammer Magia p.30) lists four entries beyond these
- * seven ranks. None of them needs a field of its own — each is already
- * expressible in the data, and the choice is deliberate:
- *
- * - **Vampire Count 2 / Liche 3** — numerically identical to `hero` / `lord`.
- * - **Wight — 1 *in addition to* his Wight Blade.** The blade is innate
- *   equipment, not a pool item: army lists grant it in `specialRules` and bake
- *   its cost into `pointsPerModel`, so it never lands in `magicItemIds` and
- *   costs no slot. That also settles the restricted-category question — an
- *   innate blade cannot collide with a chosen magic weapon.
- * - **Slann Mage-Priest — +1 on his normal wizard level.** Folded into the
- *   rank: `lz-slann` is `wizard2` (2 items at level 1) and its level upgrades
- *   carry `magicItemSlotsDelta`, giving the book's 2→3→4→5.
- *
- * Both special cases are pinned by tests in `src/rules/validate.test.ts`, since
- * they hold by virtue of how the data is written rather than by engine logic.
- */
-export const MAGIC_ITEM_ALLOWANCE: Record<CharacterRank, number> = {
-  champion: 1,
-  hero: 2,
-  lord: 3,
-  wizard1: 1,
-  wizard2: 2,
-  wizard3: 3,
-  wizard4: 4,
-}
-
 /** A per-model equipment choice (e.g. shield +1) or a character upgrade. */
 export interface EquipmentOption {
   id: string
@@ -243,16 +213,6 @@ export type MagicItemCategory =
   | 'enchanted'
   | 'arcane'
   | 'other'
-
-/** Categories restricted to at most ONE per character in 5th ed. */
-export const RESTRICTED_CATEGORIES: ReadonlySet<MagicItemCategory> = new Set([
-  'weapon',
-  'armour',
-  'shield',
-  'ward',
-  'banner',
-  'boundSpell',
-])
 
 export interface MagicItem {
   id: string

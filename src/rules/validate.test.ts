@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { validateRoster } from './validate'
-import { magicItemAllowance } from './points'
+import { magicItemAllowance, MAGIC_ITEM_ALLOWANCE } from './magicItems'
 import {
-  MAGIC_ITEM_ALLOWANCE,
   STANDARD_5E_COMPOSITION,
   type Army,
   type Roster,
