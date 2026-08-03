@@ -113,8 +113,10 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
   header comment in each `armies/*.ts` for the exact book/page citation). The **rules engine is
   exact**; some individual points values are period-accurate approximations (see `CITATIONS.md`).
 - Points may be **fractional** (e.g. shield at 0.5/model) — don't assume integers.
-- `armies.test.ts` runs integrity checks across **every** army in `ARMIES` (unique ids, a possible
-  General, no leaked army-restricted magic items, etc.), so a malformed new army fails the suite.
+- `armies/integrity.ts` enforces the mechanical data-format invariants (unique ids, mount-option
+  namespace collisions, dangling selection-rule references, leaked army-restricted items) at
+  **module load** — a malformed new army throws the moment `ARMIES` is imported, anywhere.
+  `armies.test.ts` keeps the domain-semantic checks (a possible General, book-accurate statlines…).
 - Vitest runs in **jsdom** (`localStorage` always exists — stub it `undefined` to test absence).
   There is **no @testing-library**; hook tests use a `react-dom` `act` harness — don't add the
   dependency without asking. Four engine test files hard-code Empire `emp-*` ids and points —
