@@ -6,6 +6,7 @@ import {
   partitionOptions,
   hasAnyOptions,
   filterMagicItems,
+  magicStandardNeedsBearer,
 } from './entryView'
 import { mountOptionCost } from './points'
 import type { Army, MagicItem, MountOption, UnitProfile } from '../data/types'
@@ -44,6 +45,16 @@ describe('magic standard eligibility', () => {
     const allowed = { ...baseUnit, magicStandard: true }
     expect(eligibleMagicStandards(allowed, army).map((i) => i.id)).toEqual(['b1'])
     expect(eligibleMagicStandards(baseUnit, army)).toEqual([])
+  })
+
+  // A regiment or chariot unit has a standard bearer to buy (and pay double a
+  // model for); a Stegadon's howdah or a Halfling farm machine does not, and
+  // must not be asked for one it can never buy.
+  it('requires a standard bearer only from units that are offered one', () => {
+    const bearer = { id: 'standard', name: 'Standard Bearer', pointsPerModel: 0, timesModelCost: 2, flat: true }
+    expect(magicStandardNeedsBearer({ ...baseUnit, options: [bearer] })).toBe(true)
+    expect(magicStandardNeedsBearer({ ...baseUnit, options: [] })).toBe(false)
+    expect(magicStandardNeedsBearer(baseUnit)).toBe(false)
   })
 })
 

@@ -1,5 +1,5 @@
 import type { Army } from '../types'
-import { commandOptions } from '../unitOptions'
+import { COMMAND_OPTIONS } from '../unitOptions'
 import { assertArmyIntegrity } from './integrity'
 import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
 import { EMPIRE } from './empire'
@@ -20,11 +20,14 @@ import { HALFLINGS } from './halflings'
 import { NORSE } from './norse'
 
 /**
- * Give every multi-model regiment a command group (standard bearer + musician,
- * each priced at double the unit's base cost) unless it already defines those
- * options. Done once here rather than repeated across ~70 unit definitions.
- * There is no unit-champion option in 4th/5th ed — champions are separate
- * paladin/hero/commander character entries.
+ * Give every multi-model regiment a command group (standard bearer + musician)
+ * unless it already defines those options. Done once here rather than repeated
+ * across ~70 unit definitions. There is no unit-champion option in 4th/5th ed —
+ * champions are separate paladin/hero/commander character entries.
+ *
+ * The options carry no fixed price: each command model costs double an EQUIPPED
+ * rank-and-file model, so `unitOptionCost` derives it from the entry's own
+ * selection. Chariots get no command group — see COMMAND_OPTIONS.
  */
 function withCommandGroups(army: Army): Army {
   return {
@@ -32,7 +35,7 @@ function withCommandGroups(army: Army): Army {
     units: army.units.map((u) => {
       if (u.role !== 'regiment' || u.noCommand) return u
       const existing = new Set((u.options ?? []).map((o) => o.id))
-      const extra = commandOptions(u.pointsPerModel).filter((o) => !existing.has(o.id))
+      const extra = COMMAND_OPTIONS.filter((o) => !existing.has(o.id))
       return extra.length ? { ...u, options: [...(u.options ?? []), ...extra] } : u
     }),
   }

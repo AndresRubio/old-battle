@@ -840,8 +840,8 @@ describe('validateRoster — unit magic standards', () => {
   })
 
   // Magia p.42: "Algunos carruajes de guerra también pueden portar un estandarte
-  // mágico." A chariot carries it on the chariot itself — there is no standard
-  // bearer model to require, so the bearer prerequisite must not apply.
+  // mágico." A chariot carries it on the chariot itself — it has no standard
+  // bearer on offer, so the bearer prerequisite must not apply.
   it('lets a chariot carry a magic standard without a standard bearer', () => {
     const r = roster(2000, [
       entry({ unitId: 'lord', isGeneral: true }),

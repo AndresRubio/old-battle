@@ -40,6 +40,23 @@ export interface EquipmentOption {
    * standard) rather than multiplied by the number of models.
    */
   flat?: boolean
+  /**
+   * The option costs this multiple of ONE fully-equipped rank-and-file model
+   * — base points plus every per-model option the unit has actually bought —
+   * instead of a fixed `pointsPerModel`. Used by the command group, which the
+   * rules price as extra miniatures rather than as a fixed upgrade:
+   *
+   *   "A unit standard bearer costs double the points of a normal figure in
+   *    the unit […] Include the cost of all of the equipment for a rank and
+   *    file member of the unit before doubling it." — FAQ 1996 §3.3/§3.5,
+   *    citing Warhammer Armies p.2. For a chariot the same doubling applies to
+   *    "the cost of the whole chariot" (§5.1.4).
+   *
+   * The cost therefore depends on the entry's current selection, so it can
+   * only be read through `unitOptionCost` — never off `pointsPerModel`, which
+   * such an option leaves at 0.
+   */
+  timesModelCost?: number
   /** Some upgrades (e.g. wizard level, battle standard) change the magic-item allowance. */
   magicItemSlotsDelta?: number
   /** Human-readable description of the option's in-game effect (shown via the ⓘ control). */

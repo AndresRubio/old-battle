@@ -44,15 +44,22 @@ export const SPEARS: EquipmentOption = { id: 'spears', name: 'Spears', pointsPer
  * Command group — flat per-unit upgrades available to most regiments.
  *
  * In Warhammer 4th/5th edition a unit's standard bearer and musician each cost
- * DOUBLE a rank-and-file model (i.e. as two of that unit's miniatures), so the
- * cost is derived per unit from its base points rather than a fixed charge.
+ * DOUBLE a rank-and-file model, counting that model's equipment: "Include the
+ * cost of all of the equipment for a rank and file member of the unit before
+ * doubling it" (FAQ 1996 §3.3/§3.5, citing Warhammer Armies p.2). They are
+ * therefore declared with `timesModelCost` and priced from the entry's current
+ * selection by `unitOptionCost` — `pointsPerModel` stays 0 and must not be read.
+ *
  * There is NO unit-champion option — champions are separate paladin / hero /
  * commander character entries bought from the Characters allowance.
+ *
+ * A chariot gets NO command group: it carries its standard itself and its cost
+ * is expressly not doubled — "el valor del estandarte deberá añadirse al del
+ * carruaje, pero el valor del carruaje no deberá duplicarse" (Magia printed
+ * 42). That book rule outranks the 1996 FAQ §5.1.4 answer, which prices a
+ * chariot standard bearer at double the whole chariot. See CITATIONS.md.
  */
-export function commandOptions(basePointsPerModel: number): EquipmentOption[] {
-  const cost = basePointsPerModel * 2
-  return [
-    { id: STANDARD_BEARER_ID, name: 'Standard Bearer', pointsPerModel: cost, flat: true },
-    { id: MUSICIAN_ID, name: 'Musician', pointsPerModel: cost, flat: true },
-  ]
-}
+export const COMMAND_OPTIONS: EquipmentOption[] = [
+  { id: STANDARD_BEARER_ID, name: 'Standard Bearer', pointsPerModel: 0, timesModelCost: 2, flat: true },
+  { id: MUSICIAN_ID, name: 'Musician', pointsPerModel: 0, timesModelCost: 2, flat: true },
+]

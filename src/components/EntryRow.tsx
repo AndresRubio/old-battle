@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
-import { effectiveStatLine, entryPoints, findUnit, mountOptionCost } from '../rules/points'
+import { effectiveStatLine, entryPoints, findUnit, mountOptionCost, unitOptionCost } from '../rules/points'
 import { magicItemAllowance } from '../rules/magicItems'
 import {
   companionMountProfile,
   eligibleMagicStandards,
   filterMagicItems,
   hasAnyOptions,
+  magicStandardNeedsBearer,
   partitionOptions,
 } from '../rules/entryView'
 import type { EntryActions } from '../state/rosterOps'
@@ -106,7 +107,11 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
   // Unit magic standard: a regiment the army list allows may take one banner,
   // carried by its standard bearer.
   const standardOptions = eligibleMagicStandards(unit, army)
-  const hasStandardBearer = entry.optionIds.includes(STANDARD_BEARER_ID)
+  // A unit that has a standard bearer to buy must buy it before it can carry a
+  // banner; one that carries the standard itself (a howdah, a farm machine)
+  // picks straight from the list.
+  const hasStandardBearer =
+    !magicStandardNeedsBearer(unit) || entry.optionIds.includes(STANDARD_BEARER_ID)
   const hasOptions = hasAnyOptions(unit)
 
   return (
@@ -338,7 +343,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                       checked={entry.optionIds.includes(o.id)}
                       onChange={() => actions.toggleOption(o.id)}
                     />
-                    {optionText(o.name, lang)} (+{o.pointsPerModel}
+                    {optionText(o.name, lang)} (+{unitOptionCost(unit, o, entry.optionIds)}
                     {isRegiment && !o.flat ? t('perModel', lang) : ''})
                     {optionDesc(o, lang) && (
                       <button
