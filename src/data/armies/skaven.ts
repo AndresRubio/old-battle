@@ -391,6 +391,10 @@ const units: UnitProfile[] = [
     pointsPerModel: 30,
     statLine: skaven({ WS: 5, BS: 4, T: 3, I: 5, A: 2, Ld: 7 }),
     minSize: 1,
+    // Bought to hide inside another regiment, never fielded as a rank and file
+    // of their own — so no standard bearer or musician to buy, as with the
+    // Night Goblin Fanatics and the Norse Berserkers.
+    noCommand: true,
     options: [],
     specialRules: [
       'Weeping Blades (Espadas Supurantes) & light armour (6+ save)',
@@ -436,6 +440,9 @@ const units: UnitProfile[] = [
     pointsPerModel: 15,
     statLine: skaven({ WS: 4, BS: 0, T: 4, Ld: 5 }),
     minSize: 1,
+    // They accompany a Plague Monk regiment rather than forming one, so the
+    // command models belong to the regiment they escort.
+    noCommand: true,
     options: [],
     specialRules: [
       'Plague Censer (no armour save)',
@@ -452,6 +459,9 @@ const units: UnitProfile[] = [
     pointsPerModel: 10,
     statLine: skaven({ WS: 4, BS: 4, T: 3, I: 4, Ld: 7 }),
     minSize: 1,
+    // A pack of Giant Rats or Rat Ogres led by its keepers — the same construct
+    // as the three Norse Beastmaster entries, which take no command group.
+    noCommand: true,
     options: [ADD_HAND_WEAPON],
     specialRules: [
       'Swords/hand weapons & light armour (6+ save)',

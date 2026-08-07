@@ -514,7 +514,6 @@ const units: UnitProfile[] = [
     pointsPerModel: 16,
     statLine: elf({ WS: 5, BS: 5 }),
     minSize: 5,
-    noCommand: true,
     specialRules: ['Longbow & hand weapon', 'Scouts', 'Skirmishers', 'Special deployment'],
   },
   {
@@ -526,7 +525,6 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 5, BS: 5 }),
     minSize: 5,
     max: 1,
-    noCommand: true,
     specialRules: [
       '0-1 unit',
       'Longbow & hand weapon',

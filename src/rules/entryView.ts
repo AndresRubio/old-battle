@@ -1,5 +1,5 @@
 import type { Army, EquipmentOption, MagicItem, MountOption, ProfileBlock, UnitProfile } from '../data/types'
-import { isWizardLevelId } from '../data/unitOptions'
+import { isWizardLevelId, STANDARD_BEARER_ID } from '../data/unitOptions'
 import { matchesQuery } from '../i18n/lang'
 
 /**
@@ -20,6 +20,19 @@ export function isValidMagicStandard(item: MagicItem): boolean {
  */
 export function eligibleMagicStandards(unit: UnitProfile, army: Army): MagicItem[] {
   return unit.magicStandard ? army.magicItems.filter(isValidMagicStandard) : []
+}
+
+/**
+ * Whether the unit's magic standard has to be carried by a standard-bearer
+ * model the player buys first. True exactly when the unit is offered one —
+ * regiments and chariot units, whose bearer costs double an equipped model /
+ * the whole chariot (FAQ 1996 §3.3, §5.1.4). A Stegadon's howdah or a Halfling
+ * farm machine carries the banner itself and has no bearer to buy, so it must
+ * not be asked for one. Shared by the editor and `validateRoster` so the
+ * picker's gate and the warning can't diverge.
+ */
+export function magicStandardNeedsBearer(unit: UnitProfile): boolean {
+  return unit.options?.some((o) => o.id === STANDARD_BEARER_ID) ?? false
 }
 
 /**

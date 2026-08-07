@@ -81,7 +81,29 @@ in each unit's `OPCIONES:` / `Options:` block, never army-wide. Two related rule
 - **Chariots** (Magia printed 42): *"Algunos carruajes de guerra también pueden portar un estandarte
   mágico… el valor del estandarte deberá añadirse al del carruaje, pero el valor del carruaje no
   deberá duplicarse."* Confirmed in the lists for O&G, High Elves, Wood Elves, Chaos, Undead and
-  Vampire Counts.
+  Vampire Counts. This **overrides** the 1996 FAQ §5.1.4 answer *"How much do standard bearers cost
+  for regimental chariot units? — Double the cost of the whole chariot"*, which is a `[Primarch]`
+  arbitration with no book citation behind it. Chariots therefore get no command group at all, and
+  a chariot's magic standard costs only the banner's own card value.
+
+### Command group: equipment counts before doubling (sourced 2026-08-06)
+The standard bearer and musician each cost **double a rank-and-file model** — *"A unit standard
+bearer costs double the points of a normal figure in the unit"* / *"A musician costs double the
+points of a normal figure in the unit"*, both citing **Warhammer Armies p.2** (FAQ 1996 v2.20
+§3.3, §3.5). Magia printed 42 gives the worked example: High Elf Spearman 12 → bearer 24.
+
+What that model costs is settled by the next sentence of §3.3: *"Include the cost of all of the
+equipment for a rank and file member of the unit before doubling it for the cost of the standard
+bearer."* So Empire Halberdiers at 7, with light armour (+2) and shields (+1), field a 10-pt
+trooper and a 20-pt standard bearer — not 14. Provenance note: the ×2 rule carries a book citation,
+but the include-the-equipment clause is marked `[Primarch]`, i.e. a ruling by the FAQ compilers
+rather than printed text. It is adopted because no army-book entry prices a command model
+independently, so the generic rule is the only statement of the cost, and the books' own example
+(a bare spearman) does not contradict it.
+
+Mechanically this makes the command group the one option whose price depends on the rest of the
+entry: `EquipmentOption.timesModelCost` declares the multiple and `unitOptionCost` derives the
+points from the current selection. Reading `pointsPerModel` off such an option yields 0.
 
 (Halflings and Norse had no official 5th-ed army book, so their entries follow the Hungry Horde and
 Norsca supplements rather than a *Warhammer Armies* volume.)

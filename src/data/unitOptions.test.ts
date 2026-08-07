@@ -5,7 +5,7 @@ import {
   isWizardLevelId,
   wizardLevelOf,
   WIZARD_LEVELS,
-  commandOptions,
+  COMMAND_OPTIONS,
 } from './unitOptions'
 
 describe('option-identity conventions', () => {
@@ -25,6 +25,16 @@ describe('option-identity conventions', () => {
   })
 
   it('command options are declared with the owned ids', () => {
-    expect(commandOptions(5).map((o) => o.id)).toEqual([STANDARD_BEARER_ID, MUSICIAN_ID])
+    expect(COMMAND_OPTIONS.map((o) => o.id)).toEqual([STANDARD_BEARER_ID, MUSICIAN_ID])
+  })
+
+  // Their price moves with the unit's kit, so it can only come from
+  // `unitOptionCost`; a fixed pointsPerModel would silently undercharge.
+  it('command options carry no fixed price, only the ×2 model-cost rule', () => {
+    for (const o of COMMAND_OPTIONS) {
+      expect(o.pointsPerModel).toBe(0)
+      expect(o.timesModelCost).toBe(2)
+      expect(o.flat).toBe(true)
+    }
   })
 })

@@ -16,12 +16,34 @@ export function optionPointsPerModel(unit: UnitProfile, optionIds: string[]): nu
     .reduce((sum, o) => sum + o.pointsPerModel, 0)
 }
 
+/**
+ * What one fully-equipped rank-and-file model of the unit costs under the
+ * current selection — base points plus the per-model equipment bought. For a
+ * chariot this is the whole equipped chariot. The basis for `timesModelCost`.
+ */
+export function equippedModelCost(unit: UnitProfile, optionIds: string[]): number {
+  return unit.pointsPerModel + optionPointsPerModel(unit, optionIds)
+}
+
+/**
+ * Cost of ONE unit option under the current selection — the single accessor for
+ * an option's price. A `timesModelCost` option (the command group) is priced as
+ * that many equipped rank-and-file models and so moves with the unit's kit;
+ * everything else is its fixed `pointsPerModel`. Never read `pointsPerModel`
+ * off a unit option directly.
+ */
+export function unitOptionCost(unit: UnitProfile, option: EquipmentOption, optionIds: string[]): number {
+  return option.timesModelCost
+    ? option.timesModelCost * equippedModelCost(unit, optionIds)
+    : option.pointsPerModel
+}
+
 /** Points from chosen flat (per-unit) options, e.g. a command group. */
 export function flatOptionPoints(unit: UnitProfile, optionIds: string[]): number {
   if (!unit.options) return 0
   return unit.options
     .filter((o) => optionIds.includes(o.id) && o.flat)
-    .reduce((sum, o) => sum + o.pointsPerModel, 0)
+    .reduce((sum, o) => sum + unitOptionCost(unit, o, optionIds), 0)
 }
 
 /** Points from the chosen mount (flat — a character rides one mount). */
@@ -84,8 +106,7 @@ export function effectiveStatLine(unit: UnitProfile, optionIds: string[]): StatL
 export function entryPoints(entry: RosterEntry, army: Army): number {
   const unit = findUnit(army, entry.unitId)
   if (!unit) return 0
-  const perModel = unit.pointsPerModel + optionPointsPerModel(unit, entry.optionIds)
-  const modelPoints = perModel * entry.size
+  const modelPoints = equippedModelCost(unit, entry.optionIds) * entry.size
   const flatPoints = flatOptionPoints(unit, entry.optionIds)
   const magicPoints = entry.magicItemIds.reduce((sum, id) => {
     const item = findMagicItem(army, id)

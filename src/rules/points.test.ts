@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { effectiveStatLine, entryPoints, mountPoints, findUnit } from './points'
+import { effectiveStatLine, entryPoints, mountPoints, findUnit, unitOptionCost } from './points'
 import { getArmy } from '../data/armies'
 import type { RosterEntry, UnitProfile } from '../data/types'
 
 const empire = getArmy('empire')!
 const bretonnia = getArmy('bretonnia')!
+const orcs = getArmy('orcs-and-goblins')!
+const undead = getArmy('undead')!
 
 const mk = (over: Partial<RosterEntry> & { unitId: string }): RosterEntry => ({
   id: 'e',
@@ -17,18 +19,38 @@ const mk = (over: Partial<RosterEntry> & { unitId: string }): RosterEntry => ({
 describe('entryPoints — flat vs per-model options', () => {
   it('multiplies per-model options by size but charges flat options once', () => {
     // Halberdiers base 7/model. Shield is per-model (+1); the standard and
-    // musician are flat and each cost double a rank-and-file model (2×7=14).
+    // musician are flat and each cost double an EQUIPPED rank-and-file model
+    // (2×(7+1)=16).
     const entry = mk({ unitId: 'emp-halberdiers', size: 10, optionIds: ['shield', 'standard', 'musician'] })
-    // 10*(7+1)=80  +standard 14 +musician 14 = 108
-    expect(entryPoints(entry, empire)).toBe(108)
+    // 10*(7+1)=80  +standard 16 +musician 16 = 112
+    expect(entryPoints(entry, empire)).toBe(112)
   })
 
   it('prices the standard and musician at double the unit base cost (4th/5th ed)', () => {
-    // Halberdiers base 7/model → command models cost 2×7 = 14 each.
+    // Halberdiers base 7/model, no equipment chosen → 2×7 = 14 each.
     const halberdiers = empire.units.find((u) => u.id === 'emp-halberdiers')!
-    const cost = (id: string) => (halberdiers.options ?? []).find((o) => o.id === id)?.pointsPerModel
+    const cost = (id: string) =>
+      unitOptionCost(halberdiers, halberdiers.options!.find((o) => o.id === id)!, [id])
     expect(cost('standard')).toBe(14)
     expect(cost('musician')).toBe(14)
+  })
+
+  it('counts the rank-and-file model’s equipment before doubling (FAQ 3.3/3.5)', () => {
+    // "Include the cost of all of the equipment for a rank and file member of
+    // the unit before doubling it for the cost of the standard bearer."
+    // Halberdiers 7 + light armour 2 + shield 1 = 10/model → 20 per command model.
+    const halberdiers = empire.units.find((u) => u.id === 'emp-halberdiers')!
+    const standard = halberdiers.options!.find((o) => o.id === 'standard')!
+    expect(unitOptionCost(halberdiers, standard, ['light-armour', 'shield', 'standard'])).toBe(20)
+
+    const bare = mk({ unitId: 'emp-halberdiers', size: 10, optionIds: ['standard'] })
+    const equipped = mk({
+      unitId: 'emp-halberdiers',
+      size: 10,
+      optionIds: ['light-armour', 'shield', 'standard'],
+    })
+    // 10 models × 3 pts of kit = 30, plus 6 more on the standard bearer.
+    expect(entryPoints(equipped, empire) - entryPoints(bare, empire)).toBe(36)
   })
 
   it('command group (standard + musician, no champion) is auto-added to regiments', () => {
@@ -45,6 +67,28 @@ describe('entryPoints — flat vs per-model options', () => {
     const ids = (u: typeof general) => (u.options ?? []).map((o) => o.id)
     expect(ids(general)).not.toContain('standard')
     expect(ids(cannon)).not.toContain('musician')
+  })
+})
+
+describe('entryPoints — a chariot is never doubled', () => {
+  // Magia printed 42: "el valor del estandarte deberá añadirse al del carruaje,
+  // pero el valor del carruaje NO deberá duplicarse." A chariot carries its
+  // standard itself, so it gets no command group to pay double for. This book
+  // rule outranks FAQ §5.1.4, which prices a chariot standard bearer at double
+  // the whole chariot. See CITATIONS.md — Magic-standard caps.
+  it('offers a chariot no standard bearer or musician to buy', () => {
+    for (const chariot of [...orcs.units, ...undead.units].filter((u) => u.role === 'chariot')) {
+      const ids = (chariot.options ?? []).map((o) => o.id)
+      expect(ids).not.toContain('standard')
+      expect(ids).not.toContain('musician')
+    }
+  })
+
+  it('adds only the banner’s own points to a chariot carrying a magic standard', () => {
+    const bare = mk({ unitId: 'og-orc-boar-chariot', size: 1 })
+    const withBanner = mk({ unitId: 'og-orc-boar-chariot', size: 1, magicStandardId: 'mi-banner-of-war' })
+    expect(entryPoints(bare, orcs)).toBe(81)
+    expect(entryPoints(withBanner, orcs) - 81).toBe(25)
   })
 })
 

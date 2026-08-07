@@ -3,7 +3,7 @@ import { findMagicItem, findUnit, rosterTotalPoints } from './points'
 import { summarize } from './summary'
 import { entryMagicItemFindings, armyItemUniquenessFindings } from './magicItems'
 import { STANDARD_BEARER_ID } from '../data/unitOptions'
-import { isValidMagicStandard } from './entryView'
+import { isValidMagicStandard, magicStandardNeedsBearer } from './entryView'
 import { toViolation, type Finding, type RuleId, type RuleParams } from './messages'
 import type { Lang } from '../i18n/lang'
 
@@ -193,9 +193,9 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
       if (!unit.magicStandard) {
         raise('warning', 'magic-standard-not-allowed', { unit }, e.id)
       } else {
-        // Only a regiment needs a standard-bearer model. A chariot (or a monster
-        // with a howdah) carries the standard itself — Magia p.42.
-        if (unit.role === 'regiment' && !e.optionIds.includes(STANDARD_BEARER_ID)) {
+        // Where a standard bearer exists to be bought, the magic standard needs
+        // one — and it must be paid for. See magicStandardNeedsBearer.
+        if (magicStandardNeedsBearer(unit) && !e.optionIds.includes(STANDARD_BEARER_ID)) {
           raise('warning', 'magic-standard-no-bearer', { unit }, e.id)
         }
         if (!item || !isValidMagicStandard(item)) {

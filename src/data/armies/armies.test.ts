@@ -65,6 +65,66 @@ describe('unit magic standards', () => {
   }
 })
 
+describe('command groups', () => {
+  // A standard bearer and a musician are extra miniatures in the rank and file,
+  // each costing double an equipped one. An entry that never forms a rank and
+  // file of its own therefore has none to buy: models that hide inside another
+  // regiment (Fanatics, Berserkers, Assassins), models that merely accompany
+  // one (Plague Censer Bearers), and a pack led by a single keeper rather than
+  // by its own command models (the Norse and Clan Moulder Beastmasters).
+  const NO_RANK_AND_FILE = [
+    'ch-nurglings', 'ch-swarms',
+    'hf-crazed-cooks',
+    'no-berserkers', 'no-ulfjarls',
+    'no-beastmaster-snow-trolls', 'no-beastmaster-giant-wolves', 'no-beastmaster-bears',
+    'og-night-goblin-fanatics', 'og-squig-hoppers',
+    'sk-assassins', 'sk-beastmasters', 'sk-plague-censer-bearers',
+    'vc-spectral-host', 'vc-spectral-maidens',
+  ]
+
+  for (const id of NO_RANK_AND_FILE) {
+    it(`${id}: forms no rank and file, so has no command group to buy`, () => {
+      const unit = ARMIES.flatMap((a) => a.units).find((u) => u.id === id)
+      expect(unit, `${id} not found`).toBeDefined()
+      expect(unit!.noCommand, `${id} should be noCommand`).toBe(true)
+      expect((unit!.options ?? []).map((o) => o.id)).not.toContain('standard')
+    })
+  }
+
+  // Skirmishing does not take a unit's standard away: in skirmish formation a
+  // unit still counts "Unit standard gets combat resolution bonus" (FAQ 1996
+  // §3.6.1, citing Rule Book pp.90-91). So skirmishing alone is never a reason
+  // to withhold the command group — only an entry's own army-list text is, and
+  // the entries that have such text state it in their special rules.
+  it('skirmishing alone never costs a regiment its command group', () => {
+    const skirmishers = ARMIES.flatMap((a) => a.units).filter(
+      (u) => u.role === 'regiment' && u.specialRules?.some((r) => /skirmish/i.test(r)),
+    )
+    const denied = /no (command|standard|champion)|may not take command|Regiment of Renown/i
+    for (const u of skirmishers) {
+      if (u.noCommand) {
+        expect(
+          u.specialRules?.some((r) => denied.test(r)),
+          `${u.id} is noCommand but nothing in its rules denies it a command group`,
+        ).toBe(true)
+      }
+    }
+  })
+
+  // The Regiments of Renown are sold at a fixed price that already includes
+  // their named standard bearer and musician, so offering the upgrade again
+  // would charge for them twice.
+  it('Regiments of Renown price their command models in, and never offer them again', () => {
+    const ror = ARMIES.flatMap((a) => a.units).filter(
+      (u) => u.role === 'regiment' && u.specialRules?.some((r) => /Regiment of Renown/i.test(r)),
+    )
+    expect(ror.length).toBeGreaterThan(10)
+    for (const u of ror) {
+      expect(u.noCommand, `${u.id} is a Regiment of Renown and must be noCommand`).toBe(true)
+    }
+  })
+})
+
 describe('magic-item catalog completeness', () => {
   it('includes the Dispel Scroll and Warrior Familiar', () => {
     const ids = new Set(COMMON_MAGIC_ITEMS.map((i) => i.id))
