@@ -455,6 +455,39 @@ describe('mounts & profiles', () => {
     expect(statLine('og-skarsnik'), 'Skarsnik (p.93)').toEqual({ M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 6, A: 4, Ld: 9 })
   })
 
+  // OLD-20 — book p.79 "Señor de la Guerra" mount table, read straight off the PDF
+  // scan and corroborated by the p.73/p.74 bestiary rows, both p.82 rider entries,
+  // the two p.88 chariots and the p.98 reference table. Same dropped-H column shift
+  // as OLD-18, except on mounts it moved HA as well as I: the War Boar read
+  // HA 3 / I 2 for HA 4 / I 3, the Giant Wolf HA 3 for HA 4. Every boar and wolf
+  // profile in the army shares one constant, so this walks all of them at once —
+  // character mounts, cavalry steeds and chariot draught teams alike.
+  it('Orcs & Goblins: every War Boar and Giant Wolf profile matches the book p.79 mount table', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const WAR_BOAR = { M: 7, WS: 4, BS: 0, S: 3, T: 4, W: 1, I: 3, A: 1, Ld: 3 }
+    const GIANT_WOLF = { M: 9, WS: 4, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 3 }
+
+    // Collect every beast profile the army exposes, wherever it hangs.
+    const beasts: { where: string; name: string; statLine: unknown }[] = []
+    for (const unit of orcs.units) {
+      if (unit.mount) beasts.push({ where: `${unit.id}.mount`, name: unit.mount.name, statLine: unit.mount.statLine })
+      for (const p of unit.profiles ?? []) beasts.push({ where: `${unit.id}.profiles`, name: p.name, statLine: p.statLine })
+      for (const m of unit.mounts ?? []) {
+        if (m.statLine) beasts.push({ where: `${unit.id}.mounts.${m.id}`, name: m.name, statLine: m.statLine })
+        for (const p of m.profiles ?? []) beasts.push({ where: `${unit.id}.mounts.${m.id}.profiles`, name: p.name, statLine: p.statLine })
+      }
+    }
+
+    const boars = beasts.filter((b) => /Boar/.test(b.name) && !/Chariot/.test(b.name))
+    const wolves = beasts.filter((b) => /Wolf|Wolves/.test(b.name) && !/Chariot/.test(b.name))
+    // Guard the guard: if the data stops exposing these, the loops below pass vacuously.
+    expect(boars.length, 'War Boar profiles found').toBeGreaterThan(0)
+    expect(wolves.length, 'Giant Wolf profiles found').toBeGreaterThan(0)
+
+    for (const b of boars) expect(b.statLine, `${b.name} @ ${b.where}`).toEqual(WAR_BOAR)
+    for (const w of wolves) expect(w.statLine, `${w.name} @ ${w.where}`).toEqual(GIANT_WOLF)
+  })
+
   // OLD-12 — book p.81 "Shamanes Orcos" table: each wizard level has its own
   // full profile (Shaman / Paladín / Maestro / Gran Shaman), and "Los Orcos
   // Salvajes usan los atributos de los Shamanes Orcos" — the Savage Orc Shaman

@@ -68,9 +68,16 @@ const GOBLIN_SHAMAN_LEVELS: EquipmentOption[] = [
 ]
 
 // --- Beast statlines (draught beasts & ridden bestiary). Movement already in
-//     inches (War Boar 18cm→7", Giant Wolf 22cm→9", Giant Spider 18cm→7"). ---
-const WAR_BOAR_STATS: StatLine = { M: 7, WS: 3, BS: 0, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 3 }
-const GIANT_WOLF_STATS: StatLine = { M: 9, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 3 }
+//     inches (War Boar 18cm→7", Giant Wolf 22cm→9", Giant Spider 18cm→7").
+//     Book rows, all nine columns M HA HP F R H I A L (p.79 mount table, matching
+//     the p.74/p.73 bestiary, both p.82 rider entries, the p.88 chariots and the
+//     p.98 reference table):
+//       War Boar    18 4 0 3 4 1 3 1 3
+//       Giant Wolf  22 4 0 3 3 1 3 1 3
+//     One constant each, shared by character mounts, cavalry steeds and chariot
+//     draught teams — keep them that way so a book row lives in exactly one place. ---
+const WAR_BOAR_STATS: StatLine = { M: 7, WS: 4, BS: 0, S: 3, T: 4, W: 1, I: 3, A: 1, Ld: 3 }
+const GIANT_WOLF_STATS: StatLine = { M: 9, WS: 4, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 3 }
 // Giant Spider ridden profile (book p.73 mount row: M18 HA3 HP0 F4 R3 H1 I1 A1 L5).
 const GIANT_SPIDER_STATS: StatLine = { M: 7, WS: 3, BS: 0, S: 4, T: 3, W: 1, I: 1, A: 1, Ld: 5 }
 
@@ -820,7 +827,7 @@ const units: UnitProfile[] = [
     nameEs: 'Orcos Jinetes de Jabalí',
     role: 'regiment',
     pointsPerModel: 27,
-    // PDF p.82: rider M10 HA4 HP3 F3 R4 H1 I2 A1 L7; Boar M18 — cavalry M=7"
+    // PDF p.82: rider M10 HA4 HP3 F3 R4 H1 I2 A1 L7; Boar M18 HA4 HP0 F3 R4 H1 I3 A1 L3 — cavalry M=7"
     statLine: { M: 7, WS: 4, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
     mount: WAR_BOAR_PROFILE,
     minSize: 5,
@@ -833,7 +840,7 @@ const units: UnitProfile[] = [
     nameEs: 'Goblins Jinetes de Lobo',
     role: 'regiment',
     pointsPerModel: 9,
-    // PDF p.82: rider M10 HA2 HP3 F3 R3 H1 I2 A1 L5; Wolf M22 — cavalry M=9"
+    // PDF p.82: rider M10 HA2 HP3 F3 R3 H1 I2 A1 L5; Wolf M22 HA4 HP0 F3 R3 H1 I3 A1 L3 — cavalry M=9"
     statLine: { M: 9, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
     mount: { name: 'Giant Wolf', nameEs: 'Lobo Gigante', statLine: GIANT_WOLF_STATS },
     minSize: 5,
