@@ -210,7 +210,7 @@ const units: UnitProfile[] = [
     nameEs: 'Señor de la Guerra Orco Negro',
     role: 'character',
     pointsPerModel: 140,
-    // PDF p.79: M10 HA7 HP6 F5 R5 I3 A5 L10
+    // PDF p.79: M10 HA7 HP6 F5 R5 H3 I5 A4 L10
     statLine: { M: 4, WS: 7, BS: 6, S: 5, T: 5, W: 3, I: 5, A: 4, Ld: 10 },
     isCharacter: true,
     characterRank: 'lord',
@@ -224,8 +224,8 @@ const units: UnitProfile[] = [
     nameEs: 'Señor de la Guerra Orco',
     role: 'character',
     pointsPerModel: 110,
-    // PDF p.79: M10 HA6 HP6 F4 R5 I3 A5 L9
-    statLine: { M: 4, WS: 6, BS: 6, S: 4, T: 5, W: 3, I: 3, A: 5, Ld: 9 },
+    // PDF p.79: M10 HA6 HP6 F4 R5 H3 I5 A4 L9
+    statLine: { M: 4, WS: 6, BS: 6, S: 4, T: 5, W: 3, I: 5, A: 4, Ld: 9 },
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
@@ -238,8 +238,8 @@ const units: UnitProfile[] = [
     nameEs: 'Señor de la Guerra Orco Salvaje',
     role: 'character',
     pointsPerModel: 150,
-    // PDF p.79: M10 HA6 HP6 F4 R5 I3 A5 L9
-    statLine: { M: 4, WS: 6, BS: 6, S: 4, T: 5, W: 3, I: 3, A: 5, Ld: 9 },
+    // PDF p.79: M10 HA6 HP6 F4 R5 H3 I5 A4 L9
+    statLine: { M: 4, WS: 6, BS: 6, S: 4, T: 5, W: 3, I: 5, A: 4, Ld: 9 },
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
@@ -252,8 +252,8 @@ const units: UnitProfile[] = [
     nameEs: 'Señor de la Guerra Goblin',
     role: 'character',
     pointsPerModel: 50,
-    // PDF p.79: M10 HA5 HP6 F4 R4 I3 A5 L7
-    statLine: { M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 3, A: 5, Ld: 7 },
+    // PDF p.79: M10 HA5 HP6 F4 R4 H3 I5 A4 L7
+    statLine: { M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 5, A: 4, Ld: 7 },
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
@@ -266,8 +266,8 @@ const units: UnitProfile[] = [
     nameEs: 'Señor de la Guerra Goblin Silvano',
     role: 'character',
     pointsPerModel: 50,
-    // PDF p.79: M10 HA5 HP6 F4 R4 I3 A5 L7
-    statLine: { M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 3, A: 5, Ld: 7 },
+    // PDF p.79: M10 HA5 HP6 F4 R4 H3 I5 A4 L7
+    statLine: { M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 5, A: 4, Ld: 7 },
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
@@ -280,8 +280,8 @@ const units: UnitProfile[] = [
     nameEs: 'Señor de la Guerra Goblin Nocturno',
     role: 'character',
     pointsPerModel: 50,
-    // PDF p.79: M10 HA5 HP6 F4 R4 I3 A5 L7
-    statLine: { M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 3, A: 5, Ld: 7 },
+    // PDF p.79: M10 HA5 HP6 F4 R4 H3 I5 A4 L7
+    statLine: { M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 5, A: 4, Ld: 7 },
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
@@ -656,8 +656,8 @@ const units: UnitProfile[] = [
     nameEs: 'Azhag el Carnicero',
     role: 'character',
     pointsPerModel: 130,
-    // PDF p.90: M10 HA6 HP6 F4 R5 I3 A5 L10
-    statLine: { M: 4, WS: 6, BS: 6, S: 4, T: 5, W: 3, I: 3, A: 5, Ld: 10 },
+    // PDF p.90: M10 HA6 HP6 F4 R5 H3 I5 A4 L10
+    statLine: { M: 4, WS: 6, BS: 6, S: 4, T: 5, W: 3, I: 5, A: 4, Ld: 10 },
     isCharacter: true,
     characterRank: 'lord',
     lores: ['waaagh'],
@@ -678,8 +678,8 @@ const units: UnitProfile[] = [
     nameEs: 'Oglok el Horrible',
     role: 'character',
     pointsPerModel: 90,
-    // PDF p.90: M10 HA6 HP5 F4 R5 I2 A4 L9
-    statLine: { M: 4, WS: 6, BS: 5, S: 4, T: 5, W: 2, I: 2, A: 4, Ld: 9 },
+    // PDF p.90: M10 HA6 HP5 F4 R5 H2 I4 A4 L9
+    statLine: { M: 4, WS: 6, BS: 5, S: 4, T: 5, W: 2, I: 4, A: 4, Ld: 9 },
     isCharacter: true,
     characterRank: 'hero',
     canBeGeneral: false,
@@ -698,8 +698,8 @@ const units: UnitProfile[] = [
     nameEs: 'Grom el Panzudo de la Montaña de la Niebla',
     role: 'character',
     pointsPerModel: 80,
-    // PDF p.91: M10 HA5 HP6 F4 R4 I3 A5 L7
-    statLine: { M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 3, A: 5, Ld: 7 },
+    // PDF p.91: M10 HA5 HP6 F4 R4 H3 I5 A4 L7
+    statLine: { M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 5, A: 4, Ld: 7 },
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
@@ -719,8 +719,8 @@ const units: UnitProfile[] = [
     nameEs: 'Gorbad Garra de Hierro',
     role: 'character',
     pointsPerModel: 120,
-    // PDF p.91: M10 HA6 HP6 F4 R5 I3 A5 L10 (on boar: use Boar M)
-    statLine: { M: 4, WS: 6, BS: 6, S: 4, T: 5, W: 3, I: 3, A: 5, Ld: 10 },
+    // PDF p.91: M10 HA6 HP6 F4 R5 H3 I5 A4 L10 (on boar: use Boar M)
+    statLine: { M: 4, WS: 6, BS: 6, S: 4, T: 5, W: 3, I: 5, A: 4, Ld: 10 },
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
@@ -739,8 +739,8 @@ const units: UnitProfile[] = [
     nameEs: 'Gorfang Rotgut',
     role: 'character',
     pointsPerModel: 90,
-    // PDF p.92: M10 HA5 HP5 F5 R5 I3 A4 L8
-    statLine: { M: 4, WS: 5, BS: 5, S: 5, T: 5, W: 3, I: 3, A: 4, Ld: 8 },
+    // PDF p.92: M10 HA5 HP5 F5 R5 H3 I4 A3 L8
+    statLine: { M: 4, WS: 5, BS: 5, S: 5, T: 5, W: 3, I: 4, A: 3, Ld: 8 },
     isCharacter: true,
     characterRank: 'hero',
     canBeGeneral: false,
@@ -760,8 +760,8 @@ const units: UnitProfile[] = [
     nameEs: 'Morglum Quiebracuellos',
     role: 'character',
     pointsPerModel: 150,
-    // PDF p.92: M10 HA7 HP6 F5 R5 I3 A5 L10
-    statLine: { M: 4, WS: 7, BS: 6, S: 5, T: 5, W: 3, I: 3, A: 5, Ld: 10 },
+    // PDF p.92: M10 HA7 HP6 F5 R5 H3 I5 A4 L10
+    statLine: { M: 4, WS: 7, BS: 6, S: 5, T: 5, W: 3, I: 5, A: 4, Ld: 10 },
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
@@ -781,8 +781,8 @@ const units: UnitProfile[] = [
     nameEs: 'Skarsnik, Señor de la Guerra de los Ocho Picos',
     role: 'character',
     pointsPerModel: 80,
-    // PDF p.93: M10 HA5 HP6 F4 R4 I3 A6 L9
-    statLine: { M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 3, A: 6, Ld: 9 },
+    // PDF p.93: M10 HA5 HP6 F4 R4 H3 I6 A4 L9
+    statLine: { M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 6, A: 4, Ld: 9 },
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,

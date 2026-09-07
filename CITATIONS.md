@@ -154,6 +154,22 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   HP4/F5/I3/A2 for the Black Orc Boss, HP4/F4/I3/A2 for the Orc and Savage Orc Bosses, and
   HP4/F4/I3/A2 for the Goblin/Forest Goblin/Night Goblin Bosses. Corrected; no other stats or
   points changed. Linear OLD-9.
+- **Warbosses and special characters** (five `og-warboss-*` entries plus `og-azhag`, `og-oglok`,
+  `og-grom`, `og-gorbad`, `og-gorfang`, `og-morglum`, `og-skarsnik`) — I/A were transcribed one
+  column out because the source comments dropped the book's **H** column (nine printed columns are
+  M / HA / HP / F / R / H / I / A / L). The book gives I5/A4 for the Orc, Savage Orc, Goblin,
+  Forest Goblin and Night Goblin Warbosses (printed p.79, via
+  `source/transcribed/orcs-goblins-lista-ejercito.md`, corroborated by the p.98 reference table),
+  and for the special characters (printed pp.90-93, via `source/transcribed/orcs-goblins.md`):
+  Azhag I5/A4, Oglok I4/A4, Grom I5/A4, Gorbad I5/A4, Gorfang I4/A3, Morglum I5/A4, Skarsnik I6/A4.
+  The Black Orc Warboss already held the right values; only its comment was fixed. Skarsnik's row
+  carries a transcription note of its own: both passes misread it and it was settled by re-reading
+  the scan at 400 DPI. Corrected; no other stats or points changed. Linear OLD-18.
+- **Giant Spider Initiative** (`GIANT_SPIDER_STATS`) — left at **I1** deliberately. The book
+  contradicts itself: I1 in the p.79 character-mount table, I2 for the Forest Goblin Spider Riders
+  on p.83; both transcription passes agree on I1 at p.79, so it is the original that disagrees with
+  itself, not an OCR slip. The p.79 row is the one that applies to a character's mount, so it wins.
+  Logged as an open incidencia in the transcription and on Linear OLD-18.
 - **Orc Shaman mounts** (`og-shaman-orc`) — wrongly offered a Giant Wolf mount; the book's
   "Shamanes" section (printed p.81, "Monturas" paragraph, via
   `source/transcribed/orcs-goblins-lista-ejercito.md`) gives Orc/Savage Orc shamans War Boar (+8)
