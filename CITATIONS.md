@@ -170,6 +170,22 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   on p.83; both transcription passes agree on I1 at p.79, so it is the original that disagrees with
   itself, not an OCR slip. The p.79 row is the one that applies to a character's mount, so it wins.
   Logged as an open incidencia in the transcription and on Linear OLD-18.
+- **War Boar and Giant Wolf mount profiles** (`WAR_BOAR_STATS`, `GIANT_WOLF_STATS`) — the same
+  dropped-**H** column shift as the Warbosses above, but on the beast rows it moved **HA** as well
+  as I. The book (printed p.79 character-mount table, **read directly off the PDF scan**) gives
+  War Boar `18 4 0 3 4 1 3 1 3` and Giant Wolf `22 4 0 3 3 1 3 1 3` for the nine columns
+  M / HA / HP / F / R / H / I / A / L; the code held War Boar HA3/I2 and Giant Wolf HA3. Corrected
+  to HA4/I3 and HA4 respectively. The two rows are corroborated by the p.73/p.74 bestiary entries,
+  both p.82 rider entries, the two p.88 chariots, the p.98 reference table and the mount rows of
+  Oglok, Gorbad, Gorfang and Morglum (pp.90-92) — every one identical. Both are single constants
+  shared by character mounts, cavalry steeds and chariot draught teams, so the fix reaches all of
+  them at once. Movement converted as usual (18cm→7", 22cm→9"). No points changed. Linear OLD-20.
+- **Grom's Giant Wolves** (printed p.91) — the book really does print `22 4 0 3 **4** 1 3 1 3` for
+  the wolves pulling Grom's chariot, i.e. **T4** where every other Giant Wolf row in the book has
+  T3. Confirmed by re-reading the scan at 400 DPI, so it is a special-character variant, not an OCR
+  slip. Not modelled: `og-grom` carries no wolf profile (he takes the Wolf Chariot as a special
+  rule), and the generic `GIANT_WOLF_STATS` must stay at the book's T3. Recorded here so a future
+  pass does not "fix" the transcription. Linear OLD-20.
 - **Orc Shaman mounts** (`og-shaman-orc`) — wrongly offered a Giant Wolf mount; the book's
   "Shamanes" section (printed p.81, "Monturas" paragraph, via
   `source/transcribed/orcs-goblins-lista-ejercito.md`) gives Orc/Savage Orc shamans War Boar (+8)
