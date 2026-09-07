@@ -423,6 +423,38 @@ describe('mounts & profiles', () => {
     }
   })
 
+  // OLD-18 — book p.79 "Señor de la Guerra" table, corroborated by the p.98
+  // reference table. The nine book columns are M / HA / HP / F / R / H / I / A / L;
+  // the original transcription dropped H, so I and A landed one column out (I 3 /
+  // A 5 instead of I 5 / A 4). Regression guard for those two columns.
+  it('Orcs & Goblins: Warboss (Señor de la Guerra) statlines match the book p.79 table', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const statLine = (unitId: string) => orcs.units.find((u) => u.id === unitId)!.statLine
+    expect(statLine('og-warboss-black-orc')).toEqual({ M: 4, WS: 7, BS: 6, S: 5, T: 5, W: 3, I: 5, A: 4, Ld: 10 })
+    for (const id of ['og-warboss-orc', 'og-warboss-savage-orc']) {
+      expect(statLine(id), id).toEqual({ M: 4, WS: 6, BS: 6, S: 4, T: 5, W: 3, I: 5, A: 4, Ld: 9 })
+    }
+    for (const id of ['og-warboss-goblin', 'og-warboss-forest-goblin', 'og-warboss-night-goblin']) {
+      expect(statLine(id), id).toEqual({ M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 5, A: 4, Ld: 7 })
+    }
+  })
+
+  // OLD-18 — book pp.90-93 "Personajes especiales". Same dropped-H column shift as
+  // the Warbosses above. Skarsnik's row carries an extra caveat: both transcription
+  // passes misread it and it was resolved by re-reading the scan at 400 DPI, so his
+  // I 6 / A 4 is deliberate and not a typo for I 3 / A 6.
+  it('Orcs & Goblins: special character statlines match the book pp.90-93 tables', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const statLine = (unitId: string) => orcs.units.find((u) => u.id === unitId)!.statLine
+    expect(statLine('og-azhag'), 'Azhag el Carnicero (p.90)').toEqual({ M: 4, WS: 6, BS: 6, S: 4, T: 5, W: 3, I: 5, A: 4, Ld: 10 })
+    expect(statLine('og-oglok'), 'Oglok el Horrible (p.90)').toEqual({ M: 4, WS: 6, BS: 5, S: 4, T: 5, W: 2, I: 4, A: 4, Ld: 9 })
+    expect(statLine('og-grom'), 'Grom el Panzudo (p.91)').toEqual({ M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 5, A: 4, Ld: 7 })
+    expect(statLine('og-gorbad'), 'Gorbad Garra de Hierro (p.91)').toEqual({ M: 4, WS: 6, BS: 6, S: 4, T: 5, W: 3, I: 5, A: 4, Ld: 10 })
+    expect(statLine('og-gorfang'), 'Gorfang Rotgut (p.92)').toEqual({ M: 4, WS: 5, BS: 5, S: 5, T: 5, W: 3, I: 4, A: 3, Ld: 8 })
+    expect(statLine('og-morglum'), 'Morglum Quiebracuellos (p.92)').toEqual({ M: 4, WS: 7, BS: 6, S: 5, T: 5, W: 3, I: 5, A: 4, Ld: 10 })
+    expect(statLine('og-skarsnik'), 'Skarsnik (p.93)').toEqual({ M: 4, WS: 5, BS: 6, S: 4, T: 4, W: 3, I: 6, A: 4, Ld: 9 })
+  })
+
   // OLD-12 — book p.81 "Shamanes Orcos" table: each wizard level has its own
   // full profile (Shaman / Paladín / Maestro / Gran Shaman), and "Los Orcos
   // Salvajes usan los atributos de los Shamanes Orcos" — the Savage Orc Shaman
