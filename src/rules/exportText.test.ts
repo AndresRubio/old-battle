@@ -28,6 +28,27 @@ describe('exportRosterText', () => {
     expect(text).toContain('+ Shields')
   })
 
+  it('prints every option with its cost, marking per-model prices', () => {
+    // A mount already printed "(+8 pts)" while options printed bare, so a reader
+    // could not tell what an option added. Per-model options carry the /model
+    // suffix the editor uses, so a regiment's 1/model is not read as 1 total.
+    const text = exportRosterText(roster, empire)
+    expect(text).toContain('+ Shields (+1 pts/model)')
+
+    const orcs = getArmy('orcs-and-goblins')!
+    const ogRoster: Roster = {
+      id: 'o', name: 'Waaagh', armyId: 'orcs-and-goblins', pointsLimit: 1000,
+      entries: [
+        { id: '1', unitId: 'og-warboss-orc', size: 1, optionIds: ['shield', 'two-hand'], magicItemIds: [] },
+      ],
+    }
+    const ogText = exportRosterText(ogRoster, orcs)
+    // A character is one model, so no /model suffix on its Equipment List kit.
+    expect(ogText).toContain('+ Shield (+1 pts)')
+    expect(ogText).toContain('+ Two-handed weapon (+2 pts)')
+    expect(ogText).toContain('Options: Two-handed weapon (+2 pts), Shield (+1 pts)')
+  })
+
   it('reports total points', () => {
     const text = exportRosterText(roster, empire)
     // general 100 + sword 20 = 120; halberdiers 20*(7+1)=160 -> 280

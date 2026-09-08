@@ -1,5 +1,5 @@
-import type { Army, MagicItem, Roster, RosterEntry, StatLine } from '../data/types'
-import { effectiveStatLine, entryPoints, findMagicItem, findUnit } from './points'
+import type { Army, EquipmentOption, MagicItem, Roster, RosterEntry, StatLine, UnitProfile } from '../data/types'
+import { effectiveStatLine, entryPoints, findMagicItem, findUnit, unitOptionCost } from './points'
 import { summarize } from './summary'
 import { validateRoster } from './validate'
 import {
@@ -20,6 +20,23 @@ import {
   t,
 } from '../i18n/lang'
 import { isWizardLevelId } from '../data/unitOptions'
+
+/**
+ * An option's label with its price, formatted exactly as the editor shows it:
+ * a per-model price on a regiment carries the "/model" suffix so a 1/model
+ * shield is not read as 1 point total. Flat options, and every option on a
+ * single-model entry (character, chariot, war machine), print a plain total.
+ */
+function optionLabel(
+  unit: UnitProfile,
+  option: EquipmentOption,
+  optionIds: string[],
+  lang: Lang,
+): string {
+  const name = isWizardLevelId(option.id) ? wizardLevelLabel(option.id, lang) : optionText(option.name, lang)
+  const perModel = unit.role === 'regiment' && !option.flat ? t('perModel', lang) : ''
+  return `${name} (+${unitOptionCost(unit, option, optionIds)} ${t('pts', lang)}${perModel})`
+}
 
 /** The nine characteristic columns, in the canonical M/WS/BS/S/T/W/I/A/Ld order. */
 const STAT_KEYS = ['M', 'WS', 'BS', 'S', 'T', 'W', 'I', 'A', 'Ld'] as const
@@ -80,9 +97,7 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
   const mountOpts = (mount?.options ?? []).filter((o) => entry.optionIds.includes(o.id))
   if (opts.length > 0 || mountOpts.length > 0) {
     const labels = [
-      ...opts.map((o) =>
-        isWizardLevelId(o.id) ? wizardLevelLabel(o.id, lang) : optionText(o.name, lang),
-      ),
+      ...opts.map((o) => optionLabel(unit, o, entry.optionIds, lang)),
       ...mountOpts.map((o) => optionText(o.name, lang)),
     ]
     lines.push(`  ${t('options', lang)}: ${labels.join(', ')}`)
@@ -147,8 +162,7 @@ export function exportRosterText(roster: Roster, army: Army, lang: Lang = 'en'):
 
       const opts = (unit.options ?? []).filter((o) => e.optionIds.includes(o.id))
       for (const o of opts) {
-        const label = isWizardLevelId(o.id) ? wizardLevelLabel(o.id, lang) : optionText(o.name, lang)
-        lines.push(`    + ${label}`)
+        lines.push(`    + ${optionLabel(unit, o, e.optionIds, lang)}`)
       }
       const mount = e.mountId ? (unit.mounts ?? []).find((m) => m.id === e.mountId) : undefined
       if (mount) {

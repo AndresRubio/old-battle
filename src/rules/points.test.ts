@@ -17,6 +17,18 @@ const mk = (over: Partial<RosterEntry> & { unitId: string }): RosterEntry => ({
 })
 
 describe('entryPoints — flat vs per-model options', () => {
+  it('never multiplies a single-model entry by size — only regiments have a size', () => {
+    // `size` is meaningless on a character: the editor offers no size control and
+    // defaultSize() returns 1. But a hand-edited or corrupted stored roster can
+    // carry any number, and before this guard it silently multiplied the whole
+    // kit (an Orc Boss at size 3 with shield + light armour billed 108 instead
+    // of 36). Points must not scale with a field the character does not use.
+    const one = mk({ unitId: 'og-boss-orc', size: 1, optionIds: ['shield', 'light-armour'] })
+    const three = mk({ unitId: 'og-boss-orc', size: 3, optionIds: ['shield', 'light-armour'] })
+    expect(entryPoints(one, orcs)).toBe(36) // 33 base + shield 1 + light armour 2
+    expect(entryPoints(three, orcs)).toBe(entryPoints(one, orcs))
+  })
+
   it('multiplies per-model options by size but charges flat options once', () => {
     // Halberdiers base 7/model. Shield is per-model (+1); the standard and
     // musician are flat and each cost double an EQUIPPED rank-and-file model
@@ -228,15 +240,22 @@ describe('entryPoints — chariot mounts with nested options (Orcs & Goblins)', 
   })
 
   it('never multiplies mount options by unit size', () => {
-    // Defensive: even with an (artificial) size > 1, mount options charge once.
-    // 3×110 (models) + 81 (chariot) + 20 (scythes) + 2×1 (shields, 2 crew) = 433.
-    const entry = mk({
-      unitId: 'og-warboss-orc',
-      size: 3,
-      mountId: 'mount-boar-chariot',
-      optionIds: ['mount-boar-chariot-scythes', 'mount-boar-chariot-shields'],
-    })
-    expect(entryPoints(entry, orcs)).toBe(433)
+    // Defensive: an (artificial) size > 1 on a character changes nothing at all
+    // — not the mount options, and since entryPoints only multiplies regiments,
+    // not the base cost either. 110 + 81 (chariot) + 20 (scythes) + 2×1
+    // (shields, 2 crew) = 213, whatever `size` says.
+    const at = (size: number) =>
+      entryPoints(
+        mk({
+          unitId: 'og-warboss-orc',
+          size,
+          mountId: 'mount-boar-chariot',
+          optionIds: ['mount-boar-chariot-scythes', 'mount-boar-chariot-shields'],
+        }),
+        orcs,
+      )
+    expect(at(1)).toBe(213)
+    expect(at(3)).toBe(213)
   })
 })
 

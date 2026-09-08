@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Army, Roster } from '../data/types'
 import { exportRosterText } from '../rules/exportText'
 import { useLang, t } from '../i18n/lang'
@@ -13,6 +13,16 @@ export function ExportDialog({ roster, army, onClose }: Props) {
   const [lang] = useLang()
   const text = exportRosterText(roster, army, lang)
   const [copied, setCopied] = useState(false)
+
+  // Escape closes the dialog. Without this the only way out was the ✕ or a
+  // backdrop click, which is not what a modal trains you to expect.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
 
   const copy = async () => {
     try {
