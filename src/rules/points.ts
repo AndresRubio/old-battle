@@ -106,7 +106,13 @@ export function effectiveStatLine(unit: UnitProfile, optionIds: string[]): StatL
 export function entryPoints(entry: RosterEntry, army: Army): number {
   const unit = findUnit(army, entry.unitId)
   if (!unit) return 0
-  const modelPoints = equippedModelCost(unit, entry.optionIds) * entry.size
+  // Only a regiment has a size. Every other role is a single model: the editor
+  // renders the size stepper behind the same `role === 'regiment'` test, and
+  // defaultSize() hands character / war machine / monster / chariot a 1. A
+  // hand-edited or corrupted stored roster can still carry any number, and
+  // without this guard the whole equipped cost silently scaled with it.
+  const models = unit.role === 'regiment' ? entry.size : 1
+  const modelPoints = equippedModelCost(unit, entry.optionIds) * models
   const flatPoints = flatOptionPoints(unit, entry.optionIds)
   const magicPoints = entry.magicItemIds.reduce((sum, id) => {
     const item = findMagicItem(army, id)

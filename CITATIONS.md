@@ -170,6 +170,18 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   on p.83; both transcription passes agree on I1 at p.79, so it is the original that disagrees with
   itself, not an OCR slip. The p.79 row is the one that applies to a character's mount, so it wins.
   Logged as an open incidencia in the transcription and on Linear OLD-18.
+- **Carrying several weapons at once** — deliberately NOT restricted. A character may buy a bow, a
+  short bow and a crossbow together, or a halberd and a two-handed weapon, and the builder allows
+  it. The rulebook is explicit that a warrior carries a hand weapon *plus* other weapons and picks
+  which to use: "Se supone que todos los guerreros están equipados con una espada (u otra arma de
+  mano similar). Además, algunos guerreros estarán equipados con otras armas como lanzas, hachas a
+  dos manos o alabardas. Si el jugador lo desea, las tropas equipadas de esta forma podrán golpear
+  con su arma de mano en vez de hacerlo con su otra arma" (Reglamento printed p.54). The
+  restrictions the rules do impose are on *use*, not purchase — a two-handed weapon or halberd
+  bars the shield in close combat (p.54-55), and only one magic weapon may be wielded (p.93,
+  already enforced by `RESTRICTED_CATEGORIES`). Nothing forbids owning more than one weapon, and
+  the O&G Equipment List only prints prices, so adding an `exclusiveGroup` here would invent a
+  rule the books do not contain. Buying redundant weapons wastes points; it is not illegal.
 - **Character equipment list** (`OG_CHARACTER_EQUIPMENT`) — the book's "LISTA DE EQUIPO" (printed
   p.78, PDF page 80, read directly off the scan) is "todas las armas y armaduras normales con que
   puede equiparse un personaje Orco o Goblin": additional hand weapon 1, two-handed weapon 2,
