@@ -29,6 +29,31 @@ const SHORTBOW_1: EquipmentOption = { id: 'short-bow', name: 'Short bow', points
 const SHORTBOW_HALF: EquipmentOption = { id: 'short-bow', name: 'Short bow', pointsPerModel: 0.5 }
 const CROSSBOW_1: EquipmentOption = { id: 'crossbow', name: 'Crossbow (instead of Bow)', pointsPerModel: 1 }
 
+// --- Character equipment (book printed p.78 "LISTA DE EQUIPO", PDF page 80):
+//     "La siguiente tabla indica todas las armas y armaduras normales con que
+//     puede equiparse un personaje Orco o Goblin." The first Sword/Axe/Mace or
+//     any other hand weapon is free and is already every character's base kit,
+//     so only the nine paid rows appear here:
+//       arma de mano adicional 1 · arma a dos manos 2 · lanza 1 · alabarda 2 ·
+//       arco 2 · arco corto 1 · ballesta 3 · escudo 1 · armadura ligera 2
+//     Names are SINGULAR — a character is one model. The plural per-model
+//     constants above are the regiment prices from the pp.82-88 OPCIONES lines,
+//     a different table that happens to share several ids.
+//     The book offers Orcs & Goblins NO heavy armour: the armour-save table on
+//     the same page mentions it, but the Equipment List does not list it, so its
+//     absence here is the book's, not an omission. ---
+const OG_CHARACTER_EQUIPMENT: EquipmentOption[] = [
+  { id: 'add-hand-weapon', name: 'Additional hand weapon', pointsPerModel: 1 },
+  { id: 'two-hand', name: 'Two-handed weapon', pointsPerModel: 2 },
+  { id: 'spear', name: 'Spear', pointsPerModel: 1 },
+  { id: 'halberd', name: 'Halberd', pointsPerModel: 2 },
+  { id: 'bow', name: 'Bow', pointsPerModel: 2 },
+  { id: 'short-bow', name: 'Short bow', pointsPerModel: 1 },
+  { id: 'crossbow', name: 'Crossbow', pointsPerModel: 3 },
+  { id: 'shield', name: 'Shield', pointsPerModel: 1 },
+  { id: 'light-armour', name: 'Light armour', pointsPerModel: 2 },
+]
+
 // Shaman level upgrades — cumulative costs from the book (p.81).
 // Each level has its own FULL profile per the p.81 "Shamanes Orcos" table
 // (M10cm→4"): Shaman S3 W1 I3 A1 / Paladín S4 W2 I3 A1 / Maestro S4 W3 I4 A2 /
@@ -223,6 +248,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     mounts: ORC_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Immune to Animosity', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -237,6 +263,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     mounts: ORC_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Animosity', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -251,6 +278,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     mounts: ORC_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Animosity', 'Frenzy (Savage Orcs)', '6+ ward save (war paint)', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -265,6 +293,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     mounts: GOBLIN_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Animosity', 'Fear Elves', 'May ride Giant Wolf (+4 pts) or a monster/chariot'],
   },
   {
@@ -279,6 +308,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     mounts: FOREST_GOBLIN_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Animosity', 'Fear Elves', 'May ride Giant Spider (+4 pts) or a monster/chariot'],
   },
   {
@@ -293,6 +323,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     mounts: NIGHT_GOBLIN_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'May ride a monster or chariot only'],
   },
 
@@ -312,6 +343,7 @@ const units: UnitProfile[] = [
     max: 1,
     // p.79 "Monturas: mismas que el Señor de la Guerra" — same mounts as the Warlord.
     mounts: ORC_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Army Battle Standard', 'Immune to Animosity', 'One magic item (may be a magic standard)'],
   },
   {
@@ -329,6 +361,7 @@ const units: UnitProfile[] = [
     max: 1,
     // p.79 "Monturas: mismas que el Señor de la Guerra" — same mounts as the Warlord.
     mounts: ORC_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Army Battle Standard', 'Animosity', 'One magic item (may be a magic standard)'],
   },
   {
@@ -346,6 +379,7 @@ const units: UnitProfile[] = [
     max: 1,
     // p.79 "Monturas: mismas que el Señor de la Guerra" — same mounts as the Warlord.
     mounts: ORC_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Army Battle Standard', 'Animosity', 'Frenzy (Savage Orcs)', 'One magic item (may be a magic standard)'],
   },
   {
@@ -363,6 +397,7 @@ const units: UnitProfile[] = [
     max: 1,
     // p.79 "Monturas: mismas que el Señor de la Guerra" — same mounts as the Warlord.
     mounts: GOBLIN_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Army Battle Standard', 'Animosity', 'Fear Elves', 'One magic item (may be a magic standard)'],
   },
   {
@@ -380,6 +415,7 @@ const units: UnitProfile[] = [
     max: 1,
     // p.79 "Monturas: mismas que el Señor de la Guerra" — same mounts as the Warlord.
     mounts: FOREST_GOBLIN_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Army Battle Standard', 'Animosity', 'Fear Elves', 'One magic item (may be a magic standard)'],
   },
   {
@@ -397,6 +433,7 @@ const units: UnitProfile[] = [
     max: 1,
     // p.79 "Monturas: mismas que el Señor de la Guerra" — same mounts as the Warlord.
     mounts: NIGHT_GOBLIN_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Army Battle Standard', 'Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'One magic item (may be a magic standard)'],
   },
 
@@ -412,6 +449,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     mounts: ORC_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Immune to Animosity', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -425,6 +463,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     mounts: ORC_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Animosity', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -438,6 +477,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     mounts: ORC_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Animosity', 'Frenzy (Savage Orcs)', '6+ ward save (war paint)', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
@@ -451,6 +491,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     mounts: GOBLIN_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Animosity', 'Fear Elves', 'May ride Giant Wolf (+4 pts) or a monster/chariot'],
   },
   {
@@ -464,6 +505,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     mounts: FOREST_GOBLIN_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Animosity', 'Fear Elves', 'May ride Giant Spider (+4 pts) or a monster/chariot'],
   },
   {
@@ -477,6 +519,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     mounts: NIGHT_GOBLIN_MOUNTS,
+    options: OG_CHARACTER_EQUIPMENT,
     specialRules: ['Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'May ride a monster or chariot only'],
   },
 
@@ -491,7 +534,8 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 5, BS: 4, S: 5, T: 4, W: 1, I: 3, A: 2, Ld: 8 },
     isCharacter: true,
     characterRank: 'champion',
-    specialRules: ['Leads a Black Orc regiment', 'Immune to Animosity'],
+    options: OG_CHARACTER_EQUIPMENT,
+    specialRules: ['Equipped as his regiment (Equipment List prices)', 'Leads a Black Orc regiment', 'Immune to Animosity'],
   },
   {
     id: 'og-boss-orc',
@@ -503,7 +547,8 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 1, I: 3, A: 2, Ld: 7 },
     isCharacter: true,
     characterRank: 'champion',
-    specialRules: ['Leads an Orc regiment', 'Animosity'],
+    options: OG_CHARACTER_EQUIPMENT,
+    specialRules: ['Equipped as his regiment (Equipment List prices)', 'Leads an Orc regiment', 'Animosity'],
   },
   {
     id: 'og-boss-savage-orc',
@@ -515,7 +560,8 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 1, I: 3, A: 2, Ld: 7 },
     isCharacter: true,
     characterRank: 'champion',
-    specialRules: ['Leads a Savage Orc regiment', 'Animosity', 'Frenzy (Savage Orcs)'],
+    options: OG_CHARACTER_EQUIPMENT,
+    specialRules: ['Equipped as his regiment (Equipment List prices)', 'Leads a Savage Orc regiment', 'Animosity', 'Frenzy (Savage Orcs)'],
   },
   {
     id: 'og-boss-goblin',
@@ -527,7 +573,8 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 },
     isCharacter: true,
     characterRank: 'champion',
-    specialRules: ['Leads a Goblin regiment', 'Animosity', 'Fear Elves'],
+    options: OG_CHARACTER_EQUIPMENT,
+    specialRules: ['Equipped as his regiment (Equipment List prices)', 'Leads a Goblin regiment', 'Animosity', 'Fear Elves'],
   },
   {
     id: 'og-boss-forest-goblin',
@@ -539,7 +586,8 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 },
     isCharacter: true,
     characterRank: 'champion',
-    specialRules: ['Leads a Forest Goblin regiment', 'Animosity', 'Fear Elves'],
+    options: OG_CHARACTER_EQUIPMENT,
+    specialRules: ['Equipped as his regiment (Equipment List prices)', 'Leads a Forest Goblin regiment', 'Animosity', 'Fear Elves'],
   },
   {
     id: 'og-boss-night-goblin',
@@ -551,7 +599,8 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 },
     isCharacter: true,
     characterRank: 'champion',
-    specialRules: ['Leads a Night Goblin regiment', 'Animosity', 'Fear Elves', 'Hatred of Dwarfs'],
+    options: OG_CHARACTER_EQUIPMENT,
+    specialRules: ['Equipped as his regiment (Equipment List prices)', 'Leads a Night Goblin regiment', 'Animosity', 'Fear Elves', 'Hatred of Dwarfs'],
   },
 
   // ----- Shamanes (Wizards) — wizard1 -----
@@ -567,9 +616,9 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     lores: ['waaagh'],
-    options: ORC_SHAMAN_LEVELS,
+    options: [...ORC_SHAMAN_LEVELS, ...OG_CHARACTER_EQUIPMENT],
     mounts: ORC_MOUNTS,
-    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'May ride War Boar (+8 pts) or a monster/chariot'],
+    specialRules: ['Equipment limited to what his troop type may take', 'Wizard (Waaagh! Magic)', 'Animosity', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
     id: 'og-shaman-savage-orc',
@@ -587,12 +636,12 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     lores: ['waaagh'],
-    options: SAVAGE_ORC_SHAMAN_LEVELS,
+    options: [...SAVAGE_ORC_SHAMAN_LEVELS, ...OG_CHARACTER_EQUIPMENT],
     mounts: ORC_MOUNTS,
     // Book p.19: joining a Savage Orc unit (Warriors or Boar Boyz) grants him an
     // extra magic card (his alone) and upgrades the war-paint ward to 5+ for both
     // the Shaman and the unit's warriors.
-    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Frenzy (Savage Orcs)', '6+ ward save (war paint)', 'Joined to a Savage Orc unit: gains an extra magic card (usable only by him)', 'Joined to a Savage Orc unit: 5+ ward save for the Shaman and the unit', 'May ride War Boar (+8 pts) or a monster/chariot'],
+    specialRules: ['Equipment limited to what his troop type may take', 'Wizard (Waaagh! Magic)', 'Animosity', 'Frenzy (Savage Orcs)', '6+ ward save (war paint)', 'Joined to a Savage Orc unit: gains an extra magic card (usable only by him)', 'Joined to a Savage Orc unit: 5+ ward save for the Shaman and the unit', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
   {
     id: 'og-shaman-goblin',
@@ -606,9 +655,9 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     lores: ['waaagh'],
-    options: GOBLIN_SHAMAN_LEVELS,
+    options: [...GOBLIN_SHAMAN_LEVELS, ...OG_CHARACTER_EQUIPMENT],
     mounts: GOBLIN_MOUNTS,
-    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'May ride Giant Wolf (+4 pts) or a monster/chariot'],
+    specialRules: ['Equipment limited to what his troop type may take', 'Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'May ride Giant Wolf (+4 pts) or a monster/chariot'],
   },
   {
     id: 'og-shaman-forest-goblin',
@@ -622,7 +671,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     lores: ['waaagh'],
-    options: GOBLIN_SHAMAN_LEVELS,
+    options: [...GOBLIN_SHAMAN_LEVELS, ...OG_CHARACTER_EQUIPMENT],
     mounts: FOREST_GOBLIN_MOUNTS,
     // "Shamanes Goblins Silvanos", book printed p.19 (PDF p.21, offset +2):
     // spider venom lets him add +1 to his Mental Burst roll and, on a
@@ -630,7 +679,7 @@ const units: UnitProfile[] = [
     // effect (worst possible result is 2, "Estallido Mental" is impossible);
     // but any failed Waaagh! check (even one "saved" by that natural 6)
     // makes him stagger 2D6cm in a random (scatter die) direction.
-    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'May ride Giant Spider (+4 pts) or a monster/chariot', 'Spider venom: +1 to the Mental Burst roll; a natural 6 counts as passing the Waaagh! check with no ill effect', 'Any failed Waaagh! check makes him stagger 2D6cm in a random direction'],
+    specialRules: ['Equipment limited to what his troop type may take', 'Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'May ride Giant Spider (+4 pts) or a monster/chariot', 'Spider venom: +1 to the Mental Burst roll; a natural 6 counts as passing the Waaagh! check with no ill effect', 'Any failed Waaagh! check makes him stagger 2D6cm in a random direction'],
   },
   {
     id: 'og-shaman-night-goblin',
@@ -644,7 +693,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     lores: ['waaagh'],
-    options: GOBLIN_SHAMAN_LEVELS,
+    options: [...GOBLIN_SHAMAN_LEVELS, ...OG_CHARACTER_EQUIPMENT],
     mounts: NIGHT_GOBLIN_MOUNTS,
     // "Shamanes Goblins Nocturnos", book printed p.18 (PDF p.20, offset +2):
     // carries one Shaman Mushroom per wizard level (each usable once per
@@ -653,7 +702,7 @@ const units: UnitProfile[] = [
     // -1 on the Mental Burst table; and eating one lets him cast without
     // Orcs & Goblins nearby, though with no Waaagh! energy within 30cm he
     // still draws no ordinary Winds of Magic cards.
-    specialRules: ['Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'Carries Shaman Mushrooms (1 per wizard level, each usable once per battle)', 'Eats a mushroom before the Magic phase: 1D6 extra magic cards, usable only by him', 'After eating a mushroom, -1 to the Mental Burst roll if he must test that phase', 'After eating a mushroom, may cast without Orcs & Goblins nearby (no energy source in 30cm = mushroom cards only)', 'May ride a monster or chariot only'],
+    specialRules: ['Equipment limited to what his troop type may take', 'Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'Hatred of Dwarfs', 'Carries Shaman Mushrooms (1 per wizard level, each usable once per battle)', 'Eats a mushroom before the Magic phase: 1D6 extra magic cards, usable only by him', 'After eating a mushroom, -1 to the Mental Burst roll if he must test that phase', 'After eating a mushroom, may cast without Orcs & Goblins nearby (no energy source in 30cm = mushroom cards only)', 'May ride a monster or chariot only'],
   },
 
   // ----- Personajes Especiales (0-1 each) -----

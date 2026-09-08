@@ -488,6 +488,65 @@ describe('mounts & profiles', () => {
     for (const w of wolves) expect(w.statLine, `${w.name} @ ${w.where}`).toEqual(GIANT_WOLF)
   })
 
+  // OLD-19 — book printed p.78 "LISTA DE EQUIPO" (PDF page 80), the table of
+  // "todas las armas y armaduras normales con que puede equiparse un personaje
+  // Orco o Goblin". The first hand weapon is free and is already each character's
+  // base equipment, so only the nine paid rows are offered. Every non-special
+  // character gets the list: the Warboss (p.79), Battle Standard (p.79) and Big
+  // Boss (p.80) may take "cualquier arma o armadura" from it, the Shaman (p.81)
+  // whatever his troop type allows, and the Boss (p.80) is equipped as his
+  // regiment but priced from this same table.
+  const OG_EQUIPMENT_LIST: [string, number][] = [
+    ['add-hand-weapon', 1],
+    ['two-hand', 2],
+    ['spear', 1],
+    ['halberd', 2],
+    ['bow', 2],
+    ['short-bow', 1],
+    ['crossbow', 3],
+    ['shield', 1],
+    ['light-armour', 2],
+  ]
+
+  it('Orcs & Goblins: every non-special character offers the p.78 Equipment List at book prices', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const characters = orcs.units.filter(
+      (u) => u.isCharacter && !(u.specialRules ?? []).some((r) => r.startsWith('Special character')),
+    )
+    // 6 Warbosses + 6 Battle Standards + 6 Big Bosses + 6 Bosses + 5 Shamans.
+    expect(characters.length, 'non-special O&G characters').toBe(29)
+
+    for (const unit of characters) {
+      const opts = unit.options ?? []
+      for (const [id, points] of OG_EQUIPMENT_LIST) {
+        const opt = opts.find((o) => o.id === id)
+        expect(opt, `${unit.id} offers ${id}`).toBeDefined()
+        expect(opt!.pointsPerModel, `${unit.id} ${id} cost`).toBe(points)
+        // Characters are single models; the list price must not be a flat
+        // per-unit charge or a model-cost multiple.
+        expect(opt!.flat ?? false, `${unit.id} ${id} flat`).toBe(false)
+        expect(opt!.timesModelCost, `${unit.id} ${id} timesModelCost`).toBeUndefined()
+      }
+    }
+  })
+
+  // The book gives special characters a fixed kit in their own "ARMAS Y ARMADURA"
+  // paragraph (Azhag light armour + shield, Grom light armour + Elf-Biter, …), so
+  // they must NOT inherit the free-choice Equipment List.
+  it('Orcs & Goblins: special characters keep their fixed book kit, no Equipment List', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const specials = orcs.units.filter((u) =>
+      (u.specialRules ?? []).some((r) => r.startsWith('Special character')),
+    )
+    expect(specials.length, 'O&G special characters').toBe(7)
+    for (const unit of specials) {
+      const ids = (unit.options ?? []).map((o) => o.id)
+      for (const [id] of OG_EQUIPMENT_LIST) {
+        expect(ids, `${unit.id} must not offer ${id}`).not.toContain(id)
+      }
+    }
+  })
+
   // OLD-12 — book p.81 "Shamanes Orcos" table: each wizard level has its own
   // full profile (Shaman / Paladín / Maestro / Gran Shaman), and "Los Orcos
   // Salvajes usan los atributos de los Shamanes Orcos" — the Savage Orc Shaman
