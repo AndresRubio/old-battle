@@ -12,6 +12,11 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   '6+ ward save (war paint)': 'salvación especial 6+ (pintura de guerra)',
   'Always rides a Bretonnian Warhorse (+3)': 'Siempre monta un Caballo de Guerra Bretón (+3)',
   'Animosity': 'Animosidad',
+  // O&G p.78 Equipment List caveats — the book restricts who may take what, but
+  // the app cannot enforce either (a Boss is not linked to a regiment entry, and
+  // 'troop type' has no model here), so both are shown as notes. See OLD-19.
+  'Equipped as his regiment (Equipment List prices)': 'Equipado como su regimiento (precios de la Lista de Equipo)',
+  'Equipment limited to what his troop type may take': 'Equipo limitado al permitido a su tipo de tropa',
   'Armed as the rest of his unit': 'Armado como el resto de su unidad',
   'Army Battle Standard': 'Estandarte de Batalla del Ejército',
   'Army General': 'General del Ejército',

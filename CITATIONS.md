@@ -170,6 +170,23 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   on p.83; both transcription passes agree on I1 at p.79, so it is the original that disagrees with
   itself, not an OCR slip. The p.79 row is the one that applies to a character's mount, so it wins.
   Logged as an open incidencia in the transcription and on Linear OLD-18.
+- **Character equipment list** (`OG_CHARACTER_EQUIPMENT`) — the book's "LISTA DE EQUIPO" (printed
+  p.78, PDF page 80, read directly off the scan) is "todas las armas y armaduras normales con que
+  puede equiparse un personaje Orco o Goblin": additional hand weapon 1, two-handed weapon 2,
+  spear 1, halberd 2, bow 2, short bow 1, crossbow 3, shield 1, light armour 2. The first hand
+  weapon is free and is already each character's base kit, so only these nine paid rows are
+  offered. The list is deliberately **without heavy armour** — the armour-save table on the same
+  page mentions Armadura Pesada, but the Equipment List does not offer it to Orcs & Goblins.
+  Applied to all 29 non-special characters: Warboss ("cualquier arma o armadura de entre las que
+  aparecen en la Lista de Equipo", p.79), Battle Standard (same wording, p.79), Big Boss
+  ("cualquier arma o armadura de las indicadas en la Lista de Equipo", p.80), Shaman ("cualquiera
+  de las armas o armaduras permitidas al tipo de tropas indicadas en esta lista", p.81) and Boss
+  ("siempre está armado y equipado de la misma forma que el resto de los miembros de su regimiento
+  — consulta la Lista de Equipo para sus valores en puntos", p.80). The seven special characters
+  are excluded: each has a fixed kit in its own "ARMAS Y ARMADURA" paragraph. Two of the book's
+  restrictions cannot be enforced by the app — a Boss entry has no link to a regiment entry, and
+  "troop type" is not modelled — so both are surfaced as note tags on the affected entries rather
+  than silently dropped or silently invented. Linear OLD-19.
 - **War Boar and Giant Wolf mount profiles** (`WAR_BOAR_STATS`, `GIANT_WOLF_STATS`) — the same
   dropped-**H** column shift as the Warbosses above, but on the beast rows it moved **HA** as well
   as I. The book (printed p.79 character-mount table, **read directly off the PDF scan**) gives
