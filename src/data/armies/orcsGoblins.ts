@@ -1126,6 +1126,40 @@ const units: UnitProfile[] = [
     options: [ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, LIGHT_ARMOUR_2],
     specialRules: ['Causes fear', 'Hand weapon'],
   },
+  {
+    // OLD-27: Giants are a Regiments-section entry in the 5th-edition O&G book,
+    // not a Monster — the book's Monsters table has no Giant line, and the
+    // entry's own specialRules already say Giants "May form units of fewer than
+    // 5", i.e. they can form actual multi-model units. Moved here from the
+    // Monsters section, role changed from 'monster' to 'regiment'. Points,
+    // statLine and specialRules are unchanged from before.
+    //
+    // minSize: "May form units of fewer than 5" only makes sense as an explicit
+    // exemption from a normal regiment's 5-model minimum (ordinary regiments in
+    // this file use `minSize: 5`), and Giants are called out as allowed all the
+    // way down to a unit of 1 — so `minSize: 1`. Read directly off this entry's
+    // own specialRules text already in the file, not an invented number.
+    //
+    // noCommand: true — a Giant is a single large monstrous individual model
+    // (Large target, terror, special attacks stand in for normal weapon/armour
+    // options; no shield/hand-weapon kit at all), not rank-and-file infantry
+    // like `og-ogres` (an ordinary mercenary troop regiment, correctly left
+    // WITHOUT `noCommand` in OLD-22). That puts Giants with the codebase's other
+    // non-rank-and-file multi-model entries — `og-night-goblin-fanatics` and
+    // `og-squig-hoppers`, both individual models with `noCommand: true` — rather
+    // than with an equipped troop regiment, so a unit of Giants gets no auto
+    // standard+musician.
+    id: 'og-giant',
+    name: 'Giant',
+    nameEs: 'Gigante',
+    role: 'regiment',
+    pointsPerModel: 200,
+    // PDF p.86: M15 HA3 HP3 F7 R6 H6 I3 A– L6 (special attacks)
+    statLine: { M: 6, WS: 3, BS: 3, S: 7, T: 6, W: 6, I: 3, A: 1, Ld: 6 },
+    minSize: 1,
+    noCommand: true,
+    specialRules: ['Large target', 'Causes terror', 'Special attacks (club, jump, etc.)', 'May form units of fewer than 5'],
+  },
 
   // ===== MÁQUINAS DE GUERRA — War machines (0-25%) =====
   {
@@ -1223,16 +1257,6 @@ const units: UnitProfile[] = [
   },
 
   // ===== MONSTRUOS — Monsters (0-25%) =====
-  {
-    id: 'og-giant',
-    name: 'Giant',
-    nameEs: 'Gigante',
-    role: 'monster',
-    pointsPerModel: 200,
-    // PDF p.86: M15 HA3 HP3 F7 R6 H6 I3 A– L6 (special attacks)
-    statLine: { M: 6, WS: 3, BS: 3, S: 7, T: 6, W: 6, I: 3, A: 1, Ld: 6 },
-    specialRules: ['Large target', 'Causes terror', 'Special attacks (club, jump, etc.)', 'May form units of fewer than 5'],
-  },
   {
     id: 'og-trolls',
     name: 'Trolls',

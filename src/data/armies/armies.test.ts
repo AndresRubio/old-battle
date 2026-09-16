@@ -773,6 +773,57 @@ describe('OLD-22: Ogres are a Regiment, not a Monster', () => {
   })
 })
 
+describe('OLD-27: Giants are a Regiment, not a Monster', () => {
+  const og = getArmy('orcs-and-goblins')!
+  const giant = og.units.find((u) => u.id === 'og-giant')
+
+  it('og-giant has role "regiment" and keeps its book-accurate points/stats/specialRules', () => {
+    expect(giant, 'og-giant not found').toBeDefined()
+    expect(giant!.role).toBe('regiment')
+    expect(giant!.pointsPerModel).toBe(200)
+    // PDF p.86: M15 HA3 HP3 F7 R6 H6 I3 A– L6 (special attacks) — unchanged by the category move.
+    expect(giant!.statLine).toEqual({ M: 6, WS: 3, BS: 3, S: 7, T: 6, W: 6, I: 3, A: 1, Ld: 6 })
+    expect(giant!.specialRules).toEqual([
+      'Large target', 'Causes terror', 'Special attacks (club, jump, etc.)', 'May form units of fewer than 5',
+    ])
+  })
+
+  it('minSize: 1 — "may form units of fewer than 5" is an exemption from the normal 5-model floor', () => {
+    // The entry's own specialRules text ("May form units of fewer than 5") only
+    // makes sense as an explicit exemption from a normal regiment's minSize: 5
+    // (see e.g. og-orc-boyz, og-goblins above) — a lone Giant must be legal.
+    expect(giant!.minSize).toBe(1)
+  })
+
+  it('noCommand: true — a lone monstrous model, not rank-and-file, so no auto command group', () => {
+    // Unlike og-ogres (an ordinary mercenary troop regiment, correctly left
+    // WITHOUT noCommand in OLD-22), a Giant has no shield/hand-weapon kit at
+    // all — Large target/terror/special attacks stand in for normal equipment,
+    // the same shape as og-night-goblin-fanatics/og-squig-hoppers (individual
+    // models, both noCommand: true).
+    expect(giant!.noCommand).toBe(true)
+    expect((giant!.options ?? []).map((o) => o.id)).not.toEqual(
+      expect.arrayContaining(['standard', 'musician']),
+    )
+  })
+
+  it('counts toward the Regiments cap and NOT the Monsters cap in the Muster Check', () => {
+    const roster: Roster = {
+      id: 'r',
+      name: 'Giants test',
+      armyId: 'orcs-and-goblins',
+      pointsLimit: 1000,
+      entries: [{ id: '1', unitId: 'og-giant', size: 2, optionIds: [], magicItemIds: [] }],
+    }
+    const points = entryPoints(roster.entries[0], og)
+    expect(points).toBe(400) // 2 * 200, no options
+
+    const s = summarize(roster, og)
+    expect(s.caps.regiments.points).toBe(points)
+    expect(s.caps.monsters.points).toBe(0)
+  })
+})
+
 describe('Empire — sample legal list validates cleanly', () => {
   it('a balanced 1000pt list produces no violations', () => {
     const empire = getArmy('empire')!
