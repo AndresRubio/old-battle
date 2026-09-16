@@ -7,6 +7,8 @@ import {
   hasAnyOptions,
   filterMagicItems,
   magicStandardNeedsBearer,
+  resolveStatNotes,
+  statCell,
 } from './entryView'
 import { mountOptionCost } from './points'
 import type { Army, MagicItem, MountOption, UnitProfile } from '../data/types'
@@ -33,6 +35,59 @@ const baseUnit: UnitProfile = {
 const army = {
   magicItems: [banner('b1'), banner('b-special', true), sword],
 } as unknown as Army
+
+// OLD-43 — `statCell` is the single statement of "a book token REPLACES the
+// numeric value", shared by the editor's stat strip and the plaintext export.
+describe('statCell', () => {
+  const line = { M: 4, WS: 3, BS: 3, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 7 }
+
+  it('prints the number when the column has one and no note', () => {
+    expect(statCell('A', line)).toBe('1')
+    expect(statCell('M', line, {})).toBe('4')
+  })
+
+  it('prints "–" for a column the book leaves blank', () => {
+    expect(statCell('A', { T: 7, W: 3 })).toBe('–')
+  })
+
+  it('lets a note WIN over a number that is still present', () => {
+    // Data should never hold both, but the precedence is what the renderers
+    // depend on: nothing may show an invented number where a token was read.
+    expect(statCell('A', line, { A: '1D6' })).toBe('1D6')
+    expect(statCell('M', line, { M: '5D6cm' })).toBe('5D6cm')
+  })
+
+  it('works for ANY of the nine columns, not just Attacks', () => {
+    expect(statCell('WS', {}, { WS: 'Especial' })).toBe('Especial')
+    expect(statCell('Ld', {}, { Ld: '–' })).toBe('–')
+  })
+})
+
+describe('resolveStatNotes', () => {
+  const src = {
+    statNotes: { M: '2D6"', WS: 'Sp', A: 'D6' },
+    statNotesEs: { WS: 'Esp' },
+  }
+
+  it('returns the English notes untouched in English', () => {
+    expect(resolveStatNotes(src, 'en')).toEqual({ M: '2D6"', WS: 'Sp', A: 'D6' })
+  })
+
+  it('overrides ONLY the columns statNotesEs names', () => {
+    // The dice columns are language-neutral and must survive the merge.
+    expect(resolveStatNotes(src, 'es')).toEqual({ M: '2D6"', WS: 'Esp', A: 'D6' })
+  })
+
+  it('falls back to the English notes when there is no Spanish override', () => {
+    const noEs = { statNotes: { A: '1D6' } }
+    expect(resolveStatNotes(noEs, 'es')).toEqual({ A: '1D6' })
+  })
+
+  it('yields an empty map for a source with no notes at all', () => {
+    expect(resolveStatNotes({}, 'en')).toEqual({})
+    expect(resolveStatNotes({}, 'es')).toEqual({})
+  })
+})
 
 describe('magic standard eligibility', () => {
   it('accepts only non-special banners', () => {

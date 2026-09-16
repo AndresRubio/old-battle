@@ -17,6 +17,13 @@ export interface StatLine {
 }
 
 /**
+ * Non-numeric tokens a book prints in characteristic columns, keyed by column.
+ * A note REPLACES the numeric value in every renderer. `StatLine` stays numeric
+ * — see the doc on `UnitProfile.statNotes` for why.
+ */
+export type StatNotes = Partial<Record<keyof StatLine, string>>
+
+/**
  * Character rank determines how many magic items the model may carry (5th ed
  * limits by COUNT, not points). See research/magic-items-5e.md.
  */
@@ -109,8 +116,17 @@ export interface MountOption {
   nameEs?: string
   /** Flat points added to the character entry when this mount is chosen. */
   points: number
-  /** The mount's own characteristic profile, shown beneath the rider's. */
-  statLine?: StatLine
+  /**
+   * The mount's own characteristic profile, shown beneath the rider's.
+   * Partial: a column the book prints as a token lives in `statNotes` instead
+   * and is absent here. `assertArmyIntegrity` requires every one of the nine
+   * columns to be accounted for by one or the other.
+   */
+  statLine?: Partial<StatLine>
+  /** Book tokens for this mount's columns — see `UnitProfile.statNotes`. */
+  statNotes?: StatNotes
+  /** Spanish overrides for `statNotes`, per column. See `UnitProfile.statNotesEs`. */
+  statNotesEs?: StatNotes
   specialRules?: string[]
   /**
    * Option id the rider must also have for this mount to be legal — e.g. a
@@ -151,21 +167,14 @@ export interface ProfileBlock {
   /** Partial: a chariot chassis only has T/W; absent stats render as "–". */
   statLine: Partial<StatLine>
   /**
-   * Printed in place of the numeric `A` when the book gives this profile's
-   * Attacks as a DICE EXPRESSION rather than a number — the Undead Chariot's
-   * "1D6" (No Muertos printed p.84) or the Witch King's Black Chariot "1D6+2"
-   * (Elfos Oscuros printed p.57). `StatLine.A` is `number` and stays that way:
-   * a chassis's Attacks affects no points and no validation, so this is a
-   * display-only string rather than a widening of the type the whole rules
-   * engine reads. Every renderer must show it INSTEAD of `statLine.A` — see
-   * `statCell` in rules/entryView.ts, the single statement of that rule.
-   *
-   * Out of scope here (OLD-39 covers `ProfileBlock` only): some books print a
-   * dice or range token in a UNIT's own `statLine` or in a `MountOption`'s —
-   * e.g. "Engendro del Caos 5D6 … 1D6" (Reino del Caos printed p.120). Those
-   * stats are full `StatLine`s and are tracked in their own issue.
+   * Book tokens for this profile's columns — see `UnitProfile.statNotes`.
+   * Unlike a unit or a mount, a `ProfileBlock` is NOT required to account for
+   * all nine columns: a chariot chassis legitimately prints only some of them
+   * and renders "–" for the rest.
    */
-  attacksNote?: string
+  statNotes?: StatNotes
+  /** Spanish overrides for `statNotes`, per column. See `UnitProfile.statNotesEs`. */
+  statNotesEs?: StatNotes
   specialRules?: string[]
 }
 
@@ -177,7 +186,40 @@ export interface UnitProfile {
   role: UnitRole
   /** Per-model cost for regiments; total base cost for single-model entries. */
   pointsPerModel: number
-  statLine?: StatLine
+  /**
+   * Partial: a column whose book value is a token lives in `statNotes` instead
+   * and is absent here. `assertArmyIntegrity` requires all nine columns to be
+   * accounted for between the two, so an omission can never be silent.
+   */
+  statLine?: Partial<StatLine>
+  /**
+   * Non-numeric tokens this unit's book row prints in place of a number — the
+   * Chaos Spawn's "5D6" Movement and "1D6" Attacks (Reino del Caos printed
+   * p.90), the Berserker's "2-10" artillery-dice Attacks (Norsca), the Night
+   * Goblin Fanatic's "Especial" Weapon Skill (O&G printed p.66).
+   *
+   * `StatLine` stays `number` on purpose. A token affects no points and no
+   * validation — nothing in the rules engine does arithmetic on it — so this is
+   * a DISPLAY-ONLY channel rather than a widening of the type every rule,
+   * points calculation and summary reads. Widening `StatLine` itself would push
+   * a string case into code that has no meaningful answer for it.
+   *
+   * Every renderer must show the note INSTEAD of the numeric value; the column
+   * therefore stays absent from `statLine` rather than carrying an invented
+   * number beside its note. `statCell` in rules/entryView.ts is the single
+   * statement of that rule — the editor's stat strip and the plaintext export
+   * both go through it, so the screen and the export cannot disagree about what
+   * the book prints.
+   */
+  statNotes?: StatNotes
+  /**
+   * Spanish overrides for `statNotes`, merged over it per column (the same
+   * fallback convention as `nameEs` / `descEs`): `statNotes` holds the English
+   * rendering and this names only the columns whose token is a WORD rather than
+   * a dice expression — "Sp" → "Esp", "Special" → "Especial". Resolved by
+   * `resolveStatNotes` in rules/entryView.ts.
+   */
+  statNotesEs?: StatNotes
   minSize?: number
   maxSize?: number
   /** Character-only fields. */

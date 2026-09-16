@@ -1139,13 +1139,40 @@ const units: UnitProfile[] = [
     nameEs: 'Goblins Nocturnos Fanáticos',
     role: 'regiment',
     pointsPerModel: 30,
-    // PDF p.85: M5D6 Especial F5 R3 H1 I1D6 A- L-
-    statLine: { M: 4, WS: 0, BS: 0, S: 5, T: 3, W: 1, I: 1, A: 1, Ld: 5 },
+    // OLD-43 — bestiary, printed p.66 = PDF 68, under headers M HA HP F R H I A L:
+    //   "Goblin Fanático  5D6  Especial  5  3  1  -  1D3  -"
+    // "Especial" spans the HA/HP pair (HA = Especial, HP blank), and M, I and L
+    // are printed as dashes. Only F5 R3 H1 are numbers. The previous comment here
+    // ("PDF p.85: M5D6 Especial F5 R3 H1 I1D6 A- L-") was mis-transcribed — it had
+    // I and A swapped — and labelled a printed page as a PDF page.
+    // M is 5D6 CENTIMETRES, per the rules text: "desplaza la miniatura en esa
+    // dirección el equivalente del resultado en centímetros". A dice expression
+    // cannot be converted to inches, so the unit is stated in the token.
+    //
+    // ATTACKS IS UNRESOLVED, deliberately. The book contradicts itself: the
+    // bestiary row above prints 1D3, the army list (printed p.85 = PDF 87)
+    // prints 1D6. Both were read at 400dpi and both are legible — this is the
+    // book disagreeing with itself, not a bad scan. The owner's ruling is that
+    // bestiary-vs-list conflicts are settled case by case rather than by a
+    // blanket precedent, and this case is still open — tracked as OLD-45.
+    //
+    // So the column shows "?" rather than a number. It used to hold A: 1, which
+    // is wrong under BOTH readings — the one thing the book is unambiguous
+    // about is that this cell is a dice roll. "?" asserts nothing the book does
+    // not say, and is visually distinct from the "–" that means "the book
+    // prints a blank here".
+    statLine: { S: 5, T: 3, W: 1 },
+    statNotes: { M: '5D6cm', WS: 'Special', BS: '–', I: '–', A: '?', Ld: '–' },
+    statNotesEs: { WS: 'Especial' },
     minSize: 1,
     noCommand: true,
     specialRules: [
       'Up to 3 hidden in each Night Goblin unit',
-      'Move 5D6" (random each turn); S5 ball & chain; D6 wounds per model hit',
+      // OLD-43 — "5D6cm", not the 5D6" this line used to claim: the book's
+      // MOVIMIENTO rule (printed p.66) says the roll moves the model "el
+      // equivalente del resultado en centímetros". Kept in step with the M
+      // token in `statNotes` above, which the card renders right beside it.
+      'Move 5D6cm (random each turn); S5 ball & chain; D6 wounds per model hit',
       'Released automatically when enemy comes within 8"',
       'Cannot be in Squig Hunter or Nets & Clubs units',
     ],

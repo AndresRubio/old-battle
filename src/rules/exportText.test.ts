@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { exportRosterText } from './exportText'
 import { getArmy } from '../data/armies'
-import type { Roster } from '../data/types'
+import type { Roster, RosterEntry } from '../data/types'
 
 const empire = getArmy('empire')!
 
@@ -163,5 +163,58 @@ describe('exportRosterText — dice Attacks (OLD-39)', () => {
     const text = exportRosterText(rosterOf('dark-elves', 'de-witch-king'), darkElves, 'es')
     const { values } = rowUnder(text, 'Carruaje Negro')
     expect(values).toContain('1D6+2')
+  })
+})
+
+// OLD-43 — the export renders the same stat strips as the editor, but it never
+// passed notes for a UNIT'S OWN row (there was no such thing) nor for a chosen
+// MOUNT's row (exportText.ts:103 rendered it bare). Both paths are new.
+describe('exportRosterText — unit and mount stat notes (OLD-43)', () => {
+  const chaos = getArmy('chaos')!
+  const halflings = getArmy('halflings')!
+
+  const rosterOf = (armyId: string, unitId: string, over: Partial<RosterEntry> = {}): Roster => ({
+    id: 'r', name: 'Notes test', armyId, pointsLimit: 2000,
+    entries: [{ id: '1', unitId, size: 1, optionIds: [], magicItemIds: [], ...over }],
+  })
+
+  /** The stat value row of the unit's OWN table — the FIRST stat header in the
+   *  detail block belongs to the unit itself (labelled profiles come after it).
+   *  Matched on the header row in either language (M WS … / M HA …). */
+  const ownValues = (text: string) => {
+    const lines = text.split('\n')
+    const h = lines.findIndex((l) => /^\s+M\s+(WS|HA)\s/.test(l))
+    expect(h, 'no stat header in the detail block').toBeGreaterThan(-1)
+    return lines[h + 1].trim().split(/\s+/)
+  }
+
+  /** The value row printed under the labelled profile `label`. */
+  const labelledValues = (text: string, label: string) => {
+    const lines = text.split('\n')
+    const i = lines.findIndex((l) => l.trim() === `· ${label}`)
+    expect(i, `no "${label}" row in the export`).toBeGreaterThan(-1)
+    return lines[i + 2].trim().split(/\s+/)
+  }
+
+  it("exports the Chaos Spawn's own M and A as book tokens, not dashes", () => {
+    const text = exportRosterText(rosterOf('chaos', 'ch-chaos-spawn'), chaos)
+    expect(ownValues(text)).toEqual(['5D6cm', '3', '0', '4', '5', '3', '3', '1D6', '10'])
+  })
+
+  it("exports the Crazed Cook's word token, localized per language", () => {
+    expect(ownValues(exportRosterText(rosterOf('halflings', 'hf-crazed-cooks'), halflings)))
+      .toEqual(['2D6"', 'Sp', '0', '5', '2', '1', '–', 'D6', '–'])
+    expect(ownValues(exportRosterText(rosterOf('halflings', 'hf-crazed-cooks'), halflings, 'es')))
+      .toEqual(['2D6"', 'Esp', '0', '5', '2', '1', '–', 'D6', '–'])
+  })
+
+  it("exports a chosen mount's own note (Beast of Nurgle A 1D6)", () => {
+    const roster = rosterOf('chaos', 'ch-lord', {
+      mountId: 'mount-beast-of-nurgle',
+      optionIds: ['mark-nurgle'],
+    })
+    const text = exportRosterText(roster, chaos)
+    expect(labelledValues(text, 'Beast of Nurgle (+75 pts)'))
+      .toEqual(['3', '3', '0', '3', '5', '3', '3', '1D6', '6'])
   })
 })

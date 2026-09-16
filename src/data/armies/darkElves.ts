@@ -218,7 +218,7 @@ const units: UnitProfile[] = [
     //   "Rey Brujo       12  7  7  5  5  4  9  4    10"
     //   "Carruaje Negro   -  -  -  7  7  3  -  1D6+2  -"
     //   "Gélido          20  3  0  4  4  1  4  2     3"
-    // The chariot's 1D6+2 Attacks rides in `attacksNote` (StatLine.A is `number`);
+    // The chariot's 1D6+2 Attacks rides in `statNotes` (StatLine.A is `number`);
     // its M/WS/BS/I/Ld are printed "-" and so stay absent. Gélido M 20cm → 8".
     // The book labels the draught row "Gélido"; the generic mount in this file is
     // "Caballo Frío" for the same beast, and its I differs (1 there, 4 here) — that
@@ -227,7 +227,7 @@ const units: UnitProfile[] = [
       {
         name: 'Black Chariot', nameEs: 'Carruaje Negro',
         statLine: { S: 7, T: 7, W: 3 },
-        attacksNote: '1D6+2',
+        statNotes: { A: '1D6+2' },
         specialRules: ['Scythed blades', 'Drawn by 2 Cold Ones'],
       },
       {

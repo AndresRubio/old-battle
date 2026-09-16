@@ -1,6 +1,6 @@
-import type { Army, EquipmentOption, MagicItem, MountOption, ProfileBlock, StatLine, UnitProfile } from '../data/types'
+import type { Army, EquipmentOption, MagicItem, MountOption, ProfileBlock, StatLine, StatNotes, UnitProfile } from '../data/types'
 import { isWizardLevelId, STANDARD_BEARER_ID } from '../data/unitOptions'
-import { matchesQuery } from '../i18n/lang'
+import { matchesQuery, type Lang } from '../i18n/lang'
 
 /**
  * Pure per-entry derivations the editor renders. Anything the UI needs to
@@ -12,20 +12,36 @@ import { matchesQuery } from '../i18n/lang'
  * The text one characteristic column shows: the value, or "–" when the book's
  * row leaves that column blank.
  *
- * The exception is Attacks. A few chariot chassis print a DICE EXPRESSION there
- * ("1D6" for the Undead Chariot, "1D6+2" for the Witch King's Black Chariot),
- * which `StatLine.A: number` cannot hold — a `ProfileBlock` carries it as
- * `attacksNote` instead and it REPLACES the numeric A. Both the editor
- * (`StatLineRow`) and the plaintext export go through here so the screen and
- * the exported list can never disagree about what the book prints.
+ * ANY of the nine columns may print a non-numeric token instead of a number —
+ * a dice expression ("5D6" Movement, "1D6" Attacks), a range ("2-10", the
+ * artillery dice) or a word ("Especial"/"Sp" Weapon Skill). `StatLine` is all
+ * `number` and stays that way, so the token rides alongside in `statNotes` and
+ * REPLACES the numeric value here. This is the single statement of that rule:
+ * the editor's stat strip (`StatLineRow`) and the plaintext export both go
+ * through it, so the screen and the exported list can never disagree about what
+ * the book prints.
  */
 export function statCell(
   key: keyof StatLine,
   statLine: Partial<StatLine>,
-  attacksNote?: string,
+  notes?: StatNotes,
 ): string {
-  if (key === 'A' && attacksNote) return attacksNote
+  const note = notes?.[key]
+  if (note) return note
   return String(statLine[key] ?? '–')
+}
+
+/**
+ * The stat notes to render in a given language. `statNotes` holds the English
+ * rendering of every noted column; `statNotesEs` overrides only the columns
+ * whose token is a word rather than a dice expression ("Sp" → "Esp"), exactly
+ * like the `nameEs` / `descEs` fallback convention used elsewhere.
+ */
+export function resolveStatNotes(
+  src: { statNotes?: StatNotes; statNotesEs?: StatNotes },
+  lang: Lang,
+): StatNotes {
+  return lang === 'es' ? { ...src.statNotes, ...src.statNotesEs } : (src.statNotes ?? {})
 }
 
 /** A unit magic standard must be a non-special banner — Magia p.42. */
@@ -109,6 +125,10 @@ export function companionMountProfile(
           name: selectedMount.name,
           nameEs: selectedMount.nameEs,
           statLine: selectedMount.statLine,
+          // The mount's book tokens ride along, or the row would print an
+          // invented "–" where the book prints e.g. "1D6" Attacks.
+          statNotes: selectedMount.statNotes,
+          statNotesEs: selectedMount.statNotesEs,
           specialRules: selectedMount.specialRules,
         }
       : undefined)

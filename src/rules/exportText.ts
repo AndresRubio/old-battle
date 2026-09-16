@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, MagicItem, Roster, RosterEntry, StatLine, UnitProfile } from '../data/types'
+import type { Army, EquipmentOption, MagicItem, Roster, RosterEntry, StatLine, StatNotes, UnitProfile } from '../data/types'
 import { effectiveStatLine, entryPoints, findMagicItem, findUnit, unitOptionCost } from './points'
 import { summarize } from './summary'
 import { validateRoster } from './validate'
@@ -20,7 +20,7 @@ import {
   t,
 } from '../i18n/lang'
 import { isWizardLevelId } from '../data/unitOptions'
-import { statCell } from './entryView'
+import { resolveStatNotes, statCell } from './entryView'
 
 /**
  * An option's label with its price, formatted exactly as the editor shows it:
@@ -47,8 +47,9 @@ const STAT_COL = 4
 /**
  * A quick-reference characteristic table (monospace-aligned): a header row of
  * localized stat labels and a row of values. Absent stats render as "–", and a
- * profile's `attacksNote` prints the book's dice expression in the A column
- * (`statCell` owns that rule, shared with the editor's stat strip).
+ * resolved `notes` entry prints the book's own token ("5D6", "1D6", "2-10",
+ * "Especial") in its column instead of a number (`statCell` owns that rule,
+ * shared with the editor's stat strip).
  * An optional `label` (mount / chariot profile) is printed above the rows.
  *
  * Columns are sized to their own content, so a wide cell ("1D6+2") pushes its
@@ -58,11 +59,11 @@ function statTableLines(
   statLine: Partial<StatLine>,
   lang: Lang,
   label?: string,
-  attacksNote?: string,
+  notes?: StatNotes,
 ): string[] {
   const lines: string[] = []
   if (label) lines.push(`  · ${label}`)
-  const cells = STAT_KEYS.map((k) => statCell(k, statLine, attacksNote))
+  const cells = STAT_KEYS.map((k) => statCell(k, statLine, notes))
   const widths = STAT_KEYS.map((k, i) =>
     Math.max(STAT_COL, STAT_LABEL[lang][k].length + 1, cells[i].length + 1),
   )
@@ -89,10 +90,10 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
 
   // Some options (e.g. O&G shaman wizard levels) replace the whole statLine.
   const statLine = effectiveStatLine(unit, entry.optionIds)
-  if (statLine) lines.push(...statTableLines(statLine, lang))
+  if (statLine) lines.push(...statTableLines(statLine, lang, undefined, resolveStatNotes(unit, lang)))
   // Extra display-only profiles: chariot crew / chassis / draught beasts, etc.
   for (const p of unit.profiles ?? []) {
-    lines.push(...statTableLines(p.statLine, lang, profileName(p, lang), p.attacksNote))
+    lines.push(...statTableLines(p.statLine, lang, profileName(p, lang), resolveStatNotes(p, lang)))
   }
   // The chosen mount rides with the character — show its profile too. A
   // chariot mount contributes its crew / draught-beast / chassis rows instead
@@ -100,10 +101,11 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
   const mount = entry.mountId ? (unit.mounts ?? []).find((m) => m.id === entry.mountId) : undefined
   if (mount) {
     const label = `${mountName(mount, lang)} (+${mount.points} ${t('pts', lang)})`
-    if (mount.statLine) lines.push(...statTableLines(mount.statLine, lang, label))
-    else lines.push(`  · ${label}`)
+    if (mount.statLine) {
+      lines.push(...statTableLines(mount.statLine, lang, label, resolveStatNotes(mount, lang)))
+    } else lines.push(`  · ${label}`)
     for (const p of mount.profiles ?? []) {
-      lines.push(...statTableLines(p.statLine, lang, profileName(p, lang), p.attacksNote))
+      lines.push(...statTableLines(p.statLine, lang, profileName(p, lang), resolveStatNotes(p, lang)))
     }
   }
 

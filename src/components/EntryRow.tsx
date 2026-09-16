@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine } from '../data/types'
+import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine, StatNotes } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
 import { effectiveStatLine, entryPoints, findUnit, mountOptionCost, unitOptionCost } from '../rules/points'
 import { magicItemAllowance } from '../rules/magicItems'
@@ -10,6 +10,7 @@ import {
   hasAnyOptions,
   magicStandardNeedsBearer,
   partitionOptions,
+  resolveStatNotes,
   statCell,
 } from '../rules/entryView'
 import type { EntryActions } from '../state/rosterOps'
@@ -22,17 +23,18 @@ import { MountSelector } from './MountSelector'
 
 /** One M/WS/BS/S/T/W/I/A/Ld row, optionally labelled (mount / chariot profile).
  *  Accepts partial profiles (a chariot chassis only has T/W); absent stats show "–".
- *  `attacksNote` prints the book's dice expression ("1D6") in the A column. */
+ *  `notes` prints the book's own token ("5D6", "1D6", "2-10", "Especial") in the
+ *  columns the book does not give as a number, INSTEAD of the numeric value. */
 function StatLineRow({
   statLine,
   lang,
   label,
-  attacksNote,
+  notes,
 }: {
   statLine: Partial<StatLine>
   lang: Lang
   label?: string
-  attacksNote?: string
+  notes?: StatNotes
 }) {
   return (
     <div className="statline-wrap">
@@ -41,7 +43,7 @@ function StatLineRow({
         {(['M', 'WS', 'BS', 'S', 'T', 'W', 'I', 'A', 'Ld'] as const).map((k) => (
           <span key={k} className="stat">
             <span className="stat-k">{STAT_LABEL[lang][k]}</span>
-            <span className="stat-v">{statCell(k, statLine, attacksNote)}</span>
+            <span className="stat-v">{statCell(k, statLine, notes)}</span>
           </span>
         ))}
       </div>
@@ -186,6 +188,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
               statLine={statLine}
               lang={lang}
               label={companionMount ? t('rider', lang) : undefined}
+              notes={resolveStatNotes(unit, lang)}
             />
           )}
           {companionMount && (
@@ -194,7 +197,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                 statLine={companionMount.statLine}
                 lang={lang}
                 label={profileName(companionMount, lang)}
-                attacksNote={companionMount.attacksNote}
+                notes={resolveStatNotes(companionMount, lang)}
               />
               {companionMount.specialRules && companionMount.specialRules.length > 0 && (
                 <RuleTags rules={companionMount.specialRules} lang={lang} />
@@ -205,7 +208,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
           {/* Extra profiles: chariot crew/chassis/draught, or a fixed mount. */}
           {unit.profiles?.map((p, i) => (
             <div key={i} className="profile-block">
-              <StatLineRow statLine={p.statLine} lang={lang} label={profileName(p, lang)} attacksNote={p.attacksNote} />
+              <StatLineRow statLine={p.statLine} lang={lang} label={profileName(p, lang)} notes={resolveStatNotes(p, lang)} />
               {p.specialRules && p.specialRules.length > 0 && <RuleTags rules={p.specialRules} lang={lang} />}
             </div>
           ))}
@@ -214,7 +217,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
               beasts / chassis), beneath the rider like a chariot unit's. */}
           {selectedMount?.profiles?.map((p, i) => (
             <div key={i} className="profile-block">
-              <StatLineRow statLine={p.statLine} lang={lang} label={profileName(p, lang)} attacksNote={p.attacksNote} />
+              <StatLineRow statLine={p.statLine} lang={lang} label={profileName(p, lang)} notes={resolveStatNotes(p, lang)} />
               {p.specialRules && p.specialRules.length > 0 && <RuleTags rules={p.specialRules} lang={lang} />}
             </div>
           ))}

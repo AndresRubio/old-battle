@@ -1,4 +1,26 @@
-import type { Army } from '../types'
+import type { Army, StatLine, StatNotes } from '../types'
+
+/** The nine characteristic columns, in the canonical M/WS/BS/S/T/W/I/A/Ld order. */
+const STAT_KEYS: Array<keyof StatLine> = ['M', 'WS', 'BS', 'S', 'T', 'W', 'I', 'A', 'Ld']
+
+/**
+ * Columns a profile neither prints as a number nor explains with a book token
+ * (OLD-43). `UnitProfile.statLine` and `MountOption.statLine` are
+ * `Partial<StatLine>` so a column whose book value is a token ("5D6", "2-10",
+ * "Especial") can be absent and carried in `statNotes` instead — but the type no
+ * longer forces completeness, so a plain typo would silently drop a stat and the
+ * UI would render "–" as if the book printed a dash. Every one of the nine
+ * columns must therefore be accounted for by one side or the other.
+ *
+ * Deliberately NOT applied to `ProfileBlock`: a chariot chassis legitimately
+ * prints only some columns ("Carruaje - - - 7 7 3 1 - -") and renders "–" for
+ * the rest, which is exactly what the book shows.
+ */
+const unaccountedStats = (
+  statLine: Partial<StatLine>,
+  statNotes: StatNotes | undefined,
+): Array<keyof StatLine> =>
+  STAT_KEYS.filter((k) => statLine[k] === undefined && statNotes?.[k] === undefined)
 
 /**
  * Construction-time integrity for assembled armies. Runs once per army at
@@ -34,6 +56,22 @@ export function assertArmyIntegrity(army: Army): Army {
 
   for (const u of army.units) {
     if (u.pointsPerModel < 0) fail(`${u.id}: negative pointsPerModel`)
+
+    // Every characteristic column a unit or a mount claims to have must be
+    // either a number or a book token — see `unaccountedStats`.
+    if (u.statLine) {
+      const missing = unaccountedStats(u.statLine, u.statNotes)
+      if (missing.length) {
+        fail(`${u.id}: statLine has no value and no statNotes entry for ${missing.join(', ')}`)
+      }
+    }
+    for (const m of u.mounts ?? []) {
+      if (!m.statLine) continue
+      const missing = unaccountedStats(m.statLine, m.statNotes)
+      if (missing.length) {
+        fail(`${u.id}/${m.id}: statLine has no value and no statNotes entry for ${missing.join(', ')}`)
+      }
+    }
 
     // Mount options share RosterEntry.optionIds with the unit's own options,
     // so every option id must be unique across the unit's WHOLE namespace

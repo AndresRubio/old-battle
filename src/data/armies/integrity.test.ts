@@ -125,6 +125,71 @@ describe('assertArmyIntegrity', () => {
     ).toThrow(/special-character item mi-z/)
   })
 
+  // OLD-43 — `UnitProfile.statLine` and `MountOption.statLine` widened from a
+  // full `StatLine` to `Partial<StatLine>` so a column the book prints as a
+  // token ("5D6", "2-10", "Especial") can be absent and carried in `statNotes`
+  // instead. The type no longer forces completeness, so this guard is what makes
+  // the widening safe: a silently dropped column would otherwise render "–" as
+  // if the book printed a dash.
+  describe('nine-column coverage (statLine + statNotes)', () => {
+    const FULL = { M: 4, WS: 3, BS: 3, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 7 }
+
+    it('throws naming the unit and the columns nothing accounts for', () => {
+      const { M, A, ...short } = FULL
+      void M
+      void A
+      const u = unit({ id: 'gap', statLine: short })
+      expect(() => assertArmyIntegrity(army({ units: [u] }))).toThrow(
+        /gap: statLine has no value and no statNotes entry for M, A/,
+      )
+    })
+
+    it('accepts the same unit once the missing columns carry a book token', () => {
+      const { M, A, ...short } = FULL
+      void M
+      void A
+      const u = unit({ id: 'gap', statLine: short, statNotes: { M: '5D6cm', A: '1D6' } })
+      expect(assertArmyIntegrity(army({ units: [u] }))).toBeTruthy()
+    })
+
+    it('still throws when the note covers only some of the gaps', () => {
+      const { M, A, ...short } = FULL
+      void M
+      void A
+      const u = unit({ id: 'gap', statLine: short, statNotes: { M: '5D6cm' } })
+      expect(() => assertArmyIntegrity(army({ units: [u] }))).toThrow(
+        /gap: statLine has no value and no statNotes entry for A/,
+      )
+    })
+
+    it('applies the same rule to a mount profile', () => {
+      const { Ld, ...short } = FULL
+      void Ld
+      const withGap = unit({
+        id: 'c', role: 'character', isCharacter: true,
+        mounts: [{ id: 'steed', name: 'Steed', points: 10, statLine: short }],
+      })
+      expect(() => assertArmyIntegrity(army({ units: [withGap] }))).toThrow(
+        /c\/steed: statLine has no value and no statNotes entry for Ld/,
+      )
+      const noted = unit({
+        id: 'c', role: 'character', isCharacter: true,
+        mounts: [{ id: 'steed', name: 'Steed', points: 10, statLine: short, statNotes: { Ld: '–' } }],
+      })
+      expect(assertArmyIntegrity(army({ units: [noted] }))).toBeTruthy()
+    })
+
+    it('leaves a unit with no statLine at all alone, and never applies to a ProfileBlock', () => {
+      // A chariot chassis legitimately prints only some columns
+      // ("Carruaje - - - 7 7 3 1 - -") and renders "–" for the rest.
+      const u = unit({
+        id: 'chariot', role: 'chariot',
+        profiles: [{ name: 'Chassis', statLine: { S: 7, T: 7, W: 3, I: 1 } }],
+      })
+      expect(assertArmyIntegrity(army({ units: [u] }))).toBeTruthy()
+    })
+  })
+
   it('throws on selection rules referencing unknown units', () => {
     expect(() =>
       assertArmyIntegrity(
