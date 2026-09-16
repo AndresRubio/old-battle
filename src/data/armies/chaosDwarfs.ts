@@ -41,10 +41,16 @@ const ADD_HAND_WEAPON: EquipmentOption = { id: 'add-hand-weapon', name: 'Additio
 
 // Sorcerer level upgrades — Brujo 59 → Paladín Brujo (L2) 121 → Maestro de Brujos
 // (L3) 219 → Gran Brujo (L4) 328. Deltas +62 / +160 / +269 (p.57).
+//
+// OLD-37 — each level has its OWN profile in the p.57 table (M in cm; 8cm → 3"):
+//   Brujo              8 4 3 3 5 1 3 1  9   (the unit's base statLine)
+//   Paladín Brujo      8 4 3 4 5 2 3 1  9
+//   Maestro de Brujos  8 4 3 4 5 3 4 2  9
+//   Gran Brujo         8 4 3 4 5 4 5 3 10
 const CD_WIZARD_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Wizard Level 2 (Sorcerer Paladin)', pointsPerModel: 62, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Wizard Level 3 (Master Sorcerer)', pointsPerModel: 160, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Wizard Level 4 (Great Sorcerer)', pointsPerModel: 269, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Wizard Level 2 (Sorcerer Paladin)', pointsPerModel: 62, magicItemSlotsDelta: 1, statLine: chaosDwarf({ WS: 4, BS: 3, S: 4, T: 5, W: 2, I: 3, A: 1, Ld: 9 }) },
+  { id: 'wizard-l3', name: 'Wizard Level 3 (Master Sorcerer)', pointsPerModel: 160, magicItemSlotsDelta: 2, statLine: chaosDwarf({ WS: 4, BS: 3, S: 4, T: 5, W: 3, I: 4, A: 2, Ld: 9 }) },
+  { id: 'wizard-l4', name: 'Wizard Level 4 (Great Sorcerer)', pointsPerModel: 269, magicItemSlotsDelta: 3, statLine: chaosDwarf({ WS: 4, BS: 3, S: 4, T: 5, W: 4, I: 5, A: 3, Ld: 10 }) },
 ]
 
 // --- Character mounts. Chaos Dwarf Lords/Heroes/Sorcerers are too heavy for

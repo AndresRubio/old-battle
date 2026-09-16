@@ -126,10 +126,17 @@ const BOW_LIGHT_ARMOUR: EquipmentOption = { id: 'light-armour', name: 'Light arm
 // Wizard level upgrades (p.61). Wizard 56 → Champion (L2) 118 → Master (L3) 190 →
 // Lord (L4) 287. Cumulative deltas +62 / +134 / +231. Damsels/Prophetesses of the
 // Lady are the Bretonnian wizards.
+//
+// OLD-37 — each level has its OWN profile in the p.61 table (English book, M
+// already in inches):
+//   Wizard           4 3 3 3 4 1 4 1 7   (the unit's base statLine)
+//   Wizard Champion  4 3 3 4 4 2 4 1 7
+//   Master Wizard    4 3 3 4 4 3 5 2 7
+//   Wizard Lord      4 3 3 4 4 4 6 3 8
 const BR_WIZARD_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Wizard Champion (level 2)', pointsPerModel: 62, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Master Wizard (level 3)', pointsPerModel: 134, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Wizard Lord (level 4)', pointsPerModel: 231, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Wizard Champion (level 2)', pointsPerModel: 62, magicItemSlotsDelta: 1, statLine: human({ S: 4, T: 4, W: 2, I: 4 }) },
+  { id: 'wizard-l3', name: 'Master Wizard (level 3)', pointsPerModel: 134, magicItemSlotsDelta: 2, statLine: human({ S: 4, T: 4, W: 3, I: 5, A: 2 }) },
+  { id: 'wizard-l4', name: 'Wizard Lord (level 4)', pointsPerModel: 231, magicItemSlotsDelta: 3, statLine: human({ S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 8 }) },
 ]
 
 const units: UnitProfile[] = [
@@ -247,7 +254,9 @@ const units: UnitProfile[] = [
     nameEs: 'Damisela de la Dama',
     role: 'character',
     pointsPerModel: 56,
-    statLine: human({ WS: 3, BS: 3, I: 4 }),
+    // OLD-37: the p.61 "Wizard" row prints T 4 (was T 3 here); levels 2-4 follow
+    // on the level options.
+    statLine: human({ WS: 3, BS: 3, T: 4, I: 4 }),
     isCharacter: true,
     characterRank: 'wizard1',
     lores: ['battle'],

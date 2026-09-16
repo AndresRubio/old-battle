@@ -157,19 +157,31 @@ const MARK_TZEENTCH: EquipmentOption = {
 // Chaos Sorcerer level upgrades — Hechicero (L1) 84 → Paladín Hechicero (L2) 166 →
 // Maestro Hechicero (L3) 240 → Gran Hechicero (L4) 356.
 // Deltas from L1: +82 / +156 / +272 (Reino del Caos p.101).
+//
+// OLD-37 — each level has its OWN profile in the p.101 table (M in cm; 10cm → 4"):
+//   Hechicero          10 6 6 4 5 1 7 2  9   (the unit's base statLine)
+//   Paladín Hechicero  10 6 6 5 5 2 7 2  9
+//   Maestro Hechicero  10 6 6 5 5 3 8 3  9
+//   Gran Hechicero     10 6 6 5 5 4 9 4 10
 const CHAOS_WIZARD_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Nivel 2 (Paladín Hechicero)', pointsPerModel: 82, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Nivel 3 (Maestro Hechicero)', pointsPerModel: 156, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Nivel 4 (Gran Hechicero)', pointsPerModel: 272, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Nivel 2 (Paladín Hechicero)', pointsPerModel: 82, magicItemSlotsDelta: 1, statLine: statline({ WS: 6, BS: 6, S: 5, T: 5, W: 2, I: 7, A: 2, Ld: 9 }) },
+  { id: 'wizard-l3', name: 'Nivel 3 (Maestro Hechicero)', pointsPerModel: 156, magicItemSlotsDelta: 2, statLine: statline({ WS: 6, BS: 6, S: 5, T: 5, W: 3, I: 8, A: 3, Ld: 9 }) },
+  { id: 'wizard-l4', name: 'Nivel 4 (Gran Hechicero)', pointsPerModel: 272, magicItemSlotsDelta: 3, statLine: statline({ WS: 6, BS: 6, S: 5, T: 5, W: 4, I: 9, A: 4, Ld: 10 }) },
 ]
 
 // Beast Shaman level upgrades — Shaman (L1) 68 → Paladín (L2) 134 →
 // Maestro (L3) 225 → Gran Shaman (L4) 336.
 // Deltas from L1: +66 / +157 / +268 (Reino del Caos pp.106-107).
+//
+// OLD-37 — each level has its OWN profile in the p.107 table (M in cm; 10cm → 4"):
+//   Shaman          10 4 3 3 5 2 4 1 7   (the unit's base statLine)
+//   Paladín Shaman  10 4 3 4 5 3 4 1 7
+//   Maestro Shaman  10 4 3 4 5 4 5 2 7
+//   Gran Shaman     10 4 3 4 5 5 6 3 8
 const BEAST_SHAMAN_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Nivel 2 (Paladín Shaman)', pointsPerModel: 66, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Nivel 3 (Maestro Shaman)', pointsPerModel: 157, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Nivel 4 (Gran Shaman)', pointsPerModel: 268, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Nivel 2 (Paladín Shaman)', pointsPerModel: 66, magicItemSlotsDelta: 1, statLine: statline({ WS: 4, BS: 3, S: 4, T: 5, W: 3, I: 4, A: 1, Ld: 7 }) },
+  { id: 'wizard-l3', name: 'Nivel 3 (Maestro Shaman)', pointsPerModel: 157, magicItemSlotsDelta: 2, statLine: statline({ WS: 4, BS: 3, S: 4, T: 5, W: 4, I: 5, A: 2, Ld: 7 }) },
+  { id: 'wizard-l4', name: 'Nivel 4 (Gran Shaman)', pointsPerModel: 268, magicItemSlotsDelta: 3, statLine: statline({ WS: 4, BS: 3, S: 4, T: 5, W: 5, I: 6, A: 3, Ld: 8 }) },
 ]
 
 const units: UnitProfile[] = [

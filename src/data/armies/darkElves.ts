@@ -28,10 +28,16 @@ const CAV_LANCE_2: EquipmentOption = { id: 'cav-lance', name: 'Cavalry lances', 
 const CAV_LANCE_4: EquipmentOption = { id: 'cav-lance', name: 'Cavalry lances', pointsPerModel: 4 }
 
 // Sorceress level upgrades — Dark-Elf-specific costs (Sorceress 59 → L2 121 → L3 219 → L4 328).
+//
+// OLD-37 — each level has its OWN profile in the p.50 table (M in cm; 12cm → 5"):
+//   Hechicero          12 4 4 3 4 1 7 1 8   (the unit's base statLine)
+//   Paladín Hechicero  12 4 4 4 4 2 7 1 8
+//   Maestro Hechicero  12 4 4 4 4 3 8 2 8
+//   Gran Hechicero     12 4 4 4 4 4 9 3 9
 const DE_WIZARD_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Wizard Level 2 (Master Paladin)', pointsPerModel: 62, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Wizard Level 3 (Master Sorcerer)', pointsPerModel: 160, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Wizard Level 4 (Supreme Sorcerer)', pointsPerModel: 269, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Wizard Level 2 (Master Paladin)', pointsPerModel: 62, magicItemSlotsDelta: 1, statLine: elf({ S: 4, T: 4, W: 2, I: 7 }) },
+  { id: 'wizard-l3', name: 'Wizard Level 3 (Master Sorcerer)', pointsPerModel: 160, magicItemSlotsDelta: 2, statLine: elf({ S: 4, T: 4, W: 3, I: 8, A: 2 }) },
+  { id: 'wizard-l4', name: 'Wizard Level 4 (Supreme Sorcerer)', pointsPerModel: 269, magicItemSlotsDelta: 3, statLine: elf({ S: 4, T: 4, W: 4, I: 9, A: 3, Ld: 9 }) },
 ]
 
 // --- Character mounts (army list: "may ride a Cold One, a Dark Steed or a

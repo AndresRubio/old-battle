@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { ARMIES, getArmy } from './index'
 import { validateRoster } from '../../rules/validate'
-import { entryPoints, pointsByRole } from '../../rules/points'
+import { entryPoints, pointsByRole, effectiveStatLine } from '../../rules/points'
 import { findRule } from '../rules'
 import { summarize } from '../../rules/summary'
 import type { Roster, StatLine } from '../types'
@@ -1553,6 +1553,170 @@ describe('OLD-34 — High Elf characters may ride a Tiranoc Chariot', () => {
       // up an unrelated ⓘ glossary entry (the old prose matched none either).
       expect(findRule(tag), `"${tag}" must not inherit a glossary entry`).toBeUndefined()
     }
+  })
+})
+
+// OLD-37 — a wizard-level option must carry the profile the book prints for that
+// level, not just its points and item slots: the books give every level its own
+// row (S / W / I / A / Ld all move). Each expectation below is the printed row,
+// verbatim, resolved through `effectiveStatLine` exactly as EntryRow renders it.
+// Movement: the Spanish books print centimetres and the data stores inches
+// (8→3, 10→4, 12→5); the four ENGLISH books (Bretonnia, Lizardmen, Dogs of War)
+// already print inches.
+describe('OLD-37 — wizard levels carry their own profile', () => {
+  type Rows = { l1: StatLine; l2: StatLine; l3?: StatLine; l4?: StatLine }
+  const row = (M: number, WS: number, BS: number, S: number, T: number, W: number, I: number, A: number, Ld: number): StatLine =>
+    ({ M, WS, BS, S, T, W, I, A, Ld })
+
+  const CASES: { armyId: string; unitId: string; page: string; rows: Rows }[] = [
+    {
+      // Imperio printed p.58: Hechicero / Paladín Hechicero / Maestro Hechicero /
+      // Gran Hechicero. M 10cm → 4".
+      armyId: 'empire', unitId: 'emp-wizard', page: 'Imperio p.58',
+      rows: {
+        l1: row(4, 3, 3, 3, 4, 1, 4, 1, 7),
+        l2: row(4, 3, 3, 4, 4, 2, 4, 1, 7),
+        l3: row(4, 3, 3, 4, 4, 3, 5, 2, 7),
+        l4: row(4, 3, 3, 4, 4, 4, 6, 3, 8),
+      },
+    },
+    {
+      // Bretonnia printed p.61 (English): Wizard / Wizard Champion / Master
+      // Wizard / Wizard Lord. M already in inches.
+      armyId: 'bretonnia', unitId: 'br-wizard', page: 'Bretonnia p.61',
+      rows: {
+        l1: row(4, 3, 3, 3, 4, 1, 4, 1, 7),
+        l2: row(4, 3, 3, 4, 4, 2, 4, 1, 7),
+        l3: row(4, 3, 3, 4, 4, 3, 5, 2, 7),
+        l4: row(4, 3, 3, 4, 4, 4, 6, 3, 8),
+      },
+    },
+    {
+      // Dogs of War / Mercenaries printed p.29 (English): Hireling Wizards.
+      armyId: 'dogs-of-war', unitId: 'dow-wizard', page: 'Mercenaries p.29',
+      rows: {
+        l1: row(4, 3, 3, 3, 4, 1, 4, 1, 7),
+        l2: row(4, 3, 3, 4, 4, 2, 4, 1, 7),
+        l3: row(4, 3, 3, 4, 4, 3, 5, 2, 7),
+        l4: row(4, 3, 3, 4, 4, 4, 6, 3, 8),
+      },
+    },
+    {
+      // Altos Elfos printed p.74: Mago / Paladín Mago / Mago Maestro / Gran Mago.
+      // M 12cm → 5".
+      armyId: 'high-elves', unitId: 'he-mage', page: 'Altos Elfos p.74',
+      rows: {
+        l1: row(5, 4, 4, 3, 4, 1, 7, 1, 8),
+        l2: row(5, 4, 4, 4, 4, 2, 7, 1, 8),
+        l3: row(5, 4, 4, 4, 4, 3, 8, 2, 8),
+        l4: row(5, 4, 4, 4, 4, 4, 9, 3, 9),
+      },
+    },
+    {
+      // Elfos Oscuros printed p.50: Hechicero / Paladín / Maestro / Gran
+      // Hechicero — the same four rows as the High Elf Mage. M 12cm → 5".
+      armyId: 'dark-elves', unitId: 'de-sorceress', page: 'Elfos Oscuros p.50',
+      rows: {
+        l1: row(5, 4, 4, 3, 4, 1, 7, 1, 8),
+        l2: row(5, 4, 4, 4, 4, 2, 7, 1, 8),
+        l3: row(5, 4, 4, 4, 4, 3, 8, 2, 8),
+        l4: row(5, 4, 4, 4, 4, 4, 9, 3, 9),
+      },
+    },
+    {
+      // Skaven printed p.62: Brujo Ingeniero / Paladín Brujo / Maestro de Brujos.
+      // No level-4 option — the Vidente Gris is its own always-L4 entry. M 12cm → 5".
+      armyId: 'skaven', unitId: 'sk-warlock-engineer', page: 'Skaven p.62',
+      rows: {
+        l1: row(5, 3, 3, 3, 4, 1, 5, 1, 5),
+        l2: row(5, 3, 3, 4, 4, 2, 5, 1, 6),
+        l3: row(5, 3, 3, 4, 4, 3, 6, 2, 7),
+      },
+    },
+    {
+      // Enanos del Caos printed p.57: Brujo / Paladín Brujo / Maestro de Brujos /
+      // Gran Brujo. M 8cm → 3".
+      armyId: 'chaos-dwarfs', unitId: 'cd-sorcerer', page: 'Enanos del Caos p.57',
+      rows: {
+        l1: row(3, 4, 3, 3, 5, 1, 3, 1, 9),
+        l2: row(3, 4, 3, 4, 5, 2, 3, 1, 9),
+        l3: row(3, 4, 3, 4, 5, 3, 4, 2, 9),
+        l4: row(3, 4, 3, 4, 5, 4, 5, 3, 10),
+      },
+    },
+    {
+      // Reino del Caos printed p.101: Hechicero / Paladín / Maestro / Gran
+      // Hechicero. M 10cm → 4".
+      armyId: 'chaos', unitId: 'ch-sorcerer', page: 'Reino del Caos p.101',
+      rows: {
+        l1: row(4, 6, 6, 4, 5, 1, 7, 2, 9),
+        l2: row(4, 6, 6, 5, 5, 2, 7, 2, 9),
+        l3: row(4, 6, 6, 5, 5, 3, 8, 3, 9),
+        l4: row(4, 6, 6, 5, 5, 4, 9, 4, 10),
+      },
+    },
+    {
+      // Reino del Caos printed p.107: Shaman / Paladín / Maestro / Gran Shaman.
+      // M 10cm → 4".
+      armyId: 'chaos', unitId: 'ch-beast-shaman', page: 'Reino del Caos p.107',
+      rows: {
+        l1: row(4, 4, 3, 3, 5, 2, 4, 1, 7),
+        l2: row(4, 4, 3, 4, 5, 3, 4, 1, 7),
+        l3: row(4, 4, 3, 4, 5, 4, 5, 2, 7),
+        l4: row(4, 4, 3, 4, 5, 5, 6, 3, 8),
+      },
+    },
+    {
+      // No Muertos printed p.80 (army list) — Nigromante / Paladín / Maestro. A
+      // non-general Necromancer caps at Level 3, so no l4 option here. M 10cm → 4".
+      armyId: 'undead', unitId: 'ud-necromancer', page: 'No Muertos p.80',
+      rows: {
+        l1: row(4, 4, 4, 4, 3, 1, 3, 2, 8),
+        l2: row(4, 5, 5, 4, 3, 2, 4, 3, 9),
+        l3: row(4, 6, 6, 5, 4, 3, 5, 4, 9),
+      },
+    },
+    {
+      // Hombres Lagarto printed p.73 (English): Mage-Priest & Palanquin /
+      // Champion / Master / Mage-Lord. M already in inches.
+      armyId: 'lizardmen', unitId: 'lz-slann', page: 'Lizardmen p.73',
+      rows: {
+        l1: row(4, 3, 2, 4, 4, 3, 2, 3, 8),
+        l2: row(4, 4, 3, 6, 4, 4, 3, 4, 8),
+        l3: row(4, 5, 4, 6, 5, 6, 5, 6, 9),
+        l4: row(4, 6, 5, 6, 5, 8, 6, 8, 10),
+      },
+    },
+  ]
+
+  for (const { armyId, unitId, page, rows } of CASES) {
+    it(`${armyId}/${unitId} resolves each level to its own row (${page})`, () => {
+      const unit = getArmy(armyId)!.units.find((u) => u.id === unitId)!
+      expect(unit, `${unitId} must exist`).toBeDefined()
+      expect(effectiveStatLine(unit, []), `${unitId} level 1 (base)`).toEqual(rows.l1)
+      const levels: [string, StatLine | undefined][] = [
+        ['wizard-l2', rows.l2], ['wizard-l3', rows.l3], ['wizard-l4', rows.l4],
+      ]
+      for (const [optionId, expected] of levels) {
+        const offered = (unit.options ?? []).some((o) => o.id === optionId)
+        if (!expected) {
+          expect(offered, `${unitId} must not offer ${optionId}`).toBe(false)
+          continue
+        }
+        expect(offered, `${unitId} must offer ${optionId}`).toBe(true)
+        expect(effectiveStatLine(unit, [optionId]), `${unitId} ${optionId}`).toEqual(expected)
+      }
+    })
+  }
+
+  // The Undead General is bought as a Great Necromancer already, and the single
+  // level option it carries must resolve to the very same Gran Nigromante row
+  // (bestiary p.57: 10 7 7 5 4 4 6 5 10; M 10cm → 4").
+  it('undead/ud-general-great-necromancer stays on the Gran Nigromante row at level 4 (No Muertos p.57)', () => {
+    const general = getArmy('undead')!.units.find((u) => u.id === 'ud-general-great-necromancer')!
+    const greatNecromancer = row(4, 7, 7, 5, 4, 4, 6, 5, 10)
+    expect(effectiveStatLine(general, []), 'base').toEqual(greatNecromancer)
+    expect(effectiveStatLine(general, ['wizard-l4']), 'wizard-l4').toEqual(greatNecromancer)
   })
 })
 

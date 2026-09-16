@@ -501,6 +501,74 @@ chariot, so a legal list could not be built. Nothing already in the data was wro
   OLD-33 rows, now a shared constant (`TIRANOC_CHARIOT_PROFILES`) used by both the standalone entry
   and the mount, so the two can never drift. Linear OLD-34.
 
+#### Wizard-level statlines (OLD-37)
+A wizard-level option used to raise only points and `magicItemSlotsDelta`, so a Level-4 wizard was
+displayed with the Level-1 row. Every book prints a **separate profile per level** (S / W / I / A /
+Ld all move), so each level option now carries the printed row as an `EquipmentOption.statLine`,
+resolved by `effectiveStatLine`. Option **ids are unchanged** (stored rosters keep their selection)
+and **no points value or item-slot delta was touched**. The rows below are verbatim from the scans,
+in the books' own nine columns (Spanish M / HA / HP / F / R / H / I / A / L); Movement is converted
+to inches in the data as usual (8cm→3", 10→4, 12→5) except in the English books, which already
+print inches. Each army's level-1 row is the unit's own base `statLine`.
+- **The Empire** (`emp-wizard`) — printed **p.58** = PDF 60, HECHICEROS:
+  Hechicero `10 3 3 3 4 1 4 1 7` / Paladín Hechicero `10 3 3 4 4 2 4 1 7` /
+  Maestro Hechicero `10 3 3 4 4 3 5 2 7` / Gran Hechicero `10 3 3 4 4 4 6 3 8`.
+- **Bretonnia** (`br-wizard`) — printed **p.61** = PDF 63, WIZARDS (English book, M in inches):
+  Wizard `4 3 3 3 4 1 4 1 7` / Wizard Champion `4 3 3 4 4 2 4 1 7` /
+  Master Wizard `4 3 3 4 4 3 5 2 7` / Wizard Lord `4 3 3 4 4 4 6 3 8`. The Damsel's **base T was
+  3 and the book prints 4**, so the base row was corrected too — the only profile value changed
+  outside the level options. (`source/transcribed/bretonnia.md` has the Wizard Lord as
+  `... 5 3 7`; the scan at 400 DPI reads `6 3 8` and the PDF wins.)
+- **Dogs of War** (`dow-wizard`) — printed **p.29** = PDF 31, HIRELING WIZARDS (English book):
+  the same four rows as Bretonnia/Empire, Wizard Lord included: `4 3 3 4 4 4 6 3 8`.
+  (`source/transcribed/dogs-of-war.md` "resolves" the Wizard Lord's Attacks to 2; the scan at
+  400 DPI reads **A 3**. The PDF wins; the transcription's Incidencias entry is wrong.)
+- **High Elves** (`he-mage`) — printed **p.74** = PDF 76, MAGOS:
+  Mago `12 4 4 3 4 1 7 1 8` / Paladín Mago `12 4 4 4 4 2 7 1 8` /
+  Mago Maestro `12 4 4 4 4 3 8 2 8` / Gran Mago `12 4 4 4 4 4 9 3 9`.
+- **Dark Elves** (`de-sorceress`) — printed **p.50** = PDF 52, HECHICEROS ELFOS OSCUROS: the same
+  four rows as the High Elf Mage, `12 4 4 3 4 1 7 1 8` … `12 4 4 4 4 4 9 3 9`.
+- **Skaven** (`sk-warlock-engineer`) — printed **p.62** = PDF 64, BRUJOS Y VIDENTES SKAVEN:
+  Brujo Ingeniero `12 3 3 3 4 1 5 1 5` / Paladín Brujo `12 3 3 4 4 2 5 1 6` /
+  Maestro de Brujos `12 3 3 4 4 3 6 2 7`. No level-4 option: the Vidente Gris
+  (`12 6 6 4 4 4 7 4 7`, same page) is a separate always-Level-4 entry.
+- **Chaos Dwarfs** (`cd-sorcerer`) — printed **p.57** = PDF 59, BRUJOS ENANOS DEL CAOS:
+  Brujo `8 4 3 3 5 1 3 1 9` / Paladín Brujo `8 4 3 4 5 2 3 1 9` /
+  Maestro de Brujos `8 4 3 4 5 3 4 2 9` / Gran Brujo `8 4 3 4 5 4 5 3 10`.
+- **Chaos — Sorcerers** (`ch-sorcerer`) — *Reino del Caos* printed **p.101** = PDF 103:
+  Hechicero `10 6 6 4 5 1 7 2 9` / Paladín Hechicero `10 6 6 5 5 2 7 2 9` /
+  Maestro Hechicero `10 6 6 5 5 3 8 3 9` / Gran Hechicero `10 6 6 5 5 4 9 4 10`. Note the level-1
+  row really does print **F 4** where the three upper rows print F 5 (already recorded in
+  `source/transcribed/chaos-realm.md`; confirmed again here).
+- **Chaos — Beastman Shamans** (`ch-beast-shaman`) — *Reino del Caos* printed **p.107** = PDF 109:
+  Shaman `10 4 3 3 5 2 4 1 7` / Paladín Shaman `10 4 3 4 5 3 4 1 7` /
+  Maestro Shaman `10 4 3 4 5 4 5 2 7` / Gran Shaman `10 4 3 4 5 5 6 3 8`.
+- **Undead** (`ud-necromancer`) — army list printed **p.80** = PDF 82, NIGROMANTES:
+  Nigromante `10 4 4 4 3 1 3 2 8` / Paladín Nigromante `10 5 5 4 3 2 4 3 9` /
+  Maestro Nigromante `10 6 6 5 4 3 5 4 9`. The army list prints only these three (a non-general
+  Necromancer caps at Level 3); the **Gran Nigromante** row `10 7 7 5 4 4 6 5 10` comes from the
+  bestiary table printed **p.57** = PDF 59, which agrees with the army list on the other three. It
+  is carried by the `wizard-l4` option that only `ud-general-great-necromancer` offers — and is the
+  General's own base row, so selecting the level is a no-op there rather than a downgrade.
+- **Lizardmen** (`lz-slann`) — printed **p.73** = PDF 75, 1 SLANN GENERAL (English book):
+  Mage-Priest & Palanquin `4 3 2 4 4 3 2 3 8` / Mage-Priest Champion `4 4 3 6 4 4 3 4 8` /
+  Master Mage-Priest `4 5 4 6 5 6 5 6 9` / Mage-Lord `4 6 5 6 5 8 6 8 10`.
+
+**Left out deliberately, and why:**
+- **Wood Elves** — the book **contradicts itself**. The army list printed **p.65** = PDF 67 gives
+  Maestro de Magos `12 4 4 4 4 2 7 1 8`, an exact duplicate of the Paladín Mago row above it, while
+  the bestiary printed **p.42** = PDF 44 gives `12 4 4 4 4 3 8 2 8` (the row every other Elf book
+  prints for that rank). Both pages were re-read at high resolution: neither is illegible, they
+  simply disagree, and nothing in the book settles which the level-3 Wood Elf Mage should use. No
+  statlines were added to `WE_WIZARD_LEVELS`; the level-3 profile stays unresolved on purpose.
+- **Halflings** — the Wizard table on PDF page 8 (the *Hungry Horde* compilation; cite by PDF index,
+  the folios are not continuous) has its **Ld column cut off at the scan's right edge**: Wizard
+  `4 2 4 2 3 1 5 1 ?` and Wizard Champion `4 2 4 3 3 2 5 2 ?`. An unreadable digit is not a value,
+  so `HF_WIZARD_LEVELS` was left alone.
+- **Orcs & Goblins** already carried per-level statlines (OLD-12 / OLD-13) and is untouched.
+  **Dwarfs** have no wizards. **Vampire Counts** and **Norse** model every wizard level as its own
+  unit entry rather than as a level option, so there is nothing for this mechanism to fix.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

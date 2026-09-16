@@ -47,10 +47,17 @@ const TERRADON_POISON_HALF: EquipmentOption = { id: 'poison-tips', name: 'Poison
 // Master   = 425 (Δ+185 over Champion; 3 spells, 4 items).
 // Lord     = 550 (Δ+125 over Master; 4 spells, 5 items).
 // magicItemSlotsDelta tracks the rising item allowance (book: 2→3→4→5).
+//
+// OLD-37 — each level has its OWN profile in the p.73 table (English book, M
+// already in inches):
+//   Mage-Priest & Palanquin            4 3 2 4 4 3 2 3  8   (the base statLine)
+//   Mage-Priest Champion & Palanquin   4 4 3 6 4 4 3 4  8
+//   Master Mage-Priest & Palanquin     4 5 4 6 5 6 5 6  9
+//   Mage-Lord & Palanquin              4 6 5 6 5 8 6 8 10
 const SLANN_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Mage-Priest Champion (Level 2)', pointsPerModel: 125, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Master Mage-Priest (Level 3)', pointsPerModel: 310, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Mage-Priest Lord (Level 4)', pointsPerModel: 435, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Mage-Priest Champion (Level 2)', pointsPerModel: 125, magicItemSlotsDelta: 1, statLine: { M: 4, WS: 4, BS: 3, S: 6, T: 4, W: 4, I: 3, A: 4, Ld: 8 } },
+  { id: 'wizard-l3', name: 'Master Mage-Priest (Level 3)', pointsPerModel: 310, magicItemSlotsDelta: 2, statLine: { M: 4, WS: 5, BS: 4, S: 6, T: 5, W: 6, I: 5, A: 6, Ld: 9 } },
+  { id: 'wizard-l4', name: 'Mage-Priest Lord (Level 4)', pointsPerModel: 435, magicItemSlotsDelta: 3, statLine: { M: 4, WS: 6, BS: 5, S: 6, T: 5, W: 8, I: 6, A: 8, Ld: 10 } },
 ]
 
 // --- Character mounts (army list p.74). Saurus & Skink characters may ride a

@@ -33,10 +33,16 @@ const LIGHT_ARMOUR_1: EquipmentOption = { id: 'light-armour', name: 'Light armou
 // Battle Wizard level upgrades (p.58). Costs: Hechicero 56 → Paladín Hechicero 118
 // → Maestro Hechicero 190 → Gran Hechicero 287. Cumulative deltas: +62 / +72 / +97.
 // Magic-item slots: 1 / 2 / 3 / 4.
+//
+// OLD-37 — each level has its OWN profile in the p.58 table (M in cm; 10cm → 4"):
+//   Hechicero          10 3 3 3 4 1 4 1 7   (the unit's base statLine)
+//   Paladín Hechicero  10 3 3 4 4 2 4 1 7
+//   Maestro Hechicero  10 3 3 4 4 3 5 2 7
+//   Gran Hechicero     10 3 3 4 4 4 6 3 8
 const EMP_WIZARD_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Wizard Level 2 (Paladín Hechicero)', pointsPerModel: 62, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Wizard Level 3 (Maestro Hechicero)', pointsPerModel: 72, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Wizard Level 4 (Gran Hechicero)', pointsPerModel: 97, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Wizard Level 2 (Paladín Hechicero)', pointsPerModel: 62, magicItemSlotsDelta: 1, statLine: human({ S: 4, T: 4, W: 2, I: 4 }) },
+  { id: 'wizard-l3', name: 'Wizard Level 3 (Maestro Hechicero)', pointsPerModel: 72, magicItemSlotsDelta: 2, statLine: human({ S: 4, T: 4, W: 3, I: 5, A: 2 }) },
+  { id: 'wizard-l4', name: 'Wizard Level 4 (Gran Hechicero)', pointsPerModel: 97, magicItemSlotsDelta: 3, statLine: human({ S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 8 }) },
 ]
 
 // --- Character mounts. Empire characters "may ride a Warhorse (+3) or a Monster"

@@ -53,9 +53,15 @@ const NETS_1: EquipmentOption = { id: 'nets', name: 'Nets', pointsPerModel: 1 }
 // 118 → Master of Sorcerers (Maestro de Brujos) 190; Grey Seers (Videntes Grises)
 // are always Level 4 at 340 and are a separate character entry below.
 // Deltas off the base 56: +62 / +134.
+//
+// OLD-37 — each level has its OWN profile in the p.62 table (M in cm; 12cm → 5"):
+//   Brujo Ingeniero    12 3 3 3 4 1 5 1 5   (the unit's base statLine)
+//   Paladín Brujo      12 3 3 4 4 2 5 1 6
+//   Maestro de Brujos  12 3 3 4 4 3 6 2 7
+//   (Vidente Gris 12 6 6 4 4 4 7 4 7 is the separate always-L4 entry below.)
 const SK_WIZARD_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Wizard Level 2 (Sorcerer Paladin)', pointsPerModel: 62, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Wizard Level 3 (Master of Sorcerers)', pointsPerModel: 134, magicItemSlotsDelta: 2 },
+  { id: 'wizard-l2', name: 'Wizard Level 2 (Sorcerer Paladin)', pointsPerModel: 62, magicItemSlotsDelta: 1, statLine: skaven({ WS: 3, BS: 3, S: 4, T: 4, W: 2, I: 5, A: 1, Ld: 6 }) },
+  { id: 'wizard-l3', name: 'Wizard Level 3 (Master of Sorcerers)', pointsPerModel: 134, magicItemSlotsDelta: 2, statLine: skaven({ WS: 3, BS: 3, S: 4, T: 4, W: 3, I: 6, A: 2, Ld: 7 }) },
 ]
 
 // --- Character mounts. The Warlord, Warlock Engineer and Grey Seer entries
