@@ -678,10 +678,12 @@ describe('OLD-22: Ogres are a Regiment, not a Monster', () => {
   const og = getArmy('orcs-and-goblins')!
   const ogres = og.units.find((u) => u.id === 'og-ogres')
 
-  it('og-ogres has role "regiment" and keeps its book-accurate points/options', () => {
+  it('og-ogres has role "regiment" and keeps its book-accurate points/stats/options', () => {
     expect(ogres, 'og-ogres not found').toBeDefined()
     expect(ogres!.role).toBe('regiment')
     expect(ogres!.pointsPerModel).toBe(40)
+    // PDF p.86: M15 HA3 HP2 F4 R5 H3 I3 A2 L7 — unchanged by the category move.
+    expect(ogres!.statLine).toEqual({ M: 6, WS: 3, BS: 2, S: 4, T: 5, W: 3, I: 3, A: 2, Ld: 7 })
     // Book options preserved, PLUS the standard bearer + musician that
     // withCommandGroups auto-adds to every multi-model regiment (see below).
     expect((ogres!.options ?? []).map((o) => o.id).sort()).toEqual(
