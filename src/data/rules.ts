@@ -4,7 +4,10 @@
 
 export interface RuleDef {
   id: string
-  /** Lowercase substrings matched against an ability tag (e.g. "causes fear" → "fear"). */
+  /**
+   * Lowercase words matched against an ability tag (e.g. "causes fear" → "fear").
+   * Matching is word-aware, not substring: see `findRule`.
+   */
   aliases: string[]
   titleEn: string
   titleEs: string
@@ -12,8 +15,8 @@ export interface RuleDef {
   es: string
 }
 
-// NOTE: order matters — findRule returns the FIRST entry whose alias is a
-// substring of the tag, so more specific rules are listed before generic ones.
+// Order is only a tie-breaker now: findRule picks the alias that appears
+// EARLIEST in the tag, not the first entry in this array (see findRule).
 export const RULES: RuleDef[] = [
   {
     id: 'immune-psychology',
@@ -205,7 +208,7 @@ export const RULES: RuleDef[] = [
   },
   {
     id: 'breath-weapon',
-    aliases: ['breath weapon', 'breath', 'arma de aliento', 'aliento'],
+    aliases: ['breath weapon', 'breath', 'breathe', 'arma de aliento', 'aliento'],
     titleEn: 'Breath Weapon',
     titleEs: 'Arma de aliento',
     en: 'The creature breathes fire (or worse) over its foes during the shooting phase. Place the teardrop template; each model under it is hit on a 4+, wounding at Strength 4 (unless stated otherwise) with saves as normal.',
@@ -349,11 +352,102 @@ export const RULES: RuleDef[] = [
   },
 ]
 
-/** Find the glossary entry that best matches an ability tag, or undefined. */
-export function findRule(tag: string): RuleDef | undefined {
-  const t = tag.toLowerCase()
-  for (const r of RULES) {
-    if (r.aliases.some((a) => t.includes(a))) return r
+/**
+ * Tags whose glossary article the heuristic gets wrong, pinned by hand.
+ *
+ * `null` suppresses the ⓘ entirely. These are the cases word-aware matching
+ * cannot reach, because the alias really is a word of the tag — it just does not
+ * mean the rule. Two kinds show up:
+ *
+ *  - **negations** — the tag says the model does NOT have the rule
+ *    ("Living — not Undead; does not cause fear");
+ *  - **proper names** — a rule's word inside the name of a weapon, a formation
+ *    or a troop type ("Lance formation", "the Storm Daemon" halberd).
+ *
+ * Keyed by the English tag verbatim, exactly like `RULE_PHRASE_ES`: a tag IS its
+ * own key. Editing a tag's English text orphans its entry here — the pinning
+ * test in `ruleTags.test.ts` fails when that happens.
+ */
+export const TAG_RULE_OVERRIDES: Record<string, string | null> = {
+  // Negations — the tag denies the very rule its words name.
+  'Living — not Undead; does not cause fear': null,
+  'Living — not Undead; subject to psychology': null,
+  'Has yet to develop its breath weapon, so has no breath attack': null,
+  'Fixed Scientific Items (not magic items): Sphere of Alchemy, Prism of Power, Compass of Meteoric Silver':
+    null,
+  // Proper names that merely contain a rule word.
+  'Lance formation': null, // the Bretonnian FORMATION, not the cavalry weapon
+  'Breath of Life — regains a wound on 4+ each Chaos turn; can even reincarnate': null,
+  'Must take the Storm Daemon as his first magic item (+25 pts); up to 4 magic items': 'magic-items',
+  'The Storm Daemon (Tormenta Demoníaca) halberd: S6, casts Warp Lightning (1D6 hits)': null,
+  'May include any number of Slayer Paladins (Giant/Dragon/Daemon Slayers)': null,
+  'Cloud of Flies (-1 to hit them)': null,
+  'Cloud of Flies — enemies in base contact suffer -1 to hit in close combat': null,
+  'Fearfrost magic sword (+100 pts) — fixed magic item': 'magic-items',
+  // Special saves named "Shield" — not the mundane shield the article describes.
+  'Mighty Shield of the Old Ones — 3+ special save against each wound': null,
+  'Shield of Sotek — 4+ special save against each wound (cannot be reduced by Strength); wounds from armour-ignoring attacks can still be saved':
+    null,
+  'Shield of the Old Ones — 4+ special save against each wound': null,
+  'Shield of the Old Ones — 4+ special save against each wound (whole palanquin model)': null,
+}
+
+/**
+ * English inflections an alias may carry and still count as the same word.
+ *
+ * This is the whole reason matching is not a bare `\b`: the tags are prose, so
+ * the glossary's singular "shield" has to reach "shields" and "skirmish" has to
+ * reach "skirmisher"/"skirmishers". What it must NOT reach is a different word
+ * that merely starts the same — "lance" inside "Lancers", "spear" inside
+ * "Spearmen", "fear" inside "Fearfrost". Those are the bug.
+ *
+ * Kept deliberately tiny. Every entry earns its place by a tag that exists:
+ * widening it is how "lance" would creep back into "Lancers".
+ */
+const INFLECTIONS = ['s', 'es', 'er', 'ers', 'ing']
+
+const ALIAS_RE = new Map<string, RegExp>()
+
+function aliasRegExp(alias: string): RegExp {
+  let re = ALIAS_RE.get(alias)
+  if (!re) {
+    const escaped = alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    // Start and end on a word boundary that understands accented letters, which
+    // \b does not — 'lanza' must not match inside 'lanzavirotes'.
+    re = new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?:${INFLECTIONS.join('|')})?(?![\\p{L}\\p{N}])`, 'u')
+    ALIAS_RE.set(alias, re)
   }
-  return undefined
+  return re
+}
+
+/**
+ * Find the glossary entry that best matches an ability tag, or undefined.
+ *
+ * Two rules, in order:
+ *  1. An explicit `TAG_RULE_OVERRIDES` entry always wins (and may suppress).
+ *  2. Otherwise the alias that appears EARLIEST in the tag wins. The tags are
+ *     written lead-first ("Causes fear; Hatred when in the front rank..."), so
+ *     position is what identifies the subject. Ties go to the longer alias, then
+ *     to the earlier `RULES` entry.
+ *
+ * Position beats array order deliberately: relying on array order meant a new
+ * entry could silently steal another's ⓘ by being inserted above it.
+ */
+export function findRule(tag: string): RuleDef | undefined {
+  if (Object.prototype.hasOwnProperty.call(TAG_RULE_OVERRIDES, tag)) {
+    const id = TAG_RULE_OVERRIDES[tag]
+    return id === null ? undefined : RULES.find((r) => r.id === id)
+  }
+  const t = tag.toLowerCase()
+  let best: { rule: RuleDef; at: number; len: number } | undefined
+  for (const r of RULES) {
+    for (const a of r.aliases) {
+      const at = t.search(aliasRegExp(a))
+      if (at < 0) continue
+      if (!best || at < best.at || (at === best.at && a.length > best.len)) {
+        best = { rule: r, at, len: a.length }
+      }
+    }
+  }
+  return best?.rule
 }
