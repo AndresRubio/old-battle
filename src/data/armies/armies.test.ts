@@ -1106,6 +1106,94 @@ describe('OLD-25: war-machine crew equipment is a real priced option', () => {
   })
 })
 
+describe('OLD-31: the Tiranoc Chariot prices its per-crewman options per crewman', () => {
+  // High Elves p.79 (PDF 81), AURIGAS DE TIRANOC. The chariot is "tirado por dos
+  // Corceles Élficos y tripulado por dos Elfos" — TWO Aurigas, TWO steeds. Its
+  // OPCIONES line prices four upgrades per Auriga ("+1 punto por Auriga" /
+  // "+1 punto por miniatura", the subject being "Cualquier Auriga") and the
+  // barding per steed ("+4 puntos cada uno"), but the entry is role 'chariot',
+  // a SINGLE-MODEL entry to entryPoints (only 'regiment' multiplies by size).
+  // Stored per-model these charged ONE crewman / ONE steed's worth: half, or a
+  // quarter, of the book's price. They must be flat, already multiplied.
+  const chariot = () => getArmy('high-elves')!.units.find((u) => u.id === 'he-tiranoc-chariot')!
+  const opt = (id: string) => {
+    const o = (chariot().options ?? []).find((x) => x.id === id)
+    expect(o, `${id} not found on the Tiranoc Chariot`).toBeDefined()
+    return o!
+  }
+  const withOptions = (...optionIds: string[]): number =>
+    entryPoints(
+      { id: 'e', unitId: 'he-tiranoc-chariot', size: 1, optionIds, magicItemIds: [] },
+      getArmy('high-elves')!,
+    )
+
+  it('the base chariot is the book\'s 84 points', () => {
+    // "AURIGAS DE TIRANOC .... 84 puntos por miniatura"
+    expect(chariot().pointsPerModel).toBe(84)
+    expect(withOptions()).toBe(84)
+  })
+
+  it('shield / heavy armour / lance / longbow are +1 per Auriga x 2 Aurigas = +2 flat', () => {
+    // "Cualquier Auriga puede equiparse con un Escudo por un coste adicional de
+    // +1, y/o sustituir su Armadura Ligera por una Armadura Pesada por un coste
+    // adicional de +1 punto por Auriga. Cualquier Auriga puede equiparse con una
+    // Lanza por un coste adicional de +1 punto por miniatura, y sustituir su Arco
+    // por un Arco Largo por un coste adicional de +1 punto por miniatura."
+    for (const id of ['chariot-shield', 'chariot-heavy-armour', 'chariot-lance', 'chariot-longbow']) {
+      const o = opt(id)
+      expect(o.flat, `${id} must be flat (per-entry), not per-model`).toBe(true)
+      expect(o.pointsPerModel, `${id} = +1 x 2 crew`).toBe(2)
+      expect(o.description, `${id} needs the arithmetic + citation`).toBeTruthy()
+      expect(o.descEs, `${id} needs a Spanish description`).toBeTruthy()
+      expect(withOptions(id), `${id} on a bare chariot`).toBe(86)
+    }
+    // All four together: 84 + 4 x 2.
+    expect(withOptions('chariot-shield', 'chariot-heavy-armour', 'chariot-lance', 'chariot-longbow')).toBe(92)
+  })
+
+  it('barding is +4 per steed x 2 steeds = +8 flat, all-or-none', () => {
+    // "Los Corceles de los Carruajes pueden equiparse con Barda con un coste
+    // adicional de +4 puntos cada uno. Debe equiparse con barda a todos los
+    // Corceles, o a ninguno." — so it is never a single steed's +4.
+    const o = opt('chariot-barding')
+    expect(o.flat).toBe(true)
+    expect(o.pointsPerModel).toBe(8)
+    expect(withOptions('chariot-barding')).toBe(92)
+  })
+
+  it('the per-chariot options keep the book\'s per-chariot price', () => {
+    // "cuchillas en las ruedas por un coste adicional de +20 puntos" and
+    // "dos Corceles Élficos más [...] +6 puntos los dos corceles" — both are
+    // already whole-chariot prices, so they stay exactly as they were.
+    expect(opt('scythed-wheels').flat).toBe(true)
+    expect(opt('scythed-wheels').pointsPerModel).toBe(20)
+    expect(opt('extra-steeds').flat).toBe(true)
+    expect(opt('extra-steeds').pointsPerModel).toBe(6)
+    expect(withOptions('scythed-wheels')).toBe(104)
+    expect(withOptions('extra-steeds')).toBe(90)
+  })
+
+  it('no Tiranoc option is left per-model — every one is a whole-chariot charge', () => {
+    // A 'chariot' entry never multiplies by size, so a non-flat option here is
+    // silently a one-model charge whatever its name claims.
+    for (const o of chariot().options ?? []) {
+      expect(o.flat, `${o.id} must be flat on a single-model entry`).toBe(true)
+    }
+    // …and none of them still advertises itself as a per-crew unit price.
+    for (const o of chariot().options ?? []) {
+      expect(o.name, `${o.id} name`).not.toMatch(/per crew|per steed/i)
+    }
+  })
+
+  it('the Repeater Bolt Thrower has no crew options to misprice', () => {
+    // p.79: "Equipo: La dotación está equipada con arma de mano y Armadura
+    // Ligera." — no OPCIONES line at all, so nothing to buy.
+    const bt = getArmy('high-elves')!.units.find((u) => u.id === 'he-bolt-thrower')!
+    expect(bt.pointsPerModel).toBe(100)
+    expect(bt.options ?? []).toHaveLength(0)
+  })
+})
+
 describe('Empire — sample legal list validates cleanly', () => {
   it('a balanced 1000pt list produces no violations', () => {
     const empire = getArmy('empire')!

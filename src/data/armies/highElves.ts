@@ -38,15 +38,48 @@ const LANCE_2: EquipmentOption = { id: 'cav-lance', name: 'Cavalry lances', poin
 // Long bow: +1pt upgrade from bow (for Archers, Shadow Warriors, Sea Guard)
 const LONGBOW_1: EquipmentOption = { id: 'longbow', name: 'Longbows (upgrade from bows)', pointsPerModel: 1 }
 
-// Tiranoc Chariot options (flat per-unit, but listed individually as per-model
-// since a chariot is a single model)
+// Tiranoc Chariot options (p.79). EVERY one is `flat`: a chariot is a
+// single-model entry to entryPoints (only role 'regiment' multiplies by size),
+// so the book's per-Auriga and per-steed prices are stored already multiplied
+// by the chariot's fixed crew of two Aurigas / team of two steeds. The book's
+// own whole-chariot prices (scythed wheels, the extra pair of steeds) are flat
+// at face value.
 const CHARIOT_SCYTHED: EquipmentOption = { id: 'scythed-wheels', name: 'Scythed wheels', pointsPerModel: 20, flat: true }
-const CHARIOT_SHIELD: EquipmentOption = { id: 'chariot-shield', name: 'Shield (per crew)', pointsPerModel: 1 }
-const CHARIOT_HEAVY_ARMOUR: EquipmentOption = { id: 'chariot-heavy-armour', name: 'Heavy armour (per crew)', pointsPerModel: 1 }
-const CHARIOT_LANCE: EquipmentOption = { id: 'chariot-lance', name: 'Lance (per crew)', pointsPerModel: 1 }
-const CHARIOT_LONGBOW: EquipmentOption = { id: 'chariot-longbow', name: 'Longbow (per crew)', pointsPerModel: 1 }
-const CHARIOT_EXTRA_STEEDS: EquipmentOption = { id: 'extra-steeds', name: 'Extra 2 Elven Steeds', pointsPerModel: 6, flat: true }
-const CHARIOT_BARDING: EquipmentOption = { id: 'chariot-barding', name: 'Barding (per steed)', pointsPerModel: 4 }
+const CHARIOT_SHIELD: EquipmentOption = {
+  id: 'chariot-shield', name: 'Shields (both crew)', pointsPerModel: 2, flat: true,
+  description: 'A shield for each Auriga: +1 pt per crewman x 2 crew (p.79).',
+  descEs: 'Un escudo para cada Auriga: +1 pto por tripulante x 2 tripulantes (p.79).',
+}
+const CHARIOT_HEAVY_ARMOUR: EquipmentOption = {
+  id: 'chariot-heavy-armour', name: 'Heavy armour (both crew)', pointsPerModel: 2, flat: true,
+  description: 'Each Auriga swaps light armour for heavy armour: +1 pt per crewman x 2 crew (p.79).',
+  descEs: 'Cada Auriga cambia su armadura ligera por una pesada: +1 pto por tripulante x 2 tripulantes (p.79).',
+}
+const CHARIOT_LANCE: EquipmentOption = {
+  id: 'chariot-lance', name: 'Lances (both crew)', pointsPerModel: 2, flat: true,
+  description: 'A lance for each Auriga: +1 pt per crewman x 2 crew (p.79).',
+  descEs: 'Una lanza para cada Auriga: +1 pto por tripulante x 2 tripulantes (p.79).',
+}
+const CHARIOT_LONGBOW: EquipmentOption = {
+  id: 'chariot-longbow', name: 'Longbows (both crew)', pointsPerModel: 2, flat: true,
+  description: 'Each Auriga swaps his bow for a longbow: +1 pt per crewman x 2 crew (p.79).',
+  descEs: 'Cada Auriga cambia su arco por un arco largo: +1 pto por tripulante x 2 tripulantes (p.79).',
+}
+const CHARIOT_EXTRA_STEEDS: EquipmentOption = {
+  id: 'extra-steeds', name: 'Extra 2 Elven Steeds', pointsPerModel: 6, flat: true,
+  description: 'Two more Elven Steeds, one either side of the first pair: +6 pts for the two (p.79).',
+  descEs: 'Dos Corceles Élficos más, uno a cada lado de los dos primeros: +6 ptos los dos corceles (p.79).',
+}
+// "+4 puntos cada uno. Debe equiparse con barda a todos los Corceles, o a
+// ninguno" (p.79) — all-or-none, so the only price a two-steed chariot can pay
+// is 4 x 2 = 8. NOTE: a chariot that also buys CHARIOT_EXTRA_STEEDS has four
+// steeds and the book would charge 4 x 4 = 16; an EquipmentOption has no way to
+// make its cost depend on another selection, so that combination is charged 8.
+const CHARIOT_BARDING: EquipmentOption = {
+  id: 'chariot-barding', name: 'Barding (both Elven Steeds)', pointsPerModel: 8, flat: true,
+  description: 'Barding for the chariot\'s steeds — all or none: +4 pts per steed x 2 steeds (p.79).',
+  descEs: 'Barda para los corceles del carruaje — todos o ninguno: +4 ptos por corcel x 2 corceles (p.79).',
+}
 
 // Mage level upgrades — Mago 59pts → Paladín Mago 121pts → Mago Maestro 219pts
 // → Gran Mago 328pts (p.74). Cumulative point deltas.
@@ -630,7 +663,7 @@ const units: UnitProfile[] = [
     ],
     specialRules: [
       'Chariot (T7 W3) drawn by 2 Elven Steeds (6+ save base)',
-      'Crew: Auriga with light armour, sword & bow',
+      'Crew: 2 Aurigas with light armour, sword & bow',
       'Always strikes first',
       'May carry a magic standard',
       'Its decorative banners are not regimental standards — no combat-resolution bonus',

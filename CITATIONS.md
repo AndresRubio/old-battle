@@ -312,6 +312,24 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   implied unlimited supply, the Dwarf Gyrocopter by a single pilot). The only "tripulantes
   adicionales" the O&G book prices belong to the chariots (p.88, implemented in OLD-23).
   Linear OLD-25.
+- **Tiranoc Chariot per-crewman and per-steed options** (High Elves) — `source/1997 Altos Elfos.pdf`
+  printed p.79 = PDF 81, MÁQUINAS DE GUERRA / AURIGAS DE TIRANOC. The entry is "84 puntos por
+  miniatura" (base unchanged) for a chariot "tirado por dos Corceles Élficos y tripulado por dos
+  Elfos" — **two Aurigas, two steeds**. Its OPCIONES line: "Cualquier Auriga puede equiparse con un
+  Escudo por un coste adicional de +1, y/o sustituir su Armadura Ligera por una Armadura Pesada por
+  un coste adicional de +1 punto por Auriga. Cualquier Auriga puede equiparse con una Lanza por un
+  coste adicional de +1 punto por miniatura, y sustituir su Arco por un Arco Largo por un coste
+  adicional de +1 punto por miniatura." — all four are priced **per Auriga**, so each is stored
+  `flat` at **+2** (1 × 2 crew), the same modelling fix OLD-25 applied to war-machine crews. Barding
+  likewise: "Los Corceles de los Carruajes pueden equiparse con Barda con un coste adicional de +4
+  puntos cada uno. Debe equiparse con barda a todos los Corceles, o a ninguno." → `flat` **+8**
+  (4 × 2 steeds); note the book would charge 4 × 4 = 16 on a chariot that also takes the extra pair
+  of steeds, which an `EquipmentOption` cannot express (its cost cannot depend on another
+  selection). The two genuinely per-chariot options are unchanged at their printed face value:
+  "cuchillas en las ruedas por un coste adicional de +20 puntos" and "dos Corceles Élficos más [...]
+  por un coste adicional de +6 puntos los dos corceles". The same page's Repeater Bolt Thrower (100
+  pts, "una dotación de dos Altos Elfos") has no OPCIONES line at all, so it correctly offers none.
+  Linear OLD-31.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
