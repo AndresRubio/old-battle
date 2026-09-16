@@ -427,13 +427,15 @@ checked against is `CHARIOT_CHASSIS_STATS = { S: 7, T: 7, W: 3, I: 1 }` in `orcs
   Atributo de Fuerza del propio Carro de Guerra Imperial, es decir 7"*. **T and W were wrong** (the
   book gives T7 W5, the code held T5 W4).
 
-**The `A: 1D6` that cannot be entered — resolved by OLD-39 (below).** The Undead Chariot (printed
-p.84) and the Chariot of Arkhan (printed p.91) both print **1D6 Attacks**. `StatLine.A` is typed
-`number` and still is, so `A` remains deliberately **absent** from both statLines rather than being
-flattened to an invented average or to a literal. What has changed is that the printed token is no
-longer dropped: it is carried beside the statLine in the display-only `ProfileBlock.attacksNote` and
-rendered in the A column, so the UI no longer prints "–" where the book prints a roll. Pinned by
-tests in `armies.test.ts`.
+**The `A: 1D6` that cannot be entered — resolved by OLD-39, then generalised by OLD-43 (both
+below).** The Undead Chariot (printed p.84) and the Chariot of Arkhan (printed p.91) both print
+**1D6 Attacks**. `StatLine.A` is typed `number` and still is, so `A` remains deliberately **absent**
+from both statLines rather than being flattened to an invented average or to a literal. What has
+changed is that the printed token is no longer dropped: it is carried beside the statLine and
+rendered in the A column, so the UI no longer prints "–" where the book prints a roll. OLD-39 did
+that with an Attacks-only `ProfileBlock.attacksNote`; **OLD-43 removed that field** and replaced it
+with `statNotes`, which works in all nine columns and on units and mounts as well as profiles.
+Pinned by tests in `armies.test.ts`.
 
 **Parked deliberately — do not "fix" these off the same audit.** Each needs its own decision and has
 its own Linear issue:
