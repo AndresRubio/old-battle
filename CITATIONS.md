@@ -452,6 +452,55 @@ its own Linear issue:
 - **The Chaos convention** of putting chassis stats in the unit's top-level `statLine`
   (`ch-chariot`, `ch-marauder-chariot`) while every other army puts the crew there.
 
+#### High Elf characters riding a Tiranoc Chariot (OLD-34)
+Source: `source/1997 Altos Elfos.pdf`, offset **+2** (PDF index = printed page + 2). This was a
+**gap**, not a contradiction: the ability existed only as unpriced English prose in `specialRules`
+("May ride an Elven Steed (+3 pts), a monster, or a chariot") and `PRINCE_MOUNTS` offered no
+chariot, so a legal list could not be built. Nothing already in the data was wrong.
+- **The price: +84 points.** Printed **p.79** = PDF 81, closing paragraph of AURIGAS DE TIRANOC:
+  *"Los personajes pueden montar en un Carruaje, en cuyo caso el personaje sustituye a uno de los
+  tripulantes. El valor en puntos del carruaje no varía por ello: el personaje debe gastar, por
+  ejemplo, +84 puntos para montar en el carruaje básico (ver la página 74)."* The same 84 the
+  standalone `he-tiranoc-chariot` entry costs — the chariot is not repriced for being ridden.
+  Note that "ver la página 74" points at **prose, not a table**: there is no mount table on printed
+  p.74, and the only mount cost printed as a number in the character section is the Elven Steed's
+  +3 (monsters are by reference to the printed p.80 table).
+- **Who may ride — all five generic character types, each stated individually.** Printed **p.73** =
+  PDF 75 for the General, Battle Standard Bearer, Hero and Mage: *"También puede entrar en combate
+  montado en un carruaje de la sección de Máquinas de Guerra de esta lista, en cuyo caso sustituirá
+  a uno de los tripulantes y el coste del carruaje deberá sumarse al suyo propio"*, printed under
+  each entry in turn (the Mage's on printed p.74 = PDF 76). The **Paladin**'s permission is
+  conditional — printed **p.74** = PDF 76, Reglas Especiales: *"Si forma parte de un regimiento de
+  Carruajes de Guerra de Tiranoc, el Paladín también monta en un carruaje (ver la Lista de Máquinas
+  de Guerra). En este caso sustituirá a un tripulante y el coste del carruaje se sumará al suyo."*
+  The app has no way to express "only as part of a chariot regiment", so the mount is offered and
+  the condition is stated in the Paladin's own rule line (bilingual); silently dropping a legal
+  option, or silently blessing an illegal list, would both be worse.
+- **Which cap it counts against.** Printed **p.69** = PDF 71: *"Carruajes de Guerra. Si un personaje
+  monta en un Carruaje de Guerra su valor en puntos debe sumarse al del personaje, y por tanto se
+  contabilizará contra la proporción de puntos que pueden invertirse en personajes."* And printed
+  **p.71** = PDF 73 (ORGANIZACIÓN DEL EJÉRCITO), of the war-machine allowance: *"Este límite de
+  puntos **no incluye el coste de un carruaje montado por un personaje**, que debe adquirirse con
+  los puntos de Personajes."* So a ridden chariot leaves the 0-25% war machines + chariots cap and
+  enters the 0-50% characters cap. The engine already did this and was **not changed**: a
+  `MountOption`'s points land on the character's entry and `pointsByRole` buckets an entry by its
+  unit's `role`. Verified and pinned by a test (`armies.test.ts`) that fields a General on the
+  chariot alongside a standalone `he-tiranoc-chariot` and asserts 244 character points against 84
+  war-machine/chariot points.
+- **Deliberately omitted: the four crew-kit options.** The mount offers only the upgrades the book
+  prices **per chariot** — scythed wheels (+20), the extra pair of Elven Steeds (+6) and barding
+  (+8 for the two steeds), all printed p.79. It does **not** offer the standalone entry's shield,
+  heavy armour, lance and longbow. Those are printed "+1 punto por Auriga" and stored (OLD-31) as a
+  `flat` 2 meaning "+1 per Auriga × 2 Aurigas". A character *replaces* an Auriga, and the book
+  states **neither the ridden chariot's resulting crew count nor any per-crew basis for that kit on
+  a ridden chariot** — so any number here would be an invented game value rather than a transcribed
+  one, and the options are left out instead. For the same reason the mount declares no `baseCrew`.
+  This is an **open question for a future issue**, not an oversight; it is pinned by a test so the
+  omission cannot be quietly filled in with a guess.
+- No points, profile or option value changed anywhere. The chassis and steed `ProfileBlock`s are the
+  OLD-33 rows, now a shared constant (`TIRANOC_CHARIOT_PROFILES`) used by both the standalone entry
+  and the mount, so the two can never drift. Linear OLD-34.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

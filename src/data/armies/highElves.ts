@@ -82,6 +82,17 @@ const CHARIOT_BARDING: EquipmentOption = {
   descEs: 'Barda para los corceles del carruaje — todos o ninguno: +4 ptos por corcel x 2 corceles (p.79).',
 }
 
+// Tiranoc Chariot display profiles. Shared by the standalone chariot entry
+// (he-tiranoc-chariot) and by the character mount (TIRANOC_CHARIOT_MOUNT), so
+// the same chariot can never be printed two different ways.
+// OLD-33 — printed p.79 = PDF 81: "Carruaje  -  -  -  7  7  3  1  -  -".
+const TIRANOC_CHASSIS_STATS = { S: 7, T: 7, W: 3, I: 1 } as const
+const ELVEN_STEED_STATS: StatLine = { M: 9, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 4, A: 1, Ld: 5 }
+const TIRANOC_CHARIOT_PROFILES: ProfileBlock[] = [
+  { name: 'Chariot', nameEs: 'Carro', statLine: TIRANOC_CHASSIS_STATS },
+  { name: '2 Elven Steeds', nameEs: '2 Corceles Élficos', statLine: ELVEN_STEED_STATS },
+]
+
 // Mage level upgrades — Mago 59pts → Paladín Mago 121pts → Mago Maestro 219pts
 // → Gran Mago 328pts (p.74). Cumulative point deltas.
 const HE_WIZARD_LEVELS: EquipmentOption[] = [
@@ -96,7 +107,7 @@ const HE_WIZARD_LEVELS: EquipmentOption[] = [
 //     army list / monster points. ---
 const ELVEN_STEED_MOUNT: MountOption = {
   id: 'mount-elven-steed', name: 'Elven Steed', nameEs: 'Corcel Élfico',
-  points: 3, statLine: { M: 9, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 4, A: 1, Ld: 5 },
+  points: 3, statLine: ELVEN_STEED_STATS,
 }
 const GREAT_EAGLE_MOUNT: MountOption = {
   id: 'mount-great-eagle', name: 'Great Eagle', nameEs: 'Águila Gigante',
@@ -143,10 +154,60 @@ const EMPEROR_DRAGON_MOUNT: MountOption = {
   specialRules: ['Flying', 'Causes terror', 'Large target', 'Dragon breath weapon'],
 }
 
-/** Mount list for High Elf princes/heroes ("an Elven Steed or a monster"). */
+// --- The Tiranoc Chariot as a character mount (OLD-34) ---------------------
+// Printed p.79 = PDF 81, closing paragraph of AURIGAS DE TIRANOC: "Los
+// personajes pueden montar en un Carruaje, en cuyo caso el personaje sustituye
+// a uno de los tripulantes. El valor en puntos del carruaje no varía por ello:
+// el personaje debe gastar, por ejemplo, +84 puntos para montar en el carruaje
+// básico (ver la página 74)." — the same 84 points the standalone entry costs.
+// The General, Battle Standard Bearer, Hero and Mage each carry that permission
+// under their own entry (printed pp.73-74); the Paladin's is conditional on his
+// regiment being one of Tiranoc chariots (see his rule line below).
+//
+// The points cap this counts against (printed p.69 and p.71): "Si un personaje
+// monta en un Carruaje de Guerra su valor en puntos debe sumarse al del
+// personaje, y por tanto se contabilizará contra la proporción de puntos que
+// pueden invertirse en personajes" / "Este límite de puntos no incluye el coste
+// de un carruaje montado por un personaje". A MountOption already does exactly
+// that: its points land on the character's entry, and pointsByRole buckets an
+// entry by its UNIT's role — so the ridden chariot leaves the 0-25% war-machine
+// cap and enters the 0-50% character one. Pinned by armies.test.ts.
+//
+// DELIBERATELY OMITTED: the four crew-kit options the standalone entry carries
+// (CHARIOT_SHIELD / CHARIOT_HEAVY_ARMOUR / CHARIOT_LANCE / CHARIOT_LONGBOW).
+// Each is priced "+1 punto por Auriga" and stored already multiplied by the
+// chariot's crew of two. A character REPLACES one Auriga, but the book states
+// neither the resulting crew count nor a per-crew basis for those upgrades on a
+// ridden chariot, so any number here would be invented rather than transcribed.
+// Only the upgrades the book prices per CHARIOT are offered: scythed wheels
+// (+20), the extra pair of steeds (+6) and barding (+8 for the two steeds).
+// Same spirit as the CHARIOT_BARDING note above — record the limitation, don't
+// paper over it. For the same reason the mount declares no `baseCrew`: it has
+// no `perCrewman`/`addsCrewman` option that would need one, and the ridden
+// chariot's crew count is precisely what the book does not say.
+const TIRANOC_CHARIOT_MOUNT: MountOption = {
+  id: 'mount-tiranoc-chariot', name: 'Tiranoc Chariot', nameEs: 'Auriga de Tiranoc',
+  points: 84,
+  profiles: TIRANOC_CHARIOT_PROFILES,
+  options: [
+    {
+      ...CHARIOT_SCYTHED, id: 'mount-tiranoc-chariot-scythes',
+      description: 'Blades on the chariot\'s wheels: +20 pts per chariot (p.79).',
+      descEs: 'Cuchillas en las ruedas del carruaje: +20 ptos por carruaje (p.79).',
+    },
+    { ...CHARIOT_EXTRA_STEEDS, id: 'mount-tiranoc-chariot-extra-steeds' },
+    { ...CHARIOT_BARDING, id: 'mount-tiranoc-chariot-barding' },
+  ],
+}
+
+/**
+ * Mount list for High Elf princes/heroes — "an Elven Steed, a monster or a
+ * chariot" (p.71, and each character entry pp.73-74).
+ */
 const PRINCE_MOUNTS: MountOption[] = [
   ELVEN_STEED_MOUNT, GREAT_EAGLE_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT,
   PEGASUS_MOUNT, UNICORN_MOUNT, DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT,
+  TIRANOC_CHARIOT_MOUNT,
 ]
 
 /** Imrik must ride one of the three dragons (p.86). */
@@ -180,7 +241,7 @@ const units: UnitProfile[] = [
     mounts: PRINCE_MOUNTS,
     specialRules: [
       'Always strikes first',
-      'May ride an Elven Steed (+3 pts), a monster, or a chariot',
+      'May ride an Elven Steed (+3 pts), a monster, or a Tiranoc Chariot (+84 pts), replacing one of its Aurigas',
       'Up to 3 magic items',
     ],
   },
@@ -201,7 +262,7 @@ const units: UnitProfile[] = [
       'Army Battle Standard (0-1)',
       'Always strikes first',
       'May carry one magic standard (counts as magic item)',
-      'May ride an Elven Steed (+3 pts), a monster, or a chariot',
+      'May ride an Elven Steed (+3 pts), a monster, or a Tiranoc Chariot (+84 pts), replacing one of its Aurigas',
     ],
   },
   {
@@ -218,7 +279,7 @@ const units: UnitProfile[] = [
     specialRules: [
       'Always strikes first',
       'Up to 2 magic items',
-      'May ride an Elven Steed (+3 pts), a monster, or a chariot',
+      'May ride an Elven Steed (+3 pts), a monster, or a Tiranoc Chariot (+84 pts), replacing one of its Aurigas',
     ],
   },
   {
@@ -230,9 +291,19 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 5, BS: 5, S: 4, T: 3, W: 1, I: 7, A: 2, Ld: 8 }),
     isCharacter: true,
     characterRank: 'champion',
+    // Printed p.74 = PDF 76, Reglas Especiales: "Si forma parte de un regimiento
+    // de Carruajes de Guerra de Tiranoc, el Paladín también monta en un carruaje
+    // […] sustituirá a un tripulante y el coste del carruaje se sumará al suyo."
+    // The chariot is his ONLY buyable mount (a cavalry Paladin's steed is the
+    // regiment's, already paid for in the regiment's points). The app cannot
+    // enforce "only as part of a chariot regiment" — offering the option and
+    // stating the condition in the rule line beats silently dropping a legal
+    // choice or silently blessing an illegal one.
+    mounts: [TIRANOC_CHARIOT_MOUNT],
     specialRules: [
       'Always strikes first',
       'Equipped identically to the regiment; cavalry Paladins ride the same mount',
+      'If part of a Tiranoc Chariot regiment, he rides a chariot (+84 pts), replacing one of its Aurigas',
       'Up to 1 magic item',
     ],
   },
@@ -252,7 +323,7 @@ const units: UnitProfile[] = [
     specialRules: [
       'Wizard (High Magic or Battle Magic)',
       'Sword only; may not wear armour or carry other weapons',
-      'May ride an Elven Steed (+3 pts), a monster, or a chariot',
+      'May ride an Elven Steed (+3 pts), a monster, or a Tiranoc Chariot (+84 pts), replacing one of its Aurigas',
     ],
   },
 
@@ -655,14 +726,9 @@ const units: UnitProfile[] = [
     role: 'chariot',
     pointsPerModel: 84,
     statLine: elf({ WS: 5, BS: 4, S: 3, T: 3, W: 1, I: 7, A: 1, Ld: 8 }),
-    profiles: [
-      // OLD-33 — printed p.79 = PDF 81: "Carruaje - - - 7 7 3 1 - -"
-      { name: 'Chariot', nameEs: 'Carro', statLine: { S: 7, T: 7, W: 3, I: 1 } },
-      {
-        name: '2 Elven Steeds', nameEs: '2 Corceles Élficos',
-        statLine: { M: 9, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 4, A: 1, Ld: 5 },
-      },
-    ],
+    // OLD-33 chassis + steeds, shared with TIRANOC_CHARIOT_MOUNT (OLD-34) so the
+    // ridden chariot and the standalone one can never print different profiles.
+    profiles: TIRANOC_CHARIOT_PROFILES,
     specialRules: [
       'Chariot (T7 W3) drawn by 2 Elven Steeds (6+ save base)',
       'Crew: 2 Aurigas with light armour, sword & bow',

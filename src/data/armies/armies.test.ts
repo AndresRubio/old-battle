@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { ARMIES, getArmy } from './index'
 import { validateRoster } from '../../rules/validate'
-import { entryPoints } from '../../rules/points'
+import { entryPoints, pointsByRole } from '../../rules/points'
+import { findRule } from '../rules'
 import { summarize } from '../../rules/summary'
 import type { Roster, StatLine } from '../types'
 import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
@@ -1401,6 +1402,156 @@ describe('OLD-33 — chariot chassis profiles match the book', () => {
       const unit = getArmy(row.army)!.units.find((u) => u.id === row.unit)!
       const chassis = (unit.profiles ?? []).find((p) => p.name === row.profile)!
       expect(chassis.statLine.A, `${row.unit} chassis A`).toBeUndefined()
+    }
+  })
+})
+
+// OLD-34 — Altos Elfos, printed p.79 = PDF 81, closing paragraph of AURIGAS DE
+// TIRANOC: "Los personajes pueden montar en un Carruaje, en cuyo caso el
+// personaje sustituye a uno de los tripulantes. El valor en puntos del carruaje
+// no varía por ello: el personaje debe gastar, por ejemplo, +84 puntos para
+// montar en el carruaje básico (ver la página 74)." The permission is printed
+// individually under the General, Battle Standard Bearer, Hero and Mage
+// (printed pp.73-74) and, conditional on his regiment, under the Paladin
+// (printed p.74).
+describe('OLD-34 — High Elf characters may ride a Tiranoc Chariot', () => {
+  const he = () => getArmy('high-elves')!
+  const unit = (id: string) => {
+    const u = he().units.find((x) => x.id === id)
+    expect(u, `no unit ${id}`).toBeDefined()
+    return u!
+  }
+  const chariotMount = (unitId: string) =>
+    (unit(unitId).mounts ?? []).find((m) => m.id === 'mount-tiranoc-chariot')
+  const mountOpt = (unitId: string, optionId: string) => {
+    const o = (chariotMount(unitId)!.options ?? []).find((x) => x.id === optionId)
+    expect(o, `${unitId}: chariot mount has no option ${optionId}`).toBeDefined()
+    return o!
+  }
+  const riding = (unitId: string, ...optionIds: string[]) =>
+    entryPoints(
+      { id: 'e', unitId, size: 1, optionIds, mountId: 'mount-tiranoc-chariot', magicItemIds: [] },
+      he(),
+    )
+
+  // Every generic character type states the permission in its own entry.
+  const RIDERS = ['he-general', 'he-battle-standard', 'he-hero', 'he-mage', 'he-paladin']
+
+  it('all five generic characters offer the chariot, at the book\'s 84 points', () => {
+    for (const id of RIDERS) {
+      const mount = chariotMount(id)
+      expect(mount, `${id} must offer the Tiranoc Chariot mount`).toBeDefined()
+      expect(mount!.points, `${id}: chariot mount points`).toBe(84)
+      // The standalone entry's price, unchanged: "El valor en puntos del
+      // carruaje no varía por ello".
+      expect(mount!.points).toBe(unit('he-tiranoc-chariot').pointsPerModel)
+      expect(mount!.nameEs, `${id}: chariot mount needs a Spanish name`).toBe('Auriga de Tiranoc')
+    }
+  })
+
+  it('riding it adds exactly 84 points to the character\'s own cost', () => {
+    // The chariot's points are added to the character ("el coste del carruaje
+    // deberá sumarse al suyo propio", printed p.73).
+    expect(unit('he-general').pointsPerModel).toBe(160)
+    expect(riding('he-general')).toBe(160 + 84)
+    expect(unit('he-paladin').pointsPerModel).toBe(48)
+    expect(riding('he-paladin')).toBe(48 + 84)
+  })
+
+  it('the chariot-level options keep their book prices through the mount', () => {
+    // p.79: scythed wheels "+20 puntos", two more steeds "+6 puntos los dos
+    // corceles", barding "+4 puntos cada uno" all-or-none = 8 for the pair.
+    expect(mountOpt('he-general', 'mount-tiranoc-chariot-scythes').pointsPerModel).toBe(20)
+    expect(mountOpt('he-general', 'mount-tiranoc-chariot-extra-steeds').pointsPerModel).toBe(6)
+    expect(mountOpt('he-general', 'mount-tiranoc-chariot-barding').pointsPerModel).toBe(8)
+    expect(riding('he-general', 'mount-tiranoc-chariot-scythes')).toBe(160 + 84 + 20)
+    expect(riding('he-general', 'mount-tiranoc-chariot-extra-steeds')).toBe(160 + 84 + 6)
+    expect(riding('he-general', 'mount-tiranoc-chariot-barding')).toBe(160 + 84 + 8)
+    // Every offered option is bilingual, as the standalone entry's are.
+    for (const o of chariotMount('he-general')!.options ?? []) {
+      expect(o.description, `${o.id} needs a description`).toBeTruthy()
+      expect(o.descEs, `${o.id} needs a Spanish description`).toBeTruthy()
+    }
+  })
+
+  it('the four crew-kit options are deliberately NOT offered', () => {
+    // The book says the character "sustituye a uno de los tripulantes" but
+    // never states the resulting crew count, and says nothing about a per-crew
+    // basis for the crew kit on a ridden chariot. The standalone entry's
+    // shield / heavy armour / lance / longbow are stored as "+1 per Auriga x 2
+    // Aurigas" (OLD-31), a basis that no longer holds — so they are omitted
+    // rather than repriced on a guess. Only the per-CHARIOT upgrades are here.
+    const ids = (chariotMount('he-general')!.options ?? []).map((o) => o.id)
+    expect(ids).toEqual([
+      'mount-tiranoc-chariot-scythes',
+      'mount-tiranoc-chariot-extra-steeds',
+      'mount-tiranoc-chariot-barding',
+    ])
+    for (const kit of ['shield', 'heavy-armour', 'lance', 'longbow']) {
+      expect(ids.some((id) => id.includes(kit)), `crew kit "${kit}" must not be offered`).toBe(false)
+    }
+    // …and no crew flag either, since the ridden chariot's crew is unstated.
+    expect(chariotMount('he-general')!.baseCrew).toBeUndefined()
+    for (const o of chariotMount('he-general')!.options ?? []) {
+      expect(o.perCrewman, `${o.id} perCrewman`).toBeFalsy()
+      expect(o.addsCrewman, `${o.id} addsCrewman`).toBeFalsy()
+    }
+  })
+
+  it('a ridden chariot counts against CHARACTERS, a fielded one against war machines', () => {
+    // Printed p.69 = PDF 71: "Si un personaje monta en un Carruaje de Guerra su
+    // valor en puntos debe sumarse al del personaje, y por tanto se
+    // contabilizará contra la proporción de puntos que pueden invertirse en
+    // personajes." Printed p.71 = PDF 73 (ORGANIZACIÓN DEL EJÉRCITO): "Este
+    // límite de puntos no incluye el coste de un carruaje montado por un
+    // personaje, que debe adquirirse con los puntos de Personajes."
+    const army = he()
+    const entries = [
+      // General on a chariot: 160 + 84, all of it character points.
+      { id: '1', unitId: 'he-general', size: 1, optionIds: [], mountId: 'mount-tiranoc-chariot', magicItemIds: [], isGeneral: true },
+      // The same chariot fielded on its own stays a chariot: 84 war-machine points.
+      { id: '2', unitId: 'he-tiranoc-chariot', size: 1, optionIds: [], magicItemIds: [] },
+    ]
+    const byRole = pointsByRole(entries, army)
+    expect(byRole.character).toBe(244)
+    expect(byRole.chariot).toBe(84)
+    expect(byRole.warmachine).toBe(0)
+
+    const roster: Roster = {
+      id: 'r', name: 'cap check', armyId: 'high-elves', pointsLimit: 1000, entries,
+    }
+    const caps = summarize(roster, army).caps
+    expect(caps.characters.points).toBe(244)
+    // War machines + chariots share one cap: only the standalone chariot is in it.
+    expect(caps.warMachines.points).toBe(84)
+  })
+
+  it('the mount prints the same chassis and steeds as the standalone entry', () => {
+    const standalone = unit('he-tiranoc-chariot').profiles ?? []
+    for (const id of RIDERS) {
+      expect(chariotMount(id)!.profiles, `${id}: chariot mount profiles`).toEqual(standalone)
+    }
+    const chassis = standalone.find((p) => p.name === 'Chariot')!
+    // OLD-33's corrected chassis, printed p.79 — reused, never retyped.
+    expect(chassis.statLine).toEqual({ S: 7, T: 7, W: 3, I: 1 })
+  })
+
+  it('the updated rule lines are bilingual and inherit no glossary entry', () => {
+    const GENERIC = 'May ride an Elven Steed (+3 pts), a monster, or a Tiranoc Chariot (+84 pts), replacing one of its Aurigas'
+    const PALADIN = 'If part of a Tiranoc Chariot regiment, he rides a chariot (+84 pts), replacing one of its Aurigas'
+    for (const id of ['he-general', 'he-battle-standard', 'he-hero', 'he-mage']) {
+      expect(unit(id).specialRules, `${id} rule line`).toContain(GENERIC)
+    }
+    expect(unit('he-paladin').specialRules).toContain(PALADIN)
+    // The stale unpriced prose is gone from the army entirely.
+    for (const u of he().units) {
+      expect(u.specialRules ?? []).not.toContain('May ride an Elven Steed (+3 pts), a monster, or a chariot')
+    }
+    for (const tag of [GENERIC, PALADIN]) {
+      expect(RULE_PHRASE_ES[tag], `missing ES translation for "${tag}"`).toBeTruthy()
+      // findRule matches by substring, first match wins — neither tag may pick
+      // up an unrelated ⓘ glossary entry (the old prose matched none either).
+      expect(findRule(tag), `"${tag}" must not inherit a glossary entry`).toBeUndefined()
     }
   })
 })
