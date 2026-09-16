@@ -558,7 +558,12 @@ const units: UnitProfile[] = [
     statLine: { M: 5, WS: 4, BS: 4, S: 3, T: 3, W: 1, I: 6, A: 1, Ld: 8 },
     minSize: 1,
     profiles: [
-      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 4, W: 3 } },
+      // OLD-38 — 1996 Elfos Silvanos printed p.66 = PDF 68 (and again p.81 =
+      // PDF 83): "Carruaje de Guerra - - - - 7 3 - - -" — only R(T) and H(W)
+      // are printed; F(S), I, A and L are all dashes. No Strength or
+      // Initiative for this chassis — do not pattern-match to the S7/I1
+      // chassis used by other armies' chariots.
+      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
       {
         name: 'Crew (Wood Elf)', nameEs: 'Tripulación (Elfo Silvano)',
         statLine: elf(), specialRules: ['Light armour (6+ save)'],

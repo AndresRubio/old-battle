@@ -437,11 +437,13 @@ tests in `armies.test.ts`.
 
 **Parked deliberately — do not "fix" these off the same audit.** Each needs its own decision and has
 its own Linear issue:
-- **Marauder Chariot** (`ch-marauder-chariot`, `{ T: 5, W: 3 }`) — printed p.104 shows a single
+- ~~**Marauder Chariot** (`ch-marauder-chariot`, `{ T: 5, W: 3 }`) — printed p.104 shows a single
   "Carruaje" row inside the Chaos-Warrior group and **no second chassis row** for the 80-pt Carruaje
-  Bárbaro. Whether that one row governs both chariots is unresolved, so nothing was changed.
-- **Wood Elf War Chariot** (`we-war-chariot`, `{ T: 4, W: 3 }`) — the book appears to print T7, but
-  a light elven chariot at T7 is surprising enough that the scan needs a human eye first.
+  Bárbaro. Whether that one row governs both chariots is unresolved, so nothing was changed.~~
+  **Done in OLD-38** (below): one printed row governs both chariots; now `{ S: 7, T: 7, W: 3, I: 1 }`.
+- ~~**Wood Elf War Chariot** (`we-war-chariot`, `{ T: 4, W: 3 }`) — the book appears to print T7, but
+  a light elven chariot at T7 is surprising enough that the scan needs a human eye first.~~
+  **Done in OLD-38** (below): confirmed `{ T: 7, W: 3 }`, no S or I printed.
 - **Black Coach chassis** (`vc-black-coach`) — the book prints a full nine-column row that the
   unit's own top-level `statLine` already carries; filling the `ProfileBlock` would duplicate it in
   the UI. A display-design question, not a data fix.
@@ -480,6 +482,29 @@ changed.
   *Reino del Caos* printed p.115). Those are full `StatLine`s, several print the token in **M** or
   **WS** rather than A, and they currently hold invented numeric stand-ins — all of which needs a
   wider design than this one. Tracked in its own issue; nothing there was touched.
+
+#### The two chariot chassis parked by OLD-33 (OLD-38)
+Both readings below were blocked on a page whose printed layout needed a human eye, so OLD-33 left
+them alone. Both pages were rasterised at 400 dpi and read directly; the app's `ProfileBlock.statLine`
+is a `Partial<StatLine>`, so only the columns actually printed are ever filled in.
+- **Marauder Chariot chassis** (`ch-marauder-chariot`) — `{ T: 5, W: 3 }` → **`{ S: 7, T: 7, W: 3,
+  I: 1 }`**. *Reino del Caos*, printed **p.104** = PDF 106. The page is a single entry titled
+  "CARRUAJES DEL CAOS" that prints **one chassis row** covering both variants: *"Un Carruaje posee
+  una tripulación compuesta por dos Bárbaros y está tirado por dos Caballos de Guerra, o bien posee
+  una tripulación de dos Guerreros del Caos y está tirado por dos Corceles del Caos."* The printed
+  "Carruaje - - - 7 7 3 1 - -" row is shared by both the 122-pt Chaos Chariot (`ch-chariot`,
+  already corrected by OLD-33) and the 80-pt Marauder Chariot; the code's old `T: 5` matched no
+  printed row. Extracted as `CHAOS_CHARIOT_CHASSIS_STATS` in `chaos.ts` (mirrors
+  `CHARIOT_CHASSIS_STATS` in `orcsGoblins.ts`) so the two Chaos chariots share one source of truth
+  and cannot drift apart again; the `specialRules` prose line ("Chariot (T5 W3) …") was updated to
+  match the same corrected value.
+- **Wood Elf War Chariot chassis** (`we-war-chariot`) — `{ T: 4, W: 3 }` → **`{ T: 7, W: 3 }`**.
+  *1996 Elfos Silvanos*, printed **p.66** = PDF 68 (the identical row is reprinted at printed
+  **p.81** = PDF 83): "Carruaje de Guerra - - - - 7 3 - - -". **Only R (T7) and H (W3) are
+  printed** — unlike every other chariot chassis in this repo, the F, I, A and L columns are all
+  dashes, so the corrected value is `{ T: 7, W: 3 }` **only**; no S or I is added. Pinned by a test
+  that explicitly asserts the chassis carries no `S` and no `I`, to guard against a future
+  pattern-match to the `{ S: 7, T: 7, W: 3, I: 1 }` chassis used elsewhere. Linear OLD-38.
 
 #### High Elf characters riding a Tiranoc Chariot (OLD-34)
 Source: `source/1997 Altos Elfos.pdf`, offset **+2** (PDF index = printed page + 2). This was a
