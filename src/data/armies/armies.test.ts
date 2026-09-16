@@ -638,6 +638,60 @@ describe('mounts & profiles', () => {
     }
   })
 
+  // OLD-23 — the standalone chariot war machines (bought as their own roster
+  // entry, distinct from ORC_BOAR_CHARIOT_MOUNT / GOBLIN_WOLF_CHARIOT_MOUNT
+  // above, which are for a character riding one as a mount) must expose the
+  // same upgrades — extra crew, crew shields/short bows, an extra draft beast
+  // (Goblin only) and scythed wheels — as real priced `options`, not just
+  // cost figures mentioned in `specialRules` free text.
+  it('Orcs & Goblins: the standalone chariots have real priced options, not just flavor text', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const boarChariot = orcs.units.find((u) => u.id === 'og-orc-boar-chariot')!
+    expect((boarChariot.options ?? []).map((o) => o.id)).toEqual([
+      'og-orc-chariot-crew3',
+      'og-orc-chariot-crew4',
+      'og-orc-chariot-shields',
+      'og-orc-chariot-bows',
+      'og-orc-chariot-scythes',
+    ])
+    const boarPoints = Object.fromEntries((boarChariot.options ?? []).map((o) => [o.id, o.pointsPerModel]))
+    expect(boarPoints).toEqual({
+      'og-orc-chariot-crew3': 7.5,
+      'og-orc-chariot-crew4': 7.5,
+      'og-orc-chariot-shields': 1,
+      'og-orc-chariot-bows': 1,
+      'og-orc-chariot-scythes': 20,
+    })
+    // specialRules no longer states these as free-text-only costs.
+    expect((boarChariot.specialRules ?? []).join(' ')).not.toMatch(/pts|points/)
+
+    const wolfChariot = orcs.units.find((u) => u.id === 'og-goblin-wolf-chariot')!
+    expect((wolfChariot.options ?? []).map((o) => o.id)).toEqual([
+      'og-goblin-chariot-crew3',
+      'og-goblin-chariot-crew4',
+      'og-goblin-chariot-wolf3',
+      'og-goblin-chariot-shields',
+      'og-goblin-chariot-bows',
+      'og-goblin-chariot-scythes',
+    ])
+    const wolfPoints = Object.fromEntries((wolfChariot.options ?? []).map((o) => [o.id, o.pointsPerModel]))
+    expect(wolfPoints).toEqual({
+      'og-goblin-chariot-crew3': 3.5,
+      'og-goblin-chariot-crew4': 3.5,
+      'og-goblin-chariot-wolf3': 4,
+      'og-goblin-chariot-shields': 0.5,
+      'og-goblin-chariot-bows': 0.5,
+      'og-goblin-chariot-scythes': 20,
+    })
+    expect((wolfChariot.specialRules ?? []).join(' ')).not.toMatch(/pts|points/)
+
+    // Same book values as the character-mount versions of these chariots.
+    const mountBoar = orcs.units.find((u) => u.id === 'og-warboss-orc')!.mounts!.find((m) => m.id === 'mount-boar-chariot')!
+    const mountWolf = orcs.units.find((u) => u.id === 'og-warboss-goblin')!.mounts!.find((m) => m.id === 'mount-wolf-chariot')!
+    expect(boarPoints['og-orc-chariot-scythes']).toBe(mountBoar.options!.find((o) => o.id === 'mount-boar-chariot-scythes')!.pointsPerModel)
+    expect(wolfPoints['og-goblin-chariot-scythes']).toBe(mountWolf.options!.find((o) => o.id === 'mount-wolf-chariot-scythes')!.pointsPerModel)
+  })
+
   it('every cavalry regiment carries a rider + mount two-row profile', () => {
     const byId = new Map(ARMIES.flatMap((a) => a.units.map((u) => [u.id, u] as const)))
     for (const id of CAVALRY_REGIMENTS) {
