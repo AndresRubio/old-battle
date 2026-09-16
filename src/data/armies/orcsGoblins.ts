@@ -1435,6 +1435,10 @@ export const ORCS_AND_GOBLINS: Army = {
       { unitId: 'og-doom-diver', requiresAnyOf: COMMON_GOBLIN_UNITS, labelEn: 'Doom Diver Catapult', labelEs: 'Catapulta de Goblins Voladores' },
       { unitId: 'og-squig-hunters', requiresAnyOf: NIGHT_GOBLIN_UNITS, labelEn: 'Night Goblin Squig Hunters', labelEs: 'Cazadores de Garrapatos Goblins Nocturnos' },
       { unitId: 'og-night-goblin-nets-clubs', requiresAnyOf: NIGHT_GOBLIN_UNITS, labelEn: 'Night Goblins with Nets & Clubs', labelEs: 'Goblins Nocturnos con Redes y Garrotes' },
+      // OLD-26: Fanatics are always hidden inside a Night Goblin unit (p.85) —
+      // they are never an independent army-list choice, so (like the ratioCap
+      // above) a roster with Fanatics and no Night Goblin unit must be flagged.
+      { unitId: 'og-night-goblin-fanatics', requiresAnyOf: NIGHT_GOBLIN_UNITS, labelEn: 'Night Goblin Fanatics', labelEs: 'Goblins Nocturnos Fanáticos' },
     ],
   },
 }

@@ -777,6 +777,46 @@ describe('dependency/ratio batch (data)', () => {
     expect(requires(ros('orcs-and-goblins', [e('1', 'og-rock-lobber-small'), e('2', 'og-orc-boyz', 10)]))).toHaveLength(0)
   })
 
+  it('Orcs & Goblins: Night Goblin Fanatics require a Night Goblin unit present', () => {
+    const og = getArmy('orcs-and-goblins')!
+    const requires = (r: Roster) => validateRoster(r, og).filter((v) => v.rule === 'unit-requires')
+    // Fanatics with no Night Goblin unit at all → illegal (they are never an
+    // independent army-list entry — always hidden in a Night Goblin unit, p.85).
+    expect(requires(ros('orcs-and-goblins', [e('1', 'og-night-goblin-fanatics', 3)]))).toHaveLength(1)
+    expect(requires(ros('orcs-and-goblins', [
+      e('1', 'og-night-goblin-fanatics', 3), e('2', 'og-night-goblins', 20),
+    ]))).toHaveLength(0)
+  })
+
+  it('Orcs & Goblins: Fanatics capped at 3 models per Night Goblin unit ENTRY, not per model', () => {
+    const og = getArmy('orcs-and-goblins')!
+    const ratio = (r: Roster) => validateRoster(r, og).filter((v) => v.rule === 'unit-ratio-max')
+    // 1 Night Goblin entry (any size) → 3 Fanatic models allowed, 4th flags.
+    // A 30-model Night Goblin unit gets the SAME allowance as a 5-model one —
+    // the cap is per unit entry, it does not scale with Night Goblin headcount.
+    expect(ratio(ros('orcs-and-goblins', [
+      e('1', 'og-night-goblins', 30), e('2', 'og-night-goblin-fanatics', 3),
+    ]))).toHaveLength(0)
+    expect(ratio(ros('orcs-and-goblins', [
+      e('1', 'og-night-goblins', 5), e('2', 'og-night-goblin-fanatics', 3),
+    ]))).toHaveLength(0)
+    expect(ratio(ros('orcs-and-goblins', [
+      e('1', 'og-night-goblins', 30), e('2', 'og-night-goblin-fanatics', 4),
+    ]))).toHaveLength(1)
+    expect(ratio(ros('orcs-and-goblins', [
+      e('1', 'og-night-goblins', 5), e('2', 'og-night-goblin-fanatics', 4),
+    ]))).toHaveLength(1)
+    // 2 Night Goblin entries → 6 Fanatic models allowed, 7th flags.
+    expect(ratio(ros('orcs-and-goblins', [
+      e('1', 'og-night-goblins', 10), e('2', 'og-night-goblins', 10),
+      e('3', 'og-night-goblin-fanatics', 6),
+    ]))).toHaveLength(0)
+    expect(ratio(ros('orcs-and-goblins', [
+      e('1', 'og-night-goblins', 10), e('2', 'og-night-goblins', 10),
+      e('3', 'og-night-goblin-fanatics', 7),
+    ]))).toHaveLength(1)
+  })
+
   it('Skaven: Plague Priests capped one per Plague Monk regiment', () => {
     const sk = getArmy('skaven')!
     const ratio = (r: Roster) => validateRoster(r, sk).filter((v) => v.rule === 'unit-ratio-max')
