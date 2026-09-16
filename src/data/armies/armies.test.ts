@@ -890,6 +890,122 @@ describe('OLD-27: Giants are a Regiment, not a Monster', () => {
   })
 })
 
+describe('OLD-28: Trolls and Snotlings are Regiments, not Monsters', () => {
+  const og = getArmy('orcs-and-goblins')!
+  const trolls = og.units.find((u) => u.id === 'og-trolls')
+  const snotlings = og.units.find((u) => u.id === 'og-snotlings')
+
+  // The book's own CONTENIDO page (printed p.2) files both under PEÑAS —
+  // "TROLLS ... 86", "SNOTLINGS ... 86" — while LISTA DE MONSTRUOS is a
+  // separate section on p.89. Same mistake OLD-27 fixed for the Giant.
+  it('og-trolls is a regiment and keeps its book-accurate points and stats', () => {
+    expect(trolls, 'og-trolls not found').toBeDefined()
+    expect(trolls!.role).toBe('regiment')
+    expect(trolls!.pointsPerModel).toBe(65)
+    // PDF p.86 and Bestiary p.75 agree: M15 HA3 HP1 F5 R4 H3 I1 A3 L4.
+    expect(trolls!.statLine).toEqual({ M: 6, WS: 3, BS: 1, S: 5, T: 4, W: 3, I: 1, A: 3, Ld: 4 })
+  })
+
+  it('og-snotlings is a regiment and keeps its book-accurate points and stats', () => {
+    expect(snotlings, 'og-snotlings not found').toBeDefined()
+    expect(snotlings!.role).toBe('regiment')
+    expect(snotlings!.pointsPerModel).toBe(15)
+    // PDF p.86 and Bestiary p.72: M10 HA2 HP2 F1 R1 H3 I3 A3 L4, per base.
+    expect(snotlings!.statLine).toEqual({ M: 4, WS: 2, BS: 2, S: 1, T: 1, W: 3, I: 3, A: 3, Ld: 4 })
+  })
+
+  it('minSize: 1 — the book exempts both from the normal five-model floor', () => {
+    // Trolls, p.86: "el número de Trolls en una unidad puede ser inferior al
+    // mínimo normal de cinco miniaturas [...] Podrías, por ejemplo, tener sólo
+    // un Troll en tu ejército y contaría como una unidad él solo."
+    // Snotlings, p.86: organised by bases, "si tienes tan sólo una peana de
+    // Snotlings, ésta contará como una unidad por sí misma."
+    expect(trolls!.minSize).toBe(1)
+    expect(snotlings!.minSize).toBe(1)
+  })
+
+  it('noCommand: true on both — no auto standard bearer or musician', () => {
+    // Trolls follow the criterion OLD-27 set for the Giant: the entry has no
+    // equipment at all ("Los Trolls no necesitan armas para luchar"), so it is
+    // not the rank-and-file troop regiment og-ogres is (hand weapon + four
+    // equipment options, command group correctly kept in OLD-22/OLD-30).
+    // Snotlings, Bestiary p.72 (OFICIALES): "Los héroes no pueden ni unirse ni
+    // actuar como oficiales de las unidades de Snotlings [...] están demasiado
+    // excitados como para entender incluso las órdenes más simples."
+    expect(trolls!.noCommand).toBe(true)
+    expect(snotlings!.noCommand).toBe(true)
+    for (const u of [trolls!, snotlings!]) {
+      expect((u.options ?? []).map((o) => o.id)).not.toEqual(
+        expect.arrayContaining(['standard', 'musician']),
+      )
+    }
+  })
+
+  it('the three troll types are free, mutually exclusive options', () => {
+    // p.86: "cualquiera de los tres tipos: Trolls, Trolls de Río, y Trolls de
+    // Piedra", all at the same 65 pts/model — the type is a choice, not an
+    // upgrade — and "los Trolls deben estar organizados en unidades del mismo
+    // tipo", hence one shared exclusiveGroup.
+    const types = (trolls!.options ?? []).filter((o) => o.exclusiveGroup === 'troll-type')
+    expect(types.map((o) => o.id)).toEqual(['troll-type-common', 'troll-type-river', 'troll-type-stone'])
+    for (const o of types) {
+      expect(o.pointsPerModel).toBe(0)
+      expect(o.description, `${o.id} needs an English rule summary`).toBeTruthy()
+      expect(o.descEs, `${o.id} needs a Spanish rule summary`).toBeTruthy()
+    }
+    // The book gives Trolls no equipment options at all, so the type choice is
+    // the entry's whole option list.
+    expect(trolls!.options).toHaveLength(3)
+    // Snotlings get none whatsoever.
+    expect(snotlings!.options ?? []).toHaveLength(0)
+  })
+
+  it('picking a troll type costs nothing; picking two is flagged', () => {
+    const roster = (optionIds: string[]): Roster => ({
+      id: 'r',
+      name: 'Troll types',
+      armyId: 'orcs-and-goblins',
+      pointsLimit: 3000,
+      entries: [
+        { id: 'gen', unitId: 'og-warboss-orc', size: 1, optionIds: [], magicItemIds: [], isGeneral: true },
+        { id: 'trolls', unitId: 'og-trolls', size: 3, optionIds, magicItemIds: [] },
+      ],
+    })
+
+    expect(entryPoints(roster(['troll-type-stone']).entries[1], og)).toBe(195) // 3 * 65, type is free
+
+    const groupViolations = (optionIds: string[]) =>
+      validateRoster(roster(optionIds), og, 'en').filter((v) => v.rule === 'options-exclusive-group')
+    expect(groupViolations(['troll-type-stone'])).toEqual([])
+    const both = groupViolations(['troll-type-river', 'troll-type-stone'])
+    expect(both).toHaveLength(1)
+    expect(both[0].entryId).toBe('trolls')
+    // The group is a property of the whole unit, not of one model, so the
+    // message may not reuse the per-model Mark-of-Chaos wording — and it must
+    // never leak the raw group id ('troll-type') to the user.
+    expect(both[0].message).toBe('Trolls: the whole unit must be one troll type (2 selected).')
+    const es = validateRoster(roster(['troll-type-river', 'troll-type-stone']), og, 'es')
+      .filter((v) => v.rule === 'options-exclusive-group')
+    expect(es[0].message).toBe('Trolls: toda la unidad debe ser de un solo tipo de troll (hay 2 seleccionados).')
+  })
+
+  it('both count toward the Regiments cap and NOT the Monsters cap', () => {
+    const roster: Roster = {
+      id: 'r',
+      name: 'Mercenaries',
+      armyId: 'orcs-and-goblins',
+      pointsLimit: 1000,
+      entries: [
+        { id: 't', unitId: 'og-trolls', size: 3, optionIds: [], magicItemIds: [] },
+        { id: 's', unitId: 'og-snotlings', size: 4, optionIds: [], magicItemIds: [] },
+      ],
+    }
+    const s = summarize(roster, og)
+    expect(s.caps.regiments.points).toBe(3 * 65 + 4 * 15) // 255
+    expect(s.caps.monsters.points).toBe(0)
+  })
+})
+
 describe('Empire — sample legal list validates cleanly', () => {
   it('a balanced 1000pt list produces no violations', () => {
     const empire = getArmy('empire')!

@@ -296,6 +296,10 @@ const OPTION_ES: Record<string, string> = {
   'Weapons with two hands': 'Armas a dos manos',
   'Double-handed sword or axe': 'Espada o hacha a dos manos',
   'Additional hand weapon': 'Arma de mano adicional',
+  // OLD-28: the three Troll types (O&G p.86), a free choice rather than an upgrade.
+  'Common Troll': 'Troll común',
+  'River Troll': 'Troll de Río',
+  'Stone Troll': 'Troll de Piedra',
   'Additional Skink crewman': 'Sirviente Skink adicional',
   Bow: 'Arco',
   Bows: 'Arcos',
