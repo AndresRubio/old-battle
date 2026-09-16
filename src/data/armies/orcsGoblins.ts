@@ -29,6 +29,25 @@ const SHORTBOW_1: EquipmentOption = { id: 'short-bow', name: 'Short bow', points
 const SHORTBOW_HALF: EquipmentOption = { id: 'short-bow', name: 'Short bow', pointsPerModel: 0.5 }
 const CROSSBOW_1: EquipmentOption = { id: 'crossbow', name: 'Crossbow (instead of Bow)', pointsPerModel: 1 }
 
+// OLD-25: light armour for an Orc war machine's crew. Book p.87, identical line
+// under LANZADOR DE ROCAS and LANZAVIROTES: "La dotación [...] puede equiparse
+// con Armaduras Ligeras por un coste adicional de +2 puntos por miniatura", and
+// each of those machines "cuenta con tres Orcos" as its fixed crew — so the whole
+// upgrade is 3 x 2 = 6 points. It MUST be `flat`: a war machine is a single-model
+// entry to `entryPoints` (only role 'regiment' multiplies by `size`), so a
+// per-model 2 would charge 2 points for the whole crew. Same shape as Norsca's
+// dwarf-crew option. The book gives these machines no other option, and no extra
+// crew at all — the only "tripulantes adicionales" it prices are the chariots'
+// (p.88, done in OLD-23).
+const WAR_MACHINE_CREW_LIGHT_ARMOUR: EquipmentOption = {
+  id: 'light-armour',
+  name: 'Crew light armour',
+  pointsPerModel: 6,
+  flat: true,
+  description: 'Light armour for the machine\'s three Orc crew (book p.87: +2 pts per crew model).',
+  descEs: 'Armaduras ligeras para los tres Orcos de la dotación (libro p.87: +2 ptos por miniatura de la dotación).',
+}
+
 // OLD-28: the three kinds of Troll. The army list (p.86) sells them as ONE
 // entry — "cualquier número de Trolls, de cualquiera de los tres tipos: Trolls,
 // Trolls de Río, y Trolls de Piedra" — all at the same 65 pts/model, so the type
@@ -1287,7 +1306,9 @@ const units: UnitProfile[] = [
     pointsPerModel: 66.5,
     // PDF p.87: Lanzador de Rocas (machine stats: S7, 3 Orc crew); crew M10 HA3 HP3 F3 R4 H1 I2 A1 L7
     statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
-    specialRules: ['War machine; requires an Orc unit', 'Stone thrower 120cm, S7, D3 wounds per hit', '3 Orc crew', 'Crew may take light armour (+2 pts/model)'],
+    // OLD-25: the crew's light armour is now a real priced option, not a note.
+    options: [WAR_MACHINE_CREW_LIGHT_ARMOUR],
+    specialRules: ['War machine; requires an Orc unit', 'Stone thrower 120cm, S7, D3 wounds per hit', '3 Orc crew'],
   },
   {
     id: 'og-rock-lobber-large',
@@ -1296,7 +1317,9 @@ const units: UnitProfile[] = [
     role: 'warmachine',
     pointsPerModel: 96.5,
     statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
-    specialRules: ['War machine; requires an Orc unit', 'Stone thrower 150cm, S10, D6 wounds per hit', '3 Orc crew', 'Crew may take light armour (+2 pts/model)'],
+    // OLD-25: the crew's light armour is now a real priced option, not a note.
+    options: [WAR_MACHINE_CREW_LIGHT_ARMOUR],
+    specialRules: ['War machine; requires an Orc unit', 'Stone thrower 150cm, S10, D6 wounds per hit', '3 Orc crew'],
   },
   {
     id: 'og-spear-chukka',
@@ -1306,7 +1329,9 @@ const units: UnitProfile[] = [
     pointsPerModel: 46.5,
     // PDF p.87: machine S7; crew M10 HA3 HP3 F3 R4 H1 I2 A1 L7
     statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
-    specialRules: ['War machine; requires an Orc unit', 'Bolt thrower 120cm, S5-1 per rank, D4 wounds', '3 Orc crew', 'Crew may take light armour (+2 pts/model)'],
+    // OLD-25: the crew's light armour is now a real priced option, not a note.
+    options: [WAR_MACHINE_CREW_LIGHT_ARMOUR],
+    specialRules: ['War machine; requires an Orc unit', 'Bolt thrower 120cm, S5-1 per rank, D4 wounds', '3 Orc crew'],
   },
   {
     id: 'og-snotling-pump-wagon',

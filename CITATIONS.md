@@ -292,6 +292,26 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   read also removed an unsourced claim from the Snotlings entry — "9 models per base" appears
   neither there nor on p.86, which say only that a base holds several Snotlings and is used as a
   single creature with multiple attacks and wounds. Linear OLD-28.
+- **War-machine crew light armour** (Orcs & Goblins, Dwarfs, Skaven) — the books price this
+  upgrade *per crew model*, but a war machine is a single-model entry to `entryPoints` (only
+  `role: 'regiment'` multiplies by `size`), so each option is stored `flat`, already multiplied by
+  the machine's fixed crew. O&G `source/1997 orcos y goblins.pdf` printed p.87 = PDF 89, the same
+  line under LANZADOR DE ROCAS and LANZAVIROTES: "La dotación [...] puede equiparse con Armaduras
+  Ligeras por un coste adicional de +2 puntos por miniatura", with "tres Orcos" of crew → **+6**
+  (it was only a `specialRules` note before, with no way to buy it). Dwarfs
+  `source/1995 Enanos.pdf` printed pp.88-89 = PDF 90-91, the same line under all six machines
+  (Cañón 110, Cañón Órgano 65, Cañón Lanzallamas 119, Lanzador de Virotes 54, Lanzador de Rocas
+  Pequeño 74 / Grande 104), each with "una dotación de tres artilleros Enanos" → **+6** (was
+  encoded as a per-model 2, i.e. 2 pts for a three-man crew). Skaven `source/1995 skaven.pdf`
+  printed p.67 = PDF 69: "Cada Mosquete Jezzail tiene una dotación de dos Skaven [...] puede
+  equiparse con armaduras ligeras a un coste de +4 puntos por miniatura" → **+8** (it was pointing
+  at the generic 2-pt infantry light armour). All thirteen machines' base points already matched
+  the book and are unchanged. Those same pages also settle the issue's other question: **no war
+  machine in these three books may buy extra crew** — the crew is fixed (three Orcs, three Dwarfs,
+  two Skaven; the O&G Snotling Pump Wagon is crewed by one Snotling base, the Doom Diver by an
+  implied unlimited supply, the Dwarf Gyrocopter by a single pilot). The only "tripulantes
+  adicionales" the O&G book prices belong to the chariots (p.88, implemented in OLD-23).
+  Linear OLD-25.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
