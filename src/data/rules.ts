@@ -413,12 +413,28 @@ function aliasRegExp(alias: string): RegExp {
   let re = ALIAS_RE.get(alias)
   if (!re) {
     const escaped = alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    // Start and end on a word boundary that understands accented letters, which
-    // \b does not — 'lanza' must not match inside 'lanzavirotes'.
-    re = new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?:${INFLECTIONS.join('|')})?(?![\\p{L}\\p{N}])`, 'u')
+    // Both ends sit on a word boundary that understands accented letters, which
+    // `\b` does not — 'lanza' must not match inside 'lanzavirotes'.
+    //
+    // The leading edge is a CONSUMING group rather than a lookbehind, and that
+    // is deliberate: Safari only learned lookbehind in 16.4, and a `new RegExp`
+    // the engine cannot parse throws a SyntaxError where it is built — here,
+    // inside a render — instead of degrading. Nothing else in this app needs
+    // anything newer than Safari 14, so a lookbehind would be the single
+    // construct that breaks it, and it would break it hard: every unit with
+    // special rules would fail to expand. `aliasIndex` adds the group back.
+    re = new RegExp(`(^|[^\\p{L}\\p{N}])${escaped}(?:${INFLECTIONS.join('|')})?(?![\\p{L}\\p{N}])`, 'u')
     ALIAS_RE.set(alias, re)
   }
   return re
+}
+
+/** Index at which `alias` appears in `text` as a whole word, or -1. */
+function aliasIndex(text: string, alias: string): number {
+  const m = aliasRegExp(alias).exec(text)
+  // m[1] is the character consumed before the alias: '' at the start of the
+  // string, otherwise the single non-word character that precedes it.
+  return m ? m.index + m[1].length : -1
 }
 
 /**
@@ -443,7 +459,7 @@ export function findRule(tag: string): RuleDef | undefined {
   let best: { rule: RuleDef; at: number; len: number } | undefined
   for (const r of RULES) {
     for (const a of r.aliases) {
-      const at = t.search(aliasRegExp(a))
+      const at = aliasIndex(t, a)
       if (at < 0) continue
       if (!best || at < best.at || (at === best.at && a.length > best.len)) {
         best = { rule: r, at, len: a.length }
