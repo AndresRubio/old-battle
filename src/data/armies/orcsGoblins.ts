@@ -209,6 +209,32 @@ const GOBLIN_WOLF_CHARIOT_MOUNT: MountOption = {
   ],
 }
 
+// --- Standalone chariot unit options (og-orc-boar-chariot / og-goblin-wolf-chariot,
+//     p.88 OPCIONES lines). These two chariots also exist as a MountOption a
+//     character can ride (ORC_BOAR_CHARIOT_MOUNT / GOBLIN_WOLF_CHARIOT_MOUNT
+//     above) — same upgrades, same points. The mount versions use `perCrewman`
+//     / `addsCrewman` so the crew-cost options scale with the mount's current
+//     crew count (see `mountOptionCost`/`mountCrewCount` in rules/points.ts).
+//     That mechanism is mount-specific: `optionPointsPerModel`/`flatOptionPoints`
+//     (the resolver for a plain UnitProfile.options, which is what these two
+//     standalone units use) never look at `perCrewman`/`addsCrewman` — and since
+//     `entryPoints` always treats a chariot as 1 "model" (only role: 'regiment'
+//     has a size), a `flat` charge and a per-model one price identically here
+//     anyway. So each upgrade is listed once, flat, at the book's stated points
+//     — same pattern already used for the High Elf Tiranoc Chariot's own
+//     CHARIOT_SCYTHED/CHARIOT_SHIELD/etc. options above. ---
+const ORC_CHARIOT_CREW3: EquipmentOption = { id: 'og-orc-chariot-crew3', name: '3rd crewman', pointsPerModel: 7.5, flat: true }
+const ORC_CHARIOT_CREW4: EquipmentOption = { id: 'og-orc-chariot-crew4', name: '4th crewman', pointsPerModel: 7.5, flat: true }
+const ORC_CHARIOT_SHIELDS: EquipmentOption = { id: 'og-orc-chariot-shields', name: 'Shields for crew', pointsPerModel: 1 }
+const ORC_CHARIOT_BOWS: EquipmentOption = { id: 'og-orc-chariot-bows', name: 'Short bows for crew', pointsPerModel: 1 }
+const ORC_CHARIOT_SCYTHES: EquipmentOption = { id: 'og-orc-chariot-scythes', name: 'Scythed wheels', pointsPerModel: 20, flat: true }
+const GOBLIN_CHARIOT_CREW3: EquipmentOption = { id: 'og-goblin-chariot-crew3', name: '3rd crewman', pointsPerModel: 3.5, flat: true }
+const GOBLIN_CHARIOT_CREW4: EquipmentOption = { id: 'og-goblin-chariot-crew4', name: '4th crewman', pointsPerModel: 3.5, flat: true }
+const GOBLIN_CHARIOT_WOLF3: EquipmentOption = { id: 'og-goblin-chariot-wolf3', name: '3rd Giant Wolf', pointsPerModel: 4, flat: true }
+const GOBLIN_CHARIOT_SHIELDS: EquipmentOption = { id: 'og-goblin-chariot-shields', name: 'Shields for crew', pointsPerModel: 0.5 }
+const GOBLIN_CHARIOT_BOWS: EquipmentOption = { id: 'og-goblin-chariot-bows', name: 'Short bows for crew', pointsPerModel: 0.5 }
+const GOBLIN_CHARIOT_SCYTHES: EquipmentOption = { id: 'og-goblin-chariot-scythes', name: 'Scythed wheels', pointsPerModel: 20, flat: true }
+
 /** Monster mounts open to any Orc/Goblin warboss ("or a monster"). */
 const MONSTER_MOUNTS: MountOption[] = [
   WINGED_SERPENT_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT, CHIMERA_MOUNT, DRAGON_MOUNT,
@@ -1169,10 +1195,9 @@ const units: UnitProfile[] = [
     specialRules: [
       'Requires an Orc unit',
       'Chariot T7 W3; pulled by 2 War Boars; 2 Orc crew (swords & light armour)',
-      'Extra crew member +7.5 pts; crew shields +1 pt; short bows +1 pt',
-      'Scythed wheels +20 pts',
       'May carry a magic standard',
     ],
+    options: [ORC_CHARIOT_CREW3, ORC_CHARIOT_CREW4, ORC_CHARIOT_SHIELDS, ORC_CHARIOT_BOWS, ORC_CHARIOT_SCYTHES],
   },
   {
     id: 'og-goblin-wolf-chariot',
@@ -1189,9 +1214,11 @@ const units: UnitProfile[] = [
     specialRules: [
       'Requires a Goblin unit',
       'Chariot T7 W3; pulled by 2 Giant Wolves; 2 Goblin crew (swords & light armour)',
-      'Extra crew member +3.5 pts; 3rd Giant Wolf +4 pts; crew shields +0.5 pt; short bows +0.5 pt',
-      'Scythed wheels +20 pts',
       'May carry a magic standard',
+    ],
+    options: [
+      GOBLIN_CHARIOT_CREW3, GOBLIN_CHARIOT_CREW4, GOBLIN_CHARIOT_WOLF3,
+      GOBLIN_CHARIOT_SHIELDS, GOBLIN_CHARIOT_BOWS, GOBLIN_CHARIOT_SCYTHES,
     ],
   },
 

@@ -259,6 +259,92 @@ describe('entryPoints — chariot mounts with nested options (Orcs & Goblins)', 
   })
 })
 
+// OLD-23 — the standalone chariot war-machine entries (bought as their own
+// roster entry, not ridden as a character mount) get the same upgrades as
+// ORC_BOAR_CHARIOT_MOUNT / GOBLIN_WOLF_CHARIOT_MOUNT, at the same points, but
+// as plain flat `UnitProfile.options` — the previously free-text-only costs
+// (extra crew, crew shields/bows, extra draft beast, scythed wheels) are now
+// real, priced, selectable options.
+describe('entryPoints — standalone chariot units with priced options (OLD-23)', () => {
+  const orcs = getArmy('orcs-and-goblins')!
+
+  it('Orc Boar Chariot: base cost only with no options selected', () => {
+    const entry = mk({ unitId: 'og-orc-boar-chariot' })
+    expect(entryPoints(entry, orcs)).toBe(81)
+  })
+
+  it('Orc Boar Chariot: extra crewmen are flat +7.5 each', () => {
+    const entry = mk({ unitId: 'og-orc-boar-chariot', optionIds: ['og-orc-chariot-crew3'] })
+    expect(entryPoints(entry, orcs)).toBe(88.5)
+    const both = mk({
+      unitId: 'og-orc-boar-chariot',
+      optionIds: ['og-orc-chariot-crew3', 'og-orc-chariot-crew4'],
+    })
+    expect(entryPoints(both, orcs)).toBe(96)
+  })
+
+  it('Orc Boar Chariot: crew shields/short bows at the book rate (+1 each)', () => {
+    const entry = mk({
+      unitId: 'og-orc-boar-chariot',
+      optionIds: ['og-orc-chariot-shields', 'og-orc-chariot-bows'],
+    })
+    expect(entryPoints(entry, orcs)).toBe(83) // 81 + 1 + 1
+  })
+
+  it('Orc Boar Chariot: scythed wheels are an optional flat +20 (not automatic)', () => {
+    const withScythes = mk({ unitId: 'og-orc-boar-chariot', optionIds: ['og-orc-chariot-scythes'] })
+    expect(entryPoints(withScythes, orcs)).toBe(101) // 81 + 20
+    const without = mk({ unitId: 'og-orc-boar-chariot' })
+    expect(entryPoints(without, orcs)).toBe(81)
+  })
+
+  it('Orc Boar Chariot: never multiplied by size (a chariot is 1 model)', () => {
+    const at = (size: number) =>
+      entryPoints(mk({ unitId: 'og-orc-boar-chariot', size, optionIds: ['og-orc-chariot-scythes'] }), orcs)
+    expect(at(1)).toBe(101)
+    expect(at(3)).toBe(101)
+  })
+
+  it('Goblin Wolf Chariot: base cost, extra crew and 3rd Giant Wolf', () => {
+    const base = mk({ unitId: 'og-goblin-wolf-chariot' })
+    expect(entryPoints(base, orcs)).toBe(65)
+    const loaded = mk({
+      unitId: 'og-goblin-wolf-chariot',
+      optionIds: ['og-goblin-chariot-crew3', 'og-goblin-chariot-crew4', 'og-goblin-chariot-wolf3'],
+    })
+    // 65 + 3.5 + 3.5 + 4 = 76
+    expect(entryPoints(loaded, orcs)).toBe(76)
+  })
+
+  it('Goblin Wolf Chariot: crew shields/short bows at half a point each', () => {
+    const entry = mk({
+      unitId: 'og-goblin-wolf-chariot',
+      optionIds: ['og-goblin-chariot-shields', 'og-goblin-chariot-bows'],
+    })
+    expect(entryPoints(entry, orcs)).toBe(66) // 65 + 0.5 + 0.5
+  })
+
+  it('Goblin Wolf Chariot: scythed wheels are an optional flat +20', () => {
+    const entry = mk({ unitId: 'og-goblin-wolf-chariot', optionIds: ['og-goblin-chariot-scythes'] })
+    expect(entryPoints(entry, orcs)).toBe(85) // 65 + 20
+  })
+
+  it('every upgrade combined matches the sum of the book values', () => {
+    // 81 + 7.5 + 7.5 + 1 + 1 + 20 = 118
+    const entry = mk({
+      unitId: 'og-orc-boar-chariot',
+      optionIds: [
+        'og-orc-chariot-crew3',
+        'og-orc-chariot-crew4',
+        'og-orc-chariot-shields',
+        'og-orc-chariot-bows',
+        'og-orc-chariot-scythes',
+      ],
+    })
+    expect(entryPoints(entry, orcs)).toBe(118)
+  })
+})
+
 describe('effectiveStatLine — option statLine replacement (OLD-12)', () => {
   // Synthetic wizard whose level options carry full replacement profiles, like
   // the O&G shamans (book p.81: each level has its own row).
