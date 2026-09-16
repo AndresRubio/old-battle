@@ -569,6 +569,63 @@ print inches. Each army's level-1 row is the unit's own base `statLine`.
   **Dwarfs** have no wizards. **Vampire Counts** and **Norse** model every wizard level as its own
   unit entry rather than as a level option, so there is nothing for this mechanism to fix.
 
+#### High Elves army-list gaps (OLD-36)
+Source: `source/1997 Altos Elfos.pdf`, offset **+2** (PDF index = printed page + 2). Five **gaps**,
+not contradictions: nothing already in the data was wrong, five things the book prints were simply
+absent. Every row below was re-read from the scan at 400 dpi. Movement converted as usual
+(10cm→4", 15→6", 20→8", 22→9").
+- **Ellyrian Reavers (`he-ellyrian-reavers`) may buy shields, +2 points per model.** Printed
+  **p.76** = PDF 78, CABALLEROS SEGADORES, Opciones: *"Cualquier unidad puede equiparse con Escudos
+  por un coste adicional de +2 puntos por miniatura. Cualquier unidad puede equiparse con Arcos por
+  un coste adicional de +4 puntos por miniatura, y/o con Lanzas por un coste adicional de +2 puntos
+  por miniatura."* The entry carried the bows (+4) and the lances (+2) but not the shields. The
+  file's existing `SHIELD_2` constant already held the +2 price (Silver Helms, printed p.75); no new
+  rate was introduced.
+- **The Basilisk and the Chimera are legal character mounts.** Printed **p.73** = PDF 75, under the
+  General (and again under the Battle Standard Bearer, the Hero and — printed p.74 — the Mage):
+  *"El General puede montar un Corcel Élfico (+3 puntos), o un monstruo elegido en la sección de
+  Monstruos de esta lista, en cuyo caso su valor en puntos deberá sumarse al del General."* That
+  section is the whole printed **p.80** = PDF 82 table, which lists eleven monsters; `PRINCE_MOUNTS`
+  offered nine. Added: **Basilisco 150 puntos** *"Basilisco 10 3 0 4 4 2 4 3 6"* and
+  **Quimera 250 puntos** *"Quimera 15 4 0 7 6 6 4 6 8"*. The other nine printed rows were re-read
+  and all match the data unchanged (Dragón 450 `15 6 0 6 6 7 8 7 7`, Gran Dragón 600
+  `15 7 0 7 7 8 7 8 8`, Dragón Emperador 750 `15 8 0 8 8 9 6 9 9`, Águila Gigante 75
+  `5 7 0 5 4 3 5 2 8`, Grifo 150 `15 5 0 6 5 5 7 4 8`, Hipogrifo 145 `20 5 0 6 5 5 6 3 8`,
+  Mantícora 200 `15 6 0 7 7 5 4 4 8`, Pegaso 50 `20 3 0 4 4 3 4 2 3`, Unicornio 90
+  `22 5 0 4 4 3 4 2 9`).
+- **Pegasus and Unicorn now exist as monster units, not only as mounts.** Same printed **p.80**
+  MONSTRUOS table: **Pegaso 50 puntos** *"Pegaso 20 3 0 4 4 3 4 2 3"* → `he-pegasus` (M8) and
+  **Unicornio 90 puntos** *"Unicornio 22 5 0 4 4 3 4 2 9"* → `he-unicorn` (M9). The p.80 table
+  prints **points and statline only — no special-rules text for any of the eleven monsters**, so the
+  two new entries carry exactly the tags their existing mount options already carried (`Flying` for
+  the Pegasus, none for the Unicorn); no rule was invented for them. A test pins mount and unit to
+  the same row for all eleven so the two renderings can never drift.
+- **The Repeater Bolt Thrower's machine `ProfileBlock`: T7 W3, no Strength.** Printed **p.79** =
+  PDF 81 prints two rows under LANZAVIROTES DE REPETICIÓN: *"Dotación 12 4 4 3 3 1 6 1 8"* (the
+  crew, which is the unit's own `statLine`) and *"Lanzavirotes de Repetición - - - - 7 3 - - -"*.
+  Read at 400 dpi against the Dotación row above it for column alignment (M HA HP F R H I A L): the
+  **7 sits under R and the 3 under H, and the F column is a dash** — the machine has Toughness and
+  Wounds and no Strength, unlike a chariot chassis. Concordant with the special-rules page, printed
+  **p.56** = PDF 58: *"MOVIMIENTO / RESISTENCIA / HERIDAS — Como su Dotación / 7 / 3"*. The
+  Movement column is a dash on p.79 because the machine moves with its crew, so no M is stored.
+- **The Shadow Warrior ratio cap, and the part of it that cannot be modelled.** Printed **p.78** =
+  PDF 80, GUERREROS SOMBRÍOS: *"El ejército Alto Elfo puede incluir tantos regimientos de Guerreros
+  Sombríos como regimientos de Lanceros y Arqueros incluya el ejército. Sin embargo, esta
+  restricción puede ignorarse cuando los Altos Elfos deban enfrentarse a un ejército de Elfos
+  Oscuros, en cuyo caso el ejército Alto Elfo puede incluir tantos regimientos de Guerreros
+  Sombríos como se desee."* The ratio itself fits `selectionRules.ratioCaps` exactly and is now
+  declared there: `perUnit.ids = ['he-spearmen', 'he-archers']`, multiplier 1, **no floor** (the
+  book grants no free minimum here — unlike the bolt thrower's own limit on printed p.79, which
+  does say *"pero siempre pueden incluirse un mínimo de dos"* and which also counts the Guardia del
+  Mar, named there and **not** named here). The **"ignored against Dark Elves" exception cannot be
+  expressed**: the roster has no opposing army, and this app models none, so inventing a mechanism
+  for it was refused. The violation is a `warning`, and the exception is stated where the player
+  reads it — a bilingual rule line on the unit and its own ⓘ glossary entry (`shadow-warrior-ratio`
+  in `src/data/rules.ts`). That glossary entry is deliberately placed **before** the generic weapon
+  rules: `findRule` matches by substring and first match wins, and `lance` is a substring of
+  *"Lancer"*, so without it the tag would have opened the cavalry-lance article.
+- **Out of scope, untouched:** the allies rule (0-25%, printed p.71). Linear OLD-36.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

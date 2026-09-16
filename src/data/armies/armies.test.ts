@@ -1720,6 +1720,216 @@ describe('OLD-37 — wizard levels carry their own profile', () => {
   })
 })
 
+// OLD-36 — five gaps between the printed High Elf army list (1997 Altos Elfos,
+// Spanish) and the data here. Page numbers in the comments are the PRINTED page
+// (PDF = printed + 2). Book stat columns M / HA / HP / F / R / H / I / A / L map
+// to M / WS / BS / S / T / W / I / A / Ld and Movement is converted from
+// centimetres (10→4", 15→6", 20→8", 22→9"). Every statline is pinned in FULL so
+// a later edit to one column cannot quietly drag the others with it.
+describe('OLD-36 — High Elves army-list gaps', () => {
+  const he = () => getArmy('high-elves')!
+  const unit = (id: string) => {
+    const u = he().units.find((x) => x.id === id)
+    expect(u, `no unit ${id} in the High Elf list`).toBeDefined()
+    return u!
+  }
+  // Every generic character whose mount list is PRINCE_MOUNTS ("un monstruo
+  // elegido en la sección de Monstruos de esta lista", printed pp.73-74).
+  const MONSTER_RIDERS = ['he-general', 'he-battle-standard', 'he-hero', 'he-mage']
+
+  // --- 1. Ellyrian Reavers may buy shields (printed p.76) -------------------
+  it('Ellyrian Reavers offer shields at +2 points per model (p.76)', () => {
+    // "Opciones: Cualquier unidad puede equiparse con Escudos por un coste
+    // adicional de +2 puntos por miniatura. Cualquier unidad puede equiparse con
+    // Arcos por un coste adicional de +4 puntos por miniatura, y/o con Lanzas
+    // por un coste adicional de +2 puntos por miniatura." (printed p.76)
+    const reavers = unit('he-ellyrian-reavers')
+    const shield = (reavers.options ?? []).find((o) => o.id === 'shield')
+    expect(shield, 'Ellyrian Reavers must offer shields').toBeDefined()
+    expect(shield!.pointsPerModel).toBe(2)
+    expect(shield!.flat ?? false).toBe(false)
+    // The two options the entry already had are untouched, at the book's rates.
+    expect((reavers.options ?? []).find((o) => o.id === 'bows')!.pointsPerModel).toBe(4)
+    expect((reavers.options ?? []).find((o) => o.id === 'cav-lance')!.pointsPerModel).toBe(2)
+    // 5 Reavers at 25 + 2 shield each = 135; with bows and lances too: 5 × 33 = 165.
+    expect(
+      entryPoints({ id: 'e', unitId: 'he-ellyrian-reavers', size: 5, optionIds: ['shield'], magicItemIds: [] }, he()),
+    ).toBe(135)
+    expect(
+      entryPoints(
+        { id: 'e', unitId: 'he-ellyrian-reavers', size: 5, optionIds: ['shield', 'bows', 'cav-lance'], magicItemIds: [] },
+        he(),
+      ),
+    ).toBe(165)
+  })
+
+  // --- 2. Basilisk and Chimera are legal character mounts (p.80 via p.73) ---
+  const NEW_MOUNTS: Array<{ id: string; nameEs: string; points: number; stats: StatLine }> = [
+    // "Basilisco … 150 puntos / Basilisco 10 3 0 4 4 2 4 3 6" (printed p.80).
+    { id: 'mount-basilisk', nameEs: 'Basilisco', points: 150, stats: { M: 4, WS: 3, BS: 0, S: 4, T: 4, W: 2, I: 4, A: 3, Ld: 6 } },
+    // "Quimera … 250 puntos / Quimera 15 4 0 7 6 6 4 6 8" (printed p.80).
+    { id: 'mount-chimera', nameEs: 'Quimera', points: 250, stats: { M: 6, WS: 4, BS: 0, S: 7, T: 6, W: 6, I: 4, A: 6, Ld: 8 } },
+  ]
+
+  for (const m of NEW_MOUNTS) {
+    it(`every generic character may ride the ${m.nameEs} at ${m.points} points (p.80)`, () => {
+      for (const id of MONSTER_RIDERS) {
+        const mount = (unit(id).mounts ?? []).find((x) => x.id === m.id)
+        expect(mount, `${id} must offer ${m.id}`).toBeDefined()
+        expect(mount!.points, `${id}: ${m.id} points`).toBe(m.points)
+        expect(mount!.nameEs, `${id}: ${m.id} Spanish name`).toBe(m.nameEs)
+        expect(mount!.statLine, `${id}: ${m.id} statline`).toEqual(m.stats)
+      }
+      // Riding it puts the monster's points on the character's entry.
+      expect(
+        entryPoints({ id: 'e', unitId: 'he-hero', size: 1, optionIds: [], mountId: m.id, magicItemIds: [] }, he()),
+      ).toBe(104 + m.points)
+    })
+  }
+
+  it('the monster mount list covers the whole printed MONSTRUOS section (p.80)', () => {
+    // Printed p.80 lists exactly eleven monsters; a character may ride "un
+    // monstruo elegido en la sección de Monstruos de esta lista" (p.73), so all
+    // eleven must be offered — plus the Elven Steed (+3) and the Tiranoc
+    // Chariot (+84), which are not monsters.
+    const ids = (unit('he-general').mounts ?? []).map((m) => m.id).sort()
+    expect(ids).toEqual([
+      'mount-basilisk', 'mount-chimera', 'mount-dragon', 'mount-elven-steed',
+      'mount-emperor-dragon', 'mount-great-dragon', 'mount-great-eagle', 'mount-griffon',
+      'mount-hippogriff', 'mount-manticore', 'mount-pegasus', 'mount-tiranoc-chariot',
+      'mount-unicorn',
+    ])
+  })
+
+  // --- 3. Pegasus and Unicorn are monster UNITS too (printed p.80) ----------
+  const NEW_MONSTERS: Array<{ id: string; nameEs: string; points: number; stats: StatLine }> = [
+    // "Pegaso … 50 puntos / Pegaso 20 3 0 4 4 3 4 2 3" (printed p.80; 20cm → 8").
+    { id: 'he-pegasus', nameEs: 'Pegaso', points: 50, stats: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 3 } },
+    // "Unicornio … 90 puntos / Unicornio 22 5 0 4 4 3 4 2 9" (printed p.80; 22cm → 9").
+    { id: 'he-unicorn', nameEs: 'Unicornio', points: 90, stats: { M: 9, WS: 5, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 9 } },
+  ]
+
+  for (const m of NEW_MONSTERS) {
+    it(`the ${m.nameEs} can be fielded on its own — ${m.points} points, role monster (p.80)`, () => {
+      const u = unit(m.id)
+      expect(u.role).toBe('monster')
+      expect(u.pointsPerModel).toBe(m.points)
+      expect(u.nameEs).toBe(m.nameEs)
+      expect(u.statLine).toEqual(m.stats)
+      expect(u.isCharacter ?? false).toBe(false)
+      // Fielded alone it is a monster, so it lands in the 0-25% monster cap.
+      const entry = { id: '1', unitId: m.id, size: 1, optionIds: [], magicItemIds: [] }
+      expect(entryPoints(entry, he())).toBe(m.points)
+      expect(pointsByRole([entry], he()).monster).toBe(m.points)
+    })
+  }
+
+  it('each monster that is also a mount prints the same row both ways (p.80)', () => {
+    // The p.80 table is the single source for both, so the mount option and the
+    // standalone unit must never drift apart.
+    const PAIRS: Array<[string, string]> = [
+      ['he-basilisk', 'mount-basilisk'],
+      ['he-chimera', 'mount-chimera'],
+      ['he-pegasus', 'mount-pegasus'],
+      ['he-unicorn', 'mount-unicorn'],
+      ['he-great-eagle', 'mount-great-eagle'],
+      ['he-griffon', 'mount-griffon'],
+      ['he-hippogriff', 'mount-hippogriff'],
+      ['he-manticore', 'mount-manticore'],
+      ['he-dragon', 'mount-dragon'],
+      ['he-great-dragon', 'mount-great-dragon'],
+      ['he-emperor-dragon', 'mount-emperor-dragon'],
+    ]
+    for (const [unitId, mountId] of PAIRS) {
+      const mount = (unit('he-general').mounts ?? []).find((m) => m.id === mountId)!
+      expect(mount.statLine, `${mountId} vs ${unitId}: statline`).toEqual(unit(unitId).statLine)
+      expect(mount.points, `${mountId} vs ${unitId}: points`).toBe(unit(unitId).pointsPerModel)
+    }
+  })
+
+  // --- 4. The Repeater Bolt Thrower's own row (printed p.79) ----------------
+  it('the Repeater Bolt Thrower carries the machine profile T7 W3 (p.79)', () => {
+    // "Lanzavirotes de Repetición  -  -  -  -  7  3  -  -  -" (printed p.79),
+    // read against the "Dotación 12 4 4 3 3 1 6 1 8" row directly above it: the
+    // 7 is under R (Toughness) and the 3 under H (Wounds); the F column is a
+    // dash, so the machine has NO Strength. Concordant with printed p.56
+    // ("MOVIMIENTO / RESISTENCIA / HERIDAS — Como su Dotación / 7 / 3").
+    const bt = unit('he-bolt-thrower')
+    expect(bt.profiles, 'the bolt thrower needs a machine profile').toBeDefined()
+    expect(bt.profiles!).toHaveLength(1)
+    const machine = bt.profiles![0]
+    expect(machine.statLine).toEqual({ T: 7, W: 3 })
+    expect(machine.statLine.S, 'the machine row prints a dash under F').toBeUndefined()
+    expect(machine.nameEs, 'the machine profile needs a Spanish name').toBeTruthy()
+    // The unit's own statLine stays the crew row ("Dotación", p.79).
+    expect(bt.statLine).toEqual({ M: 5, WS: 4, BS: 4, S: 3, T: 3, W: 1, I: 6, A: 1, Ld: 8 })
+  })
+
+  // --- 5. The Shadow Warrior ratio cap (printed p.78) -----------------------
+  // "El ejército Alto Elfo puede incluir tantos regimientos de Guerreros
+  // Sombríos como regimientos de Lanceros y Arqueros incluya el ejército. Sin
+  // embargo, esta restricción puede ignorarse cuando los Altos Elfos deban
+  // enfrentarse a un ejército de Elfos Oscuros […]" (printed p.78).
+  // The exception depends on the OPPOSING army, which this app does not model:
+  // the ratio is enforced as a warning and the exception is carried by the
+  // unit's bilingual rule line and its ⓘ glossary entry.
+  const shadowRoster = (shadowRegiments: number, lancers: number, archers: number): Roster => ({
+    id: 'r', name: 's', armyId: 'high-elves', pointsLimit: 3000,
+    entries: [
+      { id: 'g', unitId: 'he-general', size: 1, optionIds: [], magicItemIds: [], isGeneral: true },
+      ...Array.from({ length: shadowRegiments }, (_, i) => ({
+        id: `sw${i}`, unitId: 'he-shadow-warriors', size: 5, optionIds: [], magicItemIds: [],
+      })),
+      ...Array.from({ length: lancers }, (_, i) => ({
+        id: `sp${i}`, unitId: 'he-spearmen', size: 10, optionIds: [], magicItemIds: [],
+      })),
+      ...Array.from({ length: archers }, (_, i) => ({
+        id: `ar${i}`, unitId: 'he-archers', size: 10, optionIds: [], magicItemIds: [],
+      })),
+    ],
+  })
+  const ratioViolations = (r: Roster) =>
+    validateRoster(r, he()).filter((v) => v.rule === 'unit-ratio-max' && /Shadow Warrior/.test(v.message))
+
+  it('declares the Shadow Warrior cap against Lancer + Archer regiments only (p.78)', () => {
+    const cap = (he().selectionRules?.ratioCaps ?? []).find((c) => c.unitId === 'he-shadow-warriors')
+    expect(cap, 'the Shadow Warrior ratio cap must be declared').toBeDefined()
+    // "Lanceros y Arqueros" — the Sea Guard appears in the bolt thrower's limit
+    // (p.79), not in this one.
+    expect(cap!.perUnit?.ids.slice().sort()).toEqual(['he-archers', 'he-spearmen'])
+    expect(cap!.perUnit?.multiplier ?? 1).toBe(1)
+    expect(cap!.perUnit?.minSize, 'the book sets no minimum regiment size here').toBeUndefined()
+    expect(cap!.floor, 'the book grants no free minimum here').toBeUndefined()
+    expect(cap!.absoluteMax).toBeUndefined()
+    expect(cap!.labelEs).toBe('Regimientos de Guerreros Sombríos')
+  })
+
+  it('allows one Shadow Warrior regiment per Lancer/Archer regiment and warns past it', () => {
+    expect(ratioViolations(shadowRoster(2, 1, 1)), '2 shadow vs 1+1').toEqual([])
+    expect(ratioViolations(shadowRoster(3, 2, 1)), '3 shadow vs 2+1').toEqual([])
+    const over = ratioViolations(shadowRoster(3, 1, 1))
+    expect(over, '3 shadow vs 1+1 must be flagged').toHaveLength(1)
+    expect(over[0].severity).toBe('warning')
+    expect(over[0].message).toContain('only 2 allowed')
+    // With no Lancers or Archers at all, no Shadow Warriors are allowed.
+    expect(ratioViolations(shadowRoster(1, 0, 0)), '1 shadow vs nothing').toHaveLength(1)
+  })
+
+  it('states the Dark Elf exception the engine cannot model, in both languages', () => {
+    const tag = 'Shadow Warrior regiments limited to the number of Lancer and Archer regiments (ignored against Dark Elves)'
+    expect(unit('he-shadow-warriors').specialRules ?? []).toContain(tag)
+    expect(RULE_PHRASE_ES[tag], `missing ES translation for "${tag}"`).toBeTruthy()
+    expect(RULE_PHRASE_ES[tag]).toContain('Elfos Oscuros')
+    // ⓘ glossary: findRule matches by substring, first match wins, and 'lance'
+    // is a substring of "Lancer" — without its own entry ahead of the generic
+    // weapon rules this tag would open the cavalry-lance article.
+    const rule = findRule(tag)
+    expect(rule?.id, 'the tag must resolve to its own glossary entry').toBe('shadow-warrior-ratio')
+    expect(rule!.en).toContain('Dark Elf')
+    expect(rule!.es).toContain('Elfos Oscuros')
+  })
+})
+
 describe('Empire — sample legal list validates cleanly', () => {
   it('a balanced 1000pt list produces no violations', () => {
     const empire = getArmy('empire')!

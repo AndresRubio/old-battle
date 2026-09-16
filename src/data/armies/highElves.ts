@@ -21,7 +21,7 @@ const elf = (over: Partial<StatLine> = {}): StatLine => ({
 // --- Army-specific equipment options (per-model costs, from the equipment list
 //     p.71 and the per-unit option lines pp.75-78). ---
 
-// Shields: +1pt/model for most units, +2pt for Silver Helms
+// Shields: +1pt/model for most units, +2pt for Silver Helms and Ellyrian Reavers
 const SHIELD_1: EquipmentOption = { id: 'shield', name: 'Shields', pointsPerModel: 1 }
 const SHIELD_2: EquipmentOption = { id: 'shield', name: 'Shields', pointsPerModel: 2 }
 // Heavy armour (Ithilmar): upgrade from light armour, +1pt or +2pt depending on unit
@@ -120,6 +120,18 @@ const GREAT_EAGLE_MOUNT: MountOption = {
   points: 75, statLine: { M: 2, WS: 7, BS: 0, S: 5, T: 4, W: 3, I: 5, A: 2, Ld: 8 },
   specialRules: ['Flying'],
 }
+// OLD-36 — the Basilisk and the Chimera are in the MONSTRUOS section (printed
+// p.80 = PDF 82), so a character may ride either: "El General puede montar un
+// Corcel Élfico (+3 puntos), o un monstruo elegido en la sección de Monstruos
+// de esta lista, en cuyo caso su valor en puntos deberá sumarse al del General"
+// (printed p.73 = PDF 75; the same sentence under the Battle Standard Bearer,
+// the Hero and the Mage, pp.73-74). Both were missing from PRINCE_MOUNTS.
+// "Basilisco … 150 puntos / Basilisco 10 3 0 4 4 2 4 3 6" (printed p.80).
+const BASILISK_MOUNT: MountOption = {
+  id: 'mount-basilisk', name: 'Basilisk', nameEs: 'Basilisco',
+  points: 150, statLine: { M: 4, WS: 3, BS: 0, S: 4, T: 4, W: 2, I: 4, A: 3, Ld: 6 },
+  specialRules: ['Large target', 'Causes terror', 'Petrifying gaze'],
+}
 const GRIFFON_MOUNT: MountOption = {
   id: 'mount-griffon', name: 'Griffon', nameEs: 'Grifo',
   points: 150, statLine: { M: 6, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 7, A: 4, Ld: 8 },
@@ -139,6 +151,14 @@ const PEGASUS_MOUNT: MountOption = {
   id: 'mount-pegasus', name: 'Pegasus', nameEs: 'Pegaso',
   points: 50, statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 3 },
   specialRules: ['Flying'],
+}
+// "Quimera … 250 puntos / Quimera 15 4 0 7 6 6 4 6 8" (printed p.80 = PDF 82;
+// 15cm → 6"). Special rules mirror the he-chimera unit entry below — the
+// MONSTRUOS table prints points and statline only.
+const CHIMERA_MOUNT: MountOption = {
+  id: 'mount-chimera', name: 'Chimera', nameEs: 'Quimera',
+  points: 250, statLine: { M: 6, WS: 4, BS: 0, S: 7, T: 6, W: 6, I: 4, A: 6, Ld: 8 },
+  specialRules: ['Flying', 'Large target', 'Causes terror'],
 }
 const UNICORN_MOUNT: MountOption = {
   id: 'mount-unicorn', name: 'Unicorn', nameEs: 'Unicornio',
@@ -211,8 +231,9 @@ const TIRANOC_CHARIOT_MOUNT: MountOption = {
  * chariot" (p.71, and each character entry pp.73-74).
  */
 const PRINCE_MOUNTS: MountOption[] = [
-  ELVEN_STEED_MOUNT, GREAT_EAGLE_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT,
-  PEGASUS_MOUNT, UNICORN_MOUNT, DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT,
+  ELVEN_STEED_MOUNT, GREAT_EAGLE_MOUNT, BASILISK_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT,
+  MANTICORE_MOUNT, PEGASUS_MOUNT, CHIMERA_MOUNT, UNICORN_MOUNT,
+  DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT,
   TIRANOC_CHARIOT_MOUNT,
 ]
 
@@ -577,7 +598,13 @@ const units: UnitProfile[] = [
     statLine: elf(),
     mount: { name: 'Elven Steed', nameEs: 'Corcel Élfico', statLine: ELVEN_STEED_MOUNT.statLine! },
     minSize: 5,
-    options: [BOWS_4, LANCE_2],
+    // OLD-36 — printed p.76 = PDF 78, Opciones: "Cualquier unidad puede
+    // equiparse con Escudos por un coste adicional de +2 puntos por miniatura.
+    // Cualquier unidad puede equiparse con Arcos por un coste adicional de +4
+    // puntos por miniatura, y/o con Lanzas por un coste adicional de +2 puntos
+    // por miniatura." The shield line was missing; SHIELD_2 already carried the
+    // +2 price (Silver Helms, p.75).
+    options: [SHIELD_2, BOWS_4, LANCE_2],
     specialRules: [
       'Always strikes first',
       'Light armour & sword; Elven Steed (5+ save base)',
@@ -689,6 +716,17 @@ const units: UnitProfile[] = [
     specialRules: [
       'Always strikes first',
       'Bow, sword & shield (6+ save)',
+      // OLD-36 — printed p.78 = PDF 80: "El ejército Alto Elfo puede incluir
+      // tantos regimientos de Guerreros Sombríos como regimientos de Lanceros y
+      // Arqueros incluya el ejército. Sin embargo, esta restricción puede
+      // ignorarse cuando los Altos Elfos deban enfrentarse a un ejército de
+      // Elfos Oscuros, en cuyo caso el ejército Alto Elfo puede incluir tantos
+      // regimientos de Guerreros Sombríos como se desee." The ratio itself is
+      // enforced by selectionRules.ratioCaps below; the exception depends on the
+      // OPPOSING army, which this app does not model, so it is stated here (and
+      // in the ⓘ glossary entry 'shadow-warrior-ratio') instead of being forced
+      // into a mechanism that cannot express it.
+      'Shadow Warrior regiments limited to the number of Lancer and Archer regiments (ignored against Dark Elves)',
       'Hatred of Dark Elves',
       'Fast cavalry (skirmish)',
       'Special deployment (after enemy deploys, anywhere outside enemy line of sight)',
@@ -718,7 +756,18 @@ const units: UnitProfile[] = [
     nameEs: 'Lanzavirotes de Repetición',
     role: 'warmachine',
     pointsPerModel: 100,
+    // The main statLine is the crew row: "Dotación 12 4 4 3 3 1 6 1 8" (p.79).
     statLine: elf({ A: 1 }),
+    // OLD-36 — the machine has its own row right under the crew's, printed
+    // p.79 = PDF 81: "Lanzavirotes de Repetición  -  -  -  -  7  3  -  -  -"
+    // (columns M HA HP F R H I A L, checked against the "Dotación" row above it:
+    // the 7 sits under R and the 3 under H, and the F column is a dash — the
+    // machine has Toughness and Wounds but no Strength). Concordant with the
+    // special-rules page, printed p.56 = PDF 58: "MOVIMIENTO / RESISTENCIA /
+    // HERIDAS — Como su Dotación / 7 / 3".
+    profiles: [
+      { name: 'Bolt Thrower (machine)', nameEs: 'Lanzavirotes (máquina)', statLine: { T: 7, W: 3 } },
+    ],
     specialRules: [
       'Crew of 2 (hand weapon & light armour)',
       'Number limited to number of Archers/Lancers/Sea Guard regiments; minimum 2 allowed',
@@ -821,6 +870,21 @@ const units: UnitProfile[] = [
     statLine: { M: 6, WS: 6, BS: 0, S: 7, T: 7, W: 5, I: 4, A: 4, Ld: 8 },
     specialRules: ['Flying', 'Large target', 'Causes terror'],
   },
+  // OLD-36 — the Pegasus and the Unicorn are printed in the MONSTRUOS section
+  // (printed p.80 = PDF 82) exactly like the other nine monsters, so they can be
+  // fielded on their own and not only as a character mount. Points and statline
+  // come from that table; it prints no special-rules text for any monster, so
+  // the tags below are the ones the matching mount options already carried.
+  {
+    id: 'he-pegasus',
+    name: 'Pegasus',
+    nameEs: 'Pegaso',
+    role: 'monster',
+    pointsPerModel: 50,
+    // "Pegaso … 50 puntos / Pegaso 20 3 0 4 4 3 4 2 3" (printed p.80; 20cm → 8").
+    statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 3 },
+    specialRules: ['Flying'],
+  },
   {
     id: 'he-chimera',
     name: 'Chimera',
@@ -829,6 +893,15 @@ const units: UnitProfile[] = [
     pointsPerModel: 250,
     statLine: { M: 6, WS: 4, BS: 0, S: 7, T: 6, W: 6, I: 4, A: 6, Ld: 8 },
     specialRules: ['Flying', 'Large target', 'Causes terror'],
+  },
+  {
+    id: 'he-unicorn',
+    name: 'Unicorn',
+    nameEs: 'Unicornio',
+    role: 'monster',
+    pointsPerModel: 90,
+    // "Unicornio … 90 puntos / Unicornio 22 5 0 4 4 3 4 2 9" (printed p.80; 22cm → 9").
+    statLine: { M: 9, WS: 5, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 9 },
   },
 ]
 
@@ -842,6 +915,15 @@ export const HIGH_ELVES: Army = {
   selectionRules: {
     ratioCaps: [
       { unitId: 'he-bolt-thrower', perUnit: { ids: ['he-archers', 'he-spearmen', 'he-sea-guard'] }, floor: 2, labelEn: 'Repeater Bolt Throwers', labelEs: 'Lanzavirotes de Repetición' },
+      // OLD-36 — printed p.78: as many Shadow Warrior regiments as the army has
+      // Lancer (he-spearmen) and Archer regiments. NOT the Sea Guard: the bolt
+      // thrower's own limit names "Arqueros, Lanceros y Guardia del Mar de
+      // Lothern" (p.79) while this one names only "Lanceros y Arqueros". No
+      // floor — the book grants no free minimum here. The "ignored when facing
+      // Dark Elves" exception cannot be expressed (no opponent in this app);
+      // the violation is a warning and the unit's rule line states the
+      // exception.
+      { unitId: 'he-shadow-warriors', perUnit: { ids: ['he-spearmen', 'he-archers'] }, labelEn: 'Shadow Warrior regiments', labelEs: 'Regimientos de Guerreros Sombríos' },
     ],
     dependencies: [
       { unitId: 'he-alith-anar', requiresAnyOf: ['he-shadow-warriors'], labelEn: 'Alith Anar, the Shadow King', labelEs: 'Alith Anar, el Rey Sombrío' },
