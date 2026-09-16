@@ -248,6 +248,17 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   pre-existing value (1), which is unverified against the book — flagged as Linear OLD-30, needs a
   local pass with `source/` to confirm the regiment's real minimum unit size before it is trusted.
   Linear OLD-22.
+- **Ogre minimum unit size** (`og-ogres`) — `minSize: 1` → `5`, closing the OLD-22 note above.
+  `source/1997 orcos y goblins.pdf`, printed p.82 = PDF 84 (PEÑAS section header): a regiment has
+  no maximum size, but every unit must be composed of at least 5 models *unless stated otherwise*.
+  On printed p.86 = PDF 88, three of the four mercenary entries state otherwise — Giants ("units
+  of fewer than five miniatures"), Trolls ("below the normal minimum of five miniatures") and
+  Snotlings (their own per-base organisation table) — and the Ogres entry does not, so the default
+  floor applies. The same p.86 read also confirms the entry's unchanged data: 40 pts/model,
+  M15 HA3 HP2 F4 R5 H3 I3 A2 L7, hand weapon, no save, one of additional hand weapon (+1) /
+  two-handed weapon (+2) / halberd (+2), plus light armour (+2). The entry likewise carries no
+  command-group prohibition — contrast Squig Hoppers on the same page, which are expressly denied
+  champions, standards and musicians — so `noCommand` stays unset. Linear OLD-30.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
