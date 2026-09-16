@@ -115,6 +115,9 @@ const units: UnitProfile[] = [
     nameEs: 'Carromato de Cocina (Estandarte de Batalla)',
     role: 'character',
     pointsPerModel: 80,
+    // OLD-40: this is deliberately the Aurochs row (the wagon moves as the beast that
+    // pulls it). PDF p.7 prints only Chef / Cook / Aurochs for the Chuck Wagon — there
+    // is NO chassis row in the book, so there is nothing else to transcribe here.
     statLine: { M: 6, WS: 3, BS: 0, S: 5, T: 5, W: 3, I: 2, A: 3, Ld: 5 },
     isCharacter: true,
     characterRank: 'champion',
@@ -610,10 +613,18 @@ const units: UnitProfile[] = [
     // Farm machines move and fight as chariots. The one-per-army half of that rule
     // is not yet modelled — the engine offers it on each Farm Machine.
     magicStandard: true,
+    // OLD-40: the crew kit is `flat`, NOT `perCrewman`. PDF p.12 prints "The crew
+    // ca[n] have bows at +1 point and shields at +1/2 point." with no "each" / "per
+    // crewman" qualifier (unlike O&G's chariot crew, which says "por tripulante" —
+    // see OLD-35). Priced per machine. Checked against the book; see CITATIONS.md.
     options: [
       { id: 'crew-bows', name: 'Bows for the crew', pointsPerModel: 1, flat: true },
       { id: 'crew-shields', name: 'Shields for the crew', pointsPerModel: 0.5, flat: true },
     ],
+    // The book contradicts itself on crew size: the section intro says "Both machines
+    // have a crew of three Halflings", this entry says "a crew of two Halfli[ngs]"
+    // (PDF p.12, both legible). No `baseCrew` is declared — nothing here is priced
+    // per crewman, so none is needed and none would be sourced.
     profiles: [{ name: 'Halfling crew (x2)', nameEs: 'Dotación Mediana (x2)', statLine: { M: 4, WS: 2, BS: 4, S: 2, T: 2, W: 1, I: 5, A: 1, Ld: 8 } }],
     specialRules: [
       'Farming machinery equally at home cutting off heads — pushed by war sheep, crew of two Halflings',
@@ -635,6 +646,8 @@ const units: UnitProfile[] = [
     magicStandard: true,
     options: [
       // Each option toggle buys ONE extra animal (book allows up to four in total).
+      // OLD-40: crew-bows / crew-shields stay `flat` here too, and `extra-crew` stays a
+      // plain `flat` option rather than `addsCrewman` — see the note on hf-shearer.
       { id: 'extra-crew', name: 'Additional Halfling crewman', pointsPerModel: 3.5, flat: true },
       { id: 'extra-sheep', name: 'Extra War Sheep to push', pointsPerModel: 4, flat: true },
       { id: 'extra-ram', name: 'Extra Battle Ram to push', pointsPerModel: 5, flat: true }, // approx. — cost cut off in the scan; bestiary Battle Ram value

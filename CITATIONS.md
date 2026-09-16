@@ -626,6 +626,55 @@ absent. Every row below was re-read from the scan at 400 dpi. Movement converted
   *"Lancer"*, so without it the tag would have opened the cavalry-lance article.
 - **Out of scope, untouched:** the allies rule (0-25%, printed p.71). Linear OLD-36.
 
+#### Halfling farm-machine crew kit — checked against the book, no change needed (OLD-40)
+Source: `source/Halflings!_Hungry_Horde_COMPLETO_con_Lumpin_Croop.pdf`. **Cited by PDF index** — the
+offset is not constant in this compilation (see `source/OFFSETS.md`); the WAR MACHINES spread is
+**PDF page 12** (folio 14) continuing onto **PDF page 13** (folio 15). English source, Movement
+already in inches. Re-read at 400–1200 dpi.
+
+The question OLD-40 asked was whether `hf-shearer` / `hf-reaper`'s `crew-bows` (1) and
+`crew-shields` (0.5) should become `perCrewman` under the OLD-35 mechanism. **They should not.**
+PDF 12, right column, OPTIONS, verbatim (`[…]` = lost to the scan's cut right edge, resolved from
+the continuation at the top of PDF 13's left column, which is cut on its *left* edge):
+
+> **Options**: The Reaper may have one additi[onal] Halfling crewman at +3 1/2 points. Extra [pull]
+> animals can be added to push the machin[e,] War Sheep at +4 points and Battle Rams a[t +? ]
+> points to a maximum of four. The crew ca[n] have bows at +1 point and shields at +1/[2 ]
+> **poin**t. One Farm Machine in [you]r army can carry a Magic [Ban]ner.
+
+The rates carry **no per-anything qualifier** — no *"each"*, no *"per crewman"*, no *"per model"*.
+The tail was recovered from PDF 13's first line, which reads `…t. One Farm Machine in`: the word
+closing that sentence ends in **t**, i.e. *point* (singular), so *"each"* (ending in *h*) is
+excluded, and the strip lost off PDF 12's right edge is only 2–5 characters wide — far too narrow to
+hold *" point each"*. This is exactly the case the O&G chariot entry (OLD-35) makes explicit and
+this one does not: there the book prints *"+1 punto **por tripulante**"*, here it prints a bare
+*"+1 point"* against a collective *"The crew"*. The kit is therefore priced **per machine**, which
+is what the data already says (`flat: true` on both options, on both machines). **Nothing was
+changed.** Do not re-open this without a better scan.
+
+Also read on the same spread, and likewise left alone:
+- **Base crew — the book contradicts itself and nothing settles it.** The section intro says *"Both
+  machines have a crew of three Halflings."*, while the Shearer's own entry says it *"is pushed by
+  [a] war sheep and carries a crew of two Halfli[ngs]."* Both sentences are fully legible; they
+  simply disagree. No `baseCrew` was added to either unit — it is only *required* by
+  `assertArmyIntegrity` on a host that carries `perCrewman` / `addsCrewman`, and since the kit is
+  per machine neither host needs one. `hf-shearer`'s display profile keeps its *"(x2)"* from the
+  Shearer's own sentence; `hf-reaper`'s stays uncounted.
+- **The extra Battle Ram's cost is still unreadable.** *"Battle Rams a[t +? ] points"* — the digit
+  sits in the cut strip. `extra-ram` keeps its commented-as-approximate 5, the bestiary Battle Ram
+  value; no value was invented for it. (Same cut as the Wizard-table Ld column noted under OLD-37.)
+- **Everything else in OPTIONS is already in the data and nothing in the data is absent from the
+  book**: `extra-crew` 3.5 (Reaper only, as printed), `extra-sheep` 4, the four-animal maximum, the
+  *Equipment* line *"Crew carry hand weapons and wear light armour."*, and the one-Farm-Machine
+  magic banner. The per-army half of that banner rule remains unmodelled (pre-existing, noted in
+  the file).
+- **`hf-chuck-wagon`'s top-level `statLine` duplicates the Aurochs row, and the book does not settle
+  it.** PDF page 7 (folio 9), CHUCK WAGON, prints exactly three rows — *Chef* `4 4 4 4 2 1 6 2 8`,
+  *Cook* `4 3 3 3 2 1 5 1 8`, *Aurochs* `6 3 0 5 5 3 2 3 5` — and **no wagon/chassis row at all**.
+  So the Aurochs profile standing in as the entry's own statLine is neither confirmed nor refuted by
+  the source: it is a display choice (the wagon moves as the beast pulling it), not a transcription
+  error to correct against a printed row. Left as-is, deliberately.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),
