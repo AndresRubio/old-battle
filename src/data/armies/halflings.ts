@@ -446,7 +446,19 @@ const units: UnitProfile[] = [
     nameEs: 'Cocineros Enloquecidos',
     role: 'regiment',
     pointsPerModel: 30,
-    statLine: { M: 6, WS: 0, BS: 0, S: 5, T: 2, W: 1, I: 0, A: 6, Ld: 0 }, // M 2D6, Sp WS, A D6 — see rules
+    // OLD-43 — bestiary, printed p.7 = PDF 5:
+    //   "Crazed Cook  2D6  Sp  0  5  2  1  -  D6  -"
+    // Only BS0 S5 T2 W1 are numbers; M, WS, I, A and Ld print tokens or dashes,
+    // so they are absent from the statline (they were previously invented as
+    // M 6, WS 0, I 0, A 6, Ld 0).
+    // This row is also reprinted on printed p.12, but that copy has its Ld
+    // clipped by the edge of the scan; the bestiary copy on printed p.7 prints it
+    // legibly as a blank, which is why p.7 is the citation used here.
+    // The Halfling book is ENGLISH and already gives Movement in inches, so the
+    // usual cm→inch conversion does NOT apply — hence `2D6"`, not `2D6cm`.
+    statLine: { BS: 0, S: 5, T: 2, W: 1 },
+    statNotes: { M: '2D6"', WS: 'Sp', I: '–', A: 'D6', Ld: '–' },
+    statNotesEs: { WS: 'Esp' },
     minSize: 1,
     maxSize: 3,
     max: 1,

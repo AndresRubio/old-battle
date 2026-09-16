@@ -204,3 +204,65 @@ describe('EntryRow dice Attacks (OLD-39)', () => {
     expect(attacksFor('2 Gélidos')).toBe('2')
   })
 })
+
+// OLD-43 — the path that did not exist before: a UNIT'S OWN statLine can print
+// book tokens, and so can a character's chosen MOUNT. Nothing passed notes for
+// either, so the columns rendered "–" (or, worse, an invented number).
+describe('EntryRow unit and mount stat notes (OLD-43)', () => {
+  const chaos = getArmy('chaos')!
+  const halflings = getArmy('halflings')!
+  const orcs = getArmy('orcs-and-goblins')!
+
+  /** All nine cells of the stat strip labelled `label` (unlabelled row = undefined). */
+  const cells = (label?: string) => {
+    const wrap = Array.from(container.querySelectorAll('.statline-wrap')).find((el) => {
+      const l = el.querySelector('.stat-profile-label')?.textContent
+      return label === undefined ? l === undefined || l === null : l === label
+    })!
+    return Array.from(wrap.querySelectorAll('.stat-v')).map((el) => el.textContent)
+  }
+
+  it("prints the Chaos Spawn's own M and A as book tokens (Reino del Caos printed p.90)", () => {
+    setLang('en')
+    render(<EntryRow entry={entry('ch-chaos-spawn', { size: 1 })} army={chaos} {...props} />)
+    expand()
+    expect(cells()).toEqual(['5D6cm', '3', '0', '4', '5', '3', '3', '1D6', '10'])
+  })
+
+  it("prints the Crazed Cook's word tokens, localized (Halflings printed p.7)", () => {
+    setLang('en')
+    render(<EntryRow entry={entry('hf-crazed-cooks', { size: 1 })} army={halflings} {...props} />)
+    expand()
+    expect(cells()).toEqual(['2D6"', 'Sp', '0', '5', '2', '1', '–', 'D6', '–'])
+    act(() => root.unmount())
+    container.remove()
+
+    setLang('es')
+    render(<EntryRow entry={entry('hf-crazed-cooks', { size: 1 })} army={halflings} {...props} />)
+    expand()
+    // Only the word column changes; the dice columns are language-neutral.
+    expect(cells()).toEqual(['2D6"', 'Esp', '0', '5', '2', '1', '–', 'D6', '–'])
+  })
+
+  it("translates the Fanatic's 'Special' to 'Especial' and prints its unresolved A as '?'", () => {
+    setLang('es')
+    render(<EntryRow entry={entry('og-night-goblin-fanatics', { size: 1 })} army={orcs} {...props} />)
+    expand()
+    // A prints "?" — the bestiary/army-list conflict is OPEN, and "?" is
+    // deliberately distinct from the "–" in the columns the book leaves blank.
+    expect(cells()).toEqual(['5D6cm', 'Especial', '–', '5', '3', '1', '–', '?', '–'])
+  })
+
+  it("prints a chosen mount's own note: the Beast of Nurgle's 1D6 Attacks (printed p.85)", () => {
+    setLang('en')
+    render(
+      <EntryRow
+        entry={entry('ch-lord', { size: 1, mountId: 'mount-beast-of-nurgle', optionIds: ['mark-nurgle'] })}
+        army={chaos}
+        {...props}
+      />,
+    )
+    expand()
+    expect(cells('Beast of Nurgle')).toEqual(['3', '3', '0', '3', '5', '3', '3', '1D6', '6'])
+  })
+})

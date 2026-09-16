@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, UnitProfile } from '../types'
+import type { Army, EquipmentOption, MountOption, ProfileBlock, StatLine, StatNotes, UnitProfile } from '../types'
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
@@ -61,8 +61,14 @@ const JUGGERNAUT_STATS: StatLine = { M: 7, WS: 5, BS: 0, S: 5, T: 5, W: 3, I: 1,
 const DISC_STATS: StatLine = { M: 9, WS: 0, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 }
 // Corcel de Slaanesh (p.117): M30→12", WS3 S4 T5 W1 I6 A1 Ld10.
 const STEED_OF_SLAANESH_STATS: StatLine = { M: 12, WS: 3, BS: 0, S: 4, T: 5, W: 1, I: 6, A: 1, Ld: 10 }
-// Bestia de Nurgle (p.115): M8→3", WS3 S3 T5 W3 I3 A1D6 Ld6.
-const BEAST_OF_NURGLE_STATS: StatLine = { M: 3, WS: 3, BS: 0, S: 3, T: 5, W: 3, I: 3, A: 1, Ld: 6 }
+// OLD-43 — Bestia de Nurgle, Reino del Caos printed p.85 = PDF 87 (the "p.115"
+// this comment used to cite was not a page of this book):
+//   "Bestia de Nurgle  8  3  0  3  5  3  3  1D6  6"
+// M 8cm → 3". The Attacks column prints a DICE EXPRESSION, confirmed by the
+// rules text ("Las Bestias pueden efectuar 1D6 ataques"), so A is absent from
+// the statline and carried as a book token instead — see UnitProfile.statNotes.
+const BEAST_OF_NURGLE_STATS: Partial<StatLine> = { M: 3, WS: 3, BS: 0, S: 3, T: 5, W: 3, I: 3, Ld: 6 }
+const BEAST_OF_NURGLE_NOTES: StatNotes = { A: '1D6' }
 
 // OLD-38 — Reino del Caos printed p.104 = PDF 106, "CARRUAJES DEL CAOS": a
 // single entry prints ONE chassis row ("Carruaje - - - 7 7 3 1 - -") that
@@ -94,7 +100,8 @@ const STEED_OF_SLAANESH_MOUNT: MountOption = {
 }
 const BEAST_OF_NURGLE_MOUNT: MountOption = {
   id: 'mount-beast-of-nurgle', name: 'Beast of Nurgle', nameEs: 'Bestia de Nurgle',
-  points: 75, statLine: BEAST_OF_NURGLE_STATS, requiresOption: 'mark-nurgle',
+  points: 75, statLine: BEAST_OF_NURGLE_STATS, statNotes: BEAST_OF_NURGLE_NOTES,
+  requiresOption: 'mark-nurgle',
   specialRules: ['Daemonic mount of Nurgle (requires the Mark of Nurgle)'],
 }
 
@@ -1073,13 +1080,17 @@ const units: UnitProfile[] = [
     ],
   },
   {
-    // p.115: M8→3", WS3, BS0, S3, T5, W3, I3, A1D6, Ld6. 75 pts/model.
+    // OLD-43 — printed p.85 = PDF 87: "Bestia de Nurgle 8 3 0 3 5 3 3 1D6 6".
+    // 75 pts/model. Shares the mount's row (BEAST_OF_NURGLE_STATS, above) so the
+    // two cannot drift; the `statline()` helper is deliberately NOT used here
+    // because it would default the Attacks column back to a number.
     id: 'ch-beasts-of-nurgle',
     name: 'Beasts of Nurgle',
     nameEs: 'Bestias de Nurgle',
     role: 'monster',
     pointsPerModel: 75,
-    statLine: statline({ M: 3, WS: 3, BS: 0, S: 3, T: 5, W: 3, I: 3, A: 1, Ld: 6 }),
+    statLine: BEAST_OF_NURGLE_STATS,
+    statNotes: BEAST_OF_NURGLE_NOTES,
     minSize: 1,
     noCommand: true,
     specialRules: [
@@ -1173,14 +1184,24 @@ const units: UnitProfile[] = [
   // MONSTERS & REGIMENTS — Grey Infernal (Reino del Caos pp.118-120)
   // ===================================================================
   {
-    // p.120: M5D6 (random), WS3, BS0, S4, T5, W3, I3, A1D6, Ld10. 70 pts/model.
-    // M and A are random — stored as base values, noted in specialRules.
+    // OLD-43 — printed p.90 = PDF 92 (the "p.120" cited before was not a page of
+    // this book): "Engendro del Caos 5D6 3 0 4 5 3 3 1D6 10". 70 pts/model.
+    // BOTH tokens are confirmed by the rules text: "un atributo de movimiento de
+    // 5D6 centímetros" and "pueden efectuar 1D6 ataques". M and A are therefore
+    // absent from the statline and printed from `statNotes` instead — they were
+    // previously stored as invented numbers (M 4, A 1).
+    //
+    // The "cm" suffix on the Movement token is deliberate. Every other Movement
+    // in this repo is converted to inches (the books print centimetres), but a
+    // dice expression cannot be converted — 5D6cm is not 2D6" — so the unit is
+    // stated explicitly rather than silently implying inches.
     id: 'ch-chaos-spawn',
     name: 'Chaos Spawn',
     nameEs: 'Engendro del Caos',
     role: 'monster',
     pointsPerModel: 70,
-    statLine: statline({ M: 4, WS: 3, BS: 0, S: 4, T: 5, W: 3, I: 3, A: 1, Ld: 10 }),
+    statLine: { WS: 3, BS: 0, S: 4, T: 5, W: 3, I: 3, Ld: 10 },
+    statNotes: { M: '5D6cm', A: '1D6' },
     minSize: 1,
     noCommand: true,
     specialRules: [

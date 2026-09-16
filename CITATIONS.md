@@ -458,30 +458,36 @@ its own Linear issue:
 Some books print a **dice expression** where the Attacks column expects a number. `StatLine.A` is
 typed `number` and was **not** widened: that type runs through the whole rules engine (every sum,
 comparison and ordering that reads `.A`), while a chariot chassis's Attacks affects no points and no
-validation. Instead a `ProfileBlock` may carry an optional display-only string, `attacksNote`, which
+validation. Instead a `ProfileBlock` carries an optional display-only string, which
 every renderer prints **in place of** the numeric A — the editor's stat strip (`EntryRow`) and the
 plaintext export both go through `statCell` in `rules/entryView.ts`, so screen and export cannot
 disagree. Rows read off the scans at 400 dpi; offset **+2** per `source/OFFSETS.md`. No points
 changed.
-- **Undead Chariot chassis** (`ud-undead-chariot`) → `attacksNote: '1D6'`. *No Muertos*, printed
+
+> **Superseded by OLD-43 (below).** The field OLD-39 introduced was `ProfileBlock.attacksNote`, a
+> single Attacks-only string on display profiles. OLD-43 replaced it with `statNotes`, keyed by
+> column and available on units and mounts as well; `attacksNote` no longer exists anywhere in the
+> source. The three rows below are unchanged — only the field they live in.
+
+- **Undead Chariot chassis** (`ud-undead-chariot`) → `statNotes: { A: '1D6' }`. *No Muertos*, printed
   **p.84** = PDF 86: "Carruaje Esquelético - - - 5 5 3 1 1D6 -" (reprinted on printed p.68).
-- **Chariot of Arkhan** (`ud-arkhan-the-black`) → `attacksNote: '1D6'`. *No Muertos*, printed
+- **Chariot of Arkhan** (`ud-arkhan-the-black`) → `statNotes: { A: '1D6' }`. *No Muertos*, printed
   **p.91** = PDF 93: "Carruaje de Arkhan - 4 - 6 6 3 - 1D6 -".
 - **Malekith's Black Chariot** (`de-witch-king`) → the unit had **no `profiles` array at all**, so
   the chariot he always rides and its team were invisible in the app. *Elfos Oscuros*, printed
   **p.57** = PDF 59 prints a three-row PERFIL table; the two non-rider rows were added:
-  "Carruaje Negro - - - 7 7 3 - 1D6+2 -" → `{ S: 7, T: 7, W: 3 }` + `attacksNote: '1D6+2'`, and
+  "Carruaje Negro - - - 7 7 3 - 1D6+2 -" → `{ S: 7, T: 7, W: 3 }` + `statNotes: { A: '1D6+2' }`, and
   "Gélido 20 3 0 4 4 1 4 2 3" → `{ M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 4, A: 2, Ld: 3 }`
   (M 20cm → 8"). Columns printed "-" stay **absent**, not invented. Note the book labels the draught
   row *Gélido* while this file's generic mount for the same beast is *Caballo Frío* and prints **I 1**
   against p.57's **I 4**; that mount row comes from another page and was deliberately left alone.
 - **Out of scope here, on purpose.** The survey behind this issue also found dice and range tokens
-  in a **unit's own `statLine`** (Engendro del Caos "5D6 … 1D6", *Reino del Caos* printed p.120;
-  Goblin Fanático "5D6 … 1D6", *O&G* printed p.85; Crazed Cook "2D6 … D6", *Halflings* PDF 10;
-  Berserker "2D6 … 2-10", *Norsca* PDF 22) and in a **`MountOption.statLine`** (Bestia de Nurgle,
-  *Reino del Caos* printed p.115). Those are full `StatLine`s, several print the token in **M** or
-  **WS** rather than A, and they currently hold invented numeric stand-ins — all of which needs a
-  wider design than this one. Tracked in its own issue; nothing there was touched.
+  in a **unit's own `statLine`** (Engendro del Caos, Goblin Fanático, Crazed Cook, Berserker) and in
+  a **`MountOption.statLine`** (Bestia de Nurgle). Those are full `StatLine`s, several print the
+  token in **M** or **WS** rather than A, and they held invented numeric stand-ins — all of which
+  needed a wider design than this one. **Done in OLD-43 (below)**, where the page labels OLD-39
+  recorded for two of them (*Reino del Caos* "p.120" and "p.115") turned out to be wrong; the true
+  pages are printed **90** and printed **85**.
 
 #### The two chariot chassis parked by OLD-33 (OLD-38)
 Both readings below were blocked on a page whose printed layout needed a human eye, so OLD-33 left
@@ -728,6 +734,90 @@ Also read on the same spread, and likewise left alone:
   So the Aurochs profile standing in as the entry's own statLine is neither confirmed nor refuted by
   the source: it is a display choice (the wagon moves as the beast pulling it), not a transcription
   error to correct against a printed row. Left as-is, deliberately.
+
+#### Book tokens in any characteristic column — six units and one mount (OLD-43)
+OLD-39 could print a dice expression in **one** column (Attacks) of **one** kind of row (a display
+`ProfileBlock`). The real problem is wider: a book may print a non-numeric token in **any** of the
+nine columns, in **three** places — a unit's own `statLine`, a `MountOption.statLine` and a
+`ProfileBlock.statLine` — and the tokens are not all dice ("2-10" is a range; "Especial"/"Sp" is a
+word). Six unit rows and one mount row held **invented numbers** where the book prints a token.
+
+**Mechanism.** `ProfileBlock.attacksNote` is **gone**, replaced by `StatNotes` — a partial map from
+column to printed token — as `statNotes` (+ `statNotesEs`, which overrides only the columns whose
+token is a *word*, following the `nameEs`/`descEs` fallback convention) on all three types.
+`StatLine` stays all-`number`: a token affects no points and no validation, so this is a
+display-only channel rather than a widening of the type the whole rules engine reads. A noted column
+is **absent** from `statLine` — never a number beside its note — and `statCell` in
+`rules/entryView.ts` is the single statement of "the note replaces the value", shared by `EntryRow`
+and the plaintext export. `UnitProfile.statLine` and `MountOption.statLine` widened to
+`Partial<StatLine>`; `assertArmyIntegrity` now requires all nine columns to be accounted for by
+`statLine` **or** `statNotes` on a unit or a mount, so the lost type-level completeness cannot become
+a silent omission. (Not applied to `ProfileBlock`: a chariot chassis legitimately prints only some
+columns.) Movement tokens carry their **unit** explicitly — a dice expression cannot be run through
+the repo's usual cm→inch conversion, so a Spanish book's roll reads `5D6cm` and an English book's
+`2D6"`. Rows read off the scans at 400 dpi. **No points changed.**
+
+- **Beasts of Nurgle** (`ch-beasts-of-nurgle`) and the **Beast of Nurgle mount**
+  (`mount-beast-of-nurgle`, shared by five Chaos characters) → `A` dropped, `statNotes: { A: '1D6' }`.
+  *Reino del Caos*, printed **p.85** = PDF 87: "Bestia de Nurgle 8 3 0 3 5 3 3 1D6 6". Confirmed by
+  the rules text: *"Las Bestias pueden efectuar 1D6 ataques"*. `M: 3` is correct and stays (8cm → 3").
+  **The page label OLD-39 recorded for this row, "p.115", was wrong** — it is not a page of this book.
+  The unit previously held `A: 1` via the file-local `statline()` helper (whose default is 2), so it
+  is now built from the shared row directly rather than through the helper.
+- **Chaos Spawn** (`ch-chaos-spawn`) → `M` and `A` dropped, `statNotes: { M: '5D6cm', A: '1D6' }`.
+  *Reino del Caos*, printed **p.90** = PDF 92: "Engendro del Caos 5D6 3 0 4 5 3 3 1D6 10". Both cells
+  confirmed by the rules text: *"un atributo de movimiento de 5D6 centímetros"* and *"pueden efectuar
+  1D6 ataques"*. Previously `M: 4` and `A: 1`, both invented. **The page label OLD-39 recorded,
+  "p.120", was wrong**; the true page is printed **90**.
+- **Night Goblin Fanatics** (`og-night-goblin-fanatics`) → `M`, `WS`, `BS`, `I`, `Ld` dropped,
+  `statNotes: { M: '5D6cm', WS: 'Special', BS: '–', I: '–', Ld: '–' }` +
+  `statNotesEs: { WS: 'Especial' }`. *Orcos y Goblins* bestiary, printed **p.66** = PDF 68, headers
+  M HA HP F R H I A L: "Goblin Fanático 5D6 Especial 5 3 1 - 1D3 -", with *Especial* spanning the
+  HA/HP pair (HA = Especial, HP blank). Only `S: 5, T: 3, W: 1` are numbers and they stay. The M
+  token is centimetres per the rules text: *"desplaza la miniatura en esa dirección el equivalente
+  del resultado en centímetros"*. The comment previously above this row (`// PDF p.85: M5D6 Especial
+  F5 R3 H1 I1D6 A- L-`) was **mis-transcribed** — it had I and A swapped — and labelled a printed
+  page as a PDF page; it has been replaced with the citation above.
+- **OPEN — the Fanatic's Attacks contradict between two pages of its own book.** The bestiary row
+  (printed **p.66**) prints **1D3**; the army list (printed **p.85** = PDF 87) prints **1D6**. Both
+  were read at 400dpi and both are legible, so this is the book disagreeing with itself rather than
+  a bad scan. Choosing between them is a game-value judgement and **it has not been made**: the
+  owner's ruling is that bestiary-vs-army-list conflicts are settled **case by case, with no blanket
+  precedent**, and this case is still open. Tracked as OLD-45.
+
+  What the column shows meanwhile is `statNotes.A = '?'`. The old `A: 1` was **wrong under both
+  readings** — the one thing the book is unambiguous about is that the cell is a dice roll — so
+  leaving it would have kept exactly the confident-but-false number OLD-43 exists to remove. `?`
+  asserts nothing the book does not say and is deliberately distinct from the `–` used for the
+  columns the book really does leave blank. A test pins it so that picking a side later has to come
+  through that test.
+
+  **Precedent note:** `source/OFFSETS.md` records the opposite outcome for **Norsca** (*"la lista de
+  ejército corrige al bestiario — gana la lista"*). That note stays scoped to Norsca and must **not**
+  be generalised; per the ruling above it is one case's answer, not a rule.
+- **Crazed Cooks** (`hf-crazed-cooks`) → `M`, `WS`, `I`, `A`, `Ld` dropped,
+  `statNotes: { M: '2D6"', WS: 'Sp', I: '–', A: 'D6', Ld: '–' }` + `statNotesEs: { WS: 'Esp' }`.
+  *Halflings* bestiary, printed **p.7** = PDF 5: "Crazed Cook 2D6 Sp 0 5 2 1 - D6 -". Only
+  `BS: 0, S: 5, T: 2, W: 1` are numbers and they stay; the previous `M: 6, WS: 0, I: 0, A: 6, Ld: 0`
+  were invented. The printed-**12** copy of the same row has its **Ld clipped by the edge of the
+  scan** (the same cut noted under OLD-37 and OLD-40), so the bestiary copy on printed p.7 — where Ld
+  prints legibly as a blank — is the citation. The Halfling book is **English** and already gives
+  Movement in inches, so the cm→inch conversion does **not** apply: `2D6"`, not `2D6cm`.
+- **Berserkers** (`no-berserkers`) → `M` and `A` dropped, `statNotes: { M: '2D6"', A: '2-10' }`.
+  *Norsca*. M and A are identical in all three printings of this profile — the bestiary (PDF 22), the
+  *Citadel Journal 7* revision (PDF 14) and the army list (PDF 25): "2D6" and "2-10". Previously
+  `M: 7` and `A: 6`, both invented. **"2-10" is the artillery dice** (faces 2/4/6/8/10/Misfire) — a
+  *range*, not a dice expression, which is precisely why the field holds a free token rather than a
+  dice-shaped value. English book, already inches.
+- **Out of scope, deliberately:** this unit's **WS/T/I/Ld disagree between printings of its own
+  row**. That is a separate finding and **nothing else on the unit was touched**; a test pins the
+  remaining seven columns so the change is provably confined to M and A.
+- **The Ravenswyrd** (`no-ravenswyrd`) → `M` and `A` dropped, `statNotes: { M: '2D6"', A: '2-10' }`.
+  *Norsca* **PDF 33** (printed p.21, the "NORSE SPECIAL CHARACTERS" article):
+  "The Ravenswyrd 2D6 6 0 4 4 1 4 2-10 10". The issue reported this profile as *not located in the
+  scan*; **it is located**, at PDF 33. Every other column (`WS 6, BS 0, S 4, T 4, W 1, I 4, Ld 10`)
+  already matched the book and was left alone, as was his companion `ProfileBlock` "The Raven"
+  ("12 - 0 4 4 2 5 - 10"), already correct with WS and A absent and rendering "–".
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary

@@ -128,7 +128,7 @@ export function mountOptionCost(mount: MountOption, option: EquipmentOption, opt
  * order) that has one wins; with none selected the base statLine applies.
  * Stale ids that don't exist on the unit are ignored.
  */
-export function effectiveStatLine(unit: UnitProfile, optionIds: string[]): StatLine | undefined {
+export function effectiveStatLine(unit: UnitProfile, optionIds: string[]): Partial<StatLine> | undefined {
   let result = unit.statLine
   for (const id of optionIds) {
     const opt = unit.options?.find((o) => o.id === id)

@@ -308,7 +308,15 @@ const units: UnitProfile[] = [
     nameEs: 'El Ravenswyrd',
     role: 'character',
     pointsPerModel: 100,
-    statLine: { M: 7, WS: 6, BS: 0, S: 4, T: 4, W: 1, I: 4, A: 6, Ld: 10 }, // M 2D6, A 2-10 — see rules
+    // OLD-43 — Norsca PDF 33 (printed p.21, the "NORSE SPECIAL CHARACTERS"
+    // article). The issue reported this profile as "not located in the scan"; it
+    // IS located, at PDF 33: "The Ravenswyrd  2D6  6  0  4  4  1  4  2-10  10".
+    // Every other column already matched the book and is left alone; only M and
+    // A were invented numbers (7 and 6) where the book prints tokens.
+    // "2-10" is the artillery dice (see no-berserkers); English book, already in
+    // inches, so `2D6"`.
+    statLine: { WS: 6, BS: 0, S: 4, T: 4, W: 1, I: 4, Ld: 10 },
+    statNotes: { M: '2D6"', A: '2-10' },
     isCharacter: true,
     max: 1,
     profiles: [
@@ -420,7 +428,20 @@ const units: UnitProfile[] = [
     nameEs: 'Berserkers',
     role: 'regiment',
     pointsPerModel: 35,
-    statLine: { M: 7, WS: 6, BS: 0, S: 4, T: 4, W: 1, I: 4, A: 6, Ld: 10 }, // M 2D6, A 2-10 — see rules
+    // OLD-43 — M and A print tokens, not numbers, and do so identically in all
+    // three printings of this profile (bestiary PDF 22, the Citadel Journal 7
+    // revision PDF 14, and the army list PDF 25): "2D6" and "2-10". They were
+    // previously invented as M 7 and A 6.
+    // "2-10" is the ARTILLERY DICE (faces 2/4/6/8/10/Misfire) — a range, not a
+    // dice expression, which is exactly why a dice-shaped field would not have
+    // covered this case and `statNotes` holds a free token instead.
+    // Norsca is an ENGLISH book and already gives Movement in inches, so no
+    // cm→inch conversion applies — hence `2D6"`.
+    // NOTE: this unit's WS/T/I/Ld disagree between printings of its own row.
+    // That is a separate finding, explicitly out of scope for OLD-43; the values
+    // below are deliberately left untouched.
+    statLine: { WS: 6, BS: 0, S: 4, T: 4, W: 1, I: 4, Ld: 10 },
+    statNotes: { M: '2D6"', A: '2-10' },
     minSize: 1,
     noCommand: true,
     options: [SHIELDS_1, EXTRA_HAND_WEAPON_1, DOUBLE_HANDED_2],

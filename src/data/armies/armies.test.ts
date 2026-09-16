@@ -1300,9 +1300,10 @@ describe('OLD-32 — High Elves profiles match the book', () => {
 // Two rows print `A: 1D6` in the book (the Undead Chariot and the Chariot of
 // Arkhan). `StatLine.A` is typed `number` and still is, so `A` stays absent
 // from both statLines — but since OLD-39 the printed dice expression is carried
-// alongside it as `ProfileBlock.attacksNote` and rendered in the A column, so
-// the app no longer shows "–" where the book prints a roll. The `attacksNote`
-// values are pinned in the OLD-39 block at the end of this file.
+// alongside it as a book token and rendered in the A column, so the app no
+// longer shows "–" where the book prints a roll. Since OLD-43 that token lives
+// in `ProfileBlock.statNotes` (any column, not just Attacks); the values are
+// pinned in the OLD-43 block at the end of this file.
 describe('OLD-33 — chariot chassis profiles match the book', () => {
   const CHASSIS: Array<{
     army: string
@@ -1398,9 +1399,9 @@ describe('OLD-33 — chariot chassis profiles match the book', () => {
 
   it('none of the eight chassis carries a numeric Attacks value', () => {
     // A is either absent from the book row (the six "- -" rows) or printed as
-    // 1D6, which StatLine.A cannot hold (it lives in `attacksNote` since
-    // OLD-39). Either way `statLine.A` must stay unset rather than be invented
-    // as a number.
+    // 1D6, which StatLine.A cannot hold (it lives in `statNotes` since OLD-43,
+    // OLD-39's Attacks-only field before that). Either way `statLine.A` must stay unset rather
+    // than be invented as a number.
     for (const row of CHASSIS) {
       const unit = getArmy(row.army)!.units.find((u) => u.id === row.unit)!
       const chassis = (unit.profiles ?? []).find((p) => p.name === row.profile)!
@@ -1991,58 +1992,57 @@ describe('Orcs & Goblins standalone chariots — per-crewman flags (OLD-35)', ()
   })
 })
 
-// OLD-39 — some books print a DICE EXPRESSION in a chariot chassis's Attacks
-// column. `StatLine.A` is `number` and stays that way (it runs through the
-// whole rules engine, and a chassis's Attacks affects no points and no
-// validation), so a `ProfileBlock` carries the printed token in the display-only
-// `attacksNote`, which every renderer shows INSTEAD of the numeric A.
+// OLD-39, generalised by OLD-43 — a book may print a non-numeric token in ANY
+// of the nine characteristic columns: a dice expression ("5D6", "1D6"), a range
+// ("2-10", the artillery dice) or a word ("Especial"/"Sp"). `StatLine` is all
+// `number` and stays that way (it runs through the whole rules engine, and none
+// of these tokens affects points or validation), so the printed token rides in
+// the display-only `statNotes`, which every renderer shows INSTEAD of the
+// numeric value. The noted column is therefore ABSENT from `statLine` rather
+// than carrying an invented number beside its note.
 //
-// Scope note: the survey behind this issue also found dice and range tokens in
-// places this design deliberately does NOT reach — a unit's own `statLine`
-// (Engendro del Caos "5D6 … 1D6", Reino del Caos printed p.120; Goblin Fanático
-// "5D6 … 1D6", O&G printed p.85; Crazed Cook "2D6 … D6", Halflings PDF 10;
-// Berserker "2D6 … 2-10", Norsca PDF 22) and a `MountOption.statLine` (Bestia de
-// Nurgle "… 1D6 …", Reino del Caos printed p.115). Those are full `StatLine`s
-// and belong to their own issue — see CITATIONS.md.
-describe('OLD-39 — chariot chassis print the book\'s dice Attacks', () => {
-  const DICE_ATTACKS: Array<{
-    army: string
-    unit: string
-    profile: string
-    profileEs: string
-    page: string
-    attacksNote: string
-  }> = [
+// This block pins the three chariot chassis (OLD-39's original scope); the
+// OLD-43 block below pins the unit and mount rows, and the sweep that forbids
+// an unpinned note lives there and covers all three houses.
+const CHASSIS_DICE_ATTACKS: Array<{
+  army: string
+  unit: string
+  profile: string
+  profileEs: string
+  page: string
+  attacksToken: string
+}> = [
     {
       // No Muertos, printed p.84 = PDF 86 (the identical row is reprinted on
       // printed p.68): "Carruaje Esquelético  -  -  -  5  5  3  1  1D6  -".
       army: 'undead', unit: 'ud-undead-chariot',
       profile: 'Chariot', profileEs: 'Carro',
-      page: 'No Muertos printed p.84', attacksNote: '1D6',
+      page: 'No Muertos printed p.84', attacksToken: '1D6',
     },
     {
       // No Muertos, printed p.91 = PDF 93:
       // "Carruaje de Arkhan  -  4  -  6  6  3  -  1D6  -".
       army: 'undead', unit: 'ud-arkhan-the-black',
       profile: 'Chariot of Arkhan', profileEs: 'Carro de Arkhan',
-      page: 'No Muertos printed p.91', attacksNote: '1D6',
+      page: 'No Muertos printed p.91', attacksToken: '1D6',
     },
     {
       // Elfos Oscuros, printed p.57 = PDF 59:
       // "Carruaje Negro  -  -  -  7  7  3  -  1D6+2  -".
       army: 'dark-elves', unit: 'de-witch-king',
       profile: 'Black Chariot', profileEs: 'Carruaje Negro',
-      page: 'Elfos Oscuros printed p.57', attacksNote: '1D6+2',
+      page: 'Elfos Oscuros printed p.57', attacksToken: '1D6+2',
     },
-  ]
+]
 
-  for (const row of DICE_ATTACKS) {
-    it(`${row.unit} — ${row.profile} prints A ${row.attacksNote} (${row.page})`, () => {
+describe('OLD-39 — chariot chassis print the book\'s dice Attacks', () => {
+  for (const row of CHASSIS_DICE_ATTACKS) {
+    it(`${row.unit} — ${row.profile} prints A ${row.attacksToken} (${row.page})`, () => {
       const unit = getArmy(row.army)!.units.find((u) => u.id === row.unit)
       expect(unit, `${row.army}: no unit ${row.unit}`).toBeDefined()
       const chassis = (unit!.profiles ?? []).find((p) => p.name === row.profile)
       expect(chassis, `${row.unit}: no "${row.profile}" profile`).toBeDefined()
-      expect(chassis!.attacksNote).toBe(row.attacksNote)
+      expect(chassis!.statNotes?.A).toBe(row.attacksToken)
       // The note REPLACES the numeric A — it must never be invented alongside it.
       expect(chassis!.statLine.A, `${row.unit} chassis A`).toBeUndefined()
       // Display profiles are bilingual.
@@ -2067,21 +2067,212 @@ describe('OLD-39 — chariot chassis print the book\'s dice Attacks', () => {
     expect(coldOnes.nameEs).toBe('2 Gélidos')
   })
 
-  it('no other profile in any army invents an attacksNote', () => {
+})
+
+// OLD-43 — six unit rows and one mount row printed a book TOKEN where this
+// repo had stored an invented number. OLD-39's field (ProfileBlock-only,
+// Attacks-only) is replaced by `statNotes`, which reaches all three houses — a
+// unit's own statLine, a MountOption's, and a ProfileBlock's — and any of the
+// nine columns.
+//
+// Every value below was read off a 400dpi scan of the page named in the test.
+describe('OLD-43 — units and mounts print the book\'s own token', () => {
+  type NotedRow = {
+    army: string
+    unit: string
+    /** Set for a row that belongs to one of the unit's mounts, not the unit. */
+    mount?: string
+    column: keyof StatLine
+    page: string
+    /** The English rendering (`statNotes`). */
+    token: string
+    /** The Spanish override (`statNotesEs`), when the token is a word. */
+    tokenEs?: string
+  }
+
+  const NOTED: NotedRow[] = [
+    // A — Reino del Caos printed p.85 = PDF 87:
+    //   "Bestia de Nurgle  8  3  0  3  5  3  3  1D6  6"
+    // Rules text: "Las Bestias pueden efectuar 1D6 ataques".
+    { army: 'chaos', unit: 'ch-beasts-of-nurgle', column: 'A', token: '1D6', page: 'Reino del Caos printed p.85' },
+    // …and the same printed row, ridden as a mount.
+    {
+      army: 'chaos', unit: 'ch-lord', mount: 'mount-beast-of-nurgle',
+      column: 'A', token: '1D6', page: 'Reino del Caos printed p.85',
+    },
+
+    // B — Reino del Caos printed p.90 = PDF 92:
+    //   "Engendro del Caos  5D6  3  0  4  5  3  3  1D6  10"
+    // Rules text: "un atributo de movimiento de 5D6 centímetros" and "pueden
+    // efectuar 1D6 ataques". The cm suffix is deliberate: a dice expression
+    // cannot be converted to the inches used everywhere else.
+    { army: 'chaos', unit: 'ch-chaos-spawn', column: 'M', token: '5D6cm', page: 'Reino del Caos printed p.90' },
+    { army: 'chaos', unit: 'ch-chaos-spawn', column: 'A', token: '1D6', page: 'Reino del Caos printed p.90' },
+
+    // C — Orcos y Goblins bestiary printed p.66 = PDF 68, headers M HA HP F R H I A L:
+    //   "Goblin Fanático  5D6  Especial  5  3  1  -  1D3  -"
+    // "Especial" spans the HA/HP pair (HA = Especial, HP blank).
+    // M is 5D6 CENTIMETRES ("el equivalente del resultado en centímetros").
+    { army: 'orcs-and-goblins', unit: 'og-night-goblin-fanatics', column: 'M', token: '5D6cm', page: 'O&G printed p.66' },
+    {
+      army: 'orcs-and-goblins', unit: 'og-night-goblin-fanatics',
+      column: 'WS', token: 'Special', tokenEs: 'Especial', page: 'O&G printed p.66',
+    },
+    { army: 'orcs-and-goblins', unit: 'og-night-goblin-fanatics', column: 'BS', token: '–', page: 'O&G printed p.66' },
+    { army: 'orcs-and-goblins', unit: 'og-night-goblin-fanatics', column: 'I', token: '–', page: 'O&G printed p.66' },
+    { army: 'orcs-and-goblins', unit: 'og-night-goblin-fanatics', column: 'Ld', token: '–', page: 'O&G printed p.66' },
+    // Attacks is the one cell the book contradicts itself on (bestiary 1D3 vs
+    // army list 1D6), so it prints "?" — see the dedicated test below.
+    { army: 'orcs-and-goblins', unit: 'og-night-goblin-fanatics', column: 'A', token: '?', page: 'O&G printed p.66 vs p.85 — UNRESOLVED' },
+
+    // D — Halflings bestiary printed p.7 = PDF 5:
+    //   "Crazed Cook  2D6  Sp  0  5  2  1  -  D6  -"
+    // The printed-12 copy of this row has its Ld clipped by the scan edge; the
+    // bestiary copy on printed p.7 prints it legibly as a blank.
+    // English book: Movement is ALREADY in inches, so 2D6" and not 2D6cm.
+    { army: 'halflings', unit: 'hf-crazed-cooks', column: 'M', token: '2D6"', page: 'Halflings printed p.7' },
+    {
+      army: 'halflings', unit: 'hf-crazed-cooks',
+      column: 'WS', token: 'Sp', tokenEs: 'Esp', page: 'Halflings printed p.7',
+    },
+    { army: 'halflings', unit: 'hf-crazed-cooks', column: 'I', token: '–', page: 'Halflings printed p.7' },
+    { army: 'halflings', unit: 'hf-crazed-cooks', column: 'A', token: 'D6', page: 'Halflings printed p.7' },
+    { army: 'halflings', unit: 'hf-crazed-cooks', column: 'Ld', token: '–', page: 'Halflings printed p.7' },
+
+    // E — Norsca. M and A are identical in all three printings of this profile
+    // (bestiary PDF 22, the Citadel Journal 7 revision PDF 14, army list PDF 25).
+    // "2-10" is the artillery dice (2/4/6/8/10/Misfire) — a RANGE, not a dice
+    // expression, which is why the field holds a free token and not a dice shape.
+    { army: 'norse', unit: 'no-berserkers', column: 'M', token: '2D6"', page: 'Norsca PDF 22/14/25' },
+    { army: 'norse', unit: 'no-berserkers', column: 'A', token: '2-10', page: 'Norsca PDF 22/14/25' },
+
+    // F — Norsca PDF 33 (printed p.21, "NORSE SPECIAL CHARACTERS"):
+    //   "The Ravenswyrd  2D6  6  0  4  4  1  4  2-10  10"
+    { army: 'norse', unit: 'no-ravenswyrd', column: 'M', token: '2D6"', page: 'Norsca PDF 33' },
+    { army: 'norse', unit: 'no-ravenswyrd', column: 'A', token: '2-10', page: 'Norsca PDF 33' },
+  ]
+
+  /** The statNotes / statLine pair a row addresses: the unit's, or its mount's. */
+  const sourceOf = (row: NotedRow) => {
+    const unit = getArmy(row.army)!.units.find((u) => u.id === row.unit)
+    expect(unit, `${row.army}: no unit ${row.unit}`).toBeDefined()
+    if (!row.mount) return unit!
+    const mount = (unit!.mounts ?? []).find((m) => m.id === row.mount)
+    expect(mount, `${row.unit}: no mount ${row.mount}`).toBeDefined()
+    return mount!
+  }
+
+  for (const row of NOTED) {
+    const who = row.mount ? `${row.unit}/${row.mount}` : row.unit
+    it(`${who} prints ${row.column} as "${row.token}" (${row.page})`, () => {
+      const src = sourceOf(row)
+      expect(src.statNotes?.[row.column]).toBe(row.token)
+      // A note REPLACES the number — the column must not also hold an invented one.
+      expect(src.statLine?.[row.column], `${who} statLine.${row.column}`).toBeUndefined()
+      if (row.tokenEs) expect(src.statNotesEs?.[row.column]).toBe(row.tokenEs)
+      else expect(src.statNotesEs?.[row.column]).toBeUndefined()
+    })
+  }
+
+  // The invented numbers this issue removes. Stated positively above and
+  // negatively here, so a regression that re-adds one fails loudly.
+  it('the invented numbers are gone from the six unit statLines', () => {
+    const u = (armyId: string, id: string) => getArmy(armyId)!.units.find((x) => x.id === id)!
+
+    const spawn = u('chaos', 'ch-chaos-spawn')
+    expect(spawn.statLine).not.toHaveProperty('M') // was 4
+    expect(spawn.statLine).not.toHaveProperty('A') // was 1
+    expect(spawn.statLine).toEqual({ WS: 3, BS: 0, S: 4, T: 5, W: 3, I: 3, Ld: 10 })
+
+    const beasts = u('chaos', 'ch-beasts-of-nurgle')
+    expect(beasts.statLine).not.toHaveProperty('A') // was 1 (the statline() default was 2)
+    expect(beasts.statLine).toEqual({ M: 3, WS: 3, BS: 0, S: 3, T: 5, W: 3, I: 3, Ld: 6 })
+
+    const fanatics = u('orcs-and-goblins', 'og-night-goblin-fanatics')
+    for (const k of ['M', 'WS', 'BS', 'I', 'Ld'] as const) {
+      expect(fanatics.statLine, `fanatics still has ${k}`).not.toHaveProperty(k)
+    }
+
+    const cooks = u('halflings', 'hf-crazed-cooks')
+    for (const k of ['M', 'WS', 'I', 'A', 'Ld'] as const) {
+      expect(cooks.statLine, `crazed cooks still has ${k}`).not.toHaveProperty(k)
+    }
+    expect(cooks.statLine).toEqual({ BS: 0, S: 5, T: 2, W: 1 })
+
+    for (const id of ['no-berserkers', 'no-ravenswyrd']) {
+      const norse = u('norse', id)
+      expect(norse.statLine, `${id} still has M`).not.toHaveProperty('M') // was 7
+      expect(norse.statLine, `${id} still has A`).not.toHaveProperty('A') // was 6
+    }
+  })
+
+  // The book contradicts itself on the Fanatic's Attacks: the bestiary row
+  // (printed p.66) prints 1D3, the army list (printed p.85 = PDF 87) prints 1D6.
+  // Both are legible at 400dpi, so this is the book disagreeing with itself.
+  // Choosing between them is a game-value judgement and the owner's ruling is
+  // that such conflicts are settled case by case; this case is still open.
+  //
+  // What IS settled is that the cell is a dice roll, so the old A: 1 was wrong
+  // under both readings. It shows "?" until the conflict is resolved. Pinned so
+  // that neither the "?" nor the absence of a number can be mistaken for an
+  // oversight, and so that picking a side later has to come through this test.
+  it('og-night-goblin-fanatics prints A as "?" — the bestiary/army-list conflict is OPEN', () => {
+    const fanatics = getArmy('orcs-and-goblins')!.units.find((u) => u.id === 'og-night-goblin-fanatics')!
+    expect(fanatics.statLine).not.toHaveProperty('A')
+    expect(fanatics.statNotes?.A).toBe('?')
+    // Not 1D3 and not 1D6: taking either side is the decision this pin guards.
+    expect(['1D3', '1D6']).not.toContain(fanatics.statNotes?.A)
+  })
+
+  // The Berserker's WS/T/I/Ld disagree between printings of its own row. That is
+  // a separate finding, explicitly out of scope here — pinned so this change is
+  // provably confined to M and A.
+  it('no-berserkers keeps every other column exactly as it was (out of scope)', () => {
+    const berserkers = getArmy('norse')!.units.find((u) => u.id === 'no-berserkers')!
+    expect(berserkers.statLine).toEqual({ WS: 6, BS: 0, S: 4, T: 4, W: 1, I: 4, Ld: 10 })
+  })
+
+  it('no-ravenswyrd keeps the seven columns that already matched the book (PDF 33)', () => {
+    const rw = getArmy('norse')!.units.find((u) => u.id === 'no-ravenswyrd')!
+    expect(rw.statLine).toEqual({ WS: 6, BS: 0, S: 4, T: 4, W: 1, I: 4, Ld: 10 })
+    // His companion "The Raven" (12 - 0 4 4 2 5 - 10) was already correct: WS
+    // and A are printed "-" and render "–" with no note.
+    const raven = rw.profiles!.find((p) => p.name === 'The Raven')!
+    expect(raven.statLine).toEqual({ M: 12, BS: 0, S: 4, T: 4, W: 2, I: 5, Ld: 10 })
+    expect(raven.statNotes).toBeUndefined()
+  })
+
+  it('no unit, mount or profile in any army invents an unpinned stat note', () => {
     // Only rows actually read off a scan may carry one — a note without a
-    // citation in the table above is a transcription that never happened.
-    const pinned = new Set(DICE_ATTACKS.map((r) => `${r.unit}/${r.profile}`))
+    // citation in a table above is a transcription that never happened.
+    // A MountOption object is shared by every character offered that mount (the
+    // Beast of Nurgle rides under five different Chaos characters), so a mount
+    // row is pinned by its own id rather than by the unit it hangs off.
+    const pinned = new Set<string>([
+      ...CHASSIS_DICE_ATTACKS.map((r) => `${r.unit}/${r.profile}/A`),
+      ...NOTED.map((r) => `${r.mount ?? r.unit}/${r.column}`),
+    ])
+    const check = (key: string, notes?: Record<string, string>) => {
+      for (const column of Object.keys(notes ?? {})) {
+        expect(pinned.has(`${key}/${column}`), `unpinned stat note on ${key}/${column}`).toBe(true)
+      }
+    }
     for (const army of ARMIES) {
       for (const unit of army.units) {
+        check(unit.id, unit.statNotes)
+        check(unit.id, unit.statNotesEs)
+        for (const m of unit.mounts ?? []) {
+          check(m.id, m.statNotes)
+          check(m.id, m.statNotesEs)
+        }
         const blocks = [
           ...(unit.profiles ?? []),
           ...(unit.mount ? [unit.mount] : []),
           ...(unit.mounts ?? []).flatMap((m) => m.profiles ?? []),
         ]
         for (const p of blocks) {
-          if (p.attacksNote !== undefined) {
-            expect(pinned.has(`${unit.id}/${p.name}`), `unpinned attacksNote on ${unit.id}/${p.name}`).toBe(true)
-          }
+          check(`${unit.id}/${p.name}`, p.statNotes)
+          check(`${unit.id}/${p.name}`, p.statNotesEs)
         }
       }
     }
