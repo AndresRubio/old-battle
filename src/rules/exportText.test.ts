@@ -123,3 +123,45 @@ describe('exportRosterText', () => {
     })
   })
 })
+
+// OLD-39 — the plaintext export renders the same stat strips as the editor, so
+// a chassis whose book row prints a dice Attacks must show it here too, not "–".
+describe('exportRosterText — dice Attacks (OLD-39)', () => {
+  const undead = getArmy('undead')!
+  const darkElves = getArmy('dark-elves')!
+
+  const rosterOf = (armyId: string, unitId: string): Roster => ({
+    id: 'r', name: 'Dice test', armyId, pointsLimit: 2000,
+    entries: [{ id: '1', unitId, size: 1, optionIds: [], magicItemIds: [] }],
+  })
+
+  /** The value row printed under the chassis label in the detail section. */
+  const rowUnder = (text: string, label: string) => {
+    const lines = text.split('\n')
+    const i = lines.findIndex((l) => l.trim() === `· ${label}`)
+    expect(i, `no "${label}" profile row in the export`).toBeGreaterThan(-1)
+    return { header: lines[i + 1], values: lines[i + 2] }
+  }
+
+  it('prints the Undead Chariot chassis A as 1D6, not a dash', () => {
+    const text = exportRosterText(rosterOf('undead', 'ud-undead-chariot'), undead)
+    const { values } = rowUnder(text, 'Chariot')
+    // "– – – 5 5 3 1 1D6 –" (No Muertos printed p.84).
+    expect(values.trim().split(/\s+/)).toEqual(['–', '–', '–', '5', '5', '3', '1', '1D6', '–'])
+  })
+
+  it("prints the Witch King's Black Chariot A as 1D6+2 and keeps the columns aligned", () => {
+    const text = exportRosterText(rosterOf('dark-elves', 'de-witch-king'), darkElves)
+    const { header, values } = rowUnder(text, 'Black Chariot')
+    expect(values.trim().split(/\s+/)).toEqual(['–', '–', '–', '7', '7', '3', '–', '1D6+2', '–'])
+    // The 5-character token widens its own column instead of shunting the row:
+    // the Ld header and the Ld value still start at the same offset.
+    expect(header.indexOf('Ld')).toBe(values.lastIndexOf('–'))
+  })
+
+  it('prints the dice token unchanged in the Spanish export', () => {
+    const text = exportRosterText(rosterOf('dark-elves', 'de-witch-king'), darkElves, 'es')
+    const { values } = rowUnder(text, 'Carruaje Negro')
+    expect(values).toContain('1D6+2')
+  })
+})

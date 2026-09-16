@@ -212,6 +212,29 @@ const units: UnitProfile[] = [
     lores: ['dark'],
     canBeGeneral: true,
     max: 1,
+    // OLD-39 — printed p.57 = PDF 59. The PERFIL table prints three rows and the
+    // unit had no `profiles` at all, so the chariot he always rides and its team
+    // were invisible in the app:
+    //   "Rey Brujo       12  7  7  5  5  4  9  4    10"
+    //   "Carruaje Negro   -  -  -  7  7  3  -  1D6+2  -"
+    //   "Gélido          20  3  0  4  4  1  4  2     3"
+    // The chariot's 1D6+2 Attacks rides in `attacksNote` (StatLine.A is `number`);
+    // its M/WS/BS/I/Ld are printed "-" and so stay absent. Gélido M 20cm → 8".
+    // The book labels the draught row "Gélido"; the generic mount in this file is
+    // "Caballo Frío" for the same beast, and its I differs (1 there, 4 here) — that
+    // row is sourced from another page and is deliberately left alone.
+    profiles: [
+      {
+        name: 'Black Chariot', nameEs: 'Carruaje Negro',
+        statLine: { S: 7, T: 7, W: 3 },
+        attacksNote: '1D6+2',
+        specialRules: ['Scythed blades', 'Drawn by 2 Cold Ones'],
+      },
+      {
+        name: '2 Cold Ones', nameEs: '2 Gélidos',
+        statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 4, A: 2, Ld: 3 },
+      },
+    ],
     specialRules: ['Special character', 'Wizard Level 4', 'Immune to psychology', 'Causes fear', 'Rides the Black Chariot', 'Fixed magic items'],
   },
   {

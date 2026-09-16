@@ -10,6 +10,7 @@ import {
   hasAnyOptions,
   magicStandardNeedsBearer,
   partitionOptions,
+  statCell,
 } from '../rules/entryView'
 import type { EntryActions } from '../state/rosterOps'
 import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel } from '../i18n/lang'
@@ -20,8 +21,19 @@ import { InfoDialog } from './InfoDialog'
 import { MountSelector } from './MountSelector'
 
 /** One M/WS/BS/S/T/W/I/A/Ld row, optionally labelled (mount / chariot profile).
- *  Accepts partial profiles (a chariot chassis only has T/W); absent stats show "–". */
-function StatLineRow({ statLine, lang, label }: { statLine: Partial<StatLine>; lang: Lang; label?: string }) {
+ *  Accepts partial profiles (a chariot chassis only has T/W); absent stats show "–".
+ *  `attacksNote` prints the book's dice expression ("1D6") in the A column. */
+function StatLineRow({
+  statLine,
+  lang,
+  label,
+  attacksNote,
+}: {
+  statLine: Partial<StatLine>
+  lang: Lang
+  label?: string
+  attacksNote?: string
+}) {
   return (
     <div className="statline-wrap">
       {label && <span className="stat-profile-label">{label}</span>}
@@ -29,7 +41,7 @@ function StatLineRow({ statLine, lang, label }: { statLine: Partial<StatLine>; l
         {(['M', 'WS', 'BS', 'S', 'T', 'W', 'I', 'A', 'Ld'] as const).map((k) => (
           <span key={k} className="stat">
             <span className="stat-k">{STAT_LABEL[lang][k]}</span>
-            <span className="stat-v">{statLine[k] ?? '–'}</span>
+            <span className="stat-v">{statCell(k, statLine, attacksNote)}</span>
           </span>
         ))}
       </div>
@@ -178,7 +190,12 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
           )}
           {companionMount && (
             <div className="profile-block">
-              <StatLineRow statLine={companionMount.statLine} lang={lang} label={profileName(companionMount, lang)} />
+              <StatLineRow
+                statLine={companionMount.statLine}
+                lang={lang}
+                label={profileName(companionMount, lang)}
+                attacksNote={companionMount.attacksNote}
+              />
               {companionMount.specialRules && companionMount.specialRules.length > 0 && (
                 <RuleTags rules={companionMount.specialRules} lang={lang} />
               )}
@@ -188,7 +205,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
           {/* Extra profiles: chariot crew/chassis/draught, or a fixed mount. */}
           {unit.profiles?.map((p, i) => (
             <div key={i} className="profile-block">
-              <StatLineRow statLine={p.statLine} lang={lang} label={profileName(p, lang)} />
+              <StatLineRow statLine={p.statLine} lang={lang} label={profileName(p, lang)} attacksNote={p.attacksNote} />
               {p.specialRules && p.specialRules.length > 0 && <RuleTags rules={p.specialRules} lang={lang} />}
             </div>
           ))}
@@ -197,7 +214,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
               beasts / chassis), beneath the rider like a chariot unit's. */}
           {selectedMount?.profiles?.map((p, i) => (
             <div key={i} className="profile-block">
-              <StatLineRow statLine={p.statLine} lang={lang} label={profileName(p, lang)} />
+              <StatLineRow statLine={p.statLine} lang={lang} label={profileName(p, lang)} attacksNote={p.attacksNote} />
               {p.specialRules && p.specialRules.length > 0 && <RuleTags rules={p.specialRules} lang={lang} />}
             </div>
           ))}

@@ -157,3 +157,50 @@ describe('EntryRow chariot mounts (Orcs & Goblins)', () => {
     expect(labels()).toEqual(['Rider', 'War Boar'])
   })
 })
+
+// OLD-39 — where the book prints a dice expression in a chassis's Attacks
+// column, the stat strip must show it instead of the "–" it used to render.
+describe('EntryRow dice Attacks (OLD-39)', () => {
+  const undead = getArmy('undead')!
+  const darkElves = getArmy('dark-elves')!
+
+  /** The A-column cell of the stat strip labelled `label` (M/WS/BS/S/T/W/I/A/Ld). */
+  const attacksFor = (label: string) => {
+    const wrap = Array.from(container.querySelectorAll('.statline-wrap')).find(
+      (el) => el.querySelector('.stat-profile-label')?.textContent === label,
+    )
+    return wrap?.querySelectorAll('.stat-v')[7]?.textContent
+  }
+
+  it('prints the Undead Chariot chassis A as 1D6 (No Muertos printed p.84)', () => {
+    setLang('en')
+    render(<EntryRow entry={entry('ud-undead-chariot', { size: 1 })} army={undead} {...props} />)
+    expand()
+    expect(attacksFor('Chariot')).toBe('1D6')
+    // The columns the book leaves blank still render "–".
+    const chassis = Array.from(container.querySelectorAll('.statline-wrap')).find(
+      (el) => el.querySelector('.stat-profile-label')?.textContent === 'Chariot',
+    )!
+    expect(chassis.querySelectorAll('.stat-v')[0].textContent).toBe('–')
+    // The note belongs to the chassis alone: the unit's own row keeps its number.
+    const own = container.querySelectorAll('.statline-wrap')[0]
+    expect(own.querySelectorAll('.stat-v')[7].textContent).toBe('1')
+  })
+
+  it("prints the Witch King's Black Chariot A as 1D6+2 (Elfos Oscuros printed p.57)", () => {
+    setLang('en')
+    render(<EntryRow entry={entry('de-witch-king', { size: 1 })} army={darkElves} {...props} />)
+    expand()
+    expect(attacksFor('Black Chariot')).toBe('1D6+2')
+    // Its draught team is an ordinary numeric profile.
+    expect(attacksFor('2 Cold Ones')).toBe('2')
+  })
+
+  it('prints the same dice token under the Spanish labels', () => {
+    setLang('es')
+    render(<EntryRow entry={entry('de-witch-king', { size: 1 })} army={darkElves} {...props} />)
+    expand()
+    expect(attacksFor('Carruaje Negro')).toBe('1D6+2')
+    expect(attacksFor('2 Gélidos')).toBe('2')
+  })
+})

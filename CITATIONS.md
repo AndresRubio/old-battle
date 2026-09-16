@@ -427,13 +427,13 @@ checked against is `CHARIOT_CHASSIS_STATS = { S: 7, T: 7, W: 3, I: 1 }` in `orcs
   Atributo de Fuerza del propio Carro de Guerra Imperial, es decir 7"*. **T and W were wrong** (the
   book gives T7 W5, the code held T5 W4).
 
-**The `A: 1D6` that cannot be entered.** The Undead Chariot (printed p.84) and the Chariot of Arkhan
-(printed p.91) both print **1D6 Attacks**. `StatLine.A` is typed `number`, so a dice expression
-cannot be stored; `A` is therefore deliberately **absent** from both statLines rather than being
-flattened to an invented average or to a literal. The UI prints "–" for it, which understates the
-book. Widening `StatLine` (or adding a dice-valued stat) is a separate decision and was expressly
-left out of scope — recorded here so the omission is not mistaken for a transcription slip. Pinned
-by a test in `armies.test.ts`.
+**The `A: 1D6` that cannot be entered — resolved by OLD-39 (below).** The Undead Chariot (printed
+p.84) and the Chariot of Arkhan (printed p.91) both print **1D6 Attacks**. `StatLine.A` is typed
+`number` and still is, so `A` remains deliberately **absent** from both statLines rather than being
+flattened to an invented average or to a literal. What has changed is that the printed token is no
+longer dropped: it is carried beside the statLine in the display-only `ProfileBlock.attacksNote` and
+rendered in the A column, so the UI no longer prints "–" where the book prints a roll. Pinned by
+tests in `armies.test.ts`.
 
 **Parked deliberately — do not "fix" these off the same audit.** Each needs its own decision and has
 its own Linear issue:
@@ -445,12 +445,41 @@ its own Linear issue:
 - **Black Coach chassis** (`vc-black-coach`) — the book prints a full nine-column row that the
   unit's own top-level `statLine` already carries; filling the `ProfileBlock` would duplicate it in
   the UI. A display-design question, not a data fix.
-- **Malekith's Black Chariot** (`de-witch-king`) — has no `profiles` array at all, so this is an
-  addition rather than a correction.
+- ~~**Malekith's Black Chariot** (`de-witch-king`) — has no `profiles` array at all, so this is an
+  addition rather than a correction.~~ **Done in OLD-39** (below): the `profiles` array was added.
 - **The Imperial War Wagon's top-level `statLine`** (`emp-war-wagon`) also disagrees with the book;
   only the chassis `ProfileBlock` was in scope here.
 - **The Chaos convention** of putting chassis stats in the unit's top-level `statLine`
   (`ch-chariot`, `ch-marauder-chariot`) while every other army puts the crew there.
+
+#### Dice expressions in a profile's Attacks column (OLD-39)
+Some books print a **dice expression** where the Attacks column expects a number. `StatLine.A` is
+typed `number` and was **not** widened: that type runs through the whole rules engine (every sum,
+comparison and ordering that reads `.A`), while a chariot chassis's Attacks affects no points and no
+validation. Instead a `ProfileBlock` may carry an optional display-only string, `attacksNote`, which
+every renderer prints **in place of** the numeric A — the editor's stat strip (`EntryRow`) and the
+plaintext export both go through `statCell` in `rules/entryView.ts`, so screen and export cannot
+disagree. Rows read off the scans at 400 dpi; offset **+2** per `source/OFFSETS.md`. No points
+changed.
+- **Undead Chariot chassis** (`ud-undead-chariot`) → `attacksNote: '1D6'`. *No Muertos*, printed
+  **p.84** = PDF 86: "Carruaje Esquelético - - - 5 5 3 1 1D6 -" (reprinted on printed p.68).
+- **Chariot of Arkhan** (`ud-arkhan-the-black`) → `attacksNote: '1D6'`. *No Muertos*, printed
+  **p.91** = PDF 93: "Carruaje de Arkhan - 4 - 6 6 3 - 1D6 -".
+- **Malekith's Black Chariot** (`de-witch-king`) → the unit had **no `profiles` array at all**, so
+  the chariot he always rides and its team were invisible in the app. *Elfos Oscuros*, printed
+  **p.57** = PDF 59 prints a three-row PERFIL table; the two non-rider rows were added:
+  "Carruaje Negro - - - 7 7 3 - 1D6+2 -" → `{ S: 7, T: 7, W: 3 }` + `attacksNote: '1D6+2'`, and
+  "Gélido 20 3 0 4 4 1 4 2 3" → `{ M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 4, A: 2, Ld: 3 }`
+  (M 20cm → 8"). Columns printed "-" stay **absent**, not invented. Note the book labels the draught
+  row *Gélido* while this file's generic mount for the same beast is *Caballo Frío* and prints **I 1**
+  against p.57's **I 4**; that mount row comes from another page and was deliberately left alone.
+- **Out of scope here, on purpose.** The survey behind this issue also found dice and range tokens
+  in a **unit's own `statLine`** (Engendro del Caos "5D6 … 1D6", *Reino del Caos* printed p.120;
+  Goblin Fanático "5D6 … 1D6", *O&G* printed p.85; Crazed Cook "2D6 … D6", *Halflings* PDF 10;
+  Berserker "2D6 … 2-10", *Norsca* PDF 22) and in a **`MountOption.statLine`** (Bestia de Nurgle,
+  *Reino del Caos* printed p.115). Those are full `StatLine`s, several print the token in **M** or
+  **WS** rather than A, and they currently hold invented numeric stand-ins — all of which needs a
+  wider design than this one. Tracked in its own issue; nothing there was touched.
 
 #### High Elf characters riding a Tiranoc Chariot (OLD-34)
 Source: `source/1997 Altos Elfos.pdf`, offset **+2** (PDF index = printed page + 2). This was a
