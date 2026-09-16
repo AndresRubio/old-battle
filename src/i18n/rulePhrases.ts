@@ -465,7 +465,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Crew armed with hand weapons, spears, short bows, poisoned javelins, poisoned arrows and shields': 'Dotación armada con armas de mano, lanzas, arcos cortos, jabalinas envenenadas, flechas envenenadas y escudos',
   'Crew of 2 (hand weapon & light armour)': 'Dotación de 2 (arma de mano y armadura ligera)',
   'Crew of 3 Skeletons': 'Dotación de 3 Esqueletos',
-  'Crew: Auriga with light armour, sword & bow': 'Dotación: Auriga con armadura ligera, espada y arco',
+  'Crew: 2 Aurigas with light armour, sword & bow': 'Dotación: 2 Aurigas con armadura ligera, espada y arco',
   'Crew: hand weapon & light armour': 'Dotación: arma de mano y armadura ligera',
   'Crew: heavy armour & hand weapon': 'Dotación: armadura pesada y arma de mano',
   'Crossbow Hunter — may move and shoot the crossbow from the saddle': 'Cazador con Ballesta — puede moverse y disparar la ballesta desde la silla',

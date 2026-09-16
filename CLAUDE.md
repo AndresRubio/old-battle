@@ -126,6 +126,9 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
 
 ## Reference docs
 
-`README.md`, `SPEC.md`, `PROGRESS.md` (build log), `CITATIONS.md` (sources + data-accuracy note),
+`README.md`, `SPEC.md`, `PROGRESS.md` (build log — **one short line per change**; the full
+story belongs in the commit body and the Linear issue, don't restate it here),
+`CITATIONS.md` (sources + data-accuracy note — every corrected game value gets an entry with
+its book page; this is the provenance index, keep it thorough),
 `research/` (sourced rules/army notes), and `docs/superpowers/{plans,specs}/` (design docs for
 recent rules-fidelity work).
