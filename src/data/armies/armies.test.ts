@@ -1298,9 +1298,11 @@ describe('OLD-32 — High Elves profiles match the book', () => {
 // verified reference these rows were checked against.
 //
 // Two rows print `A: 1D6` in the book (the Undead Chariot and the Chariot of
-// Arkhan). `StatLine.A` is typed `number`, so the value cannot be entered and
-// `A` is deliberately absent from both statLines — recorded in CITATIONS.md.
-// Widening the type is a separate decision, out of scope here.
+// Arkhan). `StatLine.A` is typed `number` and still is, so `A` stays absent
+// from both statLines — but since OLD-39 the printed dice expression is carried
+// alongside it as `ProfileBlock.attacksNote` and rendered in the A column, so
+// the app no longer shows "–" where the book prints a roll. The `attacksNote`
+// values are pinned in the OLD-39 block at the end of this file.
 describe('OLD-33 — chariot chassis profiles match the book', () => {
   const CHASSIS: Array<{
     army: string
@@ -1394,10 +1396,11 @@ describe('OLD-33 — chariot chassis profiles match the book', () => {
     })
   }
 
-  it('none of the eight chassis carries an Attacks value', () => {
+  it('none of the eight chassis carries a numeric Attacks value', () => {
     // A is either absent from the book row (the six "- -" rows) or printed as
-    // 1D6, which StatLine.A cannot hold. Either way it must stay unset rather
-    // than be invented as a number.
+    // 1D6, which StatLine.A cannot hold (it lives in `attacksNote` since
+    // OLD-39). Either way `statLine.A` must stay unset rather than be invented
+    // as a number.
     for (const row of CHASSIS) {
       const unit = getArmy(row.army)!.units.find((u) => u.id === row.unit)!
       const chassis = (unit.profiles ?? []).find((p) => p.name === row.profile)!
@@ -1985,5 +1988,102 @@ describe('Orcs & Goblins standalone chariots — per-crewman flags (OLD-35)', ()
     expect(wolf3.flat).toBe(true)
     expect(wolf3.perCrewman).toBeUndefined()
     expect(wolf3.addsCrewman).toBeUndefined()
+  })
+})
+
+// OLD-39 — some books print a DICE EXPRESSION in a chariot chassis's Attacks
+// column. `StatLine.A` is `number` and stays that way (it runs through the
+// whole rules engine, and a chassis's Attacks affects no points and no
+// validation), so a `ProfileBlock` carries the printed token in the display-only
+// `attacksNote`, which every renderer shows INSTEAD of the numeric A.
+//
+// Scope note: the survey behind this issue also found dice and range tokens in
+// places this design deliberately does NOT reach — a unit's own `statLine`
+// (Engendro del Caos "5D6 … 1D6", Reino del Caos printed p.120; Goblin Fanático
+// "5D6 … 1D6", O&G printed p.85; Crazed Cook "2D6 … D6", Halflings PDF 10;
+// Berserker "2D6 … 2-10", Norsca PDF 22) and a `MountOption.statLine` (Bestia de
+// Nurgle "… 1D6 …", Reino del Caos printed p.115). Those are full `StatLine`s
+// and belong to their own issue — see CITATIONS.md.
+describe('OLD-39 — chariot chassis print the book\'s dice Attacks', () => {
+  const DICE_ATTACKS: Array<{
+    army: string
+    unit: string
+    profile: string
+    profileEs: string
+    page: string
+    attacksNote: string
+  }> = [
+    {
+      // No Muertos, printed p.84 = PDF 86 (the identical row is reprinted on
+      // printed p.68): "Carruaje Esquelético  -  -  -  5  5  3  1  1D6  -".
+      army: 'undead', unit: 'ud-undead-chariot',
+      profile: 'Chariot', profileEs: 'Carro',
+      page: 'No Muertos printed p.84', attacksNote: '1D6',
+    },
+    {
+      // No Muertos, printed p.91 = PDF 93:
+      // "Carruaje de Arkhan  -  4  -  6  6  3  -  1D6  -".
+      army: 'undead', unit: 'ud-arkhan-the-black',
+      profile: 'Chariot of Arkhan', profileEs: 'Carro de Arkhan',
+      page: 'No Muertos printed p.91', attacksNote: '1D6',
+    },
+    {
+      // Elfos Oscuros, printed p.57 = PDF 59:
+      // "Carruaje Negro  -  -  -  7  7  3  -  1D6+2  -".
+      army: 'dark-elves', unit: 'de-witch-king',
+      profile: 'Black Chariot', profileEs: 'Carruaje Negro',
+      page: 'Elfos Oscuros printed p.57', attacksNote: '1D6+2',
+    },
+  ]
+
+  for (const row of DICE_ATTACKS) {
+    it(`${row.unit} — ${row.profile} prints A ${row.attacksNote} (${row.page})`, () => {
+      const unit = getArmy(row.army)!.units.find((u) => u.id === row.unit)
+      expect(unit, `${row.army}: no unit ${row.unit}`).toBeDefined()
+      const chassis = (unit!.profiles ?? []).find((p) => p.name === row.profile)
+      expect(chassis, `${row.unit}: no "${row.profile}" profile`).toBeDefined()
+      expect(chassis!.attacksNote).toBe(row.attacksNote)
+      // The note REPLACES the numeric A — it must never be invented alongside it.
+      expect(chassis!.statLine.A, `${row.unit} chassis A`).toBeUndefined()
+      // Display profiles are bilingual.
+      expect(chassis!.nameEs).toBe(row.profileEs)
+    })
+  }
+
+  // The Witch King had no `profiles` array at all, so the chariot he always
+  // rides and its draught team were invisible. Elfos Oscuros printed p.57:
+  //   "Carruaje Negro  -  -  -  7  7  3  -  1D6+2  -"
+  //   "Gélido          20  3  0  4  4  1  4  2     3"   (M 20cm → 8")
+  it('de-witch-king carries the Black Chariot and its 2 Cold Ones (printed p.57)', () => {
+    const wk = getArmy('dark-elves')!.units.find((u) => u.id === 'de-witch-king')!
+    expect(wk.profiles?.map((p) => p.name)).toEqual(['Black Chariot', '2 Cold Ones'])
+
+    const chariot = wk.profiles!.find((p) => p.name === 'Black Chariot')!
+    // M/WS/BS/I/Ld are printed "-" and must stay absent, not be invented.
+    expect(chariot.statLine).toEqual({ S: 7, T: 7, W: 3 })
+
+    const coldOnes = wk.profiles!.find((p) => p.name === '2 Cold Ones')!
+    expect(coldOnes.statLine).toEqual({ M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 4, A: 2, Ld: 3 })
+    expect(coldOnes.nameEs).toBe('2 Gélidos')
+  })
+
+  it('no other profile in any army invents an attacksNote', () => {
+    // Only rows actually read off a scan may carry one — a note without a
+    // citation in the table above is a transcription that never happened.
+    const pinned = new Set(DICE_ATTACKS.map((r) => `${r.unit}/${r.profile}`))
+    for (const army of ARMIES) {
+      for (const unit of army.units) {
+        const blocks = [
+          ...(unit.profiles ?? []),
+          ...(unit.mount ? [unit.mount] : []),
+          ...(unit.mounts ?? []).flatMap((m) => m.profiles ?? []),
+        ]
+        for (const p of blocks) {
+          if (p.attacksNote !== undefined) {
+            expect(pinned.has(`${unit.id}/${p.name}`), `unpinned attacksNote on ${unit.id}/${p.name}`).toBe(true)
+          }
+        }
+      }
+    }
   })
 })

@@ -542,8 +542,9 @@ const units: UnitProfile[] = [
     statLine: statLine({ M: 4, WS: 2, BS: 2, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 }),
     profiles: [
       // OLD-33 — printed p.84 = PDF 86: "Carruaje Esquelético - - - 5 5 3 1 1D6 -".
-      // The 1D6 Attacks cannot be stored: StatLine.A is typed number. See CITATIONS.md.
-      { name: 'Chariot', nameEs: 'Carro', statLine: { S: 5, T: 5, W: 3, I: 1 } },
+      // OLD-39 — the 1D6 Attacks now prints via `attacksNote`; StatLine.A stays
+      // `number` and unset here. See CITATIONS.md.
+      { name: 'Chariot', nameEs: 'Carro', statLine: { S: 5, T: 5, W: 3, I: 1 }, attacksNote: '1D6' },
       {
         name: '2 Skeleton Warriors (crew)', nameEs: '2 Guerreros Esqueleto (tripulación)',
         statLine: { M: 4, WS: 2, BS: 2, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
@@ -818,8 +819,10 @@ const units: UnitProfile[] = [
       {
         name: 'Chariot of Arkhan', nameEs: 'Carro de Arkhan',
         // OLD-33 — printed p.91 = PDF 93: "Carruaje de Arkhan - 4 - 6 6 3 - 1D6 -".
-        // The 1D6 Attacks cannot be stored: StatLine.A is typed number. See CITATIONS.md.
+        // OLD-39 — the 1D6 Attacks now prints via `attacksNote`; StatLine.A stays
+        // `number` and unset here. See CITATIONS.md.
         statLine: { WS: 4, S: 6, T: 6, W: 3 },
+        attacksNote: '1D6',
         specialRules: ['Flying', 'Built on a dead Manticore'],
       },
     ],

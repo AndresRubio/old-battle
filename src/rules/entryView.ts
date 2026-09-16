@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, MagicItem, MountOption, ProfileBlock, UnitProfile } from '../data/types'
+import type { Army, EquipmentOption, MagicItem, MountOption, ProfileBlock, StatLine, UnitProfile } from '../data/types'
 import { isWizardLevelId, STANDARD_BEARER_ID } from '../data/unitOptions'
 import { matchesQuery } from '../i18n/lang'
 
@@ -7,6 +7,26 @@ import { matchesQuery } from '../i18n/lang'
  * *decide* (eligibility, pairings) lives here so the rule has one statement,
  * shared with validation, and is testable without rendering a component.
  */
+
+/**
+ * The text one characteristic column shows: the value, or "–" when the book's
+ * row leaves that column blank.
+ *
+ * The exception is Attacks. A few chariot chassis print a DICE EXPRESSION there
+ * ("1D6" for the Undead Chariot, "1D6+2" for the Witch King's Black Chariot),
+ * which `StatLine.A: number` cannot hold — a `ProfileBlock` carries it as
+ * `attacksNote` instead and it REPLACES the numeric A. Both the editor
+ * (`StatLineRow`) and the plaintext export go through here so the screen and
+ * the exported list can never disagree about what the book prints.
+ */
+export function statCell(
+  key: keyof StatLine,
+  statLine: Partial<StatLine>,
+  attacksNote?: string,
+): string {
+  if (key === 'A' && attacksNote) return attacksNote
+  return String(statLine[key] ?? '–')
+}
 
 /** A unit magic standard must be a non-special banner — Magia p.42. */
 export function isValidMagicStandard(item: MagicItem): boolean {

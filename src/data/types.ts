@@ -150,6 +150,22 @@ export interface ProfileBlock {
   nameEs?: string
   /** Partial: a chariot chassis only has T/W; absent stats render as "–". */
   statLine: Partial<StatLine>
+  /**
+   * Printed in place of the numeric `A` when the book gives this profile's
+   * Attacks as a DICE EXPRESSION rather than a number — the Undead Chariot's
+   * "1D6" (No Muertos printed p.84) or the Witch King's Black Chariot "1D6+2"
+   * (Elfos Oscuros printed p.57). `StatLine.A` is `number` and stays that way:
+   * a chassis's Attacks affects no points and no validation, so this is a
+   * display-only string rather than a widening of the type the whole rules
+   * engine reads. Every renderer must show it INSTEAD of `statLine.A` — see
+   * `statCell` in rules/entryView.ts, the single statement of that rule.
+   *
+   * Out of scope here (OLD-39 covers `ProfileBlock` only): some books print a
+   * dice or range token in a UNIT's own `statLine` or in a `MountOption`'s —
+   * e.g. "Engendro del Caos 5D6 … 1D6" (Reino del Caos printed p.120). Those
+   * stats are full `StatLine`s and are tracked in their own issue.
+   */
+  attacksNote?: string
   specialRules?: string[]
 }
 
