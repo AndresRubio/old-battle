@@ -330,6 +330,47 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   por un coste adicional de +6 puntos los dos corceles". The same page's Repeater Bolt Thrower (100
   pts, "una dotación de dos Altos Elfos") has no OPCIONES line at all, so it correctly offers none.
   Linear OLD-31.
+- **High Elf character and chariot statlines, and Silver Helm barding** (High Elves) —
+  `source/1997 Altos Elfos.pdf`, a Spanish image scan whose PDF index runs **+2** ahead of the
+  printed page. Book stat columns M / HA / HP / F / R / H / I / A / L → M / WS / BS / S / T / W /
+  I / A / Ld; Movement converted as usual (12cm→5"). Five values corrected, each read off the scan
+  and cross-checked on up to three independent pages:
+  - **Tiranoc Chariot crew Strength** (`he-tiranoc-chariot`) — `S: 4` → **`S: 3`**. Printed p.79 =
+    PDF 81 prints "Auriga 12 5 4 3 3 1 7 1 8"; printed p.68 = PDF 70 (bestiary) and the printed
+    p.101 = PDF 103 reference table print the same row. Three concordant sources: an Auriga is an
+    ordinary S3 Elf warrior. The chariot's own chassis (T7 W3) and its 84-pt base are unchanged.
+  - **Battle Standard Bearer Ballistic Skill** (`he-battle-standard`) — `BS: 4` → **`BS: 5`**.
+    Printed p.73 = PDF 75: "Portaestandarte de Batalla 12 5 5 4 3 1 7 2 8" (confirmed printed
+    p.101 = PDF 103).
+  - **High Elf Hero Ballistic Skill** (`he-hero`) — `BS: 4` → **`BS: 6`**. Printed p.73 = PDF 75:
+    "Héroe 12 6 6 4 4 2 8 3 9" (confirmed printed p.101 = PDF 103).
+  - **Paladin Ballistic Skill** (`he-paladin`) — `BS: 4` → **`BS: 5`**. Printed p.74 = PDF 76:
+    "Paladín 12 5 5 4 3 1 7 2 8" (confirmed printed p.101 = PDF 103).
+    Cause of the three BS errors: these entries are built from the file-local `elf()` helper, whose
+    default BS is 4 (the rank-and-file Guerrero Elfo, p.62), and none of them overrode it. The book
+    gives High Elf characters **BS equal to WS** (Paladín 5/5, Héroe 6/6, Comandante 7/7); only the
+    General (`he-general`, already `BS: 7`) had the override and is unchanged. `armies.test.ts` now
+    pins all four rows in full, plus BS === WS across the four generic characters.
+  - **Silver Helm barding** (`he-silver-helms`) — `pointsPerModel: 4` → **`8`**. Printed p.75 =
+    PDF 77: "Cualquier unidad puede equipar sus Corceles con bardas por un coste adicional de +8
+    puntos por miniatura." The constant was named `BARDING_4` after the wrong price and is renamed
+    `BARDING_8`; it is used by the Silver Helms entry only (the Tiranoc Chariot has its own
+    `CHARIOT_BARDING`, the separate per-steed +4 of OLD-31 — a different book line, unchanged).
+  Linear OLD-32.
+
+#### Known book conflicts left as-is (High Elves)
+Two readings from the same scan that must **not** be "corrected" later by someone working off the
+book's own reference table. Both are recorded here deliberately; the code is unchanged.
+- **White Lions Strength — book erratum, code keeps S4.** The printed p.101 = PDF 103 summary table
+  prints "Leones Blancos 12 5 4 3 3 1 6 1 8", i.e. **S 3**. The bestiary (printed p.67 = PDF 69)
+  and the army list (printed p.76 = PDF 78) both print **S 4**. Two independent pages to one, and
+  S4 is what a two-handed axe-armed Chracian is elsewhere in the edition, so `he-white-lions` keeps
+  `S: 4`; the reference table is the outlier. Pinned by a test in `armies.test.ts`. Linear OLD-32.
+- **Great Eagle Ballistic Skill — unverified, code keeps BS0.** Printed p.80 = PDF 82 renders the
+  HP (BS) column as a smudged, unreadable glyph: "Águila Gigante 5 7 ö 5 4 3 5 2 8". `BS: 0` is
+  what the code has and is consistent with every other monster in that table, but the printed digit
+  itself could not be read on this scan — it is *unverified*, not confirmed. Left alone pending a
+  cleaner scan. Linear OLD-32.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary

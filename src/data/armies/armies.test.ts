@@ -1194,6 +1194,99 @@ describe('OLD-31: the Tiranoc Chariot prices its per-crewman options per crewman
   })
 })
 
+describe('OLD-32 — High Elves profiles match the book', () => {
+  // Source: 1997 Altos Elfos (Spanish army book). Page numbers below are the
+  // PRINTED page. Book stat columns M / HA / HP / F / R / H / I / A / L map to
+  // M / WS / BS / S / T / W / I / A / Ld, and Movement is converted to inches
+  // (12cm → 5"). Every row here is pinned in FULL, not just the column that was
+  // wrong, so a future edit to one stat can't quietly drag the others with it.
+  const he = () => getArmy('high-elves')!
+  const unit = (id: string) => {
+    const u = he().units.find((x) => x.id === id)
+    expect(u, `${id} not found in the High Elf list`).toBeDefined()
+    return u!
+  }
+
+  it('the Tiranoc Chariot crew are S3 Aurigas — the whole row (p.79)', () => {
+    // "Auriga  12  5  4  3  3  1  7  1  8" (p.79; concordant on p.68 and the
+    // p.101 reference table). An Auriga is an ordinary Elf warrior with a
+    // chariot: Strength 3, not 4.
+    expect(unit('he-tiranoc-chariot').statLine).toEqual({
+      M: 5, WS: 5, BS: 4, S: 3, T: 3, W: 1, I: 7, A: 1, Ld: 8,
+    })
+  })
+
+  it('the Battle Standard Bearer is BS5 — the whole row (p.73)', () => {
+    // "Portaestandarte de Batalla  12  5  5  4  3  1  7  2  8" (p.73;
+    // confirmed p.101). High Elf characters shoot as well as they fight:
+    // BS equals WS.
+    expect(unit('he-battle-standard').statLine).toEqual({
+      M: 5, WS: 5, BS: 5, S: 4, T: 3, W: 1, I: 7, A: 2, Ld: 8,
+    })
+  })
+
+  it('the High Elf Hero is BS6 — the whole row (p.73)', () => {
+    // "Héroe  12  6  6  4  4  2  8  3  9" (p.73; confirmed p.101).
+    expect(unit('he-hero').statLine).toEqual({
+      M: 5, WS: 6, BS: 6, S: 4, T: 4, W: 2, I: 8, A: 3, Ld: 9,
+    })
+  })
+
+  it('the Paladin is BS5 — the whole row (p.74)', () => {
+    // "Paladín  12  5  5  4  3  1  7  2  8" (p.74; confirmed p.101).
+    expect(unit('he-paladin').statLine).toEqual({
+      M: 5, WS: 5, BS: 5, S: 4, T: 3, W: 1, I: 7, A: 2, Ld: 8,
+    })
+  })
+
+  it('the General keeps BS7 — the elf() default must never overwrite it', () => {
+    // These entries are built from the local elf() helper, whose default BS is
+    // 4 (the rank-and-file Guerrero Elfo, p.62). The BSB / Hero / Paladin rows
+    // above were wrong precisely because they never overrode it. The General
+    // (p.73: "Comandante  12  7  7  4  4  3  9  4  10") always did — this test
+    // guards the one that was already right.
+    expect(unit('he-general').statLine.BS).toBe(7)
+    expect(unit('he-general').statLine).toEqual({
+      M: 5, WS: 7, BS: 7, S: 4, T: 4, W: 3, I: 9, A: 4, Ld: 10,
+    })
+  })
+
+  it('no High Elf character is left on the elf() BS-4 default with a higher WS', () => {
+    // The generic characters are the ones this issue corrected; the rule the
+    // book states is BS = WS for High Elf characters. Special characters are
+    // transcribed individually and are out of this check's scope.
+    for (const id of ['he-general', 'he-battle-standard', 'he-hero', 'he-paladin']) {
+      const s = unit(id).statLine
+      expect(s.BS, `${id}: High Elf characters have BS equal to WS`).toBe(s.WS)
+    }
+  })
+
+  it('Silver Helm barding is +8 points per model (p.75)', () => {
+    // "Cualquier unidad puede equipar sus Corceles con bardas por un coste
+    // adicional de +8 puntos por miniatura." (p.75)
+    const helms = unit('he-silver-helms')
+    const barding = (helms.options ?? []).find((o) => o.id === 'barding')
+    expect(barding, 'Silver Helms must offer barding').toBeDefined()
+    expect(barding!.flat ?? false).toBe(false)
+    expect(barding!.pointsPerModel).toBe(8)
+    // 5 Silver Helms at 31 + 8 barding each = 195.
+    expect(
+      entryPoints(
+        { id: 'e', unitId: 'he-silver-helms', size: 5, optionIds: ['barding'], magicItemIds: [] },
+        he(),
+      ),
+    ).toBe(195)
+  })
+
+  it('White Lions stay at S4 — the p.101 reference table is the outlier', () => {
+    // Book erratum: the p.101 summary table prints "Leones Blancos 12 5 4 3 3 1
+    // 6 1 8" (S3), but the bestiary (p.67) and the army list (p.76) both print
+    // S4. Two to one — the code keeps S4. Recorded in CITATIONS.md so nobody
+    // "corrects" it off the reference table later.
+    expect(unit('he-white-lions').statLine.S).toBe(4)
+  })
+})
+
 describe('Empire — sample legal list validates cleanly', () => {
   it('a balanced 1000pt list produces no violations', () => {
     const empire = getArmy('empire')!
