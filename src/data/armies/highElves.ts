@@ -95,10 +95,16 @@ const TIRANOC_CHARIOT_PROFILES: ProfileBlock[] = [
 
 // Mage level upgrades — Mago 59pts → Paladín Mago 121pts → Mago Maestro 219pts
 // → Gran Mago 328pts (p.74). Cumulative point deltas.
+//
+// OLD-37 — each level has its OWN profile in the p.74 table (M in cm; 12cm → 5"):
+//   Mago          12 4 4 3 4 1 7 1 8   (the unit's base statLine)
+//   Paladín Mago  12 4 4 4 4 2 7 1 8
+//   Mago Maestro  12 4 4 4 4 3 8 2 8
+//   Gran Mago     12 4 4 4 4 4 9 3 9
 const HE_WIZARD_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Wizard Level 2 (Mage Champion / Paladín Mago)', pointsPerModel: 62, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Wizard Level 3 (Master Mage / Mago Maestro)', pointsPerModel: 160, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Wizard Level 4 (Great Mage / Gran Mago)', pointsPerModel: 269, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Wizard Level 2 (Mage Champion / Paladín Mago)', pointsPerModel: 62, magicItemSlotsDelta: 1, statLine: elf({ S: 4, T: 4, W: 2, I: 7 }) },
+  { id: 'wizard-l3', name: 'Wizard Level 3 (Master Mage / Mago Maestro)', pointsPerModel: 160, magicItemSlotsDelta: 2, statLine: elf({ S: 4, T: 4, W: 3, I: 8, A: 2 }) },
+  { id: 'wizard-l4', name: 'Wizard Level 4 (Great Mage / Gran Mago)', pointsPerModel: 269, magicItemSlotsDelta: 3, statLine: elf({ S: 4, T: 4, W: 4, I: 9, A: 3, Ld: 9 }) },
 ]
 
 // --- Character mounts (p.71: "may ride an Elven Steed, a monster or a chariot").

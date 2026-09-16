@@ -55,10 +55,17 @@ const DEATHFANG_PROFILE: ProfileBlock = {
 
 // Hireling Wizard level upgrades — costs cumulative from L1 base (p.29):
 // L1=59, L2=121 (delta +62), L3=193 (delta +134 from L1), L4=290 (delta +231 from L1).
+//
+// OLD-37 — each level has its OWN profile in the p.29 table (English book, M
+// already in inches):
+//   Wizard           4 3 3 3 4 1 4 1 7   (the unit's base statLine)
+//   Wizard Champion  4 3 3 4 4 2 4 1 7
+//   Master Wizard    4 3 3 4 4 3 5 2 7
+//   Wizard Lord      4 3 3 4 4 4 6 3 8
 const DOW_WIZARD_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Wizard Champion (Level 2)', pointsPerModel: 62, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Master Wizard (Level 3)', pointsPerModel: 134, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Wizard Lord (Level 4)', pointsPerModel: 231, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Wizard Champion (Level 2)', pointsPerModel: 62, magicItemSlotsDelta: 1, statLine: { M: 4, WS: 3, BS: 3, S: 4, T: 4, W: 2, I: 4, A: 1, Ld: 7 } },
+  { id: 'wizard-l3', name: 'Master Wizard (Level 3)', pointsPerModel: 134, magicItemSlotsDelta: 2, statLine: { M: 4, WS: 3, BS: 3, S: 4, T: 4, W: 3, I: 5, A: 2, Ld: 7 } },
+  { id: 'wizard-l4', name: 'Wizard Lord (Level 4)', pointsPerModel: 231, magicItemSlotsDelta: 3, statLine: { M: 4, WS: 3, BS: 3, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 8 } },
 ]
 
 const units: UnitProfile[] = [

@@ -48,10 +48,17 @@ const SCYTHE_BLADES: EquipmentOption = { id: 'scythe-wheels', name: 'Scythed whe
 // instead lists each level as its own entry: Necromancer 68 → Necromancer Paladin
 // (L2) 163 → Master Necromancer (L3) 278 → Great Necromancer (L4) 410 [General].
 // Cumulative deltas: +95 / +210 / +342. Magic-item allowance 1/2/3/4 (p.76).
+//
+// OLD-37 — each level has its OWN profile (M in cm; 10cm → 4"). Army list p.80
+// prints the first three, the bestiary table p.57 all four and agrees with it:
+//   Nigromante          10 4 4 4 3 1 3 2  8   (the unit's base statLine)
+//   Paladín Nigromante  10 5 5 4 3 2 4 3  9
+//   Maestro Nigromante  10 6 6 5 4 3 5 4  9
+//   Gran Nigromante     10 7 7 5 4 4 6 5 10   (p.57 only; = the General's own row)
 const UD_WIZARD_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Wizard Level 2 (Necromancer Paladin)', pointsPerModel: 95, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Wizard Level 3 (Master Necromancer)', pointsPerModel: 210, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Wizard Level 4 (Great Necromancer)', pointsPerModel: 342, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Wizard Level 2 (Necromancer Paladin)', pointsPerModel: 95, magicItemSlotsDelta: 1, statLine: statLine({ M: 4, WS: 5, BS: 5, S: 4, T: 3, W: 2, I: 4, A: 3, Ld: 9 }) },
+  { id: 'wizard-l3', name: 'Wizard Level 3 (Master Necromancer)', pointsPerModel: 210, magicItemSlotsDelta: 2, statLine: statLine({ M: 4, WS: 6, BS: 6, S: 5, T: 4, W: 3, I: 5, A: 4, Ld: 9 }) },
+  { id: 'wizard-l4', name: 'Wizard Level 4 (Great Necromancer)', pointsPerModel: 342, magicItemSlotsDelta: 3, statLine: statLine({ M: 4, WS: 7, BS: 7, S: 5, T: 4, W: 4, I: 6, A: 5, Ld: 10 }) },
 ]
 
 // --- Character mounts (army list pp.76-84: a character "may ride a Skeletal
