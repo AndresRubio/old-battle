@@ -160,6 +160,18 @@ export const RULES: RuleDef[] = [
     es: 'Un Shaman Goblin Silvano hace chequeos por ¡Waaagh! como cualquier otro Shaman Goblin, pero el veneno de sus arañas mascota le permite sumar +1 a su tirada en la Tabla de Estallido Mental. Un resultado natural de 6 en esa tirada le deja completamente indemne: se le trata como si hubiera superado el chequeo por ¡Waaagh!, aunque no lo hubiera hecho, sin ningún efecto negativo; esto significa que su peor resultado posible en la tabla es un 2 ("Creo que voy a…") y jamás puede sufrir el resultado "Estallido Mental". Sin embargo, cada vez que falla de verdad un chequeo por ¡Waaagh! — incluso uno "salvado" por ese natural de 6 — se desplaza de inmediato el equivalente en centímetros de una tirada de 2D6 en una dirección aleatoria (dado de dispersión), deteniéndose ante cualquier obstáculo infranqueable; si con ello contacta con un enemigo queda trabado en combate y cuenta como si hubiera cargado ese turno (y de nuevo el turno siguiente si ya estaba luchando).',
   },
   {
+    // OLD-36 — High Elves, printed p.78. Listed HERE, well before the generic
+    // 'spear' / 'lance' entries: the tag names Lancer regiments, and 'lance' is
+    // a substring of "Lancer", so without this entry the ⓘ glossary would show
+    // the cavalry-lance weapon rule for an army-composition restriction.
+    id: 'shadow-warrior-ratio',
+    aliases: ['shadow warrior regiments'],
+    titleEn: 'Shadow Warrior regiments (army-list limit)',
+    titleEs: 'Regimientos de Guerreros Sombríos (límite de lista)',
+    en: 'The High Elf army may include as many Shadow Warrior regiments as it includes Lancer and Archer regiments. The restriction is lifted when the opponent is a Dark Elf army, in which case any number of Shadow Warrior regiments may be taken — Shadow Warriors from every corner of Ulthuan gather to fight their ancestral enemy. The army builder cannot know who the opponent will be, so it always checks the ratio: ignore the warning when you are facing Dark Elves.',
+    es: 'El ejército Alto Elfo puede incluir tantos regimientos de Guerreros Sombríos como regimientos de Lanceros y Arqueros incluya. Esta restricción se ignora cuando el adversario es un ejército de Elfos Oscuros, en cuyo caso pueden incluirse tantos regimientos de Guerreros Sombríos como se desee: los Guerreros Sombríos de todos los rincones de Ulthuan se reúnen para combatir a sus enemigos ancestrales. El creador de listas no puede saber contra quién jugarás, así que comprueba siempre la proporción: ignora el aviso si te enfrentas a Elfos Oscuros.',
+  },
+  {
     id: 'ward-save',
     aliases: ['ward save', 'ward vs', 'salvación especial', 'salvacion especial', 'salvación por protección'],
     titleEn: 'Ward Save',

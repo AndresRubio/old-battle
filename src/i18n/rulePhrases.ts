@@ -1017,6 +1017,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'See bestiary for full Assassin rules': 'Consulta el bestiario para las reglas completas del Asesino',
   'See bestiary for full Globadier rules': 'Consulta el bestiario para las reglas completas del Globadier',
   'See bestiary for full Plague Censer Bearer rules': 'Consulta el bestiario para las reglas completas del Portaincensarios de la Plaga',
+  'Shadow Warrior regiments limited to the number of Lancer and Archer regiments (ignored against Dark Elves)': 'Los regimientos de Guerreros Sombríos están limitados al número de regimientos de Lanceros y Arqueros (se ignora frente a Elfos Oscuros)',
   'Sheikh Shufti (M4 WS4 BS4 S4 T3 W2 I4 A2 Ld8): carries Scimitar of Dakisir (+1 S; +2 S on the charge)': 'Sheikh Shufti (M4 HA4 HP4 F4 R3 H2 I4 A2 L8): porta la Cimitarra de Dakisir (+1 F; +2 F en la carga)',
   'Shield gives 4+ save vs shooting only': 'El escudo otorga una salvación de 4+ solo contra el disparo',
   'Shield of Sotek — 4+ special save against each wound (cannot be reduced by Strength); wounds from armour-ignoring attacks can still be saved': 'Escudo de Sotek — salvación especial de 4+ contra cada herida (no puede reducirse por Fuerza); las heridas de ataques que ignoran la armadura aún pueden salvarse',
