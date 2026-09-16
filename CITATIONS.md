@@ -242,6 +242,12 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   Orc Boar Chariot. Data already matched (`GOBLIN_MOUNTS`/`FOREST_GOBLIN_MOUNTS`/
   `NIGHT_GOBLIN_MOUNTS` from OLD-8/OLD-11); added a regression test pinning the full mount matrix.
   No data changed. Linear OLD-17.
+- **Ogres category** (`og-ogres`) — moved from the Monsters section to the Regiments section
+  (`role: 'monster'` → `'regiment'`); the book has no Ogres line in its Monsters table, they are a
+  mercenary regiment. Points, statline and equipment options unchanged. `minSize` was left at its
+  pre-existing value (1), which is unverified against the book — flagged as Linear OLD-30, needs a
+  local pass with `source/` to confirm the regiment's real minimum unit size before it is trusted.
+  Linear OLD-22.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
