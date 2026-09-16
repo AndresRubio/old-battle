@@ -3,7 +3,7 @@ import { ARMIES, getArmy } from './index'
 import { validateRoster } from '../../rules/validate'
 import { entryPoints } from '../../rules/points'
 import { summarize } from '../../rules/summary'
-import type { Roster } from '../types'
+import type { Roster, StatLine } from '../types'
 import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
 import { MAGIC_LORES } from '../lores'
 import { RULE_PHRASE_ES } from '../../i18n/rulePhrases'
@@ -1284,6 +1284,124 @@ describe('OLD-32 — High Elves profiles match the book', () => {
     // S4. Two to one — the code keeps S4. Recorded in CITATIONS.md so nobody
     // "corrects" it off the reference table later.
     expect(unit('he-white-lions').statLine.S).toBe(4)
+  })
+})
+
+// OLD-33 — a chariot's chassis is a display-only ProfileBlock, but `statLine`
+// is a Partial<StatLine> and the UI renders "–" for every missing column, so an
+// omitted column hides real book data. Eight chassis were short the columns the
+// book prints (typically S and I); three of them (Arkhan's chariot, Volkmar's
+// War Altar and the Imperial War Wagon) also held T/W the book contradicts.
+// Same shape as the Orcs & Goblins chassis test above, whose
+// CHARIOT_CHASSIS_STATS = { S: 7, T: 7, W: 3, I: 1 } (printed p.88) is the
+// verified reference these rows were checked against.
+//
+// Two rows print `A: 1D6` in the book (the Undead Chariot and the Chariot of
+// Arkhan). `StatLine.A` is typed `number`, so the value cannot be entered and
+// `A` is deliberately absent from both statLines — recorded in CITATIONS.md.
+// Widening the type is a separate decision, out of scope here.
+describe('OLD-33 — chariot chassis profiles match the book', () => {
+  const CHASSIS: Array<{
+    army: string
+    unit: string
+    profile: string
+    profileEs: string
+    page: string
+    statLine: Partial<StatLine>
+  }> = [
+    {
+      // Altos Elfos, printed p.79 = PDF 81 (concordant with p.68 and p.101):
+      // "Carruaje  -  -  -  7  7  3  1  -  -"
+      army: 'high-elves', unit: 'he-tiranoc-chariot',
+      profile: 'Chariot', profileEs: 'Carro',
+      page: 'Altos Elfos printed p.79',
+      statLine: { S: 7, T: 7, W: 3, I: 1 },
+    },
+    {
+      // Paladines del Caos, printed p.44 = PDF 46:
+      // "CARRUAJE  –  –  –  7  7  3  1  –  –"
+      army: 'chaos', unit: 'ch-gorthor',
+      profile: 'Tuskgor Chariot', profileEs: 'Carro de Tuskgors',
+      page: 'Paladines del Caos printed p.44',
+      statLine: { S: 7, T: 7, W: 3, I: 1 },
+    },
+    {
+      // Reino del Caos, printed p.104 = PDF 106:
+      // "Carruaje  -  -  -  7  7  3  1  -  -"
+      army: 'chaos', unit: 'ch-chariot',
+      profile: 'Chariot', profileEs: 'Carro',
+      page: 'Reino del Caos printed p.104',
+      statLine: { S: 7, T: 7, W: 3, I: 1 },
+    },
+    {
+      // Reino del Caos, printed p.109 = PDF 111:
+      // "Carruaje  -  -  -  7  7  3  1  -  -"
+      army: 'chaos', unit: 'ch-beast-chariot',
+      profile: 'Chariot', profileEs: 'Carro',
+      page: 'Reino del Caos printed p.109',
+      statLine: { S: 7, T: 7, W: 3, I: 1 },
+    },
+    {
+      // No Muertos, printed p.84 = PDF 86 (the identical row is reprinted on
+      // printed p.68): "Carruaje Esquelético  -  -  -  5  5  3  1  1D6  -".
+      // A: 1D6 is unrepresentable — see the block comment above.
+      army: 'undead', unit: 'ud-undead-chariot',
+      profile: 'Chariot', profileEs: 'Carro',
+      page: 'No Muertos printed p.84',
+      statLine: { S: 5, T: 5, W: 3, I: 1 },
+    },
+    {
+      // No Muertos, printed p.91 = PDF 93:
+      // "Carruaje de Arkhan  -  4  -  6  6  3  -  1D6  -".
+      // Was { T: 5, W: 4 } — wrong T and W, not merely short columns.
+      // A: 1D6 is unrepresentable — see the block comment above.
+      army: 'undead', unit: 'ud-arkhan-the-black',
+      profile: 'Chariot of Arkhan', profileEs: 'Carro de Arkhan',
+      page: 'No Muertos printed p.91',
+      statLine: { WS: 4, S: 6, T: 6, W: 3 },
+    },
+    {
+      // Imperio, printed p.69 = PDF 71: "Altar  –  –  –  7  7  3  1  –  –".
+      // Was { T: 5, W: 4 } — wrong T and W.
+      army: 'empire', unit: 'emp-volkmar',
+      profile: 'War Altar (chariot)', profileEs: 'Altar de Guerra (carro)',
+      page: 'Imperio printed p.69',
+      statLine: { S: 7, T: 7, W: 3, I: 1 },
+    },
+    {
+      // Imperio, rules section printed p.20 = PDF 22: "Torre del Carruaje de
+      // Guerra Imperial  -  -  -  7  7  5  1  -  -". The printed p.65 army-list
+      // row omits the F column; the p.20 prose settles it ("el Atributo de
+      // Fuerza del propio Carro de Guerra Imperial, es decir 7").
+      // Was { T: 5, W: 4 } — wrong T and W.
+      army: 'empire', unit: 'emp-war-wagon',
+      profile: 'Chassis', profileEs: 'Chasis',
+      page: 'Imperio printed p.20',
+      statLine: { S: 7, T: 7, W: 5, I: 1 },
+    },
+  ]
+
+  for (const row of CHASSIS) {
+    it(`${row.unit} — ${row.profile} (${row.page})`, () => {
+      const unit = getArmy(row.army)!.units.find((u) => u.id === row.unit)
+      expect(unit, `${row.army}: no unit ${row.unit}`).toBeDefined()
+      const chassis = (unit!.profiles ?? []).find((p) => p.name === row.profile)
+      expect(chassis, `${row.unit}: no "${row.profile}" profile`).toBeDefined()
+      expect(chassis!.statLine).toEqual(row.statLine)
+      // Display profiles are bilingual — the Spanish name must survive the fix.
+      expect(chassis!.nameEs).toBe(row.profileEs)
+    })
+  }
+
+  it('none of the eight chassis carries an Attacks value', () => {
+    // A is either absent from the book row (the six "- -" rows) or printed as
+    // 1D6, which StatLine.A cannot hold. Either way it must stay unset rather
+    // than be invented as a number.
+    for (const row of CHASSIS) {
+      const unit = getArmy(row.army)!.units.find((u) => u.id === row.unit)!
+      const chassis = (unit.profiles ?? []).find((p) => p.name === row.profile)!
+      expect(chassis.statLine.A, `${row.unit} chassis A`).toBeUndefined()
+    }
   })
 })
 
