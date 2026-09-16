@@ -54,6 +54,13 @@ const OG_CHARACTER_EQUIPMENT: EquipmentOption[] = [
   { id: 'light-armour', name: 'Light armour', pointsPerModel: 2 },
 ]
 
+// Shamans may not take shield or light armour (Linear OLD-29) — derived from
+// OG_CHARACTER_EQUIPMENT rather than hand-duplicated so the other seven rows
+// (and their prices) can never drift from the Warboss/BSB/Big Boss/Boss list.
+const OG_SHAMAN_EQUIPMENT: EquipmentOption[] = OG_CHARACTER_EQUIPMENT.filter(
+  (option) => option.id !== 'shield' && option.id !== 'light-armour',
+)
+
 // Shaman level upgrades — cumulative costs from the book (p.81).
 // Each level has its own FULL profile per the p.81 "Shamanes Orcos" table
 // (M10cm→4"): Shaman S3 W1 I3 A1 / Paladín S4 W2 I3 A1 / Maestro S4 W3 I4 A2 /
@@ -642,7 +649,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     lores: ['waaagh'],
-    options: [...ORC_SHAMAN_LEVELS, ...OG_CHARACTER_EQUIPMENT],
+    options: [...ORC_SHAMAN_LEVELS, ...OG_SHAMAN_EQUIPMENT],
     mounts: ORC_MOUNTS,
     specialRules: ['Equipment limited to what his troop type may take', 'Wizard (Waaagh! Magic)', 'Animosity', 'May ride War Boar (+8 pts) or a monster/chariot'],
   },
@@ -662,7 +669,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     lores: ['waaagh'],
-    options: [...SAVAGE_ORC_SHAMAN_LEVELS, ...OG_CHARACTER_EQUIPMENT],
+    options: [...SAVAGE_ORC_SHAMAN_LEVELS, ...OG_SHAMAN_EQUIPMENT],
     mounts: ORC_MOUNTS,
     // Book p.19: joining a Savage Orc unit (Warriors or Boar Boyz) grants him an
     // extra magic card (his alone) and upgrades the war-paint ward to 5+ for both
@@ -681,7 +688,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     lores: ['waaagh'],
-    options: [...GOBLIN_SHAMAN_LEVELS, ...OG_CHARACTER_EQUIPMENT],
+    options: [...GOBLIN_SHAMAN_LEVELS, ...OG_SHAMAN_EQUIPMENT],
     mounts: GOBLIN_MOUNTS,
     specialRules: ['Equipment limited to what his troop type may take', 'Wizard (Waaagh! Magic)', 'Animosity', 'Fear Elves', 'May ride Giant Wolf (+4 pts) or a monster/chariot'],
   },
@@ -697,7 +704,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     lores: ['waaagh'],
-    options: [...GOBLIN_SHAMAN_LEVELS, ...OG_CHARACTER_EQUIPMENT],
+    options: [...GOBLIN_SHAMAN_LEVELS, ...OG_SHAMAN_EQUIPMENT],
     mounts: FOREST_GOBLIN_MOUNTS,
     // "Shamanes Goblins Silvanos", book printed p.19 (PDF p.21, offset +2):
     // spider venom lets him add +1 to his Mental Burst roll and, on a
@@ -719,7 +726,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'wizard1',
     lores: ['waaagh'],
-    options: [...GOBLIN_SHAMAN_LEVELS, ...OG_CHARACTER_EQUIPMENT],
+    options: [...GOBLIN_SHAMAN_LEVELS, ...OG_SHAMAN_EQUIPMENT],
     mounts: NIGHT_GOBLIN_MOUNTS,
     // "Shamanes Goblins Nocturnos", book printed p.18 (PDF p.20, offset +2):
     // carries one Shaman Mushroom per wizard level (each usable once per

@@ -492,11 +492,10 @@ describe('mounts & profiles', () => {
   // OLD-19 — book printed p.78 "LISTA DE EQUIPO" (PDF page 80), the table of
   // "todas las armas y armaduras normales con que puede equiparse un personaje
   // Orco o Goblin". The first hand weapon is free and is already each character's
-  // base equipment, so only the nine paid rows are offered. Every non-special
-  // character gets the list: the Warboss (p.79), Battle Standard (p.79) and Big
-  // Boss (p.80) may take "cualquier arma o armadura" from it, the Shaman (p.81)
-  // whatever his troop type allows, and the Boss (p.80) is equipped as his
-  // regiment but priced from this same table.
+  // base equipment, so only the nine paid rows are offered. The Warboss (p.79),
+  // Battle Standard (p.79) and Big Boss (p.80) may take "cualquier arma o
+  // armadura" from it, and the Boss (p.80) is equipped as his regiment but
+  // priced from this same table.
   const OG_EQUIPMENT_LIST: [string, number][] = [
     ['add-hand-weapon', 1],
     ['two-hand', 2],
@@ -509,13 +508,22 @@ describe('mounts & profiles', () => {
     ['light-armour', 2],
   ]
 
-  it('Orcs & Goblins: every non-special character offers the p.78 Equipment List at book prices', () => {
+  // OLD-29 — the Shaman (p.81) is limited to "cualquiera de las armas o
+  // armaduras permitidas al tipo de tropas indicadas en esta lista", and a
+  // Shaman's troop type never permits shield or light armour: shamans of any
+  // kind offer the same seven weapon rows but not those two.
+  const OG_SHAMAN_EQUIPMENT_LIST = OG_EQUIPMENT_LIST.filter(([id]) => id !== 'shield' && id !== 'light-armour')
+
+  it('Orcs & Goblins: Warboss, Battle Standard, Big Boss and Boss offer the full p.78 Equipment List at book prices', () => {
     const orcs = getArmy('orcs-and-goblins')!
     const characters = orcs.units.filter(
-      (u) => u.isCharacter && !(u.specialRules ?? []).some((r) => r.startsWith('Special character')),
+      (u) =>
+        u.isCharacter &&
+        !(u.specialRules ?? []).some((r) => r.startsWith('Special character')) &&
+        !u.id.startsWith('og-shaman-'),
     )
-    // 6 Warbosses + 6 Battle Standards + 6 Big Bosses + 6 Bosses + 5 Shamans.
-    expect(characters.length, 'non-special O&G characters').toBe(29)
+    // 6 Warbosses + 6 Battle Standards + 6 Big Bosses + 6 Bosses.
+    expect(characters.length, 'non-special, non-Shaman O&G characters').toBe(24)
 
     for (const unit of characters) {
       const opts = unit.options ?? []
@@ -528,6 +536,25 @@ describe('mounts & profiles', () => {
         expect(opt!.flat ?? false, `${unit.id} ${id} flat`).toBe(false)
         expect(opt!.timesModelCost, `${unit.id} ${id} timesModelCost`).toBeUndefined()
       }
+    }
+  })
+
+  it('Orcs & Goblins: Shamans offer the p.78 Equipment List minus shield and light armour (OLD-29)', () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const shamans = orcs.units.filter((u) => u.isCharacter && u.id.startsWith('og-shaman-'))
+    expect(shamans.length, 'O&G Shamans').toBe(5)
+
+    for (const unit of shamans) {
+      const opts = unit.options ?? []
+      for (const [id, points] of OG_SHAMAN_EQUIPMENT_LIST) {
+        const opt = opts.find((o) => o.id === id)
+        expect(opt, `${unit.id} offers ${id}`).toBeDefined()
+        expect(opt!.pointsPerModel, `${unit.id} ${id} cost`).toBe(points)
+        expect(opt!.flat ?? false, `${unit.id} ${id} flat`).toBe(false)
+        expect(opt!.timesModelCost, `${unit.id} ${id} timesModelCost`).toBeUndefined()
+      }
+      expect(opts.find((o) => o.id === 'shield'), `${unit.id} must not offer shield`).toBeUndefined()
+      expect(opts.find((o) => o.id === 'light-armour'), `${unit.id} must not offer light armour`).toBeUndefined()
     }
   })
 
