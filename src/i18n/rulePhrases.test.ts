@@ -20,10 +20,18 @@ function everyTag(): Map<string, Set<string>> {
     if (!tags.has(tag)) tags.set(tag, new Set())
     tags.get(tag)!.add(armyId)
   }
+  // Every field that can hold a rendered tag, enumerated from the types rather
+  // than from memory — `specialRules` lives on exactly three of them
+  // (UnitProfile, MountOption, ProfileBlock) and a UnitProfile reaches all five
+  // carriers below. Missing one is not hypothetical: the first version of this
+  // walk skipped `unit.mount` (the SINGULAR fixed steed of a cavalry regiment,
+  // a ProfileBlock, rendered by EntryRow through companionMountProfile), and the
+  // orphan check beneath then deleted three Spanish phrases that were in use.
   for (const army of ARMIES) {
     for (const unit of army.units) {
       for (const tag of unit.specialRules ?? []) add(tag, army.id)
       for (const p of unit.profiles ?? []) for (const tag of p.specialRules ?? []) add(tag, army.id)
+      for (const tag of unit.mount?.specialRules ?? []) add(tag, army.id)
       for (const mount of unit.mounts ?? []) {
         for (const tag of mount.specialRules ?? []) add(tag, army.id)
         for (const p of mount.profiles ?? []) for (const tag of p.specialRules ?? []) add(tag, army.id)
@@ -37,7 +45,7 @@ describe('OLD-44 — the Spanish rule phrases cover every tag, and only real tag
   it('every special-rule tag in every army has a Spanish phrase', () => {
     // Mounts and extra profiles count: they render through `ruleText` too, via
     // RuleTags in EntryRow. The original audit only counted unit tags and so
-    // missed 18 of the 49.
+    // missed 18 of the 49; this walk missed `unit.mount` and cost another 3.
     const missing = [...everyTag()]
       .filter(([tag]) => !RULE_PHRASE_ES[tag])
       .map(([tag, armies]) => `[${[...armies].sort().join(' ')}] ${tag}`)

@@ -397,14 +397,15 @@ export const TAG_RULE_OVERRIDES: Record<string, string | null> = {
  *
  * This is the whole reason matching is not a bare `\b`: the tags are prose, so
  * the glossary's singular "shield" has to reach "shields" and "skirmish" has to
- * reach "skirmisher"/"skirmishers". What it must NOT reach is a different word
- * that merely starts the same — "lance" inside "Lancers", "spear" inside
- * "Spearmen", "fear" inside "Fearfrost". Those are the bug.
+ * reach "skirmisher"/"skirmishers", and "armour" has to reach "light armoured
+ * jackets". What it must NOT reach is a different word that merely starts the
+ * same — "lance" inside "Lancers", "spear" inside "Spearmen", "fear" inside
+ * "Fearfrost". Those are the bug.
  *
  * Kept deliberately tiny. Every entry earns its place by a tag that exists:
  * widening it is how "lance" would creep back into "Lancers".
  */
-const INFLECTIONS = ['s', 'es', 'er', 'ers', 'ing']
+const INFLECTIONS = ['s', 'es', 'ed', 'er', 'ers', 'ing']
 
 const ALIAS_RE = new Map<string, RegExp>()
 

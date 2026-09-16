@@ -1330,6 +1330,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Shepherding — a fleeing War Sheep or Battle Ram unit it contacts is automatically rallied': 'Pastoreo — una unidad de Ovejas de Guerra o Carneros de Batalla huyendo con la que contacte se reagrupa automáticamente',
   'Skirmish — expert trackers and woodsmen': 'Hostigan — expertos rastreadores y leñadores',
   'Skittish — rider suffers -1 Leadership on Break tests': 'Asustadiza — el jinete sufre -1 al Liderazgo en los chequeos de Desmoralización',
+  'Skittish — riders take Break tests at -1 Ld': 'Asustadizas — los jinetes hacen los chequeos de Desmoralización con -1 al L',
   'Skittish — the riders suffer -1 Leadership when taking Break Tests': 'Asustadizas — los jinetes sufren -1 al Liderazgo en los chequeos de Desmoralización',
   'Soft scales — unmodified 6+ save': 'Escamas blandas — salvación inmodificable de 6+',
   'Special character — a failed Slayer sent out to befriend an Elf (member of The Comradeship)': 'Personaje especial — un Matador fracasado enviado a hacerse amigo de un Elfo (miembro de La Camaradería)',
@@ -1338,6 +1339,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Special character — steers the failed Slayer Giblit into trouble whenever possible (member of The Comradeship)': 'Personaje especial — mete en líos al Matador fracasado Giblit siempre que puede (miembro de La Camaradería)',
   'Stolen items may be passed to any character in the unit': 'Los objetos robados pueden pasarse a cualquier personaje de la unidad',
   'Stone-thrower-style catapult hurling boiling stew (full rules: Empire Army Book p.24)': 'Catapulta tipo lanzapiedras que arroja estofado hirviendo (reglas completas: libro de ejército del Imperio, pág. 24)',
+  'Sure Hoofed': 'Pezuña Firme',
   'Sure Hoofed — no movement penalties for difficult terrain': 'Pezuña Firme — sin penalizaciones de movimiento por terreno difícil',
   'Sure Hoofed — no penalties for moving over difficult terrain; may Skirmish': 'Pezuña Firme — sin penalizaciones por moverse por terreno difícil; pueden hostigar',
   'Sword and picnic basket — any Halfling will follow the chap with the picnic basket': 'Espada y cesta de picnic — cualquier Mediano seguirá al tipo de la cesta de picnic',
@@ -1359,6 +1361,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   "Women's Wrath — subject to Frenzy if any male Halflings die within 8\"": 'Ira de las Mujeres — sujeta a Frenesí si algún Mediano varón muere a 8"',
   'Woodsmen — no movement penalty for moving through woods': 'Leñadores — sin penalización de movimiento al atravesar bosques',
   'Woodsmen — no movement penalty in woods (all Halfling infantry)': 'Leñadores — sin penalización de movimiento en bosques (toda la infantería Mediana)',
+  'Woolly Coat — as barding, +1 save': 'Pelaje Lanudo — como barda, +1 a la salvación',
   "Woolly Coat — counts as barding and adds +1 to the rider's save": 'Pelaje Lanudo — cuenta como barda y añade +1 a la salvación del jinete',
 
   // ——— Norse (Nórdicos) — Citadel Journal 6-8 ———
