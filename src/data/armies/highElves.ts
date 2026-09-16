@@ -29,8 +29,9 @@ const HEAVY_ARMOUR_1: EquipmentOption = { id: 'heavy-armour', name: 'Heavy armou
 const HEAVY_ARMOUR_2: EquipmentOption = { id: 'heavy-armour', name: 'Heavy armour (Ithilmar)', pointsPerModel: 2 }
 // Light armour: +2pt (for Shadow Warriors and Archers that don't start with it)
 const LIGHT_ARMOUR_2: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 2 }
-// Barded steeds: +4pt (for cavalry)
-const BARDING_4: EquipmentOption = { id: 'barding', name: 'Barded Elven Steed', pointsPerModel: 4 }
+// Barded steeds: +8pt/model (p.75: "Cualquier unidad puede equipar sus Corceles
+// con bardas por un coste adicional de +8 puntos por miniatura").
+const BARDING_8: EquipmentOption = { id: 'barding', name: 'Barded Elven Steed', pointsPerModel: 8 }
 // Bows: +4pt (for Reavers/Ellyrian)
 const BOWS_4: EquipmentOption = { id: 'bows', name: 'Bows', pointsPerModel: 4 }
 // Cavalry lance: +2pt (for Reavers)
@@ -189,7 +190,7 @@ const units: UnitProfile[] = [
     nameEs: 'Portaestandarte de Batalla',
     role: 'character',
     pointsPerModel: 98,
-    statLine: elf({ WS: 5, BS: 4, S: 4, T: 3, W: 1, I: 7, A: 2, Ld: 8 }),
+    statLine: elf({ WS: 5, BS: 5, S: 4, T: 3, W: 1, I: 7, A: 2, Ld: 8 }),
     isCharacter: true,
     characterRank: 'hero',
     canBeBSB: true,
@@ -209,7 +210,7 @@ const units: UnitProfile[] = [
     nameEs: 'Héroe Alto Elfo',
     role: 'character',
     pointsPerModel: 104,
-    statLine: elf({ WS: 6, BS: 4, S: 4, T: 4, W: 2, I: 8, A: 3, Ld: 9 }),
+    statLine: elf({ WS: 6, BS: 6, S: 4, T: 4, W: 2, I: 8, A: 3, Ld: 9 }),
     isCharacter: true,
     characterRank: 'hero',
     canBeGeneral: true,
@@ -226,7 +227,7 @@ const units: UnitProfile[] = [
     nameEs: 'Paladín (Campeón de Regimiento)',
     role: 'character',
     pointsPerModel: 48,
-    statLine: elf({ WS: 5, BS: 4, S: 4, T: 3, W: 1, I: 7, A: 2, Ld: 8 }),
+    statLine: elf({ WS: 5, BS: 5, S: 4, T: 3, W: 1, I: 7, A: 2, Ld: 8 }),
     isCharacter: true,
     characterRank: 'champion',
     specialRules: [
@@ -483,7 +484,7 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 5, I: 7 }),
     mount: { name: 'Elven Steed', nameEs: 'Corcel Élfico', statLine: ELVEN_STEED_MOUNT.statLine! },
     minSize: 5,
-    options: [SHIELD_2, HEAVY_ARMOUR_2, BARDING_4],
+    options: [SHIELD_2, HEAVY_ARMOUR_2, BARDING_8],
     specialRules: [
       'Always strikes first',
       'Light armour & cavalry lance; Elven Steed (5+ save base)',
@@ -653,7 +654,7 @@ const units: UnitProfile[] = [
     nameEs: 'Auriga de Tiranoc',
     role: 'chariot',
     pointsPerModel: 84,
-    statLine: elf({ WS: 5, BS: 4, S: 4, T: 3, W: 1, I: 7, A: 1, Ld: 8 }),
+    statLine: elf({ WS: 5, BS: 4, S: 3, T: 3, W: 1, I: 7, A: 1, Ld: 8 }),
     profiles: [
       { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
       {
