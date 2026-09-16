@@ -8,11 +8,33 @@ export function findMagicItem(army: Army, itemId: string): MagicItem | undefined
   return army.magicItems.find((i) => i.id === itemId)
 }
 
+/**
+ * A host that carries crew: a chariot `MountOption`, or a chariot / war-machine
+ * `UnitProfile`. Both price `perCrewman` options off the same two fields.
+ */
+type Crewed = { baseCrew?: number; options?: EquipmentOption[] }
+
+/**
+ * The host's current crew count: its base crew plus one per selected
+ * `addsCrewman` option — the basis for `perCrewman` option costs.
+ */
+function crewCount(host: Crewed, optionIds: string[]): number {
+  const extra = (host.options ?? []).filter((o) => optionIds.includes(o.id) && o.addsCrewman).length
+  return (host.baseCrew ?? 0) + extra
+}
+
+/**
+ * `perCrewman` implies a per-ENTRY charge, exactly like `flat`: the rate is
+ * already multiplied by the crew count, so it must never also be multiplied by
+ * the entry's size. Both kinds therefore route to `flatOptionPoints`.
+ */
+const isPerEntry = (o: EquipmentOption) => Boolean(o.flat || o.perCrewman)
+
 /** Points contributed per model by the chosen per-model equipment options. */
 export function optionPointsPerModel(unit: UnitProfile, optionIds: string[]): number {
   if (!unit.options) return 0
   return unit.options
-    .filter((o) => optionIds.includes(o.id) && !o.flat)
+    .filter((o) => optionIds.includes(o.id) && !isPerEntry(o))
     .reduce((sum, o) => sum + o.pointsPerModel, 0)
 }
 
@@ -28,21 +50,26 @@ export function equippedModelCost(unit: UnitProfile, optionIds: string[]): numbe
 /**
  * Cost of ONE unit option under the current selection — the single accessor for
  * an option's price. A `timesModelCost` option (the command group) is priced as
- * that many equipped rank-and-file models and so moves with the unit's kit;
- * everything else is its fixed `pointsPerModel`. Never read `pointsPerModel`
- * off a unit option directly.
+ * that many equipped rank-and-file models and so moves with the unit's kit; a
+ * `perCrewman` option (chariot crew shields/bows) is priced per crewman the
+ * entry currently buys; everything else is its fixed `pointsPerModel`. Never
+ * read `pointsPerModel` off a unit option directly.
  */
 export function unitOptionCost(unit: UnitProfile, option: EquipmentOption, optionIds: string[]): number {
-  return option.timesModelCost
-    ? option.timesModelCost * equippedModelCost(unit, optionIds)
-    : option.pointsPerModel
+  if (option.timesModelCost) return option.timesModelCost * equippedModelCost(unit, optionIds)
+  if (option.perCrewman) return option.pointsPerModel * unitCrewCount(unit, optionIds)
+  return option.pointsPerModel
 }
 
-/** Points from chosen flat (per-unit) options, e.g. a command group. */
+/**
+ * Points from chosen per-entry options — flat ones (e.g. a command group) and
+ * `perCrewman` ones, which carry their own multiplier and so must not be
+ * multiplied by the entry's size on top.
+ */
 export function flatOptionPoints(unit: UnitProfile, optionIds: string[]): number {
   if (!unit.options) return 0
   return unit.options
-    .filter((o) => optionIds.includes(o.id) && o.flat)
+    .filter((o) => optionIds.includes(o.id) && isPerEntry(o))
     .reduce((sum, o) => sum + unitOptionCost(unit, o, optionIds), 0)
 }
 
@@ -58,8 +85,16 @@ export function mountPoints(unit: UnitProfile, mountId: string | undefined): num
  * `addsCrewman` option — the basis for `perCrewman` option costs.
  */
 export function mountCrewCount(mount: MountOption, optionIds: string[]): number {
-  const extra = (mount.options ?? []).filter((o) => optionIds.includes(o.id) && o.addsCrewman).length
-  return (mount.baseCrew ?? 0) + extra
+  return crewCount(mount, optionIds)
+}
+
+/**
+ * The unit's own current crew count — the standalone-chariot counterpart of
+ * `mountCrewCount`, so a chariot bought as its own entry and the same chariot
+ * ridden as a character mount price identically for the same crew and kit.
+ */
+export function unitCrewCount(unit: UnitProfile, optionIds: string[]): number {
+  return crewCount(unit, optionIds)
 }
 
 /**

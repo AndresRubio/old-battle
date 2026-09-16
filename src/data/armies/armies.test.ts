@@ -1214,3 +1214,40 @@ describe('Empire — sample legal list validates cleanly', () => {
     expect(validateRoster(roster, empire)).toEqual([])
   })
 })
+
+// OLD-35 — the standalone O&G chariots price crew shields and short bows "por
+// tripulante" (book p.88), so they carry the same `baseCrew`/`perCrewman`/
+// `addsCrewman` flags as their character-mount twins. Raw rates are unchanged
+// (asserted in the OLD-23 block above); this pins the flags that make those
+// rates scale with the crew bought.
+describe('Orcs & Goblins standalone chariots — per-crewman flags (OLD-35)', () => {
+  const orcs = getArmy('orcs-and-goblins')!
+  const byId = (id: string) => orcs.units.find((u) => u.id === id)!
+  const opt = (unitId: string, optionId: string) =>
+    (byId(unitId).options ?? []).find((o) => o.id === optionId)!
+
+  const cases = [
+    { unitId: 'og-orc-boar-chariot', prefix: 'og-orc-chariot' },
+    { unitId: 'og-goblin-wolf-chariot', prefix: 'og-goblin-chariot' },
+  ]
+
+  for (const c of cases) {
+    it(`${c.unitId}: baseCrew 2, crew kit perCrewman, extra crewmen addsCrewman`, () => {
+      expect(byId(c.unitId).baseCrew).toBe(2)
+      expect(opt(c.unitId, `${c.prefix}-shields`).perCrewman).toBe(true)
+      expect(opt(c.unitId, `${c.prefix}-bows`).perCrewman).toBe(true)
+      expect(opt(c.unitId, `${c.prefix}-crew3`).addsCrewman).toBe(true)
+      expect(opt(c.unitId, `${c.prefix}-crew4`).addsCrewman).toBe(true)
+      // Scythed wheels are priced "por carruaje" — flat, not per crewman.
+      expect(opt(c.unitId, `${c.prefix}-scythes`).perCrewman).toBeUndefined()
+      expect(opt(c.unitId, `${c.prefix}-scythes`).flat).toBe(true)
+    })
+  }
+
+  it('the 3rd Giant Wolf stays a flat +4 (the book gives no per-anything qualifier)', () => {
+    const wolf3 = opt('og-goblin-wolf-chariot', 'og-goblin-chariot-wolf3')
+    expect(wolf3.flat).toBe(true)
+    expect(wolf3.perCrewman).toBeUndefined()
+    expect(wolf3.addsCrewman).toBeUndefined()
+  })
+})

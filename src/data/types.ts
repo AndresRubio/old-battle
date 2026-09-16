@@ -38,6 +38,9 @@ export interface EquipmentOption {
   /**
    * When true the cost is a flat per-unit charge (e.g. command group, battle
    * standard) rather than multiplied by the number of models.
+   *
+   * `perCrewman` already implies a per-ENTRY charge, so `flat` is redundant
+   * (and ignored) on such an option — both land in the same per-entry bucket.
    */
   flat?: boolean
   /**
@@ -70,14 +73,20 @@ export interface EquipmentOption {
    */
   exclusiveGroup?: string
   /**
-   * Mount options only: the cost is `pointsPerModel` × the mount's CURRENT crew
-   * count (`MountOption.baseCrew` + one per selected `addsCrewman` option) — e.g.
-   * chariot crew shields priced per crewman. Never multiplied by unit size.
+   * On any crewed host — a chariot `MountOption` or a chariot / war-machine
+   * `UnitProfile` — the cost is `pointsPerModel` × the host's CURRENT crew count
+   * (its `baseCrew` + one per selected `addsCrewman` option), e.g. chariot crew
+   * shields priced per crewman (O&G p.88). This is a per-ENTRY charge: never
+   * multiplied by unit size, so `flat` is redundant alongside it. The host MUST
+   * declare `baseCrew` (enforced by `assertArmyIntegrity`) — without it the rate
+   * would silently multiply by zero. Meaningless on a `role: 'regiment'` unit,
+   * whose models are not crew; integrity rejects that too.
    */
   perCrewman?: boolean
   /**
-   * Mount options only: selecting this option adds one crewman to the mount
-   * (e.g. a chariot's "3rd crewman"), raising the basis for `perCrewman` costs.
+   * On any crewed host (see `perCrewman`): selecting this option adds one
+   * crewman (e.g. a chariot's "3rd crewman"), raising the basis for
+   * `perCrewman` costs.
    */
   addsCrewman?: boolean
   /**
@@ -199,6 +208,11 @@ export interface UnitProfile {
    * non-casters. Informational only — does not affect points or validation.
    */
   lores?: string[]
+  /**
+   * Number of crewmen the unit comes with (chariots: 2) — the basis for
+   * `perCrewman` option costs before any `addsCrewman` selections.
+   */
+  baseCrew?: number
   /**
    * Extra display-only profiles shown beneath the main statLine: a chariot's
    * crew / chassis / draught beasts, or a special character's fixed mount.
