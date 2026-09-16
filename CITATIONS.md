@@ -614,17 +614,18 @@ print inches. Each army's level-1 row is the unit's own base `statLine`.
   Mage-Priest & Palanquin `4 3 2 4 4 3 2 3 8` / Mage-Priest Champion `4 4 3 6 4 4 3 4 8` /
   Master Mage-Priest `4 5 4 6 5 6 5 6 9` / Mage-Lord `4 6 5 6 5 8 6 8 10`.
 
-**Left out deliberately, and why:**
+**Left out deliberately, and why** — both were revisited in **OLD-41 (below)**:
 - **Wood Elves** — the book **contradicts itself**. The army list printed **p.65** = PDF 67 gives
   Maestro de Magos `12 4 4 4 4 2 7 1 8`, an exact duplicate of the Paladín Mago row above it, while
   the bestiary printed **p.42** = PDF 44 gives `12 4 4 4 4 3 8 2 8` (the row every other Elf book
   prints for that rank). Both pages were re-read at high resolution: neither is illegible, they
-  simply disagree, and nothing in the book settles which the level-3 Wood Elf Mage should use. No
-  statlines were added to `WE_WIZARD_LEVELS`; the level-3 profile stays unresolved on purpose.
+  simply disagree, and nothing in the book settles which the level-3 Wood Elf Mage should use.
+  **Resolved in OLD-41**: the owner ruled for the army list, and `WE_WIZARD_LEVELS` now carries all
+  three rows.
 - **Halflings** — the Wizard table on PDF page 8 (the *Hungry Horde* compilation; cite by PDF index,
   the folios are not continuous) has its **Ld column cut off at the scan's right edge**: Wizard
   `4 2 4 2 3 1 5 1 ?` and Wizard Champion `4 2 4 3 3 2 5 2 ?`. An unreadable digit is not a value,
-  so `HF_WIZARD_LEVELS` was left alone.
+  so `HF_WIZARD_LEVELS` was left alone. **Confirmed unrecoverable in OLD-41** and still left alone.
 - **Orcs & Goblins** already carried per-level statlines (OLD-12 / OLD-13) and is untouched.
   **Dwarfs** have no wizards. **Vampire Counts** and **Norse** model every wizard level as its own
   unit entry rather than as a level option, so there is nothing for this mechanism to fix.
@@ -818,6 +819,60 @@ the repo's usual cm→inch conversion, so a Spanish book's roll reads `5D6cm` an
   scan*; **it is located**, at PDF 33. Every other column (`WS 6, BS 0, S 4, T 4, W 1, I 4, Ld 10`)
   already matched the book and was left alone, as was his companion `ProfileBlock` "The Raven"
   ("12 - 0 4 4 2 5 - 10"), already correct with WS and A absent and rendering "–".
+
+#### The two wizard tables OLD-37 parked (OLD-41)
+Neither was a coding gap. One needed a ruling, the other cannot be read at all.
+
+**Wood Elves (`we-mage`) — the book disagrees with itself, and the army list wins.**
+`source/1996 elfos silvanos.pdf`. Both pages were rasterised at 400 dpi and their printed folios
+checked before being trusted (PDF 44 prints folio **42**, PDF 67 prints folio **65**); both tables
+are perfectly legible, so this is the book, not the scan.
+
+| Rank | Bestiary, printed **p.42** = PDF 44 | Army list, printed **p.65** = PDF 67 |
+|---|---|---|
+| Mago | `12 4 4 3 4 1 7 1 8` | `12 4 4 3 4 1 7 1 8` |
+| Paladín Mago | `12 4 4 4 4 2 7 1 8` | `12 4 4 4 4 2 7 1 8` |
+| **Maestro de Magos** | `12 4 4 4 4 3 8 2 8` ← H3 I8 A2 | `12 4 4 4 4 2 7 1 8` ← H2 I7 A1 |
+| Gran Mago | `12 4 4 4 4 4 9 3 9` | `12 4 4 4 4 4 9 3 9` |
+
+Three of the four rows agree digit for digit. The Maestro's does not, and the army list's version of
+it is an **exact duplicate of the Paladín Mago row printed directly above it**, which leaves level 3
+with no profile improvement over level 2 and then jumps two steps at once to the Gran Mago.
+
+**The owner ruled for the army list**: `wizard-l3` carries `12 4 4 4 4 2 7 1 8` (M 12cm → 5"), the
+same row as `wizard-l2`, so buying level 3 raises points and magic-item slots and nothing else. That
+is deliberate and a test pins it, because the alternative reading is *tempting* — the bestiary's
+H 1/2/3/4 · I 7/7/8/9 · A 1/1/2/3 progression is exactly what the High Elf and Dark Elf books print
+for the same four ranks, so a later pass could easily "correct" this back and silently reinstate the
+rejected reading.
+
+**Precedent note:** this ruling covers **Wood Elves only**. Bestiary-vs-army-list conflicts are
+settled case by case, never by precedent — the same scoping applied to the Norsca note in
+`source/OFFSETS.md` (OLD-43) and to the still-open Orc & Goblin Fanatic Attacks (OLD-45), which was
+deliberately left at `?` rather than being decided alongside this one.
+
+**Halflings (`hf-wizard`) — the Ld column is not recoverable, and no value was invented.**
+The only printed wizard table is in the *Hungry Horde* compilation at **PDF page 8** (printed folio
+**10**; cite by PDF index, the folios are not continuous there):
+
+```
+Wizard            4  2  4  2  3  1  5  1  [Ld cut off]
+Wizard Champion   4  2  4  3  3  2  5  2  [Ld cut off]
+```
+
+Three independent reasons it stays unread, rather than merely "not read yet":
+- the embedded page image is **594×891 at 76 ppi**, so rasterising at 400 dpi adds no information
+  that is not already visible;
+- the page's **`CropBox` equals its `MediaBox`** — nothing is hidden outside the visible frame, the
+  right edge is missing from the scan itself;
+- the cut runs down the **whole right margin of that document**, not just this table: the Sheep Dog,
+  Giant Swans, Crazed Cook, Housewife, Aragand and Giblit all lose their Ld the same way, as do the
+  Shearer's and Reaper's Attacks and points. `source/transcribed/halflings.md` recorded the same
+  thing independently in two passes.
+
+There is no second copy of the article in `source/`. `HF_WIZARD_LEVELS` therefore carries **no
+`statLine`** — a plausible Ld would pass every test in the repo, which is exactly why none is
+written — and a test pins its absence.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary

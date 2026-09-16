@@ -38,10 +38,29 @@ const BARDING_8: EquipmentOption = { id: 'barding', name: 'Barding (steeds)', po
 
 // Mago level upgrades — Mago 59 → Paladín Mago (L2) 121 → Maestro de Magos (L3)
 // 219 → Gran Mago (L4) 328 (p.65). Deltas +62 / +160 / +269.
+//
+// OLD-41 — the army list (printed p.65 = PDF 67) prints a profile per level, in
+// centimetres (12cm → 5"):
+//   Mago              12 4 4 3 4 1 7 1 8   (the unit's base statLine)
+//   Paladín Mago      12 4 4 4 4 2 7 1 8
+//   Maestro de Magos  12 4 4 4 4 2 7 1 8
+//   Gran Mago         12 4 4 4 4 4 9 3 9
+//
+// The Maestro's row being IDENTICAL to the Paladín Mago's is not a typo here —
+// it is what the page prints, verified at 400 dpi. The bestiary (printed p.42 =
+// PDF 44) prints 12 4 4 4 4 3 8 2 8 for that one row instead, and the other
+// three rows agree between the two pages. The book contradicts itself, and the
+// owner ruled for the army list (OLD-41). So L3 deliberately grants no profile
+// change over L2, only points and an extra magic-item slot.
+//
+// Do NOT "repair" this into a rising 1/2/3/4 progression to match High Elves
+// and Dark Elves: that is the bestiary's reading, which was considered and
+// rejected. This ruling covers Wood Elves ONLY — bestiary-vs-list conflicts are
+// settled case by case, never by precedent (see source/OFFSETS.md).
 const WE_WIZARD_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Wizard Level 2 (Mage Paladin)', pointsPerModel: 62, magicItemSlotsDelta: 1 },
-  { id: 'wizard-l3', name: 'Wizard Level 3 (Master of Mages)', pointsPerModel: 160, magicItemSlotsDelta: 2 },
-  { id: 'wizard-l4', name: 'Wizard Level 4 (Great Mage)', pointsPerModel: 269, magicItemSlotsDelta: 3 },
+  { id: 'wizard-l2', name: 'Wizard Level 2 (Mage Paladin)', pointsPerModel: 62, magicItemSlotsDelta: 1, statLine: elf({ S: 4, T: 4, W: 2, I: 7 }) },
+  { id: 'wizard-l3', name: 'Wizard Level 3 (Master of Mages)', pointsPerModel: 160, magicItemSlotsDelta: 2, statLine: elf({ S: 4, T: 4, W: 2, I: 7 }) },
+  { id: 'wizard-l4', name: 'Wizard Level 4 (Great Mage)', pointsPerModel: 269, magicItemSlotsDelta: 3, statLine: elf({ S: 4, T: 4, W: 4, I: 9, A: 3, Ld: 9 }) },
 ]
 
 // --- Character mounts. The character rule line reads "May ride an Elven Steed

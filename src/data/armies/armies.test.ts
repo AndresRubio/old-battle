@@ -1691,6 +1691,18 @@ describe('OLD-37 — wizard levels carry their own profile', () => {
         l4: row(4, 6, 5, 6, 5, 8, 6, 8, 10),
       },
     },
+    {
+      // OLD-41 — Elfos Silvanos, ARMY LIST printed p.65. Mago / Paladín Mago /
+      // Maestro de Magos / Gran Mago, M 12cm → 5". The l3 row is identical to l2
+      // on purpose; see the contradiction test below.
+      armyId: 'wood-elves', unitId: 'we-mage', page: 'Elfos Silvanos p.65',
+      rows: {
+        l1: row(5, 4, 4, 3, 4, 1, 7, 1, 8),
+        l2: row(5, 4, 4, 4, 4, 2, 7, 1, 8),
+        l3: row(5, 4, 4, 4, 4, 2, 7, 1, 8),
+        l4: row(5, 4, 4, 4, 4, 4, 9, 3, 9),
+      },
+    },
   ]
 
   for (const { armyId, unitId, page, rows } of CASES) {
@@ -1721,6 +1733,37 @@ describe('OLD-37 — wizard levels carry their own profile', () => {
     const greatNecromancer = row(4, 7, 7, 5, 4, 4, 6, 5, 10)
     expect(effectiveStatLine(general, []), 'base').toEqual(greatNecromancer)
     expect(effectiveStatLine(general, ['wizard-l4']), 'wizard-l4').toEqual(greatNecromancer)
+  })
+
+  // OLD-41 — the one case where the book disagrees with itself. Both pages are
+  // legible at 400 dpi, so this is the book, not the scan: the bestiary (printed
+  // p.42) gives the Maestro de Magos 12 4 4 4 4 3 8 2 8, while the army list
+  // (printed p.65) repeats the Paladín Mago row above it, 12 4 4 4 4 2 7 1 8.
+  // The owner ruled for the army list. This test exists so that "fixing" the
+  // flat L2→L3 step back into a rising progression fails loudly instead of
+  // quietly reinstating the rejected reading.
+  it('wood-elves/we-mage keeps the army-list row at level 3, not the bestiary one', () => {
+    const mage = getArmy('wood-elves')!.units.find((u) => u.id === 'we-mage')!
+    const armyList = row(5, 4, 4, 4, 4, 2, 7, 1, 8)
+    const bestiary = row(5, 4, 4, 4, 4, 3, 8, 2, 8)
+    expect(effectiveStatLine(mage, ['wizard-l3'])).toEqual(armyList)
+    expect(effectiveStatLine(mage, ['wizard-l3'])).not.toEqual(bestiary)
+    // Level 3 buys points and a magic-item slot, and nothing else.
+    expect(effectiveStatLine(mage, ['wizard-l3'])).toEqual(effectiveStatLine(mage, ['wizard-l2']))
+  })
+
+  // OLD-41 — Halflings stay OUT of the table above, and must stay out. The only
+  // printed wizard table (Hungry Horde, PDF page 8 = printed folio 10) loses its
+  // Ld column off the right edge of a 76 ppi scan, and the whole right margin of
+  // that document is cropped the same way. A plausible Ld would pass every other
+  // test in this file, so the absence is pinned here instead.
+  it('halflings/hf-wizard has no per-level profile — the book scan cuts the Ld column', () => {
+    const wizard = getArmy('halflings')!.units.find((u) => u.id === 'hf-wizard')!
+    const levels = (wizard.options ?? []).filter((o) => o.id.startsWith('wizard-l'))
+    expect(levels.length, 'Halflings are restricted to levels 1 and 2').toBe(1)
+    for (const level of levels) {
+      expect(level.statLine, `${level.id} must not invent a profile`).toBeUndefined()
+    }
   })
 })
 

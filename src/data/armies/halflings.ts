@@ -84,6 +84,21 @@ const CHUCK_WAGON_PROFILES: ProfileBlock[] = [
 
 // Hired Wizard levels (article: "restricted to 1st and 2nd level Wizards only";
 // costs cut off in the scan — approx. from the Empire Battle Wizard, 56 → +62).
+//
+// OLD-41 — no `statLine` here, unlike the eleven armies OLD-37 covered, and that
+// is deliberate. The WIZARDS table (Hungry Horde PDF page 8 = printed folio 10)
+// prints:
+//     Wizard            4  2  4  2  3  1  5  1  [Ld cut off]
+//     Wizard Champion   4  2  4  3  3  2  5  2  [Ld cut off]
+// The Ld column falls off the right edge of the page. It is not recoverable:
+// the embedded scan is 594x891 at 76 ppi (so rasterising higher adds nothing),
+// the page's CropBox equals its MediaBox (so nothing is hidden outside the
+// frame), and the same right margin is cut throughout that document — the Sheep
+// Dog, Giant Swans, Crazed Cook, Housewife, Aragand and Giblit all lose their Ld
+// the same way. There is no second copy of the article in `source/`.
+//
+// A plausible Ld would pass every test in the repo, which is exactly why none is
+// written. See CITATIONS.md.
 const HF_WIZARD_LEVELS: EquipmentOption[] = [
   { id: 'wizard-l2', name: 'Wizard Champion (Level 2)', pointsPerModel: 62, magicItemSlotsDelta: 1 },
 ]
