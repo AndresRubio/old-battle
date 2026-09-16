@@ -1083,6 +1083,24 @@ const units: UnitProfile[] = [
     ],
   },
 
+  {
+    // OLD-22: Ogres are a mercenary regiment in the 5th-edition O&G book, not a
+    // monster entry (they have no line in the Monsters table) — moved here from
+    // the Monsters section, role changed from 'monster' to 'regiment'. Points,
+    // stats and options are unchanged; they form a normal rank and file so
+    // `noCommand` is intentionally left unset (see withCommandGroups).
+    id: 'og-ogres',
+    name: 'Ogres',
+    nameEs: 'Ogros',
+    role: 'regiment',
+    pointsPerModel: 40,
+    // PDF p.86: M15 HA3 HP2 F4 R5 H3 I3 A2 L7
+    statLine: { M: 6, WS: 3, BS: 2, S: 4, T: 5, W: 3, I: 3, A: 2, Ld: 7 },
+    minSize: 1,
+    options: [ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, LIGHT_ARMOUR_2],
+    specialRules: ['Causes fear', 'Hand weapon'],
+  },
+
   // ===== MÁQUINAS DE GUERRA — War machines (0-25%) =====
   {
     id: 'og-rock-lobber-small',
@@ -1187,18 +1205,6 @@ const units: UnitProfile[] = [
     // PDF p.86: M15 HA3 HP3 F7 R6 H6 I3 A– L6 (special attacks)
     statLine: { M: 6, WS: 3, BS: 3, S: 7, T: 6, W: 6, I: 3, A: 1, Ld: 6 },
     specialRules: ['Large target', 'Causes terror', 'Special attacks (club, jump, etc.)', 'May form units of fewer than 5'],
-  },
-  {
-    id: 'og-ogres',
-    name: 'Ogres',
-    nameEs: 'Ogros',
-    role: 'monster',
-    pointsPerModel: 40,
-    // PDF p.86: M15 HA3 HP2 F4 R5 H3 I3 A2 L7
-    statLine: { M: 6, WS: 3, BS: 2, S: 4, T: 5, W: 3, I: 3, A: 2, Ld: 7 },
-    minSize: 1,
-    options: [ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, LIGHT_ARMOUR_2],
-    specialRules: ['Causes fear', 'Hand weapon'],
   },
   {
     id: 'og-trolls',

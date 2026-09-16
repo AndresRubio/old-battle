@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { ARMIES, getArmy } from './index'
 import { validateRoster } from '../../rules/validate'
 import { entryPoints } from '../../rules/points'
+import { summarize } from '../../rules/summary'
 import type { Roster } from '../types'
 import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
 import { MAGIC_LORES } from '../lores'
@@ -671,6 +672,49 @@ describe('lores of magic wiring', () => {
       }
     }
   }
+})
+
+describe('OLD-22: Ogres are a Regiment, not a Monster', () => {
+  const og = getArmy('orcs-and-goblins')!
+  const ogres = og.units.find((u) => u.id === 'og-ogres')
+
+  it('og-ogres has role "regiment" and keeps its book-accurate points/options', () => {
+    expect(ogres, 'og-ogres not found').toBeDefined()
+    expect(ogres!.role).toBe('regiment')
+    expect(ogres!.pointsPerModel).toBe(40)
+    // Book options preserved, PLUS the standard bearer + musician that
+    // withCommandGroups auto-adds to every multi-model regiment (see below).
+    expect((ogres!.options ?? []).map((o) => o.id).sort()).toEqual(
+      ['add-hand-weapon', 'halberd', 'light-armour', 'two-hand', 'musician', 'standard'].sort(),
+    )
+  })
+
+  it('forms a normal rank and file, so the auto command group applies (noCommand unset)', () => {
+    // Unlike Fanatics/Squig Hoppers (individual models hidden in another unit),
+    // Ogres are an ordinary mercenary regiment in the 5th-edition army book —
+    // withCommandGroups in armies/index.ts treats them like any other
+    // multi-model regiment and adds a standard bearer + musician option.
+    expect(ogres!.noCommand).toBeUndefined()
+    expect((ogres!.options ?? []).map((o) => o.id)).toEqual(
+      expect.arrayContaining(['standard', 'musician']),
+    )
+  })
+
+  it('counts toward the Regiments cap and NOT the Monsters cap in the Muster Check', () => {
+    const roster: Roster = {
+      id: 'r',
+      name: 'Ogres test',
+      armyId: 'orcs-and-goblins',
+      pointsLimit: 1000,
+      entries: [{ id: '1', unitId: 'og-ogres', size: 3, optionIds: [], magicItemIds: [] }],
+    }
+    const points = entryPoints(roster.entries[0], og)
+    expect(points).toBe(120) // 3 * 40, no options bought
+
+    const s = summarize(roster, og)
+    expect(s.caps.regiments.points).toBe(points)
+    expect(s.caps.monsters.points).toBe(0)
+  })
 })
 
 describe('Empire — sample legal list validates cleanly', () => {
