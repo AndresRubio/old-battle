@@ -26,6 +26,24 @@ const TWO_HAND_2: EquipmentOption = { id: 'two-hand', name: 'Weapons with two ha
 const ADD_HAND_WEAPON: EquipmentOption = { id: 'add-hand-weapon', name: 'Additional hand weapon', pointsPerModel: 1 }
 const LIGHT_ARMOUR_1: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 1 }
 const LIGHT_ARMOUR_2: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 2 }
+
+// OLD-25: the Jezzail's crew armour is NOT the generic 2-pt infantry light
+// armour above. Book p.67: "Cada Mosquete Jezzail tiene una dotación de dos
+// Skaven que manejan y transportan el arma [...] La dotación de un Mosquete
+// Jezzail puede equiparse con armaduras ligeras a un coste de +4 puntos por
+// miniatura" — 2 x 4 = 8 points, stored flat because a war machine is a
+// single-model entry to `entryPoints`. The entry used to point at LIGHT_ARMOUR_2
+// and so charged 2 points for both Skaven. Neither the Jezzail nor the Warpfire
+// Thrower (whose heavy armour is standard equipment, not an option) may buy
+// extra crew.
+const JEZZAIL_CREW_LIGHT_ARMOUR: EquipmentOption = {
+  id: 'light-armour',
+  name: 'Crew light armour',
+  pointsPerModel: 8,
+  flat: true,
+  description: 'Light armour for the Jezzail\'s two Skaven crew (book p.67: +4 pts per crew model).',
+  descEs: 'Armaduras ligeras para los dos Skavens de la dotación del Jezzail (libro p.67: +4 ptos por miniatura de la dotación).',
+}
 const SLINGS_HALF: EquipmentOption = { id: 'slings', name: 'Slings', pointsPerModel: 0.5 }
 const THROWING_STARS_1: EquipmentOption = { id: 'throwing-stars', name: 'Throwing stars', pointsPerModel: 1 }
 const NETS_1: EquipmentOption = { id: 'nets', name: 'Nets', pointsPerModel: 1 }
@@ -507,7 +525,7 @@ const units: UnitProfile[] = [
     role: 'warmachine',
     pointsPerModel: 30,
     statLine: skaven(),
-    options: [LIGHT_ARMOUR_2],
+    options: [JEZZAIL_CREW_LIGHT_ARMOUR],
     specialRules: [
       'Two-Skaven weapon team (crew armed with hand weapons)',
       'Jezzail rifle: range 90cm (36"), S5, -3 save, 1D3 wounds',

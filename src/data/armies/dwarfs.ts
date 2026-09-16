@@ -24,7 +24,22 @@ const dwarf = (over: Partial<StatLine> = {}): StatLine => ({
 const SHIELD_1: EquipmentOption = { id: 'shield', name: 'Shield', pointsPerModel: 1 }
 const TWO_HAND_2: EquipmentOption = { id: 'two-hand', name: 'Two-handed weapon', pointsPerModel: 2 }
 const SPEARS_1: EquipmentOption = { id: 'spears', name: 'Spears', pointsPerModel: 1 }
-const CREW_LIGHT_ARMOUR: EquipmentOption = { id: 'light-armour', name: 'Crew light armour', pointsPerModel: 2 }
+// OLD-25: every Dwarf war machine "cuenta con una dotación de tres artilleros
+// Enanos" and offers them "armaduras ligeras invirtiendo un coste adicional de +2
+// puntos por miniatura" (book pp.88-89, the same line under all six machines), so
+// the upgrade is 3 x 2 = 6 points. It has to be `flat`: a war machine is a
+// single-model entry to `entryPoints` (only role 'regiment' multiplies by
+// `size`), and this option used to be a per-model 2 — charging 2 points for a
+// three-man crew's armour. The book gives these machines no other option and no
+// extra crew; the Gyrocopter is a single pilot and has none.
+const CREW_LIGHT_ARMOUR: EquipmentOption = {
+  id: 'light-armour',
+  name: 'Crew light armour',
+  pointsPerModel: 6,
+  flat: true,
+  description: 'Light armour for the machine\'s three Dwarf crew (book pp.88-89: +2 pts per crew model).',
+  descEs: 'Armaduras ligeras para los tres artilleros Enanos de la dotación (libro pp.88-89: +2 ptos por miniatura de la dotación).',
+}
 const RUNE_OF_STONE: EquipmentOption = { id: 'rune-of-stone', name: 'Rune of Stone (Paladin)', pointsPerModel: 5, flat: true }
 
 const units: UnitProfile[] = [
@@ -476,7 +491,6 @@ const units: UnitProfile[] = [
     specialRules: [
       'War machine — 3 Dwarf crew with hand weapons',
       'Cannon: 120cm, S10, D4 wounds, no armour save',
-      'Crew may take light armour (+2/model)',
     ],
   },
   {
@@ -490,7 +504,6 @@ const units: UnitProfile[] = [
     specialRules: [
       'War machine — 3 Dwarf crew with hand weapons',
       'Organ Gun: 120cm, S10, D3 wounds, no save modifier',
-      'Crew may take light armour (+2/model)',
     ],
   },
   {
@@ -504,7 +517,6 @@ const units: UnitProfile[] = [
     specialRules: [
       'War machine — 3 Dwarf crew with hand weapons',
       'Flame Cannon: 120cm, S5, D3 wounds, save -2',
-      'Crew may take light armour (+2/model)',
     ],
   },
   {
@@ -518,7 +530,6 @@ const units: UnitProfile[] = [
     specialRules: [
       'War machine — 3 Dwarf crew with hand weapons',
       'Bolt Thrower: 120cm, S5 (-1 per rank passed), D4 wounds, no armour save',
-      'Crew may take light armour (+2/model)',
     ],
   },
   {
@@ -532,7 +543,6 @@ const units: UnitProfile[] = [
     specialRules: [
       'War machine — 3 Dwarf crew with hand weapons',
       'Small Stone Thrower: 120cm, S7, D3 wounds, no armour save',
-      'Crew may take light armour (+2/model)',
     ],
   },
   {
@@ -546,7 +556,6 @@ const units: UnitProfile[] = [
     specialRules: [
       'War machine — 3 Dwarf crew with hand weapons',
       'Great Stone Thrower: 150cm, S10, D6 wounds, no armour save',
-      'Crew may take light armour (+2/model)',
     ],
   },
   {

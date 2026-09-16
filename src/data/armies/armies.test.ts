@@ -1006,6 +1006,106 @@ describe('OLD-28: Trolls and Snotlings are Regiments, not Monsters', () => {
   })
 })
 
+describe('OLD-25: war-machine crew equipment is a real priced option', () => {
+  // A war machine is a SINGLE-MODEL entry to entryPoints (only role 'regiment'
+  // multiplies by size), so an upgrade the book prices "per crew model" has to
+  // be stored flat, already multiplied by the fixed crew the book gives the
+  // machine. Encoded per-model it would charge one model's worth.
+  const crewOption = (armyId: string, unitId: string) => {
+    const army = getArmy(armyId)!
+    const unit = army.units.find((u) => u.id === unitId)
+    expect(unit, `${unitId} not found`).toBeDefined()
+    const opt = (unit!.options ?? []).find((o) => o.id === 'light-armour')
+    expect(opt, `${unitId} should offer crew light armour`).toBeDefined()
+    return { army, unit: unit!, opt: opt! }
+  }
+
+  const withOption = (armyId: string, unitId: string): number => {
+    const army = getArmy(armyId)!
+    return entryPoints(
+      { id: 'e', unitId, size: 1, optionIds: ['light-armour'], magicItemIds: [] },
+      army,
+    )
+  }
+
+  it('Orcs & Goblins: 3 Orc crew at +2/model = +6 flat (book p.87)', () => {
+    // "La dotación del Lanzador de Rocas puede equiparse con Armaduras Ligeras
+    // por un coste adicional de +2 puntos por miniatura", and the same line for
+    // the Lanzavirotes; each machine has "una dotación compuesta por tres Orcos".
+    for (const [id, base] of [
+      ['og-rock-lobber-small', 66.5],
+      ['og-rock-lobber-large', 96.5],
+      ['og-spear-chukka', 46.5],
+    ] as const) {
+      const { unit, opt } = crewOption('orcs-and-goblins', id)
+      expect(unit.pointsPerModel, `${id} base points`).toBe(base)
+      expect(opt.flat, `${id} crew armour must be flat`).toBe(true)
+      expect(opt.pointsPerModel, `${id} crew armour`).toBe(6)
+      expect(opt.description).toBeTruthy()
+      expect(opt.descEs).toBeTruthy()
+      expect(withOption('orcs-and-goblins', id)).toBe(base + 6)
+    }
+  })
+
+  it('Dwarfs: 3 Dwarf crew at +2/model = +6 flat on all six machines (book pp.88-89)', () => {
+    // Every Dwarf war machine "cuenta con una dotación de tres artilleros Enanos"
+    // and offers "armaduras ligeras invirtiendo un coste adicional de +2 puntos
+    // por miniatura". The base points are the book's and are unchanged.
+    for (const [id, base] of [
+      ['dw-cannon', 110],
+      ['dw-organ-gun', 65],
+      ['dw-flame-cannon', 119],
+      ['dw-bolt-thrower', 54],
+      ['dw-stone-thrower-small', 74],
+      ['dw-stone-thrower-great', 104],
+    ] as const) {
+      const { unit, opt } = crewOption('dwarfs', id)
+      expect(unit.pointsPerModel, `${id} base points`).toBe(base)
+      expect(opt.flat, `${id} crew armour must be flat`).toBe(true)
+      expect(opt.pointsPerModel, `${id} crew armour`).toBe(6)
+      expect(withOption('dwarfs', id)).toBe(base + 6)
+    }
+  })
+
+  it('Skaven: the Jezzail has 2 crew at +4/model = +8 flat (book p.67)', () => {
+    // "Cada Mosquete Jezzail tiene una dotación de dos Skaven [...] La dotación
+    // de un Mosquete Jezzail puede equiparse con armaduras ligeras a un coste de
+    // +4 puntos por miniatura." Not the generic 2-pt infantry light armour.
+    const { unit, opt } = crewOption('skaven', 'sk-jezzail')
+    expect(unit.pointsPerModel).toBe(30)
+    expect(opt.flat).toBe(true)
+    expect(opt.pointsPerModel).toBe(8)
+    expect(withOption('skaven', 'sk-jezzail')).toBe(38)
+  })
+
+  it('machines the book gives no options keep none', () => {
+    // O&G p.87-88: the Snotling Pump Wagon and the Doom Diver Catapult have no
+    // OPCIONES line at all; Dwarfs p.88: the Gyrocopter is a single pilot.
+    for (const [armyId, unitId] of [
+      ['orcs-and-goblins', 'og-snotling-pump-wagon'],
+      ['orcs-and-goblins', 'og-doom-diver'],
+      ['dwarfs', 'dw-gyrocopter'],
+    ] as const) {
+      const unit = getArmy(armyId)!.units.find((u) => u.id === unitId)!
+      expect(unit.options ?? [], `${unitId} should have no options`).toHaveLength(0)
+    }
+  })
+
+  it('no war machine in these three armies offers extra crew', () => {
+    // The books give every machine a FIXED crew — three Orcs / three Dwarfs /
+    // two Skaven. The only "tripulantes adicionales" in the O&G book belong to
+    // the chariots (OLD-23), which are role 'chariot', not 'warmachine'.
+    for (const armyId of ['orcs-and-goblins', 'dwarfs', 'skaven'] as const) {
+      for (const u of getArmy(armyId)!.units.filter((x) => x.role === 'warmachine')) {
+        for (const o of u.options ?? []) {
+          expect(o.addsCrewman, `${u.id}/${o.id}`).toBeUndefined()
+          expect(o.id, `${u.id}/${o.id}`).not.toMatch(/crew(man)?$|extra-crew/)
+        }
+      }
+    }
+  })
+})
+
 describe('Empire — sample legal list validates cleanly', () => {
   it('a balanced 1000pt list produces no violations', () => {
     const empire = getArmy('empire')!
