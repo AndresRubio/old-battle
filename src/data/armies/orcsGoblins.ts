@@ -29,6 +29,36 @@ const SHORTBOW_1: EquipmentOption = { id: 'short-bow', name: 'Short bow', points
 const SHORTBOW_HALF: EquipmentOption = { id: 'short-bow', name: 'Short bow', pointsPerModel: 0.5 }
 const CROSSBOW_1: EquipmentOption = { id: 'crossbow', name: 'Crossbow (instead of Bow)', pointsPerModel: 1 }
 
+// OLD-28: the three kinds of Troll. The army list (p.86) sells them as ONE
+// entry — "cualquier número de Trolls, de cualquiera de los tres tipos: Trolls,
+// Trolls de Río, y Trolls de Piedra" — all at the same 65 pts/model, so the type
+// is a free choice rather than an upgrade, hence `pointsPerModel: 0`. "Los
+// Trolls deben estar organizados en unidades del mismo tipo", so the three share
+// one `exclusiveGroup` and picking two is flagged as `options-exclusive-group`.
+// The army-list entry sends you to the Bestiary for the rules; the per-type
+// wording below is from there (p.75).
+const TROLL_TYPE_COMMON: EquipmentOption = {
+  id: 'troll-type-common', name: 'Common Troll', pointsPerModel: 0, exclusiveGroup: 'troll-type',
+  description:
+    'Bestiary p.75. No extra rule beyond the fear, stupidity, regeneration and vomit attack every Troll has.',
+  descEs:
+    'Bestiario p.75. Sin regla adicional más allá del miedo, la estupidez, la regeneración y el vómito que tienen todos los Trolls.',
+}
+const TROLL_TYPE_RIVER: EquipmentOption = {
+  id: 'troll-type-river', name: 'River Troll', pointsPerModel: 0, exclusiveGroup: 'troll-type',
+  description:
+    'Bestiary p.75: its stench forces any enemy to apply -1 to hit it in close combat, down to a minimum chance of 6. Shooting is unaffected.',
+  descEs:
+    'Bestiario p.75: su hedor obliga a cualquier enemigo a aplicar un -1 a las tiradas para impactarlo en combate cuerpo a cuerpo, hasta una posibilidad mínima de 6. No afecta al disparo.',
+}
+const TROLL_TYPE_STONE: EquipmentOption = {
+  id: 'troll-type-stone', name: 'Stone Troll', pointsPerModel: 0, exclusiveGroup: 'troll-type',
+  description:
+    'Bestiary p.75: natural magic resistance — a spell cast at the unit is automatically dispelled on a 4, 5 or 6 on 1D6. It applies to both sides\' spells, and does not stop magic weapons or items unless they cast spells the conventional way.',
+  descEs:
+    'Bestiario p.75: resistencia mágica natural — todo hechizo lanzado contra la unidad se dispersa automáticamente con un resultado de 4, 5 ó 6 en 1D6. Se aplica a los hechizos de ambos bandos y no afecta a las armas ni objetos mágicos, salvo a los que lancen hechizos de la forma convencional.',
+}
+
 // --- Character equipment (book printed p.78 "LISTA DE EQUIPO", PDF page 80):
 //     "La siguiente tabla indica todas las armas y armaduras normales con que
 //     puede equiparse un personaje Orco o Goblin." The first Sword/Axe/Mace or
@@ -1173,6 +1203,80 @@ const units: UnitProfile[] = [
     noCommand: true,
     specialRules: ['Large target', 'Causes terror', 'Special attacks (club, jump, etc.)', 'May form units of fewer than 5'],
   },
+  {
+    // OLD-28: Trolls are a Peñas (Regiments) entry, not a Monster — the book's
+    // own CONTENIDO page (printed p.2) lists "TROLLS ... 86" and "SNOTLINGS ...
+    // 86" under PEÑAS, while LISTA DE MONSTRUOS is a separate section on p.89.
+    // Same mistake OLD-27 fixed for the Giant. As a Monster this entry was also
+    // a single-model one, so `entryPoints` ignored `size` entirely and three
+    // Trolls cost 65 pts; as a regiment they cost 65 each, as the book prices
+    // them ("65 puntos por miniatura"). Points and statLine are unchanged.
+    //
+    // minSize: 1 — p.86: "el número de Trolls en una unidad puede ser inferior
+    // al mínimo normal de cinco miniaturas [...] Podrías, por ejemplo, tener
+    // sólo un Troll en tu ejército y contaría como una unidad él solo." (The
+    // book's unit-count-per-army-size table on the same page — 1-5 Trolls = 1
+    // unit, 6-10 = up to 2, etc. — is not modelled: the app has no rule shape
+    // for it, and the printed ranges overlap. See source/transcribed.)
+    //
+    // noCommand: true — the same criterion OLD-27 used for the Giant. The book
+    // gives Trolls no equipment at all ("Los Trolls no necesitan armas para
+    // luchar, aunque a menudo llevan un gran garrote") and no OPCIONES line, so
+    // this is not the equipped rank-and-file troop regiment `og-ogres` is (hand
+    // weapon plus four equipment options, command group deliberately kept in
+    // OLD-22/OLD-30) — a standard bearer would be priced at 2x an unequipped
+    // 65-pt monster, a cost the book never prints.
+    id: 'og-trolls',
+    name: 'Trolls',
+    nameEs: 'Trolls',
+    role: 'regiment',
+    pointsPerModel: 65,
+    // PDF p.86 and Bestiary p.75: M15 HA3 HP1 F5 R4 H3 I1 A3 L4
+    statLine: { M: 6, WS: 3, BS: 1, S: 5, T: 4, W: 3, I: 1, A: 3, Ld: 4 },
+    minSize: 1,
+    noCommand: true,
+    options: [TROLL_TYPE_COMMON, TROLL_TYPE_RIVER, TROLL_TYPE_STONE],
+    specialRules: [
+      'Causes fear', 'Stupidity', 'Regeneration', 'Vomit attack (S5, no armour save)',
+      'A unit must be all of one troll type', 'May form units of fewer than 5',
+    ],
+  },
+  {
+    // OLD-28: Snotlings likewise move from Monsters to Peñas (book CONTENIDO,
+    // printed p.2: "SNOTLINGS ... 86"). Points (15 per BASE) and statLine are
+    // unchanged; as with the Trolls, the old `role: 'monster'` meant a unit of
+    // several bases was priced as one.
+    //
+    // minSize: 1 — p.86 organises them by bases and a single base "contará como
+    // una unidad por sí misma". The per-base unit-count table is not modelled.
+    //
+    // noCommand: true — Bestiary p.72 (OFICIALES): "Los héroes no pueden ni
+    // unirse ni actuar como oficiales de las unidades de Snotlings; estos luchan
+    // como una masa de Snotlings desordenada, y están demasiado excitados como
+    // para entender incluso las órdenes más simples." A standard bearer and a
+    // musician exist to pass on exactly those orders.
+    //
+    // The old specialRules claimed "9 models per base"; that number is in
+    // neither p.86 nor the Bestiary (p.72 says only that a base holds several
+    // Snotlings and is used as a single creature with multiple attacks and
+    // wounds), so it is replaced here with the book's own wording.
+    id: 'og-snotlings',
+    name: 'Snotlings',
+    nameEs: 'Snotlings',
+    role: 'regiment',
+    pointsPerModel: 15,
+    // PDF p.86 and Bestiary p.72: M10 HA2 HP2 F1 R1 H3 I3 A3 L4 (per base)
+    statLine: { M: 4, WS: 2, BS: 2, S: 1, T: 1, W: 3, I: 3, A: 3, Ld: 4 },
+    minSize: 1,
+    noCommand: true,
+    specialRules: [
+      'Cost is per Snotling base',
+      'A base fights as one creature with multiple attacks and wounds, at full effect until it loses them all',
+      'Immune to Animosity',
+      'Imitates the nearest Orc or Goblin unit and stays within 30cm of it',
+      'Characters may not join or lead the unit',
+    ],
+  },
 
   // ===== MÁQUINAS DE GUERRA — War machines (0-25%) =====
   {
@@ -1270,28 +1374,6 @@ const units: UnitProfile[] = [
   },
 
   // ===== MONSTRUOS — Monsters (0-25%) =====
-  {
-    id: 'og-trolls',
-    name: 'Trolls',
-    nameEs: 'Trolls',
-    role: 'monster',
-    pointsPerModel: 65,
-    // PDF p.86: M15 HA3 HP1 F5 R4 H3 I1 A3 L4
-    statLine: { M: 6, WS: 3, BS: 1, S: 5, T: 4, W: 3, I: 1, A: 3, Ld: 4 },
-    minSize: 1,
-    specialRules: ['Causes fear', 'Stupidity', 'Regeneration', 'Vomit attack', 'Common / River / Stone Troll variants'],
-  },
-  {
-    id: 'og-snotlings',
-    name: 'Snotlings',
-    nameEs: 'Snotlings',
-    role: 'monster',
-    pointsPerModel: 15,
-    // PDF p.86: M10 HA2 HP2 F1 R1 H3 I3 A3 L4 (per base)
-    statLine: { M: 4, WS: 2, BS: 2, S: 1, T: 1, W: 3, I: 3, A: 3, Ld: 4 },
-    minSize: 1,
-    specialRules: ['Cost is per Snotling base (9 models per base)', 'W3 per base; immune to Animosity'],
-  },
   {
     id: 'og-giant-spiders',
     name: 'Giant Spiders',

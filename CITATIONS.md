@@ -259,6 +259,39 @@ be confirmed. They are suitable for a faithful list-building experience and for 
   two-handed weapon (+2) / halberd (+2), plus light armour (+2). The entry likewise carries no
   command-group prohibition — contrast Squig Hoppers on the same page, which are expressly denied
   champions, standards and musicians — so `noCommand` stays unset. Linear OLD-30.
+- **Trolls and Snotlings category, and the three Troll types** (`og-trolls`, `og-snotlings`) —
+  both moved from the Monsters section to the Regiments section (`role: 'monster'` → `'regiment'`),
+  the same correction OLD-27 made for the Giant. `source/1997 orcos y goblins.pdf`, CONTENIDO
+  (printed p.2 = PDF 4): "TROLLS ... 86" and "SNOTLINGS ... 86" are listed under **PEÑAS**, while
+  **LISTA DE MONSTRUOS** is a separate section on p.89 holding neither. Because a non-regiment
+  entry is a single-model entry to `entryPoints`, a unit of three Trolls used to cost 65 pts
+  instead of 195; as regiments they are priced per model as the book prices them.
+  Printed p.86 = PDF 88 confirms the unchanged entry data — Trolls 65 pts/model, M15 HA3 HP1 F5 R4
+  H3 I1 A3 L4; Snotlings 15 pts/base, M10 HA2 HP2 F1 R1 H3 I3 A3 L4 — and gives both a `minSize`
+  of 1: Trolls, "el número de Trolls en una unidad puede ser inferior al mínimo normal de cinco
+  miniaturas [...] Podrías, por ejemplo, tener sólo un Troll en tu ejército y contaría como una
+  unidad él solo"; Snotlings, "si tienes tan sólo una peana de Snotlings, ésta contará como una
+  unidad por sí misma". The per-army-size unit-count tables on the same page (1-5 Trolls = 1 unit,
+  6-10 = up to 2, …) are NOT modelled — the app has no rule shape for them, and the printed Troll
+  ranges overlap (11-15 → up to 3 units, then "de 12 a 20 Trolls = hasta 4 unidades"), an
+  inconsistency of the original also recorded in `source/transcribed/`.
+  The three Troll types come from the same page: "cualquiera de los tres tipos: Trolls, Trolls de
+  Río, y Trolls de Piedra [...] deben estar organizados en unidades del mismo tipo", all at the one
+  65 pts/model price — so they are modelled as three 0-pt options sharing `exclusiveGroup:
+  'troll-type'`, not as three separate entries or as a points upgrade. Their effects are from the
+  Bestiary (printed p.75 = PDF 77), where the army-list entry sends the reader: **Stone Trolls**
+  automatically dispel a spell cast at the unit on a 4, 5 or 6 on 1D6 (both sides' spells; it does
+  not stop magic weapons or items unless they cast spells conventionally); **River Trolls** impose
+  -1 to hit them in close combat, to a minimum chance of 6, with no effect on shooting; common
+  Trolls add nothing to the fear / stupidity / regeneration / vomit rules every Troll has.
+  `noCommand: true` on both, applying the criterion OLD-27 set for the Giant: the book gives Trolls
+  no equipment and no OPCIONES line at all ("Los Trolls no necesitan armas para luchar, aunque a
+  menudo llevan un gran garrote"), unlike the rank-and-file `og-ogres`; and for Snotlings the
+  Bestiary (printed p.72 = PDF 74, "OFICIALES") says heroes may neither join nor lead them and that
+  they are "demasiado excitados como para entender incluso las órdenes más simples". The same p.72
+  read also removed an unsourced claim from the Snotlings entry — "9 models per base" appears
+  neither there nor on p.86, which say only that a base holds several Snotlings and is used as a
+  single creature with multiple attacks and wounds. Linear OLD-28.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary

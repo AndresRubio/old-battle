@@ -37,6 +37,14 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Cannot cast if wearing armour': 'No puede lanzar hechizos si lleva armadura',
   'Captive monster': 'Monstruo cautivo',
   'Causes fear': 'Causa miedo',
+  // OLD-28: Trolls and Snotlings as Peñas entries (book p.86, Bestiario pp.72 y 75).
+  'A unit must be all of one troll type': 'Una unidad debe ser toda del mismo tipo de troll',
+  'A base fights as one creature with multiple attacks and wounds, at full effect until it loses them all':
+    'La peana lucha como una única criatura con ataques y heridas múltiples, a pleno rendimiento hasta perderlas todas',
+  'Characters may not join or lead the unit': 'Los personajes no pueden unirse a la unidad ni dirigirla',
+  'Cost is per Snotling base': 'Coste por peana de Snotlings',
+  'Imitates the nearest Orc or Goblin unit and stays within 30cm of it':
+    'Imita a la unidad de Orcos o Goblins más cercana y se mantiene a 30 cm o menos de ella',
   'Causes terror': 'Causa terror',
   'Chaos Magic or Dark Magic': 'Magia del Caos o Magia Oscura',
   'Chaos armour': 'Armadura del Caos',
@@ -46,7 +54,6 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Collar of Khorne (immune to magic)': 'Collar de Khorne (inmune a la magia)',
   'Commander': 'Comandante',
   'Common / River / Stone Troll variants': 'Variantes de Trol Común / de Río / de Piedra',
-  'Cost is per Snotling base (9 models per base)': 'Coste por base de Snotling (9 miniaturas por base)',
   'Crew may take light armour (+2 pts/model)': 'La dotación puede llevar armadura ligera (+2 pts/miniatura)',
   'Crew of 2': 'Dotación de 2',
   'Crewed by Snotlings (immune to Animosity)': 'Servida por Snotlings (inmune a la Animosidad)',
@@ -242,7 +249,6 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Usually wears no armour': 'Normalmente no lleva armadura',
   'Vomit attack': 'Ataque de vómito',
   'Vomit attack (S5, no armour save)': 'Ataque de vómito (F5, sin salvación por armadura)',
-  'W3 per base; immune to Animosity': 'H3 por base; inmune a la Animosidad',
   'War Boar mount (save 3+)': 'Montura Jabalí de Guerra (salvación 3+)',
   'War Horse mount (Caballo de Guerra, M8)': 'Montura Caballo de Guerra (Caballo de Guerra, M8)',
   'War machine': 'Máquina de guerra',

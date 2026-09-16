@@ -80,6 +80,17 @@ type MessageBuilder<K extends RuleId> = (p: RuleParams[K], lang: Lang) => string
 
 const un = (p: { unit: UnitProfile }, lang: Lang) => unitName(p.unit, lang)
 
+/**
+ * Bilingual labels for `EquipmentOption.exclusiveGroup` ids, plus whether the
+ * group is exclusive per model (a Mark of Chaos) or per unit (a Troll unit's
+ * type — O&G p.86: "los Trolls deben estar organizados en unidades del mismo
+ * tipo"). Without an entry here a group's raw id would reach the user.
+ */
+const EXCLUSIVE_GROUP_LABEL: Record<string, { scope: 'model' | 'unit'; en: string; es: string }> = {
+  mark: { scope: 'model', en: 'one Mark of Chaos', es: 'una Marca del Caos' },
+  'troll-type': { scope: 'unit', en: 'one troll type', es: 'de un solo tipo de troll' },
+}
+
 const MESSAGES: { [K in RuleId]: MessageBuilder<K> } = {
   'points-over': (p, lang) =>
     lang === 'es'
@@ -181,10 +192,17 @@ const MESSAGES: { [K in RuleId]: MessageBuilder<K> } = {
       : `${un(p, lang)}: "${itemNm}" is not a valid magic standard for this unit.`
   },
   'options-exclusive-group': (p, lang) => {
-    // The only exclusive option group so far is the four Marks of Chaos; other
-    // groups fall back to their raw group id until they earn a label.
-    const what =
-      p.group === 'mark' ? (lang === 'es' ? 'una Marca del Caos' : 'one Mark of Chaos') : p.group
+    // Each exclusive option group needs a label AND a scope: a Mark of Chaos is
+    // borne by one model, whereas a Troll unit's type (OLD-28) is a property of
+    // the whole unit, so the two need different sentences. A group that is not
+    // listed falls back to its raw id and the per-model wording.
+    const g = EXCLUSIVE_GROUP_LABEL[p.group]
+    const what = g ? g[lang === 'es' ? 'es' : 'en'] : p.group
+    if (g?.scope === 'unit') {
+      return lang === 'es'
+        ? `${un(p, lang)}: toda la unidad debe ser ${what} (hay ${p.count} seleccionados).`
+        : `${un(p, lang)}: the whole unit must be ${what} (${p.count} selected).`
+    }
     return lang === 'es'
       ? `${un(p, lang)}: una miniatura sólo puede portar ${what} (lleva ${p.count}).`
       : `${un(p, lang)}: a model may carry only ${what} (carries ${p.count}).`
