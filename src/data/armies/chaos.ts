@@ -64,6 +64,15 @@ const STEED_OF_SLAANESH_STATS: StatLine = { M: 12, WS: 3, BS: 0, S: 4, T: 5, W: 
 // Bestia de Nurgle (p.115): M8→3", WS3 S3 T5 W3 I3 A1D6 Ld6.
 const BEAST_OF_NURGLE_STATS: StatLine = { M: 3, WS: 3, BS: 0, S: 3, T: 5, W: 3, I: 3, A: 1, Ld: 6 }
 
+// OLD-38 — Reino del Caos printed p.104 = PDF 106, "CARRUAJES DEL CAOS": a
+// single entry prints ONE chassis row ("Carruaje - - - 7 7 3 1 - -") that
+// covers BOTH variants described in the prose — a Chaos Chariot (crew of 2
+// Chaos Warriors, drawn by 2 Chaos Steeds, 122 pts) or a Marauder Chariot
+// (crew of 2 Marauders, drawn by 2 War Horses, 80 pts). Shared here so the
+// two chariots below cannot drift apart (mirrors CHARIOT_CHASSIS_STATS in
+// orcsGoblins.ts).
+const CHAOS_CHARIOT_CHASSIS_STATS = { S: 7, T: 7, W: 3, I: 1 } as const
+
 const CHAOS_STEED_MOUNT: MountOption = {
   id: 'mount-chaos-steed', name: 'Chaos Steed', nameEs: 'Corcel del Caos',
   points: 4, statLine: CHAOS_STEED_STATS,
@@ -795,7 +804,7 @@ const units: UnitProfile[] = [
     statLine: statline({ S: 7, T: 7, W: 3, A: 0 }),
     profiles: [
       // OLD-33 — Reino del Caos printed p.104 = PDF 106: "Carruaje - - - 7 7 3 1 - -"
-      { name: 'Chariot', nameEs: 'Carro', statLine: { S: 7, T: 7, W: 3, I: 1 } },
+      { name: 'Chariot', nameEs: 'Carro', statLine: CHAOS_CHARIOT_CHASSIS_STATS },
       { name: '2 Chaos Warriors (crew)', nameEs: '2 Guerreros del Caos (tripulación)', statLine: statline() },
       { name: '2 Chaos Steeds', nameEs: '2 Corceles del Caos', statLine: CHAOS_STEED_STATS },
     ],
@@ -808,7 +817,9 @@ const units: UnitProfile[] = [
     ],
   },
   {
-    // Reino del Caos p.104: Carruaje Bárbaro 80 pts, crew of Bárbaros on Caballos de Guerra
+    // OLD-38 — Reino del Caos printed p.104 = PDF 106: same "CARRUAJES DEL CAOS"
+    // chassis row as ch-chariot above (see CHAOS_CHARIOT_CHASSIS_STATS); 80 pts,
+    // crew of 2 Bárbaros on 2 Caballos de Guerra.
     id: 'ch-marauder-chariot',
     name: 'Marauder Chariot',
     nameEs: 'Carruaje Bárbaro',
@@ -816,13 +827,13 @@ const units: UnitProfile[] = [
     pointsPerModel: 80,
     statLine: statline({ S: 5, T: 5, W: 3, A: 0 }),
     profiles: [
-      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 5, W: 3 } },
+      { name: 'Chariot', nameEs: 'Carro', statLine: CHAOS_CHARIOT_CHASSIS_STATS },
       { name: '2 Chaos Marauders (crew)', nameEs: '2 Bárbaros del Caos (tripulación)', statLine: statline({ WS: 4, BS: 3, S: 4, T: 3, I: 4, A: 2, Ld: 7 }) },
       { name: '2 War Horses', nameEs: '2 Caballos de Guerra', statLine: { M: 8, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 } },
     ],
     options: [SCYTHED_WHEELS],
     specialRules: [
-      'Chariot (T5 W3) — drawn by 2 War Horses, crew of 2 Chaos Marauders',
+      'Chariot (T7 W3) — drawn by 2 War Horses, crew of 2 Chaos Marauders',
       'Crew: hand weapon & light armour',
       'May carry a magic standard',
     ],

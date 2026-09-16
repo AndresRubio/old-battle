@@ -2087,3 +2087,41 @@ describe('OLD-39 — chariot chassis print the book\'s dice Attacks', () => {
     }
   })
 })
+
+describe('OLD-38 — the two parked chariot chassis match the book', () => {
+  // Reino del Caos printed p.104 = PDF 106, "CARRUAJES DEL CAOS": a single
+  // entry prints ONE chassis row ("Carruaje - - - 7 7 3 1 - -") that governs
+  // BOTH the Chaos Chariot (crew of 2 Chaos Warriors, drawn by 2 Chaos Steeds,
+  // 122 pts) and the Marauder Chariot (crew of 2 Marauders, drawn by 2 War
+  // Horses, 80 pts) — one printed chassis, two crew/draught options.
+  it('ch-chariot and ch-marauder-chariot share the printed p.104 chassis (S7 T7 W3 I1)', () => {
+    const chaos = getArmy('chaos')!
+
+    const chariot = chaos.units.find((u) => u.id === 'ch-chariot')!
+    const chariotChassis = chariot.profiles!.find((p) => p.name === 'Chariot')!
+    expect(chariotChassis.statLine).toEqual({ S: 7, T: 7, W: 3, I: 1 })
+
+    const marauderChariot = chaos.units.find((u) => u.id === 'ch-marauder-chariot')!
+    const marauderChassis = marauderChariot.profiles!.find((p) => p.name === 'Chariot')!
+    expect(marauderChassis.statLine).toEqual({ S: 7, T: 7, W: 3, I: 1 })
+
+    // Same printed row → the two chassis objects must be identical.
+    expect(marauderChassis.statLine).toEqual(chariotChassis.statLine)
+  })
+
+  // 1996 Elfos Silvanos printed p.66 = PDF 68 (repeated p.81 = PDF 83):
+  //   "Carruaje de Guerra  -  -  -  -  7  3  -  -  -"
+  // Only R(T) and H(W) are printed; F(S), I, A and L are all dashes — unlike
+  // every other chariot chassis in this repo. Do NOT pattern-match this to
+  // the S7/I1 chassis used elsewhere: adding an S or an I here would invent a
+  // game value that is not on the page.
+  it('we-war-chariot chassis is T7 W3 ONLY — no Strength, no Initiative (printed p.66/p.81)', () => {
+    const woodElves = getArmy('wood-elves')!
+    const chariot = woodElves.units.find((u) => u.id === 'we-war-chariot')!
+    const chassis = chariot.profiles!.find((p) => p.name === 'Chariot')!
+
+    expect(chassis.statLine).toEqual({ T: 7, W: 3 })
+    expect(chassis.statLine).not.toHaveProperty('S')
+    expect(chassis.statLine).not.toHaveProperty('I')
+  })
+})
