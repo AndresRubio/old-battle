@@ -800,6 +800,45 @@ describe('OLD-22: Ogres are a Regiment, not a Monster', () => {
   })
 })
 
+describe('OLD-30: Ogres take the normal 5-model regiment minimum', () => {
+  const og = getArmy('orcs-and-goblins')!
+  const ogres = og.units.find((u) => u.id === 'og-ogres')
+
+  it('minSize: 5 — the PEÑAS floor, which the Ogres entry never exempts', () => {
+    // PDF p.82 (PEÑAS header): a regiment has no maximum size, but every unit
+    // must be at least 5 models "unless stated otherwise". On p.86 three of the
+    // four mercenary entries state otherwise — Giants ("units of fewer than
+    // five"), Trolls ("below the normal minimum of five") and Snotlings (their
+    // own per-base organisation) — and Ogres do not. So the default applies.
+    //
+    // OLD-22 moved this entry from Monster to Regiment but left minSize: 1
+    // behind, which let a "regiment" of a single Ogre still buy the full
+    // command group withCommandGroups gives it (2x a fully equipped model each).
+    expect(ogres!.minSize).toBe(5)
+  })
+
+  it('a lone Ogre is now flagged, a unit of 5 is clean', () => {
+    const roster = (size: number): Roster => ({
+      id: 'r',
+      name: 'Ogre minimum',
+      armyId: 'orcs-and-goblins',
+      pointsLimit: 3000,
+      entries: [
+        { id: 'gen', unitId: 'og-warboss-orc', size: 1, optionIds: [], magicItemIds: [], isGeneral: true },
+        { id: 'boyz', unitId: 'og-orc-boyz', size: 30, optionIds: [], magicItemIds: [] },
+        { id: 'ogres', unitId: 'og-ogres', size, optionIds: [], magicItemIds: [] },
+      ],
+    })
+
+    const lone = validateRoster(roster(1), og, 'en').filter((v) => v.rule === 'min-size')
+    expect(lone).toHaveLength(1)
+    expect(lone[0].entryId).toBe('ogres')
+    expect(lone[0].message).toContain('below the minimum of 5')
+
+    expect(validateRoster(roster(5), og, 'en').filter((v) => v.rule === 'min-size')).toEqual([])
+  })
+})
+
 describe('OLD-27: Giants are a Regiment, not a Monster', () => {
   const og = getArmy('orcs-and-goblins')!
   const giant = og.units.find((u) => u.id === 'og-giant')

@@ -1122,6 +1122,12 @@ const units: UnitProfile[] = [
     // the Monsters section, role changed from 'monster' to 'regiment'. Points,
     // stats and options are unchanged; they form a normal rank and file so
     // `noCommand` is intentionally left unset (see withCommandGroups).
+    //
+    // OLD-30: that move left `minSize: 1` behind from the Monster entry, which
+    // let a "regiment" of one Ogre still buy the full command group. PDF p.82
+    // (PEÑAS header) sets the floor at 5 models per unit "unless stated
+    // otherwise"; on p.86 Giants, Trolls and Snotlings each state otherwise and
+    // the Ogres entry does not, so the default applies → minSize: 5.
     id: 'og-ogres',
     name: 'Ogres',
     nameEs: 'Ogros',
@@ -1129,7 +1135,7 @@ const units: UnitProfile[] = [
     pointsPerModel: 40,
     // PDF p.86: M15 HA3 HP2 F4 R5 H3 I3 A2 L7
     statLine: { M: 6, WS: 3, BS: 2, S: 4, T: 5, W: 3, I: 3, A: 2, Ld: 7 },
-    minSize: 1,
+    minSize: 5,
     options: [ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, LIGHT_ARMOUR_2],
     specialRules: ['Causes fear', 'Hand weapon'],
   },
