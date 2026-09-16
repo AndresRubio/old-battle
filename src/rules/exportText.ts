@@ -24,8 +24,9 @@ import { isWizardLevelId } from '../data/unitOptions'
 /**
  * An option's label with its price, formatted exactly as the editor shows it:
  * a per-model price on a regiment carries the "/model" suffix so a 1/model
- * shield is not read as 1 point total. Flat options, and every option on a
- * single-model entry (character, chariot, war machine), print a plain total.
+ * shield is not read as 1 point total. Flat and per-crewman options, and every
+ * option on a single-model entry (character, chariot, war machine), print a
+ * plain total.
  */
 function optionLabel(
   unit: UnitProfile,
@@ -34,7 +35,7 @@ function optionLabel(
   lang: Lang,
 ): string {
   const name = isWizardLevelId(option.id) ? wizardLevelLabel(option.id, lang) : optionText(option.name, lang)
-  const perModel = unit.role === 'regiment' && !option.flat ? t('perModel', lang) : ''
+  const perModel = unit.role === 'regiment' && !option.flat && !option.perCrewman ? t('perModel', lang) : ''
   return `${name} (+${unitOptionCost(unit, option, optionIds)} ${t('pts', lang)}${perModel})`
 }
 

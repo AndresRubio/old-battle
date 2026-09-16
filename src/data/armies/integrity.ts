@@ -45,6 +45,26 @@ export function assertArmyIntegrity(army: Army): Army {
     const dupOptions = dupes(optionIds)
     if (dupOptions.length) fail(`${u.id}: colliding option ids: ${dupOptions.join(', ')}`)
 
+    // Crew pricing (OLD-35). A `perCrewman` option costs rate × the host's crew
+    // count, so a host that forgets `baseCrew` prices it at rate × 0 — silently
+    // free, and invisible in the UI. Require the declaration on any host that
+    // uses either crew flag. `perCrewman` is also incoherent on a regiment,
+    // whose models are rank and file, not crew.
+    const crewOpts = (u.options ?? []).filter((o) => o.perCrewman || o.addsCrewman)
+    if (crewOpts.length && u.baseCrew === undefined) {
+      fail(`${u.id}: crew options (${crewOpts.map((o) => o.id).join(', ')}) but no baseCrew`)
+    }
+    const regimentPerCrewman = (u.options ?? []).filter((o) => o.perCrewman && u.role === 'regiment')
+    if (regimentPerCrewman.length) {
+      fail(`${u.id}: perCrewman option ${regimentPerCrewman[0].id} on a regiment (models are not crew)`)
+    }
+    for (const m of u.mounts ?? []) {
+      const mCrewOpts = (m.options ?? []).filter((o) => o.perCrewman || o.addsCrewman)
+      if (mCrewOpts.length && m.baseCrew === undefined) {
+        fail(`${u.id}/${m.id}: crew options (${mCrewOpts.map((o) => o.id).join(', ')}) but no baseCrew`)
+      }
+    }
+
     if (u.mounts) {
       const dupMounts = dupes(u.mounts.map((m) => m.id))
       if (dupMounts.length) fail(`${u.id}: duplicate mount ids: ${dupMounts.join(', ')}`)

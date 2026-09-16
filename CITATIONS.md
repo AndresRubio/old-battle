@@ -371,6 +371,28 @@ book's own reference table. Both are recorded here deliberately; the code is unc
   what the code has and is consistent with every other monster in that table, but the printed digit
   itself could not be read on this scan — it is *unverified*, not confirmed. Left alone pending a
   cleaner scan. Linear OLD-32.
+- **Standalone O&G chariots: crew shields and short bows are priced per crewman** (Orcs & Goblins)
+  — `source/1997 orcos y goblins.pdf` printed p.88 = PDF 90, CARRUAJE DE JABALÍES ORCO (81 puntos,
+  "2 tripulantes Orcos", 2 War Boars) and CARRUAJE DE LOBOS GOBLIN (65 puntos, 2 Goblin crew, 2
+  Giant Wolves). Their OPCIONES lines: "Cualquier Carruaje puede contar con dos tripulantes
+  adicionales por un coste de 7,5 puntos cada uno [3,5 on the Wolf Chariot]. La tripulación de
+  cualquier Carruaje puede equiparse con Escudos por un coste adicional de **+1 punto por
+  tripulante** [+0,5 on the Wolf Chariot]. La dotación de cualquier Carruaje puede equiparse con
+  Arcos Cortos por un coste adicional de **+1 punto por tripulante** [+0,5]. Cualquier Carruaje
+  puede equiparse con ruedas con cuchillas por un coste adicional de 20 puntos **por carruaje**."
+  The base points (81 / 65) and every printed rate are unchanged; what was wrong was the
+  multiplier. OLD-23 had stored shields and bows as plain per-model options, and since a chariot is
+  a single-model entry for `entryPoints` (only `role: 'regiment'` multiplies by `size`), they
+  charged for **one** crewman instead of the crew. Unlike the war-machine crews of OLD-25 and the
+  Tiranoc Chariot of OLD-31, a `flat` pre-multiplied total cannot express this: the crew is not
+  fixed — "dos tripulantes adicionales" means the entry may carry 2, 3 or 4 crewmen, so the cost
+  has to follow the selection. `UnitProfile.baseCrew` (2 on both) plus the existing `perCrewman` /
+  `addsCrewman` flags — until now honoured only for a `MountOption` — now drive the unit resolver
+  too, so a standalone chariot and the same chariot ridden as a character mount price identically
+  for the same crew and kit. Full Boar Chariot: 81 + 7,5 + 7,5 + 4×1 + 4×1 + 20 = **124**. Scythed
+  wheels stay flat at 20, priced "por carruaje"; the Wolf Chariot's third Giant Wolf stays flat at
+  4, the book attaching no per-anything qualifier to it. Nothing in the book's OPCIONES lines is
+  missing from the data, and nothing in the data is absent from the book. Linear OLD-35.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary

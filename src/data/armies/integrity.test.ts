@@ -57,6 +57,61 @@ describe('assertArmyIntegrity', () => {
     expect(() => assertArmyIntegrity(army({ units: [u] }))).toThrow(/has mounts but is not a character/)
   })
 
+  // OLD-35 — a perCrewman option on a host with no baseCrew prices at rate × 0:
+  // silently free. The declaration is mandatory on any host using a crew flag.
+  it('throws when a unit has crew options but no baseCrew', () => {
+    const u = unit({
+      id: 'ch',
+      role: 'chariot',
+      options: [{ id: 'crew-shields', name: 'Shields', pointsPerModel: 1, perCrewman: true }],
+    })
+    expect(() => assertArmyIntegrity(army({ units: [u] }))).toThrow(
+      /ch: crew options \(crew-shields\) but no baseCrew/,
+    )
+    const adds = unit({
+      id: 'ch2',
+      role: 'chariot',
+      options: [{ id: 'crew3', name: '3rd crewman', pointsPerModel: 5, flat: true, addsCrewman: true }],
+    })
+    expect(() => assertArmyIntegrity(army({ units: [adds] }))).toThrow(
+      /ch2: crew options \(crew3\) but no baseCrew/,
+    )
+    // With baseCrew declared the same unit is fine.
+    const ok = unit({ ...u, baseCrew: 2 })
+    expect(assertArmyIntegrity(army({ units: [ok] }))).toBeTruthy()
+  })
+
+  it('throws on a perCrewman option on a regiment (models are not crew)', () => {
+    const u = unit({
+      id: 'reg',
+      role: 'regiment',
+      baseCrew: 2,
+      options: [{ id: 'shields', name: 'Shields', pointsPerModel: 1, perCrewman: true }],
+    })
+    expect(() => assertArmyIntegrity(army({ units: [u] }))).toThrow(
+      /reg: perCrewman option shields on a regiment/,
+    )
+  })
+
+  it('throws when a mount has crew options but no baseCrew', () => {
+    const u = unit({
+      id: 'c',
+      role: 'character',
+      isCharacter: true,
+      mounts: [
+        {
+          id: 'chariot',
+          name: 'Chariot',
+          points: 50,
+          options: [{ id: 'crew-shields', name: 'Shields', pointsPerModel: 1, perCrewman: true }],
+        },
+      ],
+    })
+    expect(() => assertArmyIntegrity(army({ units: [u] }))).toThrow(
+      /c\/chariot: crew options \(crew-shields\) but no baseCrew/,
+    )
+  })
+
   it('throws on an item restricted to a different army, and on an unrestricted special item', () => {
     expect(() =>
       assertArmyIntegrity(

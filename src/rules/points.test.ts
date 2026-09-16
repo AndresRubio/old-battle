@@ -288,7 +288,7 @@ describe('entryPoints — standalone chariot units with priced options (OLD-23)'
       unitId: 'og-orc-boar-chariot',
       optionIds: ['og-orc-chariot-shields', 'og-orc-chariot-bows'],
     })
-    expect(entryPoints(entry, orcs)).toBe(83) // 81 + 1 + 1
+    expect(entryPoints(entry, orcs)).toBe(85) // 81 + 2×1 (shields, 2 crew) + 2×1 (bows, 2 crew)
   })
 
   it('Orc Boar Chariot: scythed wheels are an optional flat +20 (not automatic)', () => {
@@ -321,7 +321,7 @@ describe('entryPoints — standalone chariot units with priced options (OLD-23)'
       unitId: 'og-goblin-wolf-chariot',
       optionIds: ['og-goblin-chariot-shields', 'og-goblin-chariot-bows'],
     })
-    expect(entryPoints(entry, orcs)).toBe(66) // 65 + 0.5 + 0.5
+    expect(entryPoints(entry, orcs)).toBe(67) // 65 + 2×0.5 (shields, 2 crew) + 2×0.5 (bows, 2 crew)
   })
 
   it('Goblin Wolf Chariot: scythed wheels are an optional flat +20', () => {
@@ -330,7 +330,7 @@ describe('entryPoints — standalone chariot units with priced options (OLD-23)'
   })
 
   it('every upgrade combined matches the sum of the book values', () => {
-    // 81 + 7.5 + 7.5 + 1 + 1 + 20 = 118
+    // 81 + 7.5 + 7.5 + 4×1 (shields, 4 crew) + 4×1 (bows, 4 crew) + 20 = 124
     const entry = mk({
       unitId: 'og-orc-boar-chariot',
       optionIds: [
@@ -341,7 +341,7 @@ describe('entryPoints — standalone chariot units with priced options (OLD-23)'
         'og-orc-chariot-scythes',
       ],
     })
-    expect(entryPoints(entry, orcs)).toBe(118)
+    expect(entryPoints(entry, orcs)).toBe(124)
   })
 })
 
@@ -392,5 +392,91 @@ describe('effectiveStatLine — option statLine replacement (OLD-12)', () => {
   it('returns undefined for a unit without a base statLine and no replacing option', () => {
     const noStats: UnitProfile = { id: 'x', name: 'X', role: 'regiment', pointsPerModel: 5 }
     expect(effectiveStatLine(noStats, [])).toBeUndefined()
+  })
+})
+
+// OLD-35 — the standalone O&G chariots' crew shields and short bows are priced
+// "por tripulante" (book p.88: +1 pt/crewman on the Boar Chariot, +0.5 on the
+// Wolf Chariot), and the crew is not fixed — two extra crewmen may be bought.
+// `UnitProfile.baseCrew` + `perCrewman` now make the unit resolver scale those
+// costs with the crew actually bought, exactly as the mount resolver does.
+describe('OLD-35 — perCrewman unit options scale with the crew bought', () => {
+  const orcs = getArmy('orcs-and-goblins')!
+
+  it('Orc Boar Chariot: shields cost 1 per crewman, including bought crew', () => {
+    // 81 + 7.5 (3rd crewman) + 3×1 (shields, 3 crew) = 91.5
+    const entry = mk({
+      unitId: 'og-orc-boar-chariot',
+      optionIds: ['og-orc-chariot-crew3', 'og-orc-chariot-shields'],
+    })
+    expect(entryPoints(entry, orcs)).toBe(91.5)
+  })
+
+  it('Goblin Wolf Chariot: shields cost 0.5 per crewman at full crew', () => {
+    // 65 + 3.5 + 3.5 (crew 3 & 4) + 4×0.5 (shields, 4 crew) = 74
+    const entry = mk({
+      unitId: 'og-goblin-wolf-chariot',
+      optionIds: ['og-goblin-chariot-crew3', 'og-goblin-chariot-crew4', 'og-goblin-chariot-shields'],
+    })
+    expect(entryPoints(entry, orcs)).toBe(74)
+  })
+
+  it('a perCrewman option is charged once per entry, never multiplied by size', () => {
+    // A chariot is always 1 model, but a corrupted stored roster can carry any
+    // size. The crew multiplier must not be multiplied again.
+    const at = (size: number) =>
+      entryPoints(mk({ unitId: 'og-orc-boar-chariot', size, optionIds: ['og-orc-chariot-shields'] }), orcs)
+    expect(at(1)).toBe(83) // 81 + 2×1
+    expect(at(4)).toBe(83)
+  })
+
+  it('unitOptionCost reports the per-crewman total the UI shows', () => {
+    const chariot = findUnit(orcs, 'og-orc-boar-chariot')!
+    const shields = chariot.options!.find((o) => o.id === 'og-orc-chariot-shields')!
+    expect(unitOptionCost(chariot, shields, [])).toBe(2) // 2 base crew × 1
+    expect(unitOptionCost(chariot, shields, ['og-orc-chariot-crew3'])).toBe(3)
+    expect(unitOptionCost(chariot, shields, ['og-orc-chariot-crew3', 'og-orc-chariot-crew4'])).toBe(4)
+  })
+
+  // The cross-check that pins the two resolvers together: the same chariot,
+  // same crew, same kit, must cost the same whether it is its own roster entry
+  // or a character's mount (net of the character's own points).
+  it('a standalone chariot and the same chariot as a character mount price identically', () => {
+    const cases = [
+      {
+        rider: 'og-warboss-orc',
+        unitId: 'og-orc-boar-chariot',
+        mountId: 'mount-boar-chariot',
+        unitOpts: ['og-orc-chariot-crew3', 'og-orc-chariot-crew4', 'og-orc-chariot-shields', 'og-orc-chariot-bows', 'og-orc-chariot-scythes'],
+        mountOpts: ['mount-boar-chariot-crew3', 'mount-boar-chariot-crew4', 'mount-boar-chariot-shields', 'mount-boar-chariot-bows', 'mount-boar-chariot-scythes'],
+      },
+      {
+        rider: 'og-warboss-orc',
+        unitId: 'og-orc-boar-chariot',
+        mountId: 'mount-boar-chariot',
+        unitOpts: ['og-orc-chariot-crew3', 'og-orc-chariot-shields'],
+        mountOpts: ['mount-boar-chariot-crew3', 'mount-boar-chariot-shields'],
+      },
+      {
+        rider: 'og-warboss-goblin',
+        unitId: 'og-goblin-wolf-chariot',
+        mountId: 'mount-wolf-chariot',
+        unitOpts: ['og-goblin-chariot-crew3', 'og-goblin-chariot-crew4', 'og-goblin-chariot-shields', 'og-goblin-chariot-bows'],
+        mountOpts: ['mount-wolf-chariot-crew3', 'mount-wolf-chariot-crew4', 'mount-wolf-chariot-shields', 'mount-wolf-chariot-bows'],
+      },
+      {
+        rider: 'og-warboss-goblin',
+        unitId: 'og-goblin-wolf-chariot',
+        mountId: 'mount-wolf-chariot',
+        unitOpts: ['og-goblin-chariot-wolf3', 'og-goblin-chariot-bows', 'og-goblin-chariot-scythes'],
+        mountOpts: ['mount-wolf-chariot-wolf3', 'mount-wolf-chariot-bows', 'mount-wolf-chariot-scythes'],
+      },
+    ]
+    for (const c of cases) {
+      const standalone = entryPoints(mk({ unitId: c.unitId, optionIds: c.unitOpts }), orcs)
+      const riderAlone = entryPoints(mk({ unitId: c.rider }), orcs)
+      const mounted = entryPoints(mk({ unitId: c.rider, mountId: c.mountId, optionIds: c.mountOpts }), orcs)
+      expect(mounted - riderAlone).toBe(standalone)
+    }
   })
 })

@@ -344,7 +344,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                       onChange={() => actions.toggleOption(o.id)}
                     />
                     {optionText(o.name, lang)} (+{unitOptionCost(unit, o, entry.optionIds)}
-                    {isRegiment && !o.flat ? t('perModel', lang) : ''})
+                    {isRegiment && !o.flat && !o.perCrewman ? t('perModel', lang) : ''})
                     {optionDesc(o, lang) && (
                       <button
                         type="button"
