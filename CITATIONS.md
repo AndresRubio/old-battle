@@ -372,6 +372,64 @@ book's own reference table. Both are recorded here deliberately; the code is unc
   itself could not be read on this scan — it is *unverified*, not confirmed. Left alone pending a
   cleaner scan. Linear OLD-32.
 
+#### Chariot chassis display profiles (OLD-33)
+A chariot's chassis is a display-only `ProfileBlock`, and `ProfileBlock.statLine` is a
+`Partial<StatLine>` so the UI prints "–" for any column left out. Eight chassis were short the
+columns their book actually prints — typically **Strength and Initiative** — so the app was hiding
+real book data; three of them also carried **T and W the book contradicts**. Each row below was read
+off the PDF scan and cross-checked against `source/transcribed/*.md`. Page offset is **+2** for every
+book (PDF index = printed page + 2), per `source/OFFSETS.md`. The verified reference these were
+checked against is `CHARIOT_CHASSIS_STATS = { S: 7, T: 7, W: 3, I: 1 }` in `orcsGoblins.ts`
+(printed p.88, unchanged). No points changed — these are display profiles only.
+- **Tiranoc Chariot chassis** (`he-tiranoc-chariot`) — `{ T: 7, W: 3 }` → **`{ S: 7, T: 7, W: 3,
+  I: 1 }`**. *Altos Elfos*, printed **p.79** = PDF 81: "Carruaje - - - 7 7 3 1 - -". Printed p.68
+  (bestiary) and the printed p.101 reference table print the same row — three concordant pages.
+- **Gorthor's Tuskgor Chariot** (`ch-gorthor`) — `{ S: 7, T: 7, W: 3 }` → **`{ S: 7, T: 7, W: 3,
+  I: 1 }`**. *Paladines del Caos*, printed **p.44** = PDF 46: "CARRUAJE – – – 7 7 3 1 – –".
+- **Chaos Chariot chassis** (`ch-chariot`) — `{ T: 7, W: 3 }` → **`{ S: 7, T: 7, W: 3, I: 1 }`**.
+  *Reino del Caos*, printed **p.104** = PDF 106: "Carruaje - - - 7 7 3 1 - -".
+- **Beastman Chariot chassis** (`ch-beast-chariot`) — `{ T: 7, W: 3 }` → **`{ S: 7, T: 7, W: 3,
+  I: 1 }`**. *Reino del Caos*, printed **p.109** = PDF 111: "Carruaje - - - 7 7 3 1 - -".
+- **Undead Chariot chassis** (`ud-undead-chariot`) — `{ T: 5, W: 3 }` → **`{ S: 5, T: 5, W: 3,
+  I: 1 }`**. *No Muertos*, printed **p.84** = PDF 86: "Carruaje Esquelético - - - 5 5 3 1 1D6 -";
+  the identical row is reprinted on printed p.68.
+- **Chariot of Arkhan** (`ud-arkhan-the-black`) — `{ T: 5, W: 4 }` → **`{ WS: 4, S: 6, T: 6,
+  W: 3 }`**. *No Muertos*, printed **p.91** = PDF 93: "Carruaje de Arkhan - 4 - 6 6 3 - 1D6 -".
+  **T and W were wrong**, not merely missing: the book gives T6 W3, the code held T5 W4.
+- **Volkmar's War Altar** (`emp-volkmar`) — `{ T: 5, W: 4 }` → **`{ S: 7, T: 7, W: 3, I: 1 }`**.
+  *Imperio*, printed **p.69** = PDF 71: "Altar – – – 7 7 3 1 – –". **T and W were wrong.**
+- **Imperial War Wagon chassis** (`emp-war-wagon`) — `{ T: 5, W: 4 }` → **`{ S: 7, T: 7, W: 5,
+  I: 1 }`**. *Imperio*, rules section printed **p.20** = PDF 22: "Torre del Carruaje de Guerra
+  Imperial - - - 7 7 5 1 - -". The army-list row on printed p.65 = PDF 67 prints the same line
+  **without the F column**, and the prose on printed p.20 settles which Strength applies: *"el
+  Atributo de Fuerza del propio Carro de Guerra Imperial, es decir 7"*. **T and W were wrong** (the
+  book gives T7 W5, the code held T5 W4).
+
+**The `A: 1D6` that cannot be entered.** The Undead Chariot (printed p.84) and the Chariot of Arkhan
+(printed p.91) both print **1D6 Attacks**. `StatLine.A` is typed `number`, so a dice expression
+cannot be stored; `A` is therefore deliberately **absent** from both statLines rather than being
+flattened to an invented average or to a literal. The UI prints "–" for it, which understates the
+book. Widening `StatLine` (or adding a dice-valued stat) is a separate decision and was expressly
+left out of scope — recorded here so the omission is not mistaken for a transcription slip. Pinned
+by a test in `armies.test.ts`.
+
+**Parked deliberately — do not "fix" these off the same audit.** Each needs its own decision and has
+its own Linear issue:
+- **Marauder Chariot** (`ch-marauder-chariot`, `{ T: 5, W: 3 }`) — printed p.104 shows a single
+  "Carruaje" row inside the Chaos-Warrior group and **no second chassis row** for the 80-pt Carruaje
+  Bárbaro. Whether that one row governs both chariots is unresolved, so nothing was changed.
+- **Wood Elf War Chariot** (`we-war-chariot`, `{ T: 4, W: 3 }`) — the book appears to print T7, but
+  a light elven chariot at T7 is surprising enough that the scan needs a human eye first.
+- **Black Coach chassis** (`vc-black-coach`) — the book prints a full nine-column row that the
+  unit's own top-level `statLine` already carries; filling the `ProfileBlock` would duplicate it in
+  the UI. A display-design question, not a data fix.
+- **Malekith's Black Chariot** (`de-witch-king`) — has no `profiles` array at all, so this is an
+  addition rather than a correction.
+- **The Imperial War Wagon's top-level `statLine`** (`emp-war-wagon`) also disagrees with the book;
+  only the chassis `ProfileBlock` was in scope here.
+- **The Chaos convention** of putting chassis stats in the unit's top-level `statLine`
+  (`ch-chariot`, `ch-marauder-chariot`) while every other army puts the crew there.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

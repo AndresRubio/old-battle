@@ -656,7 +656,8 @@ const units: UnitProfile[] = [
     pointsPerModel: 84,
     statLine: elf({ WS: 5, BS: 4, S: 3, T: 3, W: 1, I: 7, A: 1, Ld: 8 }),
     profiles: [
-      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
+      // OLD-33 — printed p.79 = PDF 81: "Carruaje - - - 7 7 3 1 - -"
+      { name: 'Chariot', nameEs: 'Carro', statLine: { S: 7, T: 7, W: 3, I: 1 } },
       {
         name: '2 Elven Steeds', nameEs: '2 Corceles Élficos',
         statLine: { M: 9, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 4, A: 1, Ld: 5 },

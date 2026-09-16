@@ -611,7 +611,8 @@ const units: UnitProfile[] = [
     canBeGeneral: true,
     max: 1,
     profiles: [
-      { name: 'Tuskgor Chariot', nameEs: 'Carro de Tuskgors', statLine: { S: 7, T: 7, W: 3 }, specialRules: ['Scythed', 'Impact hits'] },
+      // OLD-33 — Paladines del Caos printed p.44 = PDF 46: "CARRUAJE – – – 7 7 3 1 – –"
+      { name: 'Tuskgor Chariot', nameEs: 'Carro de Tuskgors', statLine: { S: 7, T: 7, W: 3, I: 1 }, specialRules: ['Scythed', 'Impact hits'] },
       { name: '2 Tuskgors', nameEs: '2 Tuskgors', statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 3, A: 1, Ld: 7 }, specialRules: ['4+ armour save'] },
     ],
     specialRules: [
@@ -781,7 +782,8 @@ const units: UnitProfile[] = [
     pointsPerModel: 122,
     statLine: statline({ S: 7, T: 7, W: 3, A: 0 }),
     profiles: [
-      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
+      // OLD-33 — Reino del Caos printed p.104 = PDF 106: "Carruaje - - - 7 7 3 1 - -"
+      { name: 'Chariot', nameEs: 'Carro', statLine: { S: 7, T: 7, W: 3, I: 1 } },
       { name: '2 Chaos Warriors (crew)', nameEs: '2 Guerreros del Caos (tripulación)', statLine: statline() },
       { name: '2 Chaos Steeds', nameEs: '2 Corceles del Caos', statLine: CHAOS_STEED_STATS },
     ],
@@ -821,7 +823,8 @@ const units: UnitProfile[] = [
     pointsPerModel: 88,
     statLine: statline({ S: 7, T: 7, W: 3, A: 0 }),
     profiles: [
-      { name: 'Chariot', nameEs: 'Carro', statLine: { T: 7, W: 3 } },
+      // OLD-33 — Reino del Caos printed p.109 = PDF 111: "Carruaje - - - 7 7 3 1 - -"
+      { name: 'Chariot', nameEs: 'Carro', statLine: { S: 7, T: 7, W: 3, I: 1 } },
       { name: '2 Gor Beastmen (crew)', nameEs: '2 Gors Hombres Bestia (tripulación)', statLine: statline({ M: 4, WS: 4, BS: 3, S: 3, T: 4, W: 2, I: 3, A: 1, Ld: 7 }) },
       { name: '2 Tuskgors', nameEs: '2 Tuskgors', statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 3, A: 1, Ld: 7 }, specialRules: ['4+ armour save'] },
     ],

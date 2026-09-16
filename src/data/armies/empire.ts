@@ -280,7 +280,8 @@ const units: UnitProfile[] = [
     profiles: [
       {
         name: 'War Altar (chariot)', nameEs: 'Altar de Guerra (carro)',
-        statLine: { T: 5, W: 4 },
+        // OLD-33 — printed p.69 = PDF 71: "Altar – – – 7 7 3 1 – –"
+        statLine: { S: 7, T: 7, W: 3, I: 1 },
         specialRules: ['War chariot', 'Drawn by two Barded Warhorses'],
       },
       BARDED_WARHORSE_PROFILE,
@@ -757,7 +758,11 @@ const units: UnitProfile[] = [
     profiles: [
       {
         name: 'Chassis', nameEs: 'Chasis',
-        statLine: { T: 5, W: 4 },
+        // OLD-33 — rules section printed p.20 = PDF 22: "Torre del Carruaje de
+        // Guerra Imperial - - - 7 7 5 1 - -". The printed p.65 army-list row omits
+        // the F column; the p.20 prose settles it ("el Atributo de Fuerza del propio
+        // Carro de Guerra Imperial, es decir 7").
+        statLine: { S: 7, T: 7, W: 5, I: 1 },
         specialRules: ['Chariot has no armour save'],
       },
       {
