@@ -1149,20 +1149,18 @@ const units: UnitProfile[] = [
     // dirección el equivalente del resultado en centímetros". A dice expression
     // cannot be converted to inches, so the unit is stated in the token.
     //
-    // ATTACKS IS UNRESOLVED, deliberately. The book contradicts itself: the
-    // bestiary row above prints 1D3, the army list (printed p.85 = PDF 87)
-    // prints 1D6. Both were read at 400dpi and both are legible — this is the
-    // book disagreeing with itself, not a bad scan. The owner's ruling is that
-    // bestiary-vs-list conflicts are settled case by case rather than by a
-    // blanket precedent, and this case is still open — tracked as OLD-45.
+    // ATTACKS comes from the ARMY LIST, not the bestiary row above. The book
+    // contradicts itself here: the bestiary (printed p.66) prints 1D3, the army
+    // list (printed p.85 = PDF 87) prints 1D6. Both were read at 400dpi and
+    // both are legible — the book disagrees with itself, it is not a bad scan.
+    // OLD-45: the owner settled it for the army list, so A is 1D6.
     //
-    // So the column shows "?" rather than a number. It used to hold A: 1, which
-    // is wrong under BOTH readings — the one thing the book is unambiguous
-    // about is that this cell is a dice roll. "?" asserts nothing the book does
-    // not say, and is visually distinct from the "–" that means "the book
-    // prints a blank here".
+    // That ruling covers this row and nothing else — bestiary-vs-list conflicts
+    // are decided case by case, never by precedent. Before this, the column
+    // showed "?" while the case was open, which had already replaced an
+    // invented A: 1 that was wrong under both readings.
     statLine: { S: 5, T: 3, W: 1 },
-    statNotes: { M: '5D6cm', WS: 'Special', BS: '–', I: '–', A: '?', Ld: '–' },
+    statNotes: { M: '5D6cm', WS: 'Special', BS: '–', I: '–', A: '1D6', Ld: '–' },
     statNotesEs: { WS: 'Especial' },
     minSize: 1,
     noCommand: true,

@@ -244,13 +244,15 @@ describe('EntryRow unit and mount stat notes (OLD-43)', () => {
     expect(cells()).toEqual(['2D6"', 'Esp', '0', '5', '2', '1', '–', 'D6', '–'])
   })
 
-  it("translates the Fanatic's 'Special' to 'Especial' and prints its unresolved A as '?'", () => {
+  it("translates the Fanatic's 'Special' to 'Especial' and prints its A as the army list's '1D6'", () => {
     setLang('es')
     render(<EntryRow entry={entry('og-night-goblin-fanatics', { size: 1 })} army={orcs} {...props} />)
     expand()
-    // A prints "?" — the bestiary/army-list conflict is OPEN, and "?" is
-    // deliberately distinct from the "–" in the columns the book leaves blank.
-    expect(cells()).toEqual(['5D6cm', 'Especial', '–', '5', '3', '1', '–', '?', '–'])
+    // A prints the army list's 1D6 (printed p.85): OLD-45 settled the book's
+    // conflict with its own bestiary row (1D3) in favour of the list, and the
+    // cell held "?" while that was open. The dice token is language-neutral,
+    // so only the word column differs between EN and ES.
+    expect(cells()).toEqual(['5D6cm', 'Especial', '–', '5', '3', '1', '–', '1D6', '–'])
   })
 
   it("prints a chosen mount's own note: the Beast of Nurgle's 1D6 Attacks (printed p.85)", () => {
