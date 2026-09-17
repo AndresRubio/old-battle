@@ -2164,9 +2164,11 @@ describe('OLD-43 — units and mounts print the book\'s own token', () => {
     { army: 'orcs-and-goblins', unit: 'og-night-goblin-fanatics', column: 'BS', token: '–', page: 'O&G printed p.66' },
     { army: 'orcs-and-goblins', unit: 'og-night-goblin-fanatics', column: 'I', token: '–', page: 'O&G printed p.66' },
     { army: 'orcs-and-goblins', unit: 'og-night-goblin-fanatics', column: 'Ld', token: '–', page: 'O&G printed p.66' },
-    // Attacks is the one cell the book contradicts itself on (bestiary 1D3 vs
-    // army list 1D6), so it prints "?" — see the dedicated test below.
-    { army: 'orcs-and-goblins', unit: 'og-night-goblin-fanatics', column: 'A', token: '?', page: 'O&G printed p.66 vs p.85 — UNRESOLVED' },
+    // Attacks is the one cell the book contradicts itself on: the bestiary row
+    // above prints 1D3, the army list prints 1D6. OLD-45 settled it in favour
+    // of the ARMY LIST, so this row cites p.85 and not p.66 like its siblings.
+    // See the dedicated test below for the scope of that ruling.
+    { army: 'orcs-and-goblins', unit: 'og-night-goblin-fanatics', column: 'A', token: '1D6', page: 'O&G army list printed p.85 = PDF 87' },
 
     // D — Halflings bestiary printed p.7 = PDF 5:
     //   "Crazed Cook  2D6  Sp  0  5  2  1  -  D6  -"
@@ -2250,21 +2252,29 @@ describe('OLD-43 — units and mounts print the book\'s own token', () => {
   })
 
   // The book contradicts itself on the Fanatic's Attacks: the bestiary row
-  // (printed p.66) prints 1D3, the army list (printed p.85 = PDF 87) prints 1D6.
-  // Both are legible at 400dpi, so this is the book disagreeing with itself.
-  // Choosing between them is a game-value judgement and the owner's ruling is
-  // that such conflicts are settled case by case; this case is still open.
+  // (printed p.66 = PDF 68) prints 1D3, the army list (printed p.85 = PDF 87)
+  // prints 1D6. Both were read at 400dpi and both are legible, so this is the
+  // book disagreeing with itself rather than a bad scan.
   //
-  // What IS settled is that the cell is a dice roll, so the old A: 1 was wrong
-  // under both readings. It shows "?" until the conflict is resolved. Pinned so
-  // that neither the "?" nor the absence of a number can be mistaken for an
-  // oversight, and so that picking a side later has to come through this test.
-  it('og-night-goblin-fanatics prints A as "?" — the bestiary/army-list conflict is OPEN', () => {
+  // OLD-45 — the owner settled it for the ARMY LIST: A is 1D6. The column held
+  // "?" while the case was open, which in turn replaced an invented A: 1 that
+  // was wrong under both readings.
+  //
+  // The ruling is scoped to THIS row. Bestiary-vs-army-list conflicts are
+  // decided case by case and never by precedent, so neither the Norsca note in
+  // source/OFFSETS.md (list wins) nor the Wood Elf wizard ruling (list wins,
+  // bestiary progression rejected) decided this one — and this one decides
+  // nothing else either.
+  //
+  // Pinned because the losing reading sits nineteen pages away in the same
+  // book: a later pass reading only the bestiary could "correct" it to 1D3.
+  it('og-night-goblin-fanatics prints A as "1D6" — the army list wins (OLD-45)', () => {
     const fanatics = getArmy('orcs-and-goblins')!.units.find((u) => u.id === 'og-night-goblin-fanatics')!
     expect(fanatics.statLine).not.toHaveProperty('A')
-    expect(fanatics.statNotes?.A).toBe('?')
-    // Not 1D3 and not 1D6: taking either side is the decision this pin guards.
-    expect(['1D3', '1D6']).not.toContain(fanatics.statNotes?.A)
+    expect(fanatics.statNotes?.A).toBe('1D6')
+    // Not the bestiary's 1D3, and not the "?" it showed while the case was open.
+    expect(fanatics.statNotes?.A).not.toBe('1D3')
+    expect(fanatics.statNotes?.A).not.toBe('?')
   })
 
   // The Berserker's WS/T/I/Ld disagree between printings of its own row. That is

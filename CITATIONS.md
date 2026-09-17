@@ -781,23 +781,26 @@ the repo's usual cm→inch conversion, so a Spanish book's roll reads `5D6cm` an
   del resultado en centímetros"*. The comment previously above this row (`// PDF p.85: M5D6 Especial
   F5 R3 H1 I1D6 A- L-`) was **mis-transcribed** — it had I and A swapped — and labelled a printed
   page as a PDF page; it has been replaced with the citation above.
-- **OPEN — the Fanatic's Attacks contradict between two pages of its own book.** The bestiary row
-  (printed **p.66**) prints **1D3**; the army list (printed **p.85** = PDF 87) prints **1D6**. Both
-  were read at 400dpi and both are legible, so this is the book disagreeing with itself rather than
-  a bad scan. Choosing between them is a game-value judgement and **it has not been made**: the
-  owner's ruling is that bestiary-vs-army-list conflicts are settled **case by case, with no blanket
-  precedent**, and this case is still open. Tracked as OLD-45.
+- **RESOLVED (OLD-45) — the Fanatic's Attacks contradict between two pages of its own book, and the
+  army list wins.** The bestiary row (printed **p.66** = PDF 68) prints **1D3**; the army list
+  (printed **p.85** = PDF 87) prints **1D6**. Both were read at 400dpi and both are legible, so this
+  is the book disagreeing with itself rather than a bad scan; the two rows agree on every other
+  column. The owner ruled for the **army list**, so `statNotes.A = '1D6'` and the entry cites
+  printed **p.85** for that one cell while the rest of its row cites printed p.66.
 
-  What the column shows meanwhile is `statNotes.A = '?'`. The old `A: 1` was **wrong under both
-  readings** — the one thing the book is unambiguous about is that the cell is a dice roll — so
-  leaving it would have kept exactly the confident-but-false number OLD-43 exists to remove. `?`
-  asserts nothing the book does not say and is deliberately distinct from the `–` used for the
-  columns the book really does leave blank. A test pins it so that picking a side later has to come
-  through that test.
+  A supporting hint, not the reason: the rules text on p.66 says the ball inflicts *"1D6 impactos de
+  Fuerza 5"* on contact. Those are **hits caused**, not the A attribute, so it does not settle the
+  cell — but it is a plausible origin for the 1D6 the list prints.
 
-  **Precedent note:** `source/OFFSETS.md` records the opposite outcome for **Norsca** (*"la lista de
-  ejército corrige al bestiario — gana la lista"*). That note stays scoped to Norsca and must **not**
-  be generalised; per the ruling above it is one case's answer, not a rule.
+  The column showed `'?'` between OLD-43 and this ruling, which in turn had replaced an invented
+  `A: 1` that was **wrong under both readings** — the one thing the book is unambiguous about is
+  that the cell is a dice roll. A test pins the 1D6 and explicitly rejects both the bestiary's 1D3
+  and the old `?`, because the losing reading sits nineteen pages away in the same book.
+
+  **Precedent note:** this ruling covers **this row only**. Bestiary-vs-army-list conflicts are
+  settled **case by case, with no blanket precedent** — that the Norsca note in `source/OFFSETS.md`
+  and the Wood Elf wizard ruling also went to the list did **not** decide this one, and this one
+  decides nothing else.
 - **Crazed Cooks** (`hf-crazed-cooks`) → `M`, `WS`, `I`, `A`, `Ld` dropped,
   `statNotes: { M: '2D6"', WS: 'Sp', I: '–', A: 'D6', Ld: '–' }` + `statNotesEs: { WS: 'Esp' }`.
   *Halflings* bestiary, printed **p.7** = PDF 5: "Crazed Cook 2D6 Sp 0 5 2 1 - D6 -". Only
@@ -850,8 +853,8 @@ rejected reading.
 
 **Precedent note:** this ruling covers **Wood Elves only**. Bestiary-vs-army-list conflicts are
 settled case by case, never by precedent — the same scoping applied to the Norsca note in
-`source/OFFSETS.md` (OLD-43) and to the still-open Orc & Goblin Fanatic Attacks (OLD-45), which was
-deliberately left at `?` rather than being decided alongside this one.
+`source/OFFSETS.md` (OLD-43) and to the Orc & Goblin Fanatic Attacks, which was deliberately left at
+`?` rather than being decided alongside this one and was later settled on its own terms in OLD-45.
 
 **Halflings (`hf-wizard`) — the Ld column is not recoverable, and no value was invented.**
 The only printed wizard table is in the *Hungry Horde* compilation at **PDF page 8** (printed folio
