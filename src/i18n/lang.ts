@@ -181,7 +181,6 @@ const STRINGS = {
     en: 'Old Battle is a free, ad-free fan project built in my spare time. If it helps you muster your armies, you can buy me a coffee — it keeps the project going.',
     es: 'Old Battle es un proyecto de aficionados gratuito y sin anuncios, hecho en mi tiempo libre. Si te ayuda a reclutar tus ejércitos, puedes invitarme a un café: así sigue adelante.',
   },
-  donateKofi: { en: '☕ Ko-fi', es: '☕ Ko-fi' },
   donateCoffee: { en: '☕ Buy me a coffee', es: '☕ Invítame a un café' },
   // NewList
   newListTitle: { en: 'New Army List', es: 'Nueva Lista de Ejército' },
