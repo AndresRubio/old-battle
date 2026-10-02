@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file provides guidance to Codex when working with code in this repository.
+This file provides guidance to AI coding agents (Claude Code, Codex, …) when working with code in this repository. It is the single source of project rules; `CLAUDE.md` only imports it.
 
 ## What this is
 
