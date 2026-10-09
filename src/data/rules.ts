@@ -296,7 +296,7 @@ export const RULES: RuleDef[] = [
   },
   {
     id: 'great-weapon',
-    aliases: ['great weapon', 'two-handed', 'arma a dos manos'],
+    aliases: ['great weapon', 'two-handed', 'double-handed', 'arma a dos manos', 'armas a dos manos'],
     titleEn: 'Great Weapon',
     titleEs: 'Arma a dos manos',
     en: 'A massive two-handed weapon that adds +2 Strength, but the wielder always strikes last and cannot use a shield in combat.',
@@ -327,6 +327,74 @@ export const RULES: RuleDef[] = [
     es: 'Una pesada lanza de caballería otorga un bonificador de Fuerza a la miniatura montada en el turno en que carga.',
   },
   {
+    id: 'halberd',
+    aliases: ['halberd', 'alabarda'],
+    titleEn: 'Halberd',
+    titleEs: 'Alabarda',
+    en: 'A heavy polearm that adds +1 Strength in close combat. It takes both hands, so the wielder cannot also use a shield in combat.',
+    es: 'Un arma de asta pesada que suma +1 a la Fuerza en combate cuerpo a cuerpo. Se empuña con ambas manos, así que quien la lleva no puede usar también escudo en combate.',
+  },
+  {
+    // FAQ 1996 §3.1 / §4.2: "troops with flails need to add the strength bonus
+    // for the first round of hand to hand combat".
+    id: 'flail',
+    aliases: ['flail', 'mangual', 'mayal'],
+    titleEn: 'Flail',
+    titleEs: 'Mangual',
+    en: 'Heavy balls or spiked heads on chains. A flail adds +2 Strength, but only in the first round of each close combat; after that the wielder fights at normal Strength.',
+    es: 'Bolas o cabezas con pinchos unidas por cadenas. El mangual suma +2 a la Fuerza, pero sólo en el primer turno de cada combate cuerpo a cuerpo; después se lucha con la Fuerza normal.',
+  },
+  {
+    id: 'bow',
+    aliases: ['bow', 'arco'],
+    titleEn: 'Bow',
+    titleEs: 'Arco',
+    en: 'Missile weapon: range 24", Strength 3.',
+    es: 'Arma de proyectiles: alcance 24", Fuerza 3.',
+  },
+  {
+    id: 'short-bow',
+    aliases: ['short bow', 'arco corto', 'arcos cortos'],
+    titleEn: 'Short Bow',
+    titleEs: 'Arco corto',
+    en: 'Missile weapon: range 16", Strength 3.',
+    es: 'Arma de proyectiles: alcance 16", Fuerza 3.',
+  },
+  {
+    id: 'longbow',
+    aliases: ['longbow', 'long bow', 'arco largo', 'arcos largos'],
+    titleEn: 'Longbow',
+    titleEs: 'Arco largo',
+    en: 'Missile weapon: range 30", Strength 3.',
+    es: 'Arma de proyectiles: alcance 30", Fuerza 3.',
+  },
+  {
+    id: 'crossbow',
+    aliases: ['crossbow', 'ballesta'],
+    titleEn: 'Crossbow',
+    titleEs: 'Ballesta',
+    en: 'Missile weapon: range 30", Strength 4.',
+    es: 'Arma de proyectiles: alcance 30", Fuerza 4.',
+  },
+  {
+    id: 'sling',
+    aliases: ['sling', 'honda'],
+    titleEn: 'Sling',
+    titleEs: 'Honda',
+    en: 'Missile weapon: range 18", Strength 3.',
+    es: 'Arma de proyectiles: alcance 18", Fuerza 3.',
+  },
+  {
+    // FAQ 1996 §8.1 (Rule Book pp.20, 95): barding −1 M; with heavy armour and
+    // shield as well, −2 M.
+    id: 'barding',
+    aliases: ['barding', 'barda'],
+    titleEn: 'Barding',
+    titleEs: 'Barda',
+    en: 'Armour for the mount. It improves the rider’s armour save by +1, but the weight costs the mount 1 point of Movement (2 if the rider also carries heavy armour and shield).',
+    es: 'Armadura para la montura. Mejora en +1 la salvación por armadura del jinete, pero su peso resta 1 punto de Movimiento a la montura (2 si el jinete lleva además armadura pesada y escudo).',
+  },
+  {
     id: 'magic-items',
     aliases: ['magic item'],
     titleEn: 'Magic Items',
@@ -336,7 +404,7 @@ export const RULES: RuleDef[] = [
   },
   {
     id: 'battle-standard',
-    aliases: ['battle standard'],
+    aliases: ['battle standard', 'portaestandarte de batalla'],
     titleEn: 'Battle Standard',
     titleEs: 'Estandarte de batalla',
     en: 'The army’s Battle Standard Bearer inspires nearby troops, letting friendly units within range re-roll failed Break tests. There may be only one in the army.',
@@ -390,6 +458,17 @@ export const TAG_RULE_OVERRIDES: Record<string, string | null> = {
     null,
   'Shield of the Old Ones — 4+ special save against each wound': null,
   'Shield of the Old Ones — 4+ special save against each wound (whole palanquin model)': null,
+  // Weapon words that name something other than the mundane weapon.
+  'Repeater Crossbow': null, // not the 30"/S4 crossbow
+  'Genius — before battle choose one: Artillery Accuracy, Crossbow Accuracy or Battle Strategy': null,
+  'Accompanied by Hugo le Petit (longbow hits at S5) and Gui le Gros': null,
+  'Citizen Levy — shoot with two ranks of bows': null,
+  'Runefang (+30 pts) and Dragon Bow (+40 pts) — fixed magic items': 'magic-items',
+  'Bow or javelin poison tips +1 pt (hits at +1 Strength)': 'poisoned-attacks',
+  'Shoot on the Wing — may shoot crossbows while flying with no move penalty (cannot shoot on foot)': 'flying',
+  // Named mounts whose barding is part of a special profile.
+  'Rides Malhandir (M12" WS4 S4 T3 W1 I5 A2 Ld7) with Dragon Armour barding (2+ save)': null,
+  "Rides W'Soraych, the Apocalypse Steed (M30→12\", WS6, S5, T4, I6, A3) with barding": null,
 }
 
 /**
@@ -467,4 +546,29 @@ export function findRule(tag: string): RuleDef | undefined {
     }
   }
   return best?.rule
+}
+
+/**
+ * Option ids whose glossary article `findRule` gets wrong from the option's
+ * name, pinned by hand — `null` suppresses the ⓘ. Keyed by option id, so one
+ * entry covers every army that reuses the id.
+ */
+export const OPTION_RULE_OVERRIDES: Record<string, string | null> = {
+  // "Repeater Crossbows" are not the 30"/S4 crossbow the article describes.
+  rxbow: null,
+  // The Lizardmen giant bow is its own weapon (36", S5), not a 24"/S3 bow.
+  'giant-bow': null,
+}
+
+/**
+ * The glossary article explaining an equipment option (halberd, flail, bows…),
+ * or undefined. Options carrying their own `description` don't need this —
+ * the caller shows that instead.
+ */
+export function findOptionRule(option: { id: string; name: string }): RuleDef | undefined {
+  if (Object.prototype.hasOwnProperty.call(OPTION_RULE_OVERRIDES, option.id)) {
+    const id = OPTION_RULE_OVERRIDES[option.id]
+    return id === null ? undefined : RULES.find((r) => r.id === id)
+  }
+  return findRule(option.name)
 }

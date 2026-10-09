@@ -14,7 +14,7 @@ import {
   statCell,
 } from '../rules/entryView'
 import type { EntryActions } from '../state/rosterOps'
-import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionDesc, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel } from '../i18n/lang'
+import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionInfo, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel } from '../i18n/lang'
 import { STANDARD_BEARER_ID } from '../data/unitOptions'
 import { findRule, type RuleDef } from '../data/rules'
 import { RuleDialog } from './RuleDialog'
@@ -365,7 +365,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                     />
                     {optionText(o.name, lang)} (+{unitOptionCost(unit, o, entry.optionIds)}
                     {isRegiment && !o.flat && !o.perCrewman ? t('perModel', lang) : ''})
-                    {optionDesc(o, lang) && (
+                    {optionInfo(o, lang) && (
                       <button
                         type="button"
                         className="mi-info"
@@ -472,7 +472,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                           onChange={() => actions.toggleOption(o.id)}
                         />
                         {optionText(o.name, lang)} (+{cost})
-                        {optionDesc(o, lang) && (
+                        {optionInfo(o, lang) && (
                           <button
                             type="button"
                             className="mi-info"
@@ -611,9 +611,13 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
       )}
       {activeOption && (
         <InfoDialog
-          kicker={t('options', lang)}
+          kicker={(() => {
+            // The article title, unless it just repeats the option's own name.
+            const k = optionInfo(activeOption, lang)?.kicker
+            return k && k.toLowerCase() !== optionText(activeOption.name, lang).toLowerCase() ? k : t('options', lang)
+          })()}
           title={optionText(activeOption.name, lang)}
-          body={optionDesc(activeOption, lang) ?? (lang === 'es' ? 'Sin descripción.' : 'No description.')}
+          body={optionInfo(activeOption, lang)?.body ?? (lang === 'es' ? 'Sin descripción.' : 'No description.')}
           onClose={() => setActiveOption(null)}
         />
       )}

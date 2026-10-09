@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { ARMIES } from './armies/index'
-import { RULES, findRule, TAG_RULE_OVERRIDES } from './rules'
+import { RULES, findRule, findOptionRule, TAG_RULE_OVERRIDES, OPTION_RULE_OVERRIDES } from './rules'
+import type { EquipmentOption } from './types'
 
 /**
  * OLD-42 — the ⓘ next to a unit's ability tag is chosen by `findRule`, a
@@ -103,5 +104,55 @@ describe('OLD-42 — every ⓘ is pinned to the article it opens', () => {
     expect(findRule('The Storm Daemon (Tormenta Demoníaca) halberd: S6, casts Warp Lightning (1D6 hits)')).toBeUndefined()
     expect(findRule('May include any number of Slayer Paladins (Giant/Dragon/Daemon Slayers)')).toBeUndefined()
     expect(findRule('Cloud of Flies (-1 to hit them)')).toBeUndefined()
+  })
+})
+
+/** Every equipment option without its own description, by id, with the article its ⓘ opens. */
+function allOptions(): EquipmentOption[] {
+  const opts: EquipmentOption[] = []
+  for (const army of ARMIES) {
+    for (const unit of army.units) {
+      opts.push(...(unit.options ?? []))
+      for (const m of unit.mounts ?? []) opts.push(...(m.options ?? []))
+    }
+  }
+  return opts
+}
+
+function resolvedOptions(): string {
+  const lines = new Set<string>()
+  for (const o of allOptions()) {
+    if (o.description) continue
+    const rule = findOptionRule(o)
+    if (rule) lines.add(`${rule.id}\t${o.id}\t${o.name}`)
+  }
+  return [...lines].sort().join('\n') + '\n'
+}
+
+describe('equipment options open the glossary article for their kit', () => {
+  it('matches the recorded option → glossary mapping', async () => {
+    await expect(resolvedOptions()).toMatchFileSnapshot('./__snapshots__/option-rules.txt')
+  })
+
+  it('the kit players ask about resolves', () => {
+    expect(findOptionRule({ id: 'flail', name: 'Mangual' })?.id).toBe('flail')
+    expect(findOptionRule({ id: 'halberd', name: 'Alabarda' })?.id).toBe('halberd')
+    expect(findOptionRule({ id: 'two-hand', name: 'Armas a Dos Manos' })?.id).toBe('great-weapon')
+    expect(findOptionRule({ id: 'great-weapon', name: 'Double-handed sword or axe' })?.id).toBe('great-weapon')
+    expect(findOptionRule({ id: 'short-bow', name: 'Short bows for crew' })?.id).toBe('short-bow')
+    expect(findOptionRule({ id: 'longbow', name: 'Longbows (upgrade from bows)' })?.id).toBe('longbow')
+    expect(findOptionRule({ id: 'crossbow', name: 'Crossbow (instead of Bow)' })?.id).toBe('crossbow')
+  })
+
+  it('an overridden option id is suppressed', () => {
+    expect(findOptionRule({ id: 'rxbow', name: 'Repeater Crossbows' })).toBeUndefined()
+  })
+
+  it('every option override is still needed and still points somewhere real', () => {
+    const live = new Set(allOptions().map((o) => o.id))
+    for (const [id, rule] of Object.entries(OPTION_RULE_OVERRIDES)) {
+      expect(live.has(id), `override for an option id no army uses: "${id}"`).toBe(true)
+      if (rule !== null) expect(RULES.some((r) => r.id === rule), `unknown rule '${rule}'`).toBe(true)
+    }
   })
 })

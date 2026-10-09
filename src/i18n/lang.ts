@@ -1,8 +1,9 @@
 import { useSyncExternalStore } from 'react'
-import type { Army, MagicItem, MagicItemCategory, MountOption, ProfileBlock, StatLine, UnitProfile, UnitRole } from '../data/types'
+import type { Army, EquipmentOption, MagicItem, MagicItemCategory, MountOption, ProfileBlock, StatLine, UnitProfile, UnitRole } from '../data/types'
 import type { MagicLore, Spell } from '../data/lores'
 import { RULE_PHRASE_ES } from './rulePhrases'
 import { wizardLevelOf } from '../data/unitOptions'
+import { findOptionRule } from '../data/rules'
 
 export type Lang = 'en' | 'es'
 
@@ -383,6 +384,23 @@ export const optionDesc = (
   opt: { description?: string; descEs?: string },
   lang: Lang,
 ): string | undefined => (lang === 'es' ? opt.descEs ?? opt.description : opt.description)
+
+/**
+ * What an option's ⓘ explains: its own description when it has one (Marks of
+ * Chaos…), otherwise the glossary article for the equipment it names (halberd,
+ * flail, bows…). `kicker` is the article title, or undefined for an own
+ * description. Undefined when there is nothing to explain.
+ */
+export const optionInfo = (
+  opt: EquipmentOption,
+  lang: Lang,
+): { kicker?: string; body: string } | undefined => {
+  const own = optionDesc(opt, lang)
+  if (own) return { body: own }
+  const rule = findOptionRule(opt)
+  if (!rule) return undefined
+  return lang === 'es' ? { kicker: rule.titleEs, body: rule.es } : { kicker: rule.titleEn, body: rule.en }
+}
 
 /** Resolve a magic item's localized name / description. */
 export const magicItemName = (item: MagicItem, lang: Lang): string =>
