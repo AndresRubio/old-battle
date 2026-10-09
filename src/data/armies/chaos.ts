@@ -28,32 +28,32 @@ const statline = (over: Partial<StatLine> = {}): StatLine => ({
 // --- Army-specific equipment options (per-model costs from the army lists).
 //     Same `id` = mutually exclusive slot reused across units at the unit's own
 //     price (cf. Dark Elves / Chaos Dwarfs). ---
-const SHIELD_1: EquipmentOption = { id: 'shield', name: 'Escudos', pointsPerModel: 1 }
-const SHIELD_2: EquipmentOption = { id: 'shield', name: 'Escudos', pointsPerModel: 2 }
-const SHIELD_HALF: EquipmentOption = { id: 'shield', name: 'Escudos', pointsPerModel: 0.5 }
+const SHIELD_1: EquipmentOption = { id: 'shield', name: 'Shields', pointsPerModel: 1 }
+const SHIELD_2: EquipmentOption = { id: 'shield', name: 'Shields', pointsPerModel: 2 }
+const SHIELD_HALF: EquipmentOption = { id: 'shield', name: 'Shields', pointsPerModel: 0.5 }
 // A model wears one body armour (Reglamento p.30), and Reino del Caos p.100
 // gives characters "Armadura Ligera (+2), Armadura Pesada (+3) o Armadura del
 // Caos (+10)": all three carry exclusiveGroup 'armour', so validateRoster warns
 // if a model buys two.
-const LIGHT_ARMOUR_2: EquipmentOption = { id: 'light-armour', name: 'Armadura Ligera', pointsPerModel: 2, exclusiveGroup: 'armour' }
+const LIGHT_ARMOUR_2: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 2, exclusiveGroup: 'armour' }
 // Chaos Armour for regiments: Warriors +7/model (p.103), Knights +14/model (p.103)
-const CHAOS_ARMOUR_7: EquipmentOption = { id: 'chaos-armour', name: 'Armadura del Caos', pointsPerModel: 7 }
-const CHAOS_ARMOUR_14: EquipmentOption = { id: 'chaos-armour', name: 'Armadura del Caos', pointsPerModel: 14 }
+const CHAOS_ARMOUR_7: EquipmentOption = { id: 'chaos-armour', name: 'Chaos armour', pointsPerModel: 7 }
+const CHAOS_ARMOUR_14: EquipmentOption = { id: 'chaos-armour', name: 'Chaos armour', pointsPerModel: 14 }
 // Chaos Armour for characters: +10 pts flat (Reino del Caos p.100), an
 // alternative to light or heavy armour — same exclusiveGroup.
-const CHAOS_ARMOUR_10: EquipmentOption = { id: 'chaos-armour', name: 'Armadura del Caos', pointsPerModel: 10, exclusiveGroup: 'armour' }
-const HEAVY_ARMOUR_3: EquipmentOption = { id: 'heavy-armour', name: 'Armadura Pesada', pointsPerModel: 3, exclusiveGroup: 'armour' }
-const ADD_HAND_WEAPON_1: EquipmentOption = { id: 'add-hand-weapon', name: 'Arma de Mano Adicional', pointsPerModel: 1 }
-const TWO_HAND_2: EquipmentOption = { id: 'two-hand', name: 'Armas a Dos Manos', pointsPerModel: 2 }
-const HALBERD_2: EquipmentOption = { id: 'halberd', name: 'Alabarda', pointsPerModel: 2 }
-const FLAIL_1: EquipmentOption = { id: 'flail', name: 'Mangual', pointsPerModel: 1 }
-const FLAIL_2: EquipmentOption = { id: 'flail', name: 'Mangual', pointsPerModel: 2 }
-const SPEAR_1: EquipmentOption = { id: 'spear', name: 'Lanza', pointsPerModel: 1 }
-const SPEAR_HALF: EquipmentOption = { id: 'spear', name: 'Lanza', pointsPerModel: 0.5 }
+const CHAOS_ARMOUR_10: EquipmentOption = { id: 'chaos-armour', name: 'Chaos armour', pointsPerModel: 10, exclusiveGroup: 'armour' }
+const HEAVY_ARMOUR_3: EquipmentOption = { id: 'heavy-armour', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' }
+const ADD_HAND_WEAPON_1: EquipmentOption = { id: 'add-hand-weapon', name: 'Additional hand weapon', pointsPerModel: 1 }
+const TWO_HAND_2: EquipmentOption = { id: 'two-hand', name: 'Two-handed weapons', pointsPerModel: 2 }
+const HALBERD_2: EquipmentOption = { id: 'halberd', name: 'Halberd', pointsPerModel: 2 }
+const FLAIL_1: EquipmentOption = { id: 'flail', name: 'Flail', pointsPerModel: 1 }
+const FLAIL_2: EquipmentOption = { id: 'flail', name: 'Flail', pointsPerModel: 2 }
+const SPEAR_1: EquipmentOption = { id: 'spear', name: 'Spear', pointsPerModel: 1 }
+const SPEAR_HALF: EquipmentOption = { id: 'spear', name: 'Spear', pointsPerModel: 0.5 }
 // Characters only: "Lanza de Caballería (+2 puntos) en el caso que se trate de
 // una miniatura a caballo" (Reino del Caos pp.100-102).
 const CAV_LANCE_2: EquipmentOption = { id: 'cav-lance', name: 'Cavalry lance', pointsPerModel: 2, requiresMount: true }
-const SCYTHED_WHEELS: EquipmentOption = { id: 'scythed-wheels', name: 'Ruedas con Cuchillas', pointsPerModel: 20, flat: true }
+const SCYTHED_WHEELS: EquipmentOption = { id: 'scythed-wheels', name: 'Scythed wheels', pointsPerModel: 20, flat: true }
 
 // --- Character mounts (Reino del Caos pp.100-102; mount profiles from the
 //     bestiary pp.74-90 / 114-117). In 5th ed a character's mount cost is added
@@ -155,28 +155,28 @@ const BLOODGREED_PROFILE: ProfileBlock = {
 // (p.56), so all four share `exclusiveGroup: 'mark'`. Sorcerer-specific variants
 // of the effects are noted in each description (p.103).
 const MARK_KHORNE: EquipmentOption = {
-  id: 'mark-khorne', name: 'Marca de Khorne', pointsPerModel: 45, exclusiveGroup: 'mark',
+  id: 'mark-khorne', name: 'Mark of Khorne', pointsPerModel: 45, exclusiveGroup: 'mark',
   description:
     'Frenzy, plus free Chaos Armour (4+ save; combines with shield and mount, does not count against the magic-item limit, and does not reduce movement). Khorne has no sorcerers — a wizard may not take this Mark.',
   descEs:
     'Furia Asesina y Armadura del Caos gratuita (salvación 4+; se combina con escudo y montura, no cuenta para el límite de objetos mágicos ni reduce el movimiento). Khorne no tiene hechiceros — un mago no puede llevar esta Marca.',
 }
 const MARK_NURGLE: EquipmentOption = {
-  id: 'mark-nurgle', name: 'Marca de Nurgle', pointsPerModel: 40, exclusiveGroup: 'mark',
+  id: 'mark-nurgle', name: 'Mark of Nurgle', pointsPerModel: 40, exclusiveGroup: 'mark',
   description:
     '+1 Toughness (Champion → T5; Hero/Lord → T6). On a Sorcerer instead: no lower-level wizard within 15cm of him may cast spells.',
   descEs:
     '+1 a la Resistencia (Paladín → R5; Héroe/Comandante → R6). En un Hechicero, en cambio: ningún hechicero de nivel inferior situado a 15 cm o menos puede lanzar hechizos.',
 }
 const MARK_SLAANESH: EquipmentOption = {
-  id: 'mark-slaanesh', name: 'Marca de Slaanesh', pointsPerModel: 35, exclusiveGroup: 'mark',
+  id: 'mark-slaanesh', name: 'Mark of Slaanesh', pointsPerModel: 35, exclusiveGroup: 'mark',
   description:
     'Immune to psychology and never flees close combat — peels off from a fleeing unit to keep fighting. On a Sorcerer instead: no enemy within 30cm may shoot at or cast spells on him.',
   descEs:
     'Inmune a la psicología y nunca huye del combate cuerpo a cuerpo — se separa de una unidad que huya para seguir luchando. En un Hechicero, en cambio: ningún enemigo situado a 30 cm o menos puede dispararle ni lanzarle hechizos.',
 }
 const MARK_TZEENTCH: EquipmentOption = {
-  id: 'mark-tzeentch', name: 'Marca de Tzeentch', pointsPerModel: 10, exclusiveGroup: 'mark',
+  id: 'mark-tzeentch', name: 'Mark of Tzeentch', pointsPerModel: 10, exclusiveGroup: 'mark',
   description:
     'Once per battle, re-roll one dice that affects him directly (armour save, to-hit, or a characteristic test), adding or subtracting 1 from the result. A re-roll may not itself be re-rolled.',
   descEs:
@@ -193,9 +193,9 @@ const MARK_TZEENTCH: EquipmentOption = {
 //   Maestro Hechicero  10 6 6 5 5 3 8 3  9
 //   Gran Hechicero     10 6 6 5 5 4 9 4 10
 const CHAOS_WIZARD_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Nivel 2 (Paladín Hechicero)', pointsPerModel: 82, magicItemSlotsDelta: 1, statLine: statline({ WS: 6, BS: 6, S: 5, T: 5, W: 2, I: 7, A: 2, Ld: 9 }) },
-  { id: 'wizard-l3', name: 'Nivel 3 (Maestro Hechicero)', pointsPerModel: 156, magicItemSlotsDelta: 2, statLine: statline({ WS: 6, BS: 6, S: 5, T: 5, W: 3, I: 8, A: 3, Ld: 9 }) },
-  { id: 'wizard-l4', name: 'Nivel 4 (Gran Hechicero)', pointsPerModel: 272, magicItemSlotsDelta: 3, statLine: statline({ WS: 6, BS: 6, S: 5, T: 5, W: 4, I: 9, A: 4, Ld: 10 }) },
+  { id: 'wizard-l2', name: 'Wizard Level 2 (Sorcerer Champion)', pointsPerModel: 82, magicItemSlotsDelta: 1, statLine: statline({ WS: 6, BS: 6, S: 5, T: 5, W: 2, I: 7, A: 2, Ld: 9 }) },
+  { id: 'wizard-l3', name: 'Wizard Level 3 (Master Sorcerer)', pointsPerModel: 156, magicItemSlotsDelta: 2, statLine: statline({ WS: 6, BS: 6, S: 5, T: 5, W: 3, I: 8, A: 3, Ld: 9 }) },
+  { id: 'wizard-l4', name: 'Wizard Level 4 (Great Sorcerer)', pointsPerModel: 272, magicItemSlotsDelta: 3, statLine: statline({ WS: 6, BS: 6, S: 5, T: 5, W: 4, I: 9, A: 4, Ld: 10 }) },
 ]
 
 // Beast Shaman level upgrades — Shaman (L1) 68 → Paladín (L2) 134 →
@@ -208,9 +208,9 @@ const CHAOS_WIZARD_LEVELS: EquipmentOption[] = [
 //   Maestro Shaman  10 4 3 4 5 4 5 2 7
 //   Gran Shaman     10 4 3 4 5 5 6 3 8
 const BEAST_SHAMAN_LEVELS: EquipmentOption[] = [
-  { id: 'wizard-l2', name: 'Nivel 2 (Paladín Shaman)', pointsPerModel: 66, magicItemSlotsDelta: 1, statLine: statline({ WS: 4, BS: 3, S: 4, T: 5, W: 3, I: 4, A: 1, Ld: 7 }) },
-  { id: 'wizard-l3', name: 'Nivel 3 (Maestro Shaman)', pointsPerModel: 157, magicItemSlotsDelta: 2, statLine: statline({ WS: 4, BS: 3, S: 4, T: 5, W: 4, I: 5, A: 2, Ld: 7 }) },
-  { id: 'wizard-l4', name: 'Nivel 4 (Gran Shaman)', pointsPerModel: 268, magicItemSlotsDelta: 3, statLine: statline({ WS: 4, BS: 3, S: 4, T: 5, W: 5, I: 6, A: 3, Ld: 8 }) },
+  { id: 'wizard-l2', name: 'Wizard Level 2 (Shaman Champion)', pointsPerModel: 66, magicItemSlotsDelta: 1, statLine: statline({ WS: 4, BS: 3, S: 4, T: 5, W: 3, I: 4, A: 1, Ld: 7 }) },
+  { id: 'wizard-l3', name: 'Wizard Level 3 (Master Shaman)', pointsPerModel: 157, magicItemSlotsDelta: 2, statLine: statline({ WS: 4, BS: 3, S: 4, T: 5, W: 4, I: 5, A: 2, Ld: 7 }) },
+  { id: 'wizard-l4', name: 'Wizard Level 4 (Great Shaman)', pointsPerModel: 268, magicItemSlotsDelta: 3, statLine: statline({ WS: 4, BS: 3, S: 4, T: 5, W: 5, I: 6, A: 3, Ld: 8 }) },
 ]
 
 const units: UnitProfile[] = [
@@ -1174,7 +1174,7 @@ const units: UnitProfile[] = [
     pointsPerModel: 35,
     statLine: statline({ M: 4, WS: 6, BS: 5, S: 4, T: 3, W: 1, I: 6, A: 3, Ld: 10 }),
     minSize: 5,
-    options: [{ id: 'steed-of-slaanesh', name: 'Corceles de Slaanesh', pointsPerModel: 25 }],
+    options: [{ id: 'steed-of-slaanesh', name: 'Steeds of Slaanesh', pointsPerModel: 25 }],
     specialRules: [
       'Daemon of Slaanesh',
       'Daemonic (4+ aura save)',
