@@ -86,6 +86,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Ethereal': 'Etéreo',
   'Fast cavalry': 'Caballería ligera',
   'Fast cavalry (skirmish)': 'Caballería ligera (hostigadores)',
+  'Fast cavalry — lost if they take shields (save becomes 4+)': 'Caballería ligera — la pierden si llevan escudos (la salvación pasa a 4+)',
   'Fear Elves': 'Miedo a los Elfos',
   'Fiery body (4+ ward save)': 'Cuerpo ígneo (salvación especial 4+)',
   'Fire & flee': 'Disparar y huir',

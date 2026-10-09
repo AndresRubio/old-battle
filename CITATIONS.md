@@ -889,6 +889,24 @@ catalog. Corrected to 100 and pinned by a test in `armies.test.ts`.
 Side note, no app change: `source/transcribed/magia.md` claims the *Garra de Nagash* on that same
 p.44 prints no cost. The scan does print *"50 puntos"*, which is what the app already charges.
 
+#### Marauder Horsemen and Chaos Ogres — Reino del Caos p.105 (2026-10-09)
+Source: `source/1998 Reino del Caos.pdf`, offset +2, **printed p.105 = PDF 107**, vision-verified.
+- **Marauder Horseman rider** (`ch-marauder-horsemen`) — BS 4 / T 4 → **BS 3 / T 3**. The row prints
+  *"Jinete Bárbaro 10 4 3 4 3 1 4 2 7"*, the same as the Bárbaro del Caos in the bestiary (printed
+  p.76), so the book does not contradict itself here. The Caballo de Guerra row
+  (*"20 3 0 3 3 1 3 1 5"*) was already right.
+- **No cavalry lance** — checked because a user asked about it, and nothing changes: the only options
+  printed are *"Flagelos (+2 puntos por miniatura)"* and *"Escudos (+2 puntos por miniatura)"*, which
+  is exactly what the app offers. A test pins that list.
+- **Fast cavalry is conditional.** The Reglamento (printed p.23) defines fast cavalry as cavalry
+  with a save *"no superior a 5 ó más"* and Movement of at least 15cm. Light armour + horse gives the
+  printed 5+; shields take it to 4+, so the unit stops being fast cavalry. Special-rule tags are
+  static, so the app cannot hide the tag when shields are bought; the tag itself now says so:
+  *"Fast cavalry — lost if they take shields (save becomes 4+)"*.
+- **Chaos Ogres** (`ch-ogres`) — added the missing heavy armour option: *"Armadura Ligera (+2
+  puntos) o Armadura Pesada (+3 puntos)"*. The app does not make light and heavy armour mutually
+  exclusive, and neither does any other army (e.g. Norse Dwarfs).
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),
