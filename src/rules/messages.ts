@@ -60,6 +60,7 @@ export interface RuleParams {
   'magic-standard-invalid-item': { unit: UnitProfile; item?: MagicItem; itemId: string }
   'options-exclusive-group': { unit: UnitProfile; group: string; count: number }
   'mount-options-stale': { unit: UnitProfile; mount: MountOption; options: EquipmentOption[] }
+  'option-requires-mount': { unit: UnitProfile; option: EquipmentOption }
   'mount-requires-option': {
     unit: UnitProfile
     mount: MountOption
@@ -216,6 +217,10 @@ const MESSAGES: { [K in RuleId]: MessageBuilder<K> } = {
       ? `${un(p, lang)}: las opciones "${optNames}" pertenecen a ${mountName(p.mount, lang)}, que no es su montura actual.`
       : `${un(p, lang)}: the options "${optNames}" belong to ${mountName(p.mount, lang)}, which is not its current mount.`
   },
+  'option-requires-mount': (p, lang) =>
+    lang === 'es'
+      ? `${un(p, lang)}: ${optionText(p.option.name, lang)} sólo sirve a una miniatura montada — elige una montura o quita la opción.`
+      : `${un(p, lang)}: ${optionText(p.option.name, lang)} is only for a mounted model — choose a mount or drop it.`,
   'mount-requires-option': (p, lang) => {
     const reqName = p.requiredOption ? optionText(p.requiredOption.name, lang) : p.requiredOptionId
     return lang === 'es'

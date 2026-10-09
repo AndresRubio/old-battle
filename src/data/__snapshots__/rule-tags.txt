@@ -82,7 +82,6 @@ terror	Causes terror	[chaos high-elves norse orcs-and-goblins undead vampire-cou
 terror	Causes terror (Supernatural Horror)	[vampire-counts]
 terror	Causes terror; Panic Horses (horse-mounted units test terror at -1 Ld)	[norse]
 terror	Causes terror; large target; no save	[norse]
-chaos-armour	Chaos armour	[chaos]
 chaos-armour	Chaos armour (4+ save)	[chaos]
 chaos-armour	Chaos armour → 4+ save	[chaos]
 light-armour	Chariot T7 W3; pulled by 2 Giant Wolves; 2 Goblin crew (swords & light armour)	[orcs-and-goblins]

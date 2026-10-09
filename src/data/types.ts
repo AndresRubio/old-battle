@@ -80,6 +80,14 @@ export interface EquipmentOption {
    */
   exclusiveGroup?: string
   /**
+   * Only a mounted model may use this option — e.g. a Chaos character's
+   * cavalry lance, "en el caso que se trate de una miniatura a caballo"
+   * (Reino del Caos pp.100-102). Any mount satisfies it: the entry's chosen
+   * `mountId`, or a regiment's fixed `mount`. Validated as rule
+   * `option-requires-mount` (warning).
+   */
+  requiresMount?: boolean
+  /**
    * On any crewed host — a chariot `MountOption` or a chariot / war-machine
    * `UnitProfile` — the cost is `pointsPerModel` × the host's CURRENT crew count
    * (its `baseCrew` + one per selected `addsCrewman` option), e.g. chariot crew

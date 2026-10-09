@@ -940,6 +940,29 @@ and Chaos armour. The sorcerer's Chaos armour has no alternative to clash with. 
 The warning now reads *"a model may carry only one kind of armour"* / *"una miniatura sólo puede
 portar un tipo de armadura"*, which covers both cases.
 
+#### Chaos character armoury completed (2026-10-09)
+Source: `source/1998 Reino del Caos.pdf`, offset +2, vision-verified on **printed p.100 = PDF 102**
+(Paladín, Héroe and Comandante del Caos) and **printed p.102 = PDF 104** (Portaestandarte de
+Batalla). Both pages print the same kit, and `ch-lord`, `ch-hero`, `ch-champion` and
+`ch-battle-standard` were missing three items:
+- **Light armour +2.** *"Escudo (+1 punto), y con Armadura Ligera (+2 puntos), Armadura Pesada (+3
+  puntos) o Armadura del Caos (+10 puntos)"*. It joins `exclusiveGroup: 'armour'` with the other two.
+- **Cavalry lance +2.** *"o Lanza de Caballería (+2 puntos) en el caso que se trate de una miniatura
+  a caballo"*. This adds a new `EquipmentOption.requiresMount` flag. The lance is offered on foot as
+  well, but the new `option-requires-mount` warning fires until the character has a mount. Any
+  mount counts: the book's *"a caballo"* is read as "mounted", not "on a horse".
+- **Barding +4.** *"Si la miniatura está montada en un Corcel del Caos, éste puede equiparse con
+  Barda (+4 puntos)"*. It is an option of the Chaos Steed mount (`mount-chaos-steed-barding`), so
+  it appears only while the rider is on one and goes stale if the mount changes. The Sorcerer
+  (printed p.101) prints the same barding line and rides the same Chaos Steed, so he gets it too.
+
+The four characters also carried a **"Chaos armour"** special-rule tag, which read as if they wore it
+by default. The book prices it as a +10 option, so the tag is gone.
+
+Still missing from the book's weapon lists, and not added here: the Battle Standard Bearer's
+additional hand weapon (+1), double-handed weapon (+2), halberd (+2), spear (+1) and flail (+1) on
+p.102. The Sorcerer has no weapon options at all, though p.101 prints the same six (lance included).
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

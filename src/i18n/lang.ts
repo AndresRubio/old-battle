@@ -336,6 +336,7 @@ const OPTION_ES: Record<string, string> = {
   'Barding (steeds)': 'Barda (corceles)',
   'Barding (both Elven Steeds)': 'Barda (ambos Corceles Élficos)',
   'Nightmare barding': 'Barda de pesadilla',
+  Barding: 'Barda',
   'Nightmare mount': 'Montura pesadilla',
   'Bretonnian Warhorse': 'Caballo de guerra bretoniano',
   'Barded Elven Steed': 'Corcel élfico con barda',

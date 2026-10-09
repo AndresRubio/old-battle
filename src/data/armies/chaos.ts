@@ -50,6 +50,9 @@ const FLAIL_1: EquipmentOption = { id: 'flail', name: 'Mangual', pointsPerModel:
 const FLAIL_2: EquipmentOption = { id: 'flail', name: 'Mangual', pointsPerModel: 2 }
 const SPEAR_1: EquipmentOption = { id: 'spear', name: 'Lanza', pointsPerModel: 1 }
 const SPEAR_HALF: EquipmentOption = { id: 'spear', name: 'Lanza', pointsPerModel: 0.5 }
+// Characters only: "Lanza de Caballería (+2 puntos) en el caso que se trate de
+// una miniatura a caballo" (Reino del Caos pp.100-102).
+const CAV_LANCE_2: EquipmentOption = { id: 'cav-lance', name: 'Cavalry lance', pointsPerModel: 2, requiresMount: true }
 const SCYTHED_WHEELS: EquipmentOption = { id: 'scythed-wheels', name: 'Ruedas con Cuchillas', pointsPerModel: 20, flat: true }
 
 // --- Character mounts (Reino del Caos pp.100-102; mount profiles from the
@@ -84,9 +87,14 @@ const BEAST_OF_NURGLE_NOTES: StatNotes = { A: '1D6' }
 // orcsGoblins.ts).
 const CHAOS_CHARIOT_CHASSIS_STATS = { S: 7, T: 7, W: 3, I: 1 } as const
 
+// "Si la miniatura está montada en un Corcel del Caos, éste puede equiparse con
+// Barda (+4 puntos)" — the same line for every character that may ride one
+// (Reino del Caos pp.100-102). A mount option, so it is offered only while the
+// rider is on the Chaos Steed and goes stale if the mount changes.
 const CHAOS_STEED_MOUNT: MountOption = {
   id: 'mount-chaos-steed', name: 'Chaos Steed', nameEs: 'Corcel del Caos',
   points: 4, statLine: CHAOS_STEED_STATS,
+  options: [{ id: 'mount-chaos-steed-barding', name: 'Barding', pointsPerModel: 4 }],
 }
 const JUGGERNAUT_MOUNT: MountOption = {
   id: 'mount-juggernaut', name: 'Juggernaut of Khorne', nameEs: 'Devastador de Khorne',
@@ -222,12 +230,12 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     options: [
-      ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, SPEAR_1, FLAIL_1,
-      SHIELD_1, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
+      ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, SPEAR_1, FLAIL_1, CAV_LANCE_2,
+      SHIELD_1, LIGHT_ARMOUR_2, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
       MARK_KHORNE, MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],
     mounts: CHAOS_CHARACTER_MOUNTS,
-    specialRules: ['Chaos armour', 'May ride a Chaos Steed or a daemonic mount matching its Mark'],
+    specialRules: ['May ride a Chaos Steed or a daemonic mount matching its Mark'],
   },
   {
     id: 'ch-hero',
@@ -240,12 +248,12 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: true,
     options: [
-      ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, SPEAR_1, FLAIL_1,
-      SHIELD_1, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
+      ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, SPEAR_1, FLAIL_1, CAV_LANCE_2,
+      SHIELD_1, LIGHT_ARMOUR_2, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
       MARK_KHORNE, MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],
     mounts: CHAOS_CHARACTER_MOUNTS,
-    specialRules: ['Chaos armour', 'May ride a Chaos Steed or a daemonic mount matching its Mark'],
+    specialRules: ['May ride a Chaos Steed or a daemonic mount matching its Mark'],
   },
   {
     id: 'ch-champion',
@@ -257,12 +265,12 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     options: [
-      ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, SPEAR_1, FLAIL_1,
-      SHIELD_1, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
+      ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, SPEAR_1, FLAIL_1, CAV_LANCE_2,
+      SHIELD_1, LIGHT_ARMOUR_2, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
       MARK_KHORNE, MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],
     mounts: CHAOS_CHARACTER_MOUNTS,
-    specialRules: ['Chaos armour', 'May lead a regiment; may ride a Chaos Steed or a daemonic mount matching its Mark'],
+    specialRules: ['May lead a regiment; may ride a Chaos Steed or a daemonic mount matching its Mark'],
   },
   {
     id: 'ch-battle-standard',
@@ -277,11 +285,12 @@ const units: UnitProfile[] = [
     isBSB: true,
     max: 1,
     options: [
-      SHIELD_1, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
+      CAV_LANCE_2,
+      SHIELD_1, LIGHT_ARMOUR_2, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
       MARK_KHORNE, MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],
     mounts: CHAOS_CHARACTER_MOUNTS,
-    specialRules: ['0-1 Army Battle Standard', 'May carry one magic standard', 'Chaos armour', 'May ride a Chaos Steed or a daemonic mount matching its Mark'],
+    specialRules: ['0-1 Army Battle Standard', 'May carry one magic standard', 'May ride a Chaos Steed or a daemonic mount matching its Mark'],
   },
 
   // ----- Chaos Sorcerer (Hechiceros del Caos, Reino del Caos pp.75, 101) -----

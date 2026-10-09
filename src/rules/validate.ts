@@ -235,6 +235,16 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
       raise('warning', 'mount-options-stale', { unit, mount: s.mount, options: s.selected }, e.id)
     }
 
+    // An option only a mounted model may use (e.g. a Chaos character's cavalry
+    // lance) on an entry with no mount. See EquipmentOption.requiresMount.
+    if (!e.mountId && !unit.mount) {
+      for (const option of unit.options ?? []) {
+        if (option.requiresMount && e.optionIds.includes(option.id)) {
+          raise('warning', 'option-requires-mount', { unit, option }, e.id)
+        }
+      }
+    }
+
     // A mount that requires an option (e.g. a daemonic mount needs the matching
     // Mark of Chaos). See MountOption.requiresOption.
     if (e.mountId) {
