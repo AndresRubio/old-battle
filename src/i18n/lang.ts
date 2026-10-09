@@ -365,6 +365,16 @@ const OPTION_ES: Record<string, string> = {
   'Spears for the crew': 'Lanzas para la dotación',
   'Light armour for the rider': 'Armadura ligera para el jinete',
   'Light armour for the Dwarf crew': 'Armadura ligera para la dotación Enana',
+  // Chaos (Reino del Caos)
+  Flail: 'Mangual',
+  'Chaos armour': 'Armadura del Caos',
+  'Mark of Khorne': 'Marca de Khorne',
+  'Mark of Nurgle': 'Marca de Nurgle',
+  'Mark of Slaanesh': 'Marca de Slaanesh',
+  'Mark of Tzeentch': 'Marca de Tzeentch',
+  'Steeds of Slaanesh': 'Corceles de Slaanesh',
+  // Vampire Counts
+  'Great Spectral Wolf': 'Gran Lobo Espectral',
 }
 
 /** Translate an equipment option label. Falls back to the stored name. */
