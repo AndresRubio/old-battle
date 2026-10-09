@@ -2416,3 +2416,38 @@ describe('Reino del Caos printed p.105 — Marauder Horsemen and Chaos Ogres mat
     expect(cost('heavy-armour')).toBe(3)
   })
 })
+
+describe('light and heavy armour are alternatives on every model (Reglamento p.30)', () => {
+  // Reglamento printed p.30 = PDF 32, armour-save table: "Escudo y Armadura
+  // Ligera o Armadura Pesada" — light and heavy are never worn together. Any
+  // option list offering both must put them in one exclusiveGroup, so
+  // validateRoster warns (options-exclusive-group) when both are bought.
+  // Ids differ by army (Vampire Counts characters use `heavy-armour-char`);
+  // a crew's and a rider's armour (`crew-…`/`rider-…`) belong to different
+  // models and are not caught here.
+  const offering = ARMIES.flatMap((a) =>
+    a.units.flatMap((u) =>
+      [u.options ?? [], ...(u.mounts ?? []).map((m) => m.options ?? [])].flatMap((opts) => {
+        const light = opts.find((o) => o.id === 'light-armour')
+        const heavy = opts.find((o) => /^heavy-armour/.test(o.id))
+        return light && heavy ? [{ unit: u.id, light, heavy }] : []
+      }),
+    ),
+  )
+
+  it('finds every unit that offers both (the sweep is not vacuous)', () => {
+    expect(offering.map((x) => x.unit).sort()).toEqual([
+      'br-battle-standard', 'br-general', 'br-hero',
+      'ch-ogres',
+      'no-norse-dwarfs',
+      'ud-skeleton-warriors',
+      'vc-skeletons', 'vc-vampire-bsb', 'vc-vampire-count', 'vc-vampire-lord',
+      'vc-vampire-neonate', 'vc-wight-bsb', 'vc-wight-lord',
+    ])
+  })
+
+  it.each(offering)('$unit: light and heavy armour share exclusiveGroup "armour"', ({ light, heavy }) => {
+    expect(light.exclusiveGroup).toBe('armour')
+    expect(heavy.exclusiveGroup).toBe('armour')
+  })
+})

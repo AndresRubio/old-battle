@@ -568,8 +568,9 @@ const units: UnitProfile[] = [
     statLine: { M: 3, WS: 4, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 9 },
     minSize: 5,
     options: [
-      { id: 'light-armour', name: 'Light armour', pointsPerModel: 2 },
-      { id: 'heavy-armour', name: 'Heavy armour', pointsPerModel: 3 },
+      // Worn one or the other (Reglamento p.30).
+      { id: 'light-armour', name: 'Light armour', pointsPerModel: 2, exclusiveGroup: 'armour' },
+      { id: 'heavy-armour', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' },
       DOUBLE_HANDED_2,
       SPEARS_1,
       { id: 'crossbows', name: 'Crossbows', pointsPerModel: 2 },

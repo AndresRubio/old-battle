@@ -31,9 +31,12 @@ import { COMMON_MAGIC_ITEMS } from '../magicItems'
 // Per-model costs printed in the regiment option lines (pp.62–66).
 // Same `id` = a mutually-exclusive wargear slot reused across units.
 const SHIELD_1: EquipmentOption = { id: 'shield', name: 'Shield', pointsPerModel: 1 }
-const LIGHT_ARMOUR_2: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 2 }
+// Light and heavy armour are worn one or the other (Reglamento p.30): every
+// unit offering both puts them in exclusiveGroup 'armour', incl. the
+// characters' inline `heavy-armour-char`.
+const LIGHT_ARMOUR_2: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 2, exclusiveGroup: 'armour' }
 const HEAVY_ARMOUR_2: EquipmentOption = { id: 'heavy-armour', name: 'Heavy armour', pointsPerModel: 2 }
-const HEAVY_ARMOUR_3: EquipmentOption = { id: 'heavy-armour', name: 'Heavy armour', pointsPerModel: 3 }
+const HEAVY_ARMOUR_3: EquipmentOption = { id: 'heavy-armour', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' }
 const SPEARS_1: EquipmentOption = { id: 'spears', name: 'Spear', pointsPerModel: 1 }
 const HALBERD_2: EquipmentOption = { id: 'halberd', name: 'Halberd', pointsPerModel: 2 }
 const TWO_HAND_2: EquipmentOption = { id: 'two-hand', name: 'Two-handed weapon', pointsPerModel: 2 }
@@ -156,7 +159,7 @@ const units: UnitProfile[] = [
       { id: 'cav-lance-char', name: 'Cavalry lance', pointsPerModel: 2 },
       SHIELD_1,
       LIGHT_ARMOUR_2,
-      { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3 },
+      { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' },
       BARDING_2,
     ],
     mounts: VAMPIRE_MOUNTS,
@@ -189,7 +192,7 @@ const units: UnitProfile[] = [
       { id: 'cav-lance-char', name: 'Cavalry lance', pointsPerModel: 2 },
       SHIELD_1,
       LIGHT_ARMOUR_2,
-      { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3 },
+      { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' },
       BARDING_2,
     ],
     mounts: VAMPIRE_MOUNTS,
@@ -221,7 +224,7 @@ const units: UnitProfile[] = [
       { id: 'cav-lance-char', name: 'Cavalry lance', pointsPerModel: 2 },
       SHIELD_1,
       LIGHT_ARMOUR_2,
-      { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3 },
+      { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' },
       BARDING_2,
     ],
     mounts: VAMPIRE_MOUNTS,
@@ -355,7 +358,7 @@ const units: UnitProfile[] = [
       { id: 'cav-lance-char', name: 'Cavalry lance', pointsPerModel: 2 },
       SHIELD_1,
       LIGHT_ARMOUR_2,
-      { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3 },
+      { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' },
       BARDING_2,
     ],
     mounts: VAMPIRE_MOUNTS,
@@ -389,7 +392,7 @@ const units: UnitProfile[] = [
       { id: 'cav-lance-char', name: 'Cavalry lance', pointsPerModel: 2 },
       SHIELD_1,
       LIGHT_ARMOUR_2,
-      { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3 },
+      { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' },
       BARDING_2,
     ],
     mounts: NIGHTMARE_ONLY_MOUNTS,
@@ -445,7 +448,7 @@ const units: UnitProfile[] = [
       { id: 'cav-lance-char', name: 'Cavalry lance', pointsPerModel: 2 },
       SHIELD_1,
       LIGHT_ARMOUR_2,
-      { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3 },
+      { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' },
     ],
     mounts: NIGHTMARE_ONLY_MOUNTS,
   },

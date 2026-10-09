@@ -904,8 +904,26 @@ Source: `source/1998 Reino del Caos.pdf`, offset +2, **printed p.105 = PDF 107**
   static, so the app cannot hide the tag when shields are bought; the tag itself now says so:
   *"Fast cavalry — lost if they take shields (save becomes 4+)"*.
 - **Chaos Ogres** (`ch-ogres`) — added the missing heavy armour option: *"Armadura Ligera (+2
-  puntos) o Armadura Pesada (+3 puntos)"*. The app does not make light and heavy armour mutually
-  exclusive, and neither does any other army (e.g. Norse Dwarfs).
+  puntos) o Armadura Pesada (+3 puntos)"*. The two are mutually exclusive; see the next entry.
+
+#### Light and heavy armour are alternatives, app-wide (2026-10-09)
+Source: `source/1996 Reglamento.pdf`, **printed p.30 = PDF 32**, vision-verified. The armour-save
+table (*ARMADURAS*) has a row for *"Escudo o Armadura Ligera"*, one for *"Escudo y Armadura Ligera o
+Armadura Pesada"* and one for *"Armadura Pesada y Escudo"*, but none for light and heavy together.
+A model wears one or the other. Thirteen units offered both as independent options, so a roster
+could buy both:
+- Bretonnia: `br-general`, `br-hero` and `br-battle-standard`.
+- Chaos: `ch-ogres`.
+- Norse: `no-norse-dwarfs`.
+- Undead: `ud-skeleton-warriors`.
+- Vampire Counts: `vc-skeletons` and six characters, whose option id is `heavy-armour-char`.
+
+Each pair now shares `exclusiveGroup: 'armour'`, like the Marks of Chaos. Buying both raises the
+`options-exclusive-group` warning (*"light or heavy armour, not both"* / *"armadura ligera o pesada,
+no ambas"*); the checkboxes don't untick each other. A sweep in `armies.test.ts` pins the list of
+units and fails if a new unit offers both without the group. Crew and rider armour on one entry
+(`crew-light-armour` / `rider-light-armour` on the Norse war mammoth) belong to different models
+and stay independent.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
