@@ -831,7 +831,6 @@ const units: UnitProfile[] = [
     nameEs: 'Carruaje del Caos',
     role: 'chariot',
     pointsPerModel: 122,
-    statLine: statline({ S: 7, T: 7, W: 3, A: 0 }),
     profiles: [
       // OLD-33 — Reino del Caos printed p.104 = PDF 106: "Carruaje - - - 7 7 3 1 - -"
       { name: 'Chariot', nameEs: 'Carro', statLine: CHAOS_CHARIOT_CHASSIS_STATS },
@@ -855,7 +854,6 @@ const units: UnitProfile[] = [
     nameEs: 'Carruaje Bárbaro',
     role: 'chariot',
     pointsPerModel: 80,
-    statLine: statline({ S: 5, T: 5, W: 3, A: 0 }),
     profiles: [
       { name: 'Chariot', nameEs: 'Carro', statLine: CHAOS_CHARIOT_CHASSIS_STATS },
       { name: '2 Chaos Marauders (crew)', nameEs: '2 Bárbaros del Caos (tripulación)', statLine: statline({ WS: 4, BS: 3, S: 4, T: 3, I: 4, A: 2, Ld: 7 }) },
@@ -874,7 +872,6 @@ const units: UnitProfile[] = [
     nameEs: 'Carruaje de los Hombres Bestia',
     role: 'chariot',
     pointsPerModel: 88,
-    statLine: statline({ S: 7, T: 7, W: 3, A: 0 }),
     profiles: [
       // OLD-33 — Reino del Caos printed p.109 = PDF 111: "Carruaje - - - 7 7 3 1 - -"
       { name: 'Chariot', nameEs: 'Carro', statLine: { S: 7, T: 7, W: 3, I: 1 } },

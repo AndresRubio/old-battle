@@ -22,7 +22,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Built on a dead Manticore': 'Construido sobre una Mantícora muerta',
   'Chariot (T7 W3) — drawn by 2 Chaos Steeds, crew of 2 Chaos Warriors': 'Carro (R7 H3) — tirado por 2 Corceles del Caos, dotación de 2 Guerreros del Caos',
   'Chariot (T7 W3) — drawn by 2 Tuskgors, crew of 2 Gor Beastmen': 'Carro (R7 H3) — tirado por 2 Tuskgors, dotación de 2 Hombres Bestia Gor',
-  'Chariot (T7 W3) — drawn by 2 War Horses, crew of 2 Chaos Marauders': 'Carro (R7 H3) — tirado por 2 Caballos de Guerra, dotación de 2 Saqueadores del Caos',
+  'Chariot (T7 W3) — drawn by 2 War Horses, crew of 2 Chaos Marauders': 'Carro (R7 H3) — tirado por 2 Caballos de Guerra, dotación de 2 Bárbaros del Caos',
   'Chariot has no armour save': 'El carro no tiene salvación por armadura',
   'Daemonic mount of Khorne': 'Montura demoníaca de Khorne',
   'Daemonic mount of Khorne (requires the Mark of Khorne)': 'Montura demoníaca de Khorne (requiere la Marca de Khorne)',
