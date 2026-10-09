@@ -336,6 +336,18 @@ describe('mounts & profiles', () => {
     expect(names.some((n) => /Steed/i.test(n))).toBe(true)
   })
 
+  // Reino del Caos p.104/p.109 print only chassis, crew and beast rows; the old
+  // top statLine was a Chaos Warrior default with S/T overrides that matched no
+  // printed row, so these chariots show their labelled profiles alone.
+  it('Chaos: chariots carry no unlabelled top statLine, only book profiles', () => {
+    const chaos = getArmy('chaos')!
+    for (const id of ['ch-chariot', 'ch-marauder-chariot', 'ch-beast-chariot']) {
+      const u = chaos.units.find((x) => x.id === id)!
+      expect(u.statLine, id).toBeUndefined()
+      expect(u.profiles?.find((p) => p.name === 'Chariot')?.statLine, id).toEqual({ S: 7, T: 7, W: 3, I: 1 })
+    }
+  })
+
   // Every model in these regiments is a rider on a mount, so each must expose a
   // `mount` profile (rendered as the rider's second stat row: rider on top,
   // mount beneath). Keep this list in step with the army data.
