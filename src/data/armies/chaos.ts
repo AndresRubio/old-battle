@@ -285,7 +285,7 @@ const units: UnitProfile[] = [
     isBSB: true,
     max: 1,
     options: [
-      CAV_LANCE_2,
+      ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, SPEAR_1, FLAIL_1, CAV_LANCE_2,
       SHIELD_1, LIGHT_ARMOUR_2, HEAVY_ARMOUR_3, CHAOS_ARMOUR_10,
       MARK_KHORNE, MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],
@@ -307,6 +307,8 @@ const units: UnitProfile[] = [
     canBeGeneral: true,
     options: [
       ...CHAOS_WIZARD_LEVELS,
+      // Printed p.101: the same six weapons as the warrior characters.
+      ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, SPEAR_1, FLAIL_1, CAV_LANCE_2,
       CHAOS_ARMOUR_10,
       MARK_NURGLE, MARK_SLAANESH, MARK_TZEENTCH,
     ],

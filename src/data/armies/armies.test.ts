@@ -2484,6 +2484,19 @@ describe('Reino del Caos pp.100-102 — the Chaos character armoury', () => {
     expect(unit(id).specialRules).not.toContain('Chaos armour')
   })
 
+  it.each([...WARRIOR_CHARACTERS, 'ch-sorcerer'])('%s offers the six weapons the book prints, at its prices', (id) => {
+    // "un arma de mano adicional (+1 punto), Arma a Dos Manos (+2 puntos),
+    // Alabarda (+2 puntos), Lanza (+1 punto), Flagelo (+1 punto), o Lanza de
+    // Caballería (+2 puntos)" — the same sentence on printed pp.100, 101
+    // (Hechiceros, PDF 103) and 102.
+    const weapons = (unit(id).options ?? [])
+      .filter((o) => ['add-hand-weapon', 'two-hand', 'halberd', 'spear', 'flail', 'cav-lance'].includes(o.id))
+      .map((o) => [o.id, o.pointsPerModel])
+    expect(weapons).toEqual([
+      ['add-hand-weapon', 1], ['two-hand', 2], ['halberd', 2], ['spear', 1], ['flail', 1], ['cav-lance', 2],
+    ])
+  })
+
   it('barding (+4) is offered on the Chaos Steed only, to every rider of it', () => {
     for (const u of chaos.units) {
       for (const m of u.mounts ?? []) {

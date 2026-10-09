@@ -959,9 +959,12 @@ Batalla). Both pages print the same kit, and `ch-lord`, `ch-hero`, `ch-champion`
 The four characters also carried a **"Chaos armour"** special-rule tag, which read as if they wore it
 by default. The book prices it as a +10 option, so the tag is gone.
 
-Still missing from the book's weapon lists, and not added here: the Battle Standard Bearer's
-additional hand weapon (+1), double-handed weapon (+2), halberd (+2), spear (+1) and flail (+1) on
-p.102. The Sorcerer has no weapon options at all, though p.101 prints the same six (lance included).
+The weapon lists are now complete too. The Battle Standard Bearer (p.102) had only the lance, and
+the Sorcerer (**printed p.101 = PDF 103**, vision-verified) had no weapon at all. Both now get the
+six weapons the book prints for every Chaos character, at the same prices: additional hand weapon
++1, double-handed weapon +2, halberd +2, spear +1, flail +1 and cavalry lance +2 (mounted only). A
+test pins the six for all five characters. The book joins them with *"o"*, but the app does not
+make weapon alternatives exclusive in any army, so they stay independent here as well.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
