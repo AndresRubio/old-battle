@@ -23,8 +23,9 @@ const human = (over: Partial<StatLine> = {}): StatLine => ({
 const LANCE: EquipmentOption = { id: 'lance', name: 'Lance (mounted Knight)', pointsPerModel: 2 }
 const DOUBLE_HANDED: EquipmentOption = { id: 'great-weapon', name: 'Double-handed sword or axe', pointsPerModel: 2 }
 const SHIELD_CHAR: EquipmentOption = { id: 'shield', name: 'Shield', pointsPerModel: 1 }
-const LIGHT_ARMOUR_CHAR: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 2 }
-const HEAVY_ARMOUR_CHAR: EquipmentOption = { id: 'heavy-armour', name: 'Heavy armour', pointsPerModel: 3 }
+// Worn one or the other (Reglamento p.30): exclusiveGroup 'armour'.
+const LIGHT_ARMOUR_CHAR: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 2, exclusiveGroup: 'armour' }
+const HEAVY_ARMOUR_CHAR: EquipmentOption = { id: 'heavy-armour', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' }
 const BARDING: EquipmentOption = { id: 'barding', name: 'Barding for warhorse', pointsPerModel: 4 }
 
 const KNIGHT_EQUIP: EquipmentOption[] = [

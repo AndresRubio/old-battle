@@ -26,12 +26,14 @@ const statLine = (over: Partial<StatLine> = {}): StatLine => ({
 //     p.78 and the per-unit option lines pp.81-84). Same `id` = a reused wargear
 //     slot priced at the unit's own cost (cf. Dark Elves / Chaos Dwarfs). ---
 const LIGHT_ARMOUR_1: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 1 }
-const LIGHT_ARMOUR_2: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 2 }
+// LIGHT_ARMOUR_2 and HEAVY_ARMOUR_3 are offered together (Skeleton Warriors) and
+// are worn one or the other (Reglamento p.30): exclusiveGroup 'armour'.
+const LIGHT_ARMOUR_2: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 2, exclusiveGroup: 'armour' }
 const LIGHT_ARMOUR_4: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 4 }
 const SHIELD_1: EquipmentOption = { id: 'shield', name: 'Shields', pointsPerModel: 1 }
 const SHIELD_2: EquipmentOption = { id: 'shield', name: 'Shields', pointsPerModel: 2 }
 const SHIELD_HALF: EquipmentOption = { id: 'shield', name: 'Shields', pointsPerModel: 0.5 }
-const HEAVY_ARMOUR_3: EquipmentOption = { id: 'heavy-armour', name: 'Heavy armour', pointsPerModel: 3 }
+const HEAVY_ARMOUR_3: EquipmentOption = { id: 'heavy-armour', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' }
 const TWO_HAND_1: EquipmentOption = { id: 'two-hand', name: 'Two-handed weapon', pointsPerModel: 1 }
 const TWO_HAND_2: EquipmentOption = { id: 'two-hand', name: 'Two-handed weapon', pointsPerModel: 2 }
 const HALBERD_2: EquipmentOption = { id: 'halberd', name: 'Halberd', pointsPerModel: 2 }

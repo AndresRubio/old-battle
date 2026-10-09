@@ -496,6 +496,40 @@ describe('one Mark of Chaos per model (options-exclusive-group)', () => {
   })
 })
 
+// Reglamento printed p.30: the armour-save table never combines light and
+// heavy armour — a model wears one or the other. Every unit offering both puts
+// them in exclusiveGroup 'armour' (pinned army-wide in armies.test.ts).
+describe('light or heavy armour, not both (options-exclusive-group)', () => {
+  const chaos = getArmy('chaos')!
+  const roster = (optionIds: string[]) => ({
+    id: 'r', name: 't', armyId: 'chaos', pointsLimit: 2000, entries: [
+      { id: 'gen', unitId: 'ch-lord', size: 1, optionIds: [], magicItemIds: [], isGeneral: true },
+      { id: 'og', unitId: 'ch-ogres', size: 3, optionIds, magicItemIds: [] },
+    ],
+  })
+  const armourViolations = (optionIds: string[]) =>
+    validateRoster(roster(optionIds), chaos).filter((v) => v.rule === 'options-exclusive-group')
+
+  it('flags a unit that buys both light and heavy armour', () => {
+    const v = armourViolations(['light-armour', 'heavy-armour'])
+    expect(v).toHaveLength(1)
+    expect(v[0].severity).toBe('warning')
+    expect(v[0].entryId).toBe('og')
+  })
+  it('allows either one alone, or neither', () => {
+    expect(armourViolations(['light-armour'])).toHaveLength(0)
+    expect(armourViolations(['heavy-armour', 'shield'])).toHaveLength(0)
+    expect(armourViolations([])).toHaveLength(0)
+  })
+  it('localizes the warning (EN/ES)', () => {
+    const r = roster(['light-armour', 'heavy-armour'])
+    const en = validateRoster(r, chaos, 'en').find((v) => v.rule === 'options-exclusive-group')!
+    const es = validateRoster(r, chaos, 'es').find((v) => v.rule === 'options-exclusive-group')!
+    expect(en.message).toContain('light or heavy armour, not both')
+    expect(es.message).toContain('armadura ligera o pesada, no ambas')
+  })
+})
+
 // Reino del Caos pp.100-101: a daemonic mount requires the matching Mark of Chaos.
 describe('daemonic mount requires its Mark (mount-requires-option)', () => {
   const chaos = getArmy('chaos')!
