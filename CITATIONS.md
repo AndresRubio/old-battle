@@ -879,6 +879,16 @@ There is no second copy of the article in `source/`. `HF_WIZARD_LEVELS` therefor
 `statLine`** — a plausible Ld would pass every test in the repo, which is exactly why none is
 written — and a test pins its absence.
 
+#### Staff of Nurgle priced at 0 → 100 pts (2026-10-09)
+Source: `source/1997 Warhammer Magia.pdf`, offset +2, vision-verified. The OBJETOS PORTADORES DE
+HECHIZO entry on **printed p.44 = PDF 46** reads *"BÁCULO DE NURGLE … 100 puntos"* ("Sólo Hechiceros
+del Caos de Nurgle"), and the summary table on **printed p.75 = PDF 77** gives the same 100.
+`mi-staff-of-nurgle` had carried `points: 0` since the initial commit — the only 0-pt item in the
+catalog. Corrected to 100 and pinned by a test in `armies.test.ts`.
+
+Side note, no app change: `source/transcribed/magia.md` claims the *Garra de Nagash* on that same
+p.44 prints no cost. The scan does print *"50 puntos"*, which is what the app already charges.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),
