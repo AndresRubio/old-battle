@@ -31,14 +31,17 @@ const statline = (over: Partial<StatLine> = {}): StatLine => ({
 const SHIELD_1: EquipmentOption = { id: 'shield', name: 'Escudos', pointsPerModel: 1 }
 const SHIELD_2: EquipmentOption = { id: 'shield', name: 'Escudos', pointsPerModel: 2 }
 const SHIELD_HALF: EquipmentOption = { id: 'shield', name: 'Escudos', pointsPerModel: 0.5 }
-// Light and heavy armour are worn one or the other (Reglamento p.30), so both
-// carry exclusiveGroup 'armour' — validateRoster warns if a unit buys both.
+// A model wears one body armour (Reglamento p.30), and Reino del Caos p.100
+// gives characters "Armadura Ligera (+2), Armadura Pesada (+3) o Armadura del
+// Caos (+10)": all three carry exclusiveGroup 'armour', so validateRoster warns
+// if a model buys two.
 const LIGHT_ARMOUR_2: EquipmentOption = { id: 'light-armour', name: 'Armadura Ligera', pointsPerModel: 2, exclusiveGroup: 'armour' }
 // Chaos Armour for regiments: Warriors +7/model (p.103), Knights +14/model (p.103)
 const CHAOS_ARMOUR_7: EquipmentOption = { id: 'chaos-armour', name: 'Armadura del Caos', pointsPerModel: 7 }
 const CHAOS_ARMOUR_14: EquipmentOption = { id: 'chaos-armour', name: 'Armadura del Caos', pointsPerModel: 14 }
-// Chaos Armour for characters: +10 pts flat (Reino del Caos p.100)
-const CHAOS_ARMOUR_10: EquipmentOption = { id: 'chaos-armour', name: 'Armadura del Caos', pointsPerModel: 10 }
+// Chaos Armour for characters: +10 pts flat (Reino del Caos p.100), an
+// alternative to light or heavy armour — same exclusiveGroup.
+const CHAOS_ARMOUR_10: EquipmentOption = { id: 'chaos-armour', name: 'Armadura del Caos', pointsPerModel: 10, exclusiveGroup: 'armour' }
 const HEAVY_ARMOUR_3: EquipmentOption = { id: 'heavy-armour', name: 'Armadura Pesada', pointsPerModel: 3, exclusiveGroup: 'armour' }
 const ADD_HAND_WEAPON_1: EquipmentOption = { id: 'add-hand-weapon', name: 'Arma de Mano Adicional', pointsPerModel: 1 }
 const TWO_HAND_2: EquipmentOption = { id: 'two-hand', name: 'Armas a Dos Manos', pointsPerModel: 2 }

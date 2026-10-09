@@ -919,11 +919,26 @@ could buy both:
 - Vampire Counts: `vc-skeletons` and six characters, whose option id is `heavy-armour-char`.
 
 Each pair now shares `exclusiveGroup: 'armour'`, like the Marks of Chaos. Buying both raises the
-`options-exclusive-group` warning (*"light or heavy armour, not both"* / *"armadura ligera o pesada,
-no ambas"*); the checkboxes don't untick each other. A sweep in `armies.test.ts` pins the list of
+`options-exclusive-group` warning; the checkboxes don't untick each other. The warning text was
+widened by the next entry. A sweep in `armies.test.ts` pins the list of
 units and fails if a new unit offers both without the group. Crew and rider armour on one entry
 (`crew-light-armour` / `rider-light-armour` on the Norse war mammoth) belong to different models
 and stay independent.
+
+#### Chaos armour is a third alternative to light and heavy armour (2026-10-09)
+Source: `source/1998 Reino del Caos.pdf`, offset +2, **printed p.100 = PDF 102**, vision-verified.
+The PALADINES DEL CAOS entry (Paladín, Héroe and Comandante) reads *"Puede equiparse con Escudo
+(+1 punto), y con Armadura Ligera (+2 puntos), Armadura Pesada (+3 puntos) o Armadura del Caos (+10
+puntos)"*. The shield is added with *"y"*, but the three armours are joined by *"o"*. The owner
+confirmed the reading. The rules on pp.59/61 agree: Chaos armour gives a basic 4+ save *"que puede
+combinarse con un escudo"*, and nothing is said about combining it with other armour. The +10
+character option `CHAOS_ARMOUR_10` therefore joins `exclusiveGroup: 'armour'`. Units offering two
+armours now include `ch-lord`, `ch-hero`, `ch-champion` and `ch-battle-standard`, which offer heavy
+and Chaos armour. The sorcerer's Chaos armour has no alternative to clash with. The regiment rates
+(+7 Warriors and chariot crew, +14 Knights) *replace* the heavy armour the unit already wears
+(*"Sustituir Armadura Pesada por Armadura del Caos"*), so they have nothing to pair with either.
+The warning now reads *"a model may carry only one kind of armour"* / *"una miniatura sólo puede
+portar un tipo de armadura"*, which covers both cases.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
