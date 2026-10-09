@@ -101,6 +101,7 @@ export function Editor({ rosterId, store, onBack }: Props) {
       <div className="editor-grid">
         <aside className="editor-aside">
           <SummaryPanel roster={roster} army={army} />
+          {roster.entries.length > 0 && <MusterCheck roster={roster} army={army} />}
         </aside>
 
         <div className="editor-roster">
@@ -160,7 +161,6 @@ export function Editor({ rosterId, store, onBack }: Props) {
               })()}
             </div>
           )}
-          {roster.entries.length > 0 && <MusterCheck roster={roster} army={army} />}
         </div>
       </div>
 

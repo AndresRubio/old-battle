@@ -8,9 +8,9 @@ interface Props {
 }
 
 /**
- * The live rules verdict for a roster. Lives below the army list (the natural
- * "result at the end" position) while the points total + composition bars stay
- * up in the SummaryPanel.
+ * The live rules verdict for a roster. Lives in the editor's side column, under
+ * the SummaryPanel's points total + composition bars, so it stays in view while
+ * the army list scrolls.
  */
 export function MusterCheck({ roster, army }: Props) {
   const [lang] = useLang()

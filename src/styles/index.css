@@ -471,6 +471,9 @@ h1, h2, h3 {
 .editor-aside {
   position: sticky;
   top: 72px;
+  /* The Muster Check can grow long — scroll inside the column, not past it. */
+  max-height: calc(100vh - 88px);
+  overflow-y: auto;
 }
 .section-title {
   margin: 0 0 0.75rem;
@@ -1147,7 +1150,7 @@ h1, h2, h3 {
   .editor-grid {
     grid-template-columns: 1fr;
   }
-  .editor-aside { position: static; }
+  .editor-aside { position: static; max-height: none; overflow: visible; }
   .picker-grid { grid-template-columns: 1fr 1fr; }
 }
 
