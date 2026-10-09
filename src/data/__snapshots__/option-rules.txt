@@ -1,5 +1,4 @@
 additional-hand-weapon	add-hand-weapon	Additional hand weapon
-additional-hand-weapon	add-hand-weapon	Arma de Mano Adicional
 additional-hand-weapon	beastmaster-extra-hw	Additional hand weapon for the Beastmaster
 additional-hand-weapon	extra-hand-weapon	Additional hand weapon
 additional-hand-weapon	extra-hand-weapon	Additional hand weapon (+1 Attack)
@@ -11,24 +10,21 @@ bow	bow	Bow (Long bow)
 bow	bow	Bows
 bow	bows	Bows
 bow	crew-bows	Bows for the crew
-chaos-armour	chaos-armour	Armadura del Caos
+chaos-armour	chaos-armour	Chaos armour
 crossbow	crossbow	Crossbow
 crossbow	crossbow	Crossbow (instead of Bow)
 crossbow	crossbows	Crossbows
-flail	flail	Mangual
+flail	flail	Flail
 great-weapon	cleavers	Cleavers (double-handed weapons)
 great-weapon	crew-double-handed	Double-handed weapons for the crew
 great-weapon	double-handed	Double-handed weapons
 great-weapon	great-weapon	Double-handed sword or axe
 great-weapon	great-weapon	Great weapon
-great-weapon	two-hand	Armas a Dos Manos
 great-weapon	two-hand	Two-handed weapon
 great-weapon	two-hand	Two-handed weapons
-halberd	halberd	Alabarda
 halberd	halberd	Halberd
 halberd	halberd	Halberds
 halberd	halberd-char	Halberd
-heavy-armour	heavy-armour	Armadura Pesada
 heavy-armour	heavy-armour	Heavy armour
 heavy-armour	heavy-armour	Heavy armour (Ithilmar)
 heavy-armour	heavy-armour-char	Heavy armour
@@ -40,7 +36,6 @@ lance	lance	Lance (mounted Knight)
 light-armour	beastmaster-light-armour	Light armour for the Beastmaster
 light-armour	corsets	Corsets (count as light armour)
 light-armour	crew-light-armour	Light armour for the Dwarf crew
-light-armour	light-armour	Armadura Ligera
 light-armour	light-armour	Light armour
 light-armour	quilted-jackets	Quilted jackets (count as light armour)
 light-armour	rider-light-armour	Light armour for the rider
@@ -53,7 +48,6 @@ shield	mount-boar-chariot-shields	Shields for crew
 shield	mount-wolf-chariot-shields	Shields for crew
 shield	og-goblin-chariot-shields	Shields for crew
 shield	og-orc-chariot-shields	Shields for crew
-shield	shield	Escudos
 shield	shield	Shield
 shield	shield	Shields
 short-bow	mount-boar-chariot-bows	Short bows for crew
@@ -65,7 +59,6 @@ short-bow	short-bow	Short bows
 short-bow	short-bows	Short bows
 sling	slings	Slings
 spear	crew-spears	Spears for the crew
-spear	spear	Lanza
 spear	spear	Spear
 spear	spear	Spears
 spear	spear-char	Spear
@@ -79,6 +72,8 @@ wizard	wizard-l2	Wizard Level 2 (Master Paladin)
 wizard	wizard-l2	Wizard Level 2 (Necromancer Paladin)
 wizard	wizard-l2	Wizard Level 2 (Paladín Hechicero)
 wizard	wizard-l2	Wizard Level 2 (Paladín Shaman)
+wizard	wizard-l2	Wizard Level 2 (Shaman Champion)
+wizard	wizard-l2	Wizard Level 2 (Sorcerer Champion)
 wizard	wizard-l2	Wizard Level 2 (Sorcerer Paladin)
 wizard	wizard-l3	Master Wizard (Level 3)
 wizard	wizard-l3	Master Wizard (level 3)
@@ -86,6 +81,7 @@ wizard	wizard-l3	Wizard Level 3 (Maestro Hechicero)
 wizard	wizard-l3	Wizard Level 3 (Maestro Shaman)
 wizard	wizard-l3	Wizard Level 3 (Master Mage / Mago Maestro)
 wizard	wizard-l3	Wizard Level 3 (Master Necromancer)
+wizard	wizard-l3	Wizard Level 3 (Master Shaman)
 wizard	wizard-l3	Wizard Level 3 (Master Sorcerer)
 wizard	wizard-l3	Wizard Level 3 (Master of Mages)
 wizard	wizard-l3	Wizard Level 3 (Master of Sorcerers)
@@ -94,6 +90,7 @@ wizard	wizard-l4	Wizard Level 4 (Gran Shaman)
 wizard	wizard-l4	Wizard Level 4 (Great Mage / Gran Mago)
 wizard	wizard-l4	Wizard Level 4 (Great Mage)
 wizard	wizard-l4	Wizard Level 4 (Great Necromancer)
+wizard	wizard-l4	Wizard Level 4 (Great Shaman)
 wizard	wizard-l4	Wizard Level 4 (Great Sorcerer)
 wizard	wizard-l4	Wizard Level 4 (Supreme Sorcerer)
 wizard	wizard-l4	Wizard Lord (Level 4)
