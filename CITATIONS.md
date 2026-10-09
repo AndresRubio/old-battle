@@ -963,8 +963,23 @@ The weapon lists are now complete too. The Battle Standard Bearer (p.102) had on
 the Sorcerer (**printed p.101 = PDF 103**, vision-verified) had no weapon at all. Both now get the
 six weapons the book prints for every Chaos character, at the same prices: additional hand weapon
 +1, double-handed weapon +2, halberd +2, spear +1, flail +1 and cavalry lance +2 (mounted only). A
-test pins the six for all five characters. The book joins them with *"o"*, but the app does not
-make weapon alternatives exclusive in any army, so they stay independent here as well.
+test pins the six for all five characters. The book joins them with *"o"*, but they stay
+independent options; see the next entry.
+
+#### Weapons are NOT mutually exclusive — decided 2026-10-09
+Unlike body armour (see *Light and heavy armour are alternatives, app-wide* above), buying several
+weapons is legal, so the app does not put weapon options in an `exclusiveGroup` in any army.
+- **FAQ 1996 §4.1** (`research/faq-1996-v2.20.txt`, Primarch): *"A character may change weapons in a
+  combat freely."* A character may carry several weapons, e.g. a cavalry lance for the charge and a
+  double-handed weapon afterwards.
+- **FAQ 1996 §29.2** (High Elf units): asked about warriors with spears *and* a second hand weapon,
+  the answer only limits the bonus attack to fighting with two hand weapons. It does not forbid
+  buying both.
+- The army books' *"…, Flagelo (+1 punto), o Lanza de Caballería (+2 puntos)"* is read as listing
+  what may be bought, not as a single choice.
+
+The owner chose this after weighing it against making weapons exclusive everywhere, or for
+regiments only. Do not add weapon exclusivity without revisiting this entry.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
