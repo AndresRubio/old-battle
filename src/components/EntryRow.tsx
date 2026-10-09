@@ -121,12 +121,38 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
   // Unit magic standard: a regiment the army list allows may take one banner,
   // carried by its standard bearer.
   const standardOptions = eligibleMagicStandards(unit, army)
+  const filteredStandards = filterMagicItems(standardOptions, itemQuery, maxPts)
   // A unit that has a standard bearer to buy must buy it before it can carry a
   // banner; one that carries the standard itself (a howdah, a farm machine)
   // picks straight from the list.
   const hasStandardBearer =
     !magicStandardNeedsBearer(unit) || entry.optionIds.includes(STANDARD_BEARER_ID)
   const hasOptions = hasAnyOptions(unit)
+
+  // Search + max-points filter, shared by a character's magic items and a
+  // regiment's magic standard so both pickers narrow the same way.
+  const itemFilter = (
+    <div className="mi-filter">
+      <input
+        type="search"
+        className="mi-filter-search"
+        placeholder={t('searchItems', lang)}
+        value={itemQuery}
+        onChange={(e) => setItemQuery(e.target.value)}
+        aria-label={t('searchItems', lang)}
+      />
+      <input
+        type="number"
+        min={0}
+        step={5}
+        className="mi-filter-pts"
+        placeholder={t('maxPts', lang)}
+        value={maxPts}
+        onChange={(e) => setMaxPts(e.target.value)}
+        aria-label={t('maxPts', lang)}
+      />
+    </div>
+  )
 
   return (
     <li className={`entry ${entry.isGeneral ? 'entry-general' : ''}`}>
@@ -392,6 +418,8 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
               {!hasStandardBearer ? (
                 <p className="muted small">{t('magicStandardNeedsBearer', lang)}</p>
               ) : (
+                <>
+                {itemFilter}
                 <div className="magic-items">
                   <label className="mi-item">
                     <input
@@ -408,7 +436,10 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                       </span>
                     </span>
                   </label>
-                  {standardOptions.map((item) => (
+                  {filteredStandards.length === 0 && (
+                    <p className="muted small">{t('noItemsMatch', lang)}</p>
+                  )}
+                  {filteredStandards.map((item) => (
                     <label key={item.id} className="mi-item">
                       <input
                         type="radio"
@@ -440,6 +471,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                     </label>
                   ))}
                 </div>
+                </>
               )}
             </div>
           )}
@@ -500,26 +532,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
               <span className="opt-label">
                 {t('magicItems', lang)} <span className="muted small">({entry.magicItemIds.length}/{allowance})</span>
               </span>
-              <div className="mi-filter">
-                <input
-                  type="search"
-                  className="mi-filter-search"
-                  placeholder={t('searchItems', lang)}
-                  value={itemQuery}
-                  onChange={(e) => setItemQuery(e.target.value)}
-                  aria-label={t('searchItems', lang)}
-                />
-                <input
-                  type="number"
-                  min={0}
-                  step={5}
-                  className="mi-filter-pts"
-                  placeholder={t('maxPts', lang)}
-                  value={maxPts}
-                  onChange={(e) => setMaxPts(e.target.value)}
-                  aria-label={t('maxPts', lang)}
-                />
-              </div>
+              {itemFilter}
               <div className="magic-items">
                 {(() => {
                   const groups = CATEGORY_ORDER.map((cat) => {

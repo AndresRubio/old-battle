@@ -268,3 +268,43 @@ describe('EntryRow unit and mount stat notes (OLD-43)', () => {
     expect(cells('Beast of Nurgle')).toEqual(['3', '3', '0', '3', '5', '3', '3', '1D6', '6'])
   })
 })
+
+describe('EntryRow magic standard filter', () => {
+  /** Type into a controlled input the way React listens for it. */
+  function typeInto(input: HTMLInputElement, value: string) {
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!
+    act(() => {
+      setter.call(input, value)
+      input.dispatchEvent(new Event('input', { bubbles: true }))
+    })
+  }
+  const standardNames = () =>
+    Array.from(container.querySelectorAll('.magic-items .mi-name')).map((el) => el.textContent)
+
+  it('filters a regiment banner list by name and max points', () => {
+    render(<EntryRow entry={entry('emp-white-wolf-knights', { optionIds: ['standard'] })} army={army} {...props} />)
+    expand()
+    expect(standardNames()).toContain('Banner of Hatred')
+
+    typeInto(container.querySelector('.mi-filter-search') as HTMLInputElement, 'hatred')
+    expect(standardNames()).toEqual(['No magic standard', 'Banner of Hatred'])
+
+    typeInto(container.querySelector('.mi-filter-search') as HTMLInputElement, '')
+    typeInto(container.querySelector('.mi-filter-pts') as HTMLInputElement, '50')
+    expect(standardNames()).not.toContain('Banner of Battle')
+    expect(standardNames()).toContain('Banner of Power')
+  })
+
+  it('shows the no-match note when nothing passes the filter', () => {
+    render(<EntryRow entry={entry('emp-white-wolf-knights', { optionIds: ['standard'] })} army={army} {...props} />)
+    expand()
+    typeInto(container.querySelector('.mi-filter-search') as HTMLInputElement, 'zzz')
+    expect(container.textContent).toContain('No items match the filter.')
+  })
+
+  it('hides the filter until the regiment buys a standard bearer', () => {
+    render(<EntryRow entry={entry('emp-white-wolf-knights')} army={army} {...props} />)
+    expand()
+    expect(container.querySelector('.mi-filter')).toBeNull()
+  })
+})
