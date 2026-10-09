@@ -2375,3 +2375,44 @@ describe('OLD-38 — the two parked chariot chassis match the book', () => {
     expect(chassis.statLine).not.toHaveProperty('I')
   })
 })
+
+describe('Reino del Caos printed p.105 — Marauder Horsemen and Chaos Ogres match the book', () => {
+  // Reino del Caos printed p.105 = PDF 107, vision-verified. The army-list row
+  // "Jinete Bárbaro 10 4 3 4 3 1 4 2 7" agrees with the bestiary row for the
+  // Bárbaro del Caos (printed p.76) — no contradiction to arbitrate.
+  const chaos = getArmy('chaos')!
+  const unit = (id: string) => chaos.units.find((u) => u.id === id)!
+
+  it('the Marauder Horseman rider is BS3 T3, as printed (not BS4 T4)', () => {
+    // M is the War Horse's 20cm → 8", the cavalry convention used by ch-knights.
+    expect(unit('ch-marauder-horsemen').statLine).toEqual({
+      M: 8, WS: 4, BS: 3, S: 4, T: 3, W: 1, I: 4, A: 2, Ld: 7,
+    })
+  })
+
+  it('Marauder Horsemen buy only flails and shields — the book offers no cavalry lance', () => {
+    // "Cualquier unidad de Jinetes Bárbaros puede equiparse con Flagelos (+2
+    // puntos por miniatura). También pueden equiparse con Escudos (+2 …)."
+    const opts = (unit('ch-marauder-horsemen').options ?? [])
+      .filter((o) => o.id !== 'standard' && o.id !== 'musician')
+      .map((o) => [o.id, o.pointsPerModel])
+    expect(opts).toEqual([['flail', 2], ['shield', 2]])
+  })
+
+  it('their fast-cavalry tag says shields take it away', () => {
+    // Reglamento printed p.23: fast cavalry needs a save no better than 5+.
+    // Light armour + horse is 5+; a shield makes it 4+.
+    const tags = unit('ch-marauder-horsemen').specialRules ?? []
+    expect(tags).not.toContain('Fast cavalry')
+    const fast = tags.find((t) => t.startsWith('Fast cavalry'))
+    expect(fast).toMatch(/shield/i)
+    expect(findRule(fast!)?.id).toBe('fast-cavalry')
+  })
+
+  it('Chaos Ogres may take light armour (+2) or heavy armour (+3)', () => {
+    // "Armadura Ligera (+2 puntos) o Armadura Pesada (+3 puntos)."
+    const cost = (id: string) => unit('ch-ogres').options?.find((o) => o.id === id)?.pointsPerModel
+    expect(cost('light-armour')).toBe(2)
+    expect(cost('heavy-armour')).toBe(3)
+  })
+})

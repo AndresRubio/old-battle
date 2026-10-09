@@ -701,17 +701,25 @@ const units: UnitProfile[] = [
   },
   {
     // Cavalry: Caballo de Guerra M20cm → 8".
-    // Shield +2/model, Flail +2/model (Reino del Caos p.105).
+    // Reino del Caos printed p.105 = PDF 107: rider "10 4 3 4 3 1 4 2 7" (BS3
+    // T3, same as the Bárbaro on p.76). The only options are Flails +2/model
+    // and Shields +2/model — no cavalry lance. Fast cavalry per Reglamento
+    // p.23 needs a save no better than 5+, so shields (4+) take it away.
     id: 'ch-marauder-horsemen',
     name: 'Marauder Horsemen',
     nameEs: 'Jinetes Bárbaros del Caos',
     role: 'regiment',
     pointsPerModel: 31,
-    statLine: statline({ M: 8, WS: 4, BS: 4, S: 4, T: 4, I: 4, A: 2, Ld: 7 }),
+    statLine: statline({ M: 8, WS: 4, BS: 3, S: 4, T: 3, I: 4, A: 2, Ld: 7 }),
     mount: { name: 'Warhorse', nameEs: 'Caballo de Guerra', statLine: { M: 8, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 } },
     minSize: 5,
     options: [FLAIL_2, SHIELD_2],
-    specialRules: ['Light armour & hand weapon (5+ save)', 'War Horse mount (Caballo de Guerra, M8)', 'Fast cavalry', 'May carry a magic standard'],
+    specialRules: [
+      'Light armour & hand weapon (5+ save)',
+      'War Horse mount (Caballo de Guerra, M8)',
+      'Fast cavalry — lost if they take shields (save becomes 4+)',
+      'May carry a magic standard',
+    ],
   },
   {
     id: 'ch-hounds',
@@ -732,7 +740,8 @@ const units: UnitProfile[] = [
     pointsPerModel: 40,
     statLine: statline({ M: 6, WS: 3, BS: 2, S: 4, T: 5, W: 3, I: 3, A: 2, Ld: 7 }),
     minSize: 2,
-    options: [ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, SHIELD_1, LIGHT_ARMOUR_2],
+    // Reino del Caos printed p.105: "Armadura Ligera (+2 puntos) o Armadura Pesada (+3 puntos)".
+    options: [ADD_HAND_WEAPON_1, TWO_HAND_2, HALBERD_2, SHIELD_1, LIGHT_ARMOUR_2, HEAVY_ARMOUR_3],
     specialRules: ['Causes fear'],
   },
 
