@@ -161,6 +161,12 @@ describe('magic-item catalog completeness', () => {
     expect(dup.has('mi-chaos-familiar')).toBe(true)
     expect(dup.has('mi-chaos-armour')).toBe(true)
   })
+  it('prices the Staff of Nurgle at the 100 pts the book prints, not 0', () => {
+    // Warhammer Magia printed p.44 = PDF 46 ("BÁCULO DE NURGLE 100 puntos") and the
+    // summary table on printed p.75 = PDF 77 agree. It was the only 0-pt item.
+    const staff = ARMY_MAGIC_ITEMS['chaos'].find((i) => i.id === 'mi-staff-of-nurgle')
+    expect(staff?.points).toBe(100)
+  })
 })
 
 describe('Phase 2 selection-rule data fixes', () => {
