@@ -541,6 +541,45 @@ describe('one kind of body armour per model (options-exclusive-group)', () => {
   })
 })
 
+// Reino del Caos pp.100-102: a Chaos character's cavalry lance is only for "una
+// miniatura a caballo". EquipmentOption.requiresMount, rule option-requires-mount.
+describe('a mounted-only option needs a mount (option-requires-mount)', () => {
+  const chaos = getArmy('chaos')!
+  const roster = (optionIds: string[], mountId?: string) => ({
+    id: 'r', name: 't', armyId: 'chaos', pointsLimit: 2000, entries: [
+      { id: 'gen', unitId: 'ch-lord', size: 1, mountId, optionIds, magicItemIds: [], isGeneral: true },
+    ],
+  })
+  const lanceViolations = (optionIds: string[], mountId?: string) =>
+    validateRoster(roster(optionIds, mountId), chaos).filter((v) => v.rule === 'option-requires-mount')
+
+  it('flags a cavalry lance on a character on foot', () => {
+    const v = lanceViolations(['cav-lance'])
+    expect(v).toHaveLength(1)
+    expect(v[0].severity).toBe('warning')
+    expect(v[0].entryId).toBe('gen')
+  })
+  it('allows it on any mount', () => {
+    expect(lanceViolations(['cav-lance'], 'mount-chaos-steed')).toHaveLength(0)
+    expect(lanceViolations(['cav-lance', 'mark-khorne'], 'mount-juggernaut')).toHaveLength(0)
+  })
+  it('says nothing when no mounted-only option is chosen', () => {
+    expect(lanceViolations(['shield'])).toHaveLength(0)
+  })
+  it('localizes the warning (EN/ES)', () => {
+    const r = roster(['cav-lance'])
+    const en = validateRoster(r, chaos, 'en').find((v) => v.rule === 'option-requires-mount')!
+    const es = validateRoster(r, chaos, 'es').find((v) => v.rule === 'option-requires-mount')!
+    expect(en.message).toBe('Chaos Lord: Cavalry lance is only for a mounted model — choose a mount or drop it.')
+    expect(es.message).toBe('Comandante del Caos: Lanza de caballería sólo sirve a una miniatura montada — elige una montura o quita la opción.')
+  })
+  it('barding left behind after a change of mount is flagged as stale', () => {
+    const v = validateRoster(roster(['mount-chaos-steed-barding', 'mark-khorne'], 'mount-juggernaut'), chaos)
+      .filter((x) => x.rule === 'mount-options-stale')
+    expect(v).toHaveLength(1)
+  })
+})
+
 // Reino del Caos pp.100-101: a daemonic mount requires the matching Mark of Chaos.
 describe('daemonic mount requires its Mark (mount-requires-option)', () => {
   const chaos = getArmy('chaos')!

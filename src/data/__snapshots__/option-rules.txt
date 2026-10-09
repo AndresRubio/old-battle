@@ -4,6 +4,7 @@ additional-hand-weapon	extra-hand-weapon	Additional hand weapon
 additional-hand-weapon	extra-hand-weapon	Additional hand weapon (+1 Attack)
 barding	barding	Barding (steeds)
 barding	barding	Barding for warhorse
+barding	mount-chaos-steed-barding	Barding
 barding	nightmare-barding	Nightmare barding
 bow	bow	Bow
 bow	bow	Bow (Long bow)

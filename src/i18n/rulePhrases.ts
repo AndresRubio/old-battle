@@ -63,7 +63,6 @@ export const RULE_PHRASE_ES: Record<string, string> = {
     'Imita a la unidad de Orcos o Goblins más cercana y se mantiene a 30 cm o menos de ella',
   'Causes terror': 'Causa terror',
   'Chaos Magic or Dark Magic': 'Magia del Caos o Magia Oscura',
-  'Chaos armour': 'Armadura del Caos',
   'Cold One mount (2+ save)': 'Montura de Lagarto Frío (salvación 2+)',
   'Collar of Khorne (immune to magic)': 'Collar de Khorne (inmune a la magia)',
   'Commander': 'Comandante',

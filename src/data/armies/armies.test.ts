@@ -2453,3 +2453,57 @@ describe('a model wears one body armour — light, heavy or Chaos (Reglamento p.
     for (const o of armours) expect(o.exclusiveGroup, o.id).toBe('armour')
   })
 })
+
+describe('Reino del Caos pp.100-102 — the Chaos character armoury', () => {
+  // Printed p.100 = PDF 102 (Paladín / Héroe / Comandante) and p.102 = PDF 104
+  // (Portaestandarte de Batalla), vision-verified: "Lanza de Caballería (+2
+  // puntos) en el caso que se trate de una miniatura a caballo"; "Escudo (+1
+  // punto), y con Armadura Ligera (+2 puntos), Armadura Pesada (+3 puntos) o
+  // Armadura del Caos (+10 puntos). Si la miniatura está montada en un Corcel
+  // del Caos, éste puede equiparse con Barda (+4 puntos)."
+  const chaos = getArmy('chaos')!
+  const unit = (id: string) => chaos.units.find((u) => u.id === id)!
+  const WARRIOR_CHARACTERS = ['ch-lord', 'ch-hero', 'ch-champion', 'ch-battle-standard']
+
+  it.each(WARRIOR_CHARACTERS)('%s buys light (+2), heavy (+3) or Chaos (+10) armour, plus a shield (+1)', (id) => {
+    const opt = (oid: string) => unit(id).options?.find((o) => o.id === oid)
+    expect(opt('shield')?.pointsPerModel).toBe(1)
+    expect(opt('light-armour')?.pointsPerModel).toBe(2)
+    expect(opt('heavy-armour')?.pointsPerModel).toBe(3)
+    expect(opt('chaos-armour')?.pointsPerModel).toBe(10)
+    for (const a of ['light-armour', 'heavy-armour', 'chaos-armour']) expect(opt(a)?.exclusiveGroup).toBe('armour')
+  })
+
+  it.each(WARRIOR_CHARACTERS)('%s may take a cavalry lance (+2), only when mounted', (id) => {
+    const lance = unit(id).options?.find((o) => o.id === 'cav-lance')
+    expect(lance?.pointsPerModel).toBe(2)
+    expect(lance?.requiresMount).toBe(true)
+  })
+
+  it.each(WARRIOR_CHARACTERS)('%s no longer claims to come with Chaos armour — it is a +10 option', (id) => {
+    expect(unit(id).specialRules).not.toContain('Chaos armour')
+  })
+
+  it('barding (+4) is offered on the Chaos Steed only, to every rider of it', () => {
+    for (const u of chaos.units) {
+      for (const m of u.mounts ?? []) {
+        const barding = (m.options ?? []).filter((o) => /barding/i.test(o.id))
+        if (m.id === 'mount-chaos-steed') {
+          expect(barding.map((o) => [o.id, o.pointsPerModel]), `${u.id}`).toEqual([['mount-chaos-steed-barding', 4]])
+        } else {
+          expect(barding, `${u.id} / ${m.id}`).toEqual([])
+        }
+      }
+    }
+    // The Sorcerer's own list (printed p.101) offers the same barding.
+    expect(unit('ch-sorcerer').mounts?.some((m) => m.id === 'mount-chaos-steed')).toBe(true)
+  })
+
+  it('a Chaos Lord on a barded Chaos Steed with a lance costs 255 + 4 + 4 + 2', () => {
+    const entry = {
+      id: 'l', unitId: 'ch-lord', size: 1, mountId: 'mount-chaos-steed',
+      optionIds: ['cav-lance', 'mount-chaos-steed-barding'], magicItemIds: [],
+    }
+    expect(entryPoints(entry, chaos)).toBe(265)
+  })
+})
