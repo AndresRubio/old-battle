@@ -89,8 +89,9 @@ const un = (p: { unit: UnitProfile }, lang: Lang) => unitName(p.unit, lang)
 const EXCLUSIVE_GROUP_LABEL: Record<string, { scope: 'model' | 'unit'; en: string; es: string }> = {
   mark: { scope: 'model', en: 'one Mark of Chaos', es: 'una Marca del Caos' },
   'troll-type': { scope: 'unit', en: 'one troll type', es: 'de un solo tipo de troll' },
-  // Reglamento p.30: light and heavy armour are alternatives, never worn together.
-  armour: { scope: 'model', en: 'light or heavy armour, not both', es: 'armadura ligera o pesada, no ambas' },
+  // A model wears one body armour: light or heavy (Reglamento p.30), or Chaos
+  // armour instead of either (Reino del Caos p.100).
+  armour: { scope: 'model', en: 'one kind of armour', es: 'un tipo de armadura' },
 }
 
 const MESSAGES: { [K in RuleId]: MessageBuilder<K> } = {

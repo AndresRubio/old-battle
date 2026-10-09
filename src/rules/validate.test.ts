@@ -497,9 +497,10 @@ describe('one Mark of Chaos per model (options-exclusive-group)', () => {
 })
 
 // Reglamento printed p.30: the armour-save table never combines light and
-// heavy armour — a model wears one or the other. Every unit offering both puts
-// them in exclusiveGroup 'armour' (pinned army-wide in armies.test.ts).
-describe('light or heavy armour, not both (options-exclusive-group)', () => {
+// heavy armour — a model wears one or the other. Reino del Caos p.100 adds
+// Chaos armour to the same choice. Every unit offering two of them puts them in
+// exclusiveGroup 'armour' (pinned army-wide in armies.test.ts).
+describe('one kind of body armour per model (options-exclusive-group)', () => {
   const chaos = getArmy('chaos')!
   const roster = (optionIds: string[]) => ({
     id: 'r', name: 't', armyId: 'chaos', pointsLimit: 2000, entries: [
@@ -516,6 +517,16 @@ describe('light or heavy armour, not both (options-exclusive-group)', () => {
     expect(v[0].severity).toBe('warning')
     expect(v[0].entryId).toBe('og')
   })
+  it('flags heavy armour plus Chaos armour on a Chaos character', () => {
+    const v = validateRoster(
+      { id: 'r', name: 't', armyId: 'chaos', pointsLimit: 2000, entries: [
+        { id: 'gen', unitId: 'ch-lord', size: 1, optionIds: ['heavy-armour', 'chaos-armour'], magicItemIds: [], isGeneral: true },
+      ] },
+      chaos,
+    ).filter((x) => x.rule === 'options-exclusive-group')
+    expect(v).toHaveLength(1)
+    expect(v[0].entryId).toBe('gen')
+  })
   it('allows either one alone, or neither', () => {
     expect(armourViolations(['light-armour'])).toHaveLength(0)
     expect(armourViolations(['heavy-armour', 'shield'])).toHaveLength(0)
@@ -525,8 +536,8 @@ describe('light or heavy armour, not both (options-exclusive-group)', () => {
     const r = roster(['light-armour', 'heavy-armour'])
     const en = validateRoster(r, chaos, 'en').find((v) => v.rule === 'options-exclusive-group')!
     const es = validateRoster(r, chaos, 'es').find((v) => v.rule === 'options-exclusive-group')!
-    expect(en.message).toContain('light or heavy armour, not both')
-    expect(es.message).toContain('armadura ligera o pesada, no ambas')
+    expect(en.message).toContain('a model may carry only one kind of armour (carries 2)')
+    expect(es.message).toContain('una miniatura sólo puede portar un tipo de armadura (lleva 2)')
   })
 })
 
