@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { exportRosterText } from './exportText'
-import { getArmy } from '../data/armies'
+import { ARMIES, getArmy } from '../data/armies'
 import type { Roster, RosterEntry } from '../data/types'
+import { profileName } from '../i18n/lang'
 
 const empire = getArmy('empire')!
 
@@ -229,5 +230,62 @@ describe('exportRosterText — unit and mount stat notes (OLD-43)', () => {
     const text = exportRosterText(roster, chaos)
     expect(labelledValues(text, 'Beast of Nurgle (+75 pts)'))
       .toEqual(['3', '3', '0', '3', '5', '3', '3', '1D6', '6'])
+  })
+})
+
+// OLD-48 — the editor pairs a cavalry regiment's rider with the steed every
+// model rides (`unit.mount`, via `companionMountProfile`), but the export only
+// printed the rider: White Wolf Knights had one stat table instead of two.
+describe('exportRosterText — cavalry steed profile (OLD-48)', () => {
+  const rosterOf = (armyId: string, unitId: string, over: Partial<RosterEntry> = {}): Roster => ({
+    id: 'r', name: 'Steed test', armyId, pointsLimit: 2000,
+    entries: [{ id: '1', unitId, size: 5, optionIds: [], magicItemIds: [], ...over }],
+  })
+
+  /** The lines of the detail block, from its first stat header on. */
+  const detailLines = (text: string) => {
+    const lines = text.split('\n')
+    const h = lines.findIndex((l) => /^\s+M\s+(WS|HA)\s/.test(l))
+    expect(h, 'no stat header in the detail block').toBeGreaterThan(-1)
+    return lines.slice(h)
+  }
+
+  it('prints the White Wolf Knights steed row beneath the rider, in English', () => {
+    const lines = detailLines(exportRosterText(rosterOf('empire', 'emp-white-wolf-knights'), empire))
+    // Rider header + values, then the steed's label, header and values.
+    expect(lines[1].trim().split(/\s+/)).toEqual(['8', '4', '3', '3', '3', '1', '4', '1', '7'])
+    expect(lines[2].trim()).toBe('· Barded Warhorse')
+    expect(lines[3]).toMatch(/^\s+M\s+WS\s+BS\s+S\s+T\s+W\s+I\s+A\s+Ld$/)
+    expect(lines[4].trim().split(/\s+/)).toEqual(['8', '3', '0', '3', '3', '1', '3', '1', '5'])
+  })
+
+  it('prints the steed row in Spanish, with Movement in centimetres', () => {
+    const lines = detailLines(exportRosterText(rosterOf('empire', 'emp-white-wolf-knights'), empire, 'es'))
+    expect(lines[2].trim()).toBe('· Caballo de Guerra con Barda')
+    expect(lines[3]).toMatch(/^\s+M\s+HA\s+HP\s+F\s+R\s+H\s+I\s+A\s+L$/)
+    // A warhorse moves 8" = 20 cm (MOVEMENT_CM).
+    expect(lines[4].trim().split(/\s+/)).toEqual(['20', '3', '0', '3', '3', '1', '3', '1', '5'])
+  })
+
+  it('prints the fixed steed of every cavalry regiment in both languages', () => {
+    for (const army of ARMIES) {
+      for (const unit of army.units.filter((u) => u.mount)) {
+        for (const lang of ['en', 'es'] as const) {
+          const text = exportRosterText(rosterOf(army.id, unit.id), army, lang)
+          expect(text, `${unit.id} (${lang})`).toContain(`  · ${profileName(unit.mount!, lang)}\n`)
+        }
+      }
+    }
+  })
+
+  it("still prints a chariot mount's label and its crew / beast / chassis rows", () => {
+    const orcs = getArmy('orcs-and-goblins')!
+    const text = exportRosterText(
+      rosterOf('orcs-and-goblins', 'og-warboss-orc', { size: 1, mountId: 'mount-boar-chariot' }),
+      orcs,
+    )
+    const lines = detailLines(text)
+    const labels = lines.filter((l) => l.startsWith('  · ')).map((l) => l.trim())
+    expect(labels).toEqual(['· Orc Boar Chariot (+81 pts)', '· 2 Orc crew', '· 2 War Boars', '· Chariot'])
   })
 })
