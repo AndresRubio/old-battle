@@ -208,6 +208,19 @@ describe('exportRosterText — unit and mount stat notes (OLD-43)', () => {
       .toEqual(['2D6"', 'Esp', '0', '5', '2', '1', '–', 'D6', '–'])
   })
 
+  // OLD-46 — the export shares statCell with the editor, so its Spanish M
+  // column is in the books' centimetres too; English stays in inches.
+  it('exports Movement in centimetres in Spanish and in inches in English', () => {
+    const roster = rosterOf('chaos', 'ch-lord', { mountId: 'mount-chaos-steed' })
+    const en = exportRosterText(roster, chaos)
+    const es = exportRosterText(roster, chaos, 'es')
+    // A Chaos Lord moves 4" = 10 cm; a Chaos Steed 8" = 20 cm.
+    expect(ownValues(en)[0]).toBe('4')
+    expect(ownValues(es)[0]).toBe('10')
+    expect(labelledValues(en, 'Chaos Steed (+4 pts)')[0]).toBe('8')
+    expect(labelledValues(es, 'Corcel del Caos (+4 ptos)')[0]).toBe('20')
+  })
+
   it("exports a chosen mount's own note (Beast of Nurgle A 1D6)", () => {
     const roster = rosterOf('chaos', 'ch-lord', {
       mountId: 'mount-beast-of-nurgle',

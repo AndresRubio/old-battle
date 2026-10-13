@@ -43,7 +43,7 @@ function StatLineRow({
         {(['M', 'WS', 'BS', 'S', 'T', 'W', 'I', 'A', 'Ld'] as const).map((k) => (
           <span key={k} className="stat">
             <span className="stat-k">{STAT_LABEL[lang][k]}</span>
-            <span className="stat-v">{statCell(k, statLine, notes)}</span>
+            <span className="stat-v">{statCell(k, statLine, lang, notes)}</span>
           </span>
         ))}
       </div>

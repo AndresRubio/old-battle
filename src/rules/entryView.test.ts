@@ -42,24 +42,63 @@ describe('statCell', () => {
   const line = { M: 4, WS: 3, BS: 3, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 7 }
 
   it('prints the number when the column has one and no note', () => {
-    expect(statCell('A', line)).toBe('1')
-    expect(statCell('M', line, {})).toBe('4')
+    expect(statCell('A', line, 'en')).toBe('1')
+    expect(statCell('M', line, 'en', {})).toBe('4')
   })
 
   it('prints "–" for a column the book leaves blank', () => {
-    expect(statCell('A', { T: 7, W: 3 })).toBe('–')
+    expect(statCell('A', { T: 7, W: 3 }, 'en')).toBe('–')
   })
 
   it('lets a note WIN over a number that is still present', () => {
     // Data should never hold both, but the precedence is what the renderers
     // depend on: nothing may show an invented number where a token was read.
-    expect(statCell('A', line, { A: '1D6' })).toBe('1D6')
-    expect(statCell('M', line, { M: '5D6cm' })).toBe('5D6cm')
+    expect(statCell('A', line, 'en', { A: '1D6' })).toBe('1D6')
+    expect(statCell('M', line, 'en', { M: '5D6cm' })).toBe('5D6cm')
   })
 
   it('works for ANY of the nine columns, not just Attacks', () => {
-    expect(statCell('WS', {}, { WS: 'Especial' })).toBe('Especial')
-    expect(statCell('Ld', {}, { Ld: '–' })).toBe('–')
+    expect(statCell('WS', {}, 'en', { WS: 'Especial' })).toBe('Especial')
+    expect(statCell('Ld', {}, 'en', { Ld: '–' })).toBe('–')
+  })
+})
+
+// OLD-46 — the data stores Movement in inches, but the Spanish army books print
+// it in centimetres, so the Spanish stat strip converts the M column back.
+describe('statCell — Movement in centimetres in Spanish (OLD-46)', () => {
+  const line = { M: 4, WS: 3, BS: 3, S: 4, T: 3, W: 1, I: 3, A: 1, Ld: 7 }
+
+  it('prints M in inches in English and in centimetres in Spanish', () => {
+    expect(statCell('M', line, 'en')).toBe('4')
+    expect(statCell('M', line, 'es')).toBe('10')
+  })
+
+  // The cm the Spanish books actually print for each inch value the data holds
+  // (294 profiles cross-checked against the transcriptions). Not ×2.5 rounded
+  // one way: 3" is printed 8 and 7" is 18 (up), 5" is 12 and 9" is 22 (down).
+  it.each([
+    [0, '0'], [2, '5'], [3, '8'], [4, '10'], [5, '12'], [6, '15'],
+    [7, '18'], [8, '20'], [9, '22'], [10, '25'], [12, '30'], [24, '60'],
+  ])('prints %i" as the %s cm the Spanish books print', (inches, cm) => {
+    expect(statCell('M', { M: inches }, 'es')).toBe(cm)
+  })
+
+  it('converts ONLY the Movement column', () => {
+    expect(statCell('S', line, 'es')).toBe('4')
+    expect(statCell('Ld', line, 'es')).toBe('7')
+  })
+
+  it('leaves a Movement note exactly as the book prints it, unit included', () => {
+    expect(statCell('M', line, 'es', { M: '2D6"' })).toBe('2D6"')
+    expect(statCell('M', line, 'es', { M: '5D6cm' })).toBe('5D6cm')
+  })
+
+  it('prints "–" for a blank Movement column in Spanish too', () => {
+    expect(statCell('M', { T: 7, W: 3 }, 'es')).toBe('–')
+  })
+
+  it('never invents a centimetre value: an unmapped inch value keeps its unit', () => {
+    expect(statCell('M', { M: 11 }, 'es')).toBe('11"')
   })
 })
 

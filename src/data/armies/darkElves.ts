@@ -9,7 +9,7 @@ import { SHIELD } from '../unitOptions'
 // the book's army list (pp. 46-68) and bestiary (pp. 33-45).
 //
 // NOTE: the book gives Movement in centimetres; values here are converted to
-// the inches used elsewhere in the app (12cm→5", 22→9, 20→7, 15→6, 10→4).
+// the inches used elsewhere in the app (12cm→5", 22→9, 20→8, 15→6, 10→4).
 // Stat columns in the book are M / HA(WS) / HP(BS) / F(S) / R(T) / H(W) / I / A / L(Ld).
 
 const elf = (over: Partial<StatLine> = {}): StatLine => ({
@@ -61,7 +61,7 @@ const DARK_STEED_MOUNT: MountOption = {
 // Monster mounts — statLines/rule-tags reused from the bestiary entries below.
 const DARK_PEGASUS_MOUNT: MountOption = {
   id: 'mount-dark-pegasus', name: 'Dark Pegasus', nameEs: 'Pegaso Oscuro',
-  points: 50, statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 },
+  points: 50, statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 },
   specialRules: ['Flying'],
 }
 const MANTICORE_MOUNT: MountOption = {
@@ -96,7 +96,7 @@ const BLACK_DRAGON_PROFILE: ProfileBlock = {
 }
 const BLACK_PEGASUS_PROFILE: ProfileBlock = {
   name: 'Black Pegasus (Sulephet)', nameEs: 'Pegaso Negro (Sulephet)',
-  statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 },
+  statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 },
   specialRules: ['Flying'],
 }
 
@@ -534,7 +534,7 @@ const units: UnitProfile[] = [
     nameEs: 'Hipogrifo',
     role: 'monster',
     pointsPerModel: 145,
-    statLine: { M: 7, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 6, A: 3, Ld: 8 },
+    statLine: { M: 8, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 6, A: 3, Ld: 8 },
     specialRules: ['Large target', 'Flying'],
   },
   {

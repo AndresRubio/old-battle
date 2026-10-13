@@ -1,5 +1,6 @@
 import type { Army, EquipmentOption, MagicItem, MountOption, ProfileBlock, StatLine, StatNotes, UnitProfile } from '../data/types'
 import { isWizardLevelId, STANDARD_BEARER_ID } from '../data/unitOptions'
+import { MOVEMENT_CM } from '../data/movement'
 import { matchesQuery, type Lang } from '../i18n/lang'
 
 /**
@@ -20,15 +21,28 @@ import { matchesQuery, type Lang } from '../i18n/lang'
  * the editor's stat strip (`StatLineRow`) and the plaintext export both go
  * through it, so the screen and the exported list can never disagree about what
  * the book prints.
+ *
+ * Movement is stored in inches; in Spanish it prints in the centimetres the
+ * Spanish books use, read off `MOVEMENT_CM` (OLD-46). A token is printed as
+ * written, unit included (2D6", 5D6cm). An inch value missing from the
+ * table — unreachable for shipped data, which `assertArmyIntegrity` checks —
+ * keeps its inch mark rather than showing an invented centimetre figure.
  */
 export function statCell(
   key: keyof StatLine,
   statLine: Partial<StatLine>,
+  lang: Lang,
   notes?: StatNotes,
 ): string {
   const note = notes?.[key]
   if (note) return note
-  return String(statLine[key] ?? '–')
+  const value = statLine[key]
+  if (value === undefined) return '–'
+  if (key === 'M' && lang === 'es') {
+    const cm = MOVEMENT_CM[value]
+    return cm === undefined ? `${value}"` : String(cm)
+  }
+  return String(value)
 }
 
 /**

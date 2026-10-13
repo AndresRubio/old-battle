@@ -1,4 +1,5 @@
 import type { Army, StatLine, StatNotes } from '../types'
+import { MOVEMENT_CM } from '../movement'
 
 /** The nine characteristic columns, in the canonical M/WS/BS/S/T/W/I/A/Ld order. */
 const STAT_KEYS: Array<keyof StatLine> = ['M', 'WS', 'BS', 'S', 'T', 'W', 'I', 'A', 'Ld']
@@ -38,6 +39,13 @@ export function assertArmyIntegrity(army: Army): Army {
     throw new Error(`army data integrity [${army.id}]: ${msg}`)
   }
 
+  const checkMovement = (where: string, statLine: Partial<StatLine> | undefined) => {
+    const M = statLine?.M
+    if (M !== undefined && MOVEMENT_CM[M] === undefined) {
+      fail(`${where}: Movement ${M}" has no centimetre equivalent in MOVEMENT_CM`)
+    }
+  }
+
   const dupes = (ids: string[]): string[] => {
     const seen = new Set<string>()
     const out: string[] = []
@@ -71,6 +79,21 @@ export function assertArmyIntegrity(army: Army): Army {
       if (missing.length) {
         fail(`${u.id}/${m.id}: statLine has no value and no statNotes entry for ${missing.join(', ')}`)
       }
+    }
+
+    // Every M the data holds must have the centimetre value the Spanish books
+    // print for it (OLD-46): the Spanish stat strip reads it off MOVEMENT_CM,
+    // and an unmapped inch value has no book figure to show. Covers every
+    // profile that can carry an M — own, option replacement, cavalry steed,
+    // character mount and display profiles.
+    checkMovement(u.id, u.statLine)
+    for (const o of u.options ?? []) checkMovement(`${u.id}/${o.id}`, o.statLine)
+    for (const p of u.profiles ?? []) checkMovement(`${u.id}/${p.name}`, p.statLine)
+    if (u.mount) checkMovement(`${u.id}/${u.mount.name}`, u.mount.statLine)
+    for (const m of u.mounts ?? []) {
+      checkMovement(`${u.id}/${m.id}`, m.statLine)
+      for (const o of m.options ?? []) checkMovement(`${u.id}/${m.id}/${o.id}`, o.statLine)
+      for (const p of m.profiles ?? []) checkMovement(`${u.id}/${m.id}/${p.name}`, p.statLine)
     }
 
     // Mount options share RosterEntry.optionIds with the unit's own options,
