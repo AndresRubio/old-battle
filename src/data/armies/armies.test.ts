@@ -2532,3 +2532,28 @@ describe('Reino del Caos pp.100-102 — the Chaos character armoury', () => {
     expect(entryPoints(entry, chaos)).toBe(265)
   })
 })
+
+// OLD-46 — the Spanish render converts M back to the centimetres the book
+// prints (8cm→3", 20→8, …). These profiles had been converted with the wrong
+// row of that table, so they would have printed a cm value the book never shows
+// (18 cm, 10 cm). Values read off the PDF pages cited.
+describe('OLD-46 — Movement converts back to the centimetres the book prints', () => {
+  it('Dark Elves: the Hippogriff and both Pegasi move 20 cm = 8" (pp.55, 59, 80)', () => {
+    const de = getArmy('dark-elves')!
+    const unit = (id: string) => de.units.find((u) => u.id === id)!
+    // p.55 MONSTRUOS "Hipogrifo 20 5 0 6 5 5 6 3 8"; p.80 bestiary, same row.
+    expect(unit('de-hippogriff').statLine).toEqual({ M: 8, WS: 5, BS: 0, S: 6, T: 5, W: 5, I: 6, A: 3, Ld: 8 })
+    // p.80 "Pegaso Oscuro 20 3 0 4 4 3 4 2 5" — the lords' monster mount.
+    const pegasus = unit('de-general').mounts!.find((m) => m.id === 'mount-dark-pegasus')!
+    expect(pegasus.statLine).toEqual({ M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 })
+    // p.59 Morathi's profile "Pegaso Negro 20 3 0 4 4 3 4 2 5" (Sulephet); p.55 same row.
+    const sulephet = unit('de-morathi').profiles!.find((p) => p.name === 'Black Pegasus (Sulephet)')!
+    expect(sulephet.statLine).toEqual({ M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 5 })
+  })
+
+  it('Dwarfs: Josef Bugman moves 8 cm = 3", like every Dwarf (p.95)', () => {
+    const bugman = getArmy('dwarfs')!.units.find((u) => u.id === 'dw-josef-bugman')!
+    // p.95 "Josef Bugman 8 6 5 4 5 2 4 3 10".
+    expect(bugman.statLine).toEqual({ M: 3, WS: 6, BS: 5, S: 4, T: 5, W: 2, I: 4, A: 3, Ld: 10 })
+  })
+})

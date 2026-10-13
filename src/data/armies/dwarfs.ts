@@ -320,7 +320,7 @@ const units: UnitProfile[] = [
     nameEs: 'Josef Bugman',
     role: 'character',
     pointsPerModel: 111,
-    statLine: dwarf({ M: 4, WS: 6, BS: 5, S: 4, T: 5, W: 2, I: 4, A: 3, Ld: 10 }),
+    statLine: dwarf({ WS: 6, BS: 5, S: 4, T: 5, W: 2, I: 4, A: 3, Ld: 10 }),
     isCharacter: true,
     characterRank: 'hero',
     canBeGeneral: false,

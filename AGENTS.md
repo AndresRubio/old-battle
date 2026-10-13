@@ -108,8 +108,11 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
 - **Bilingual everywhere.** Any new user-facing string needs both `en` and `es` (add to `STRINGS`
   in `lang.ts`). Data objects carry `nameEs`/`descEs`/`nameEs` that fall back to English. Validation
   messages take a `lang` arg and branch inline.
-- **Movement is in inches.** The source army books give Movement in centimetres; values in the data
-  files are already converted (8cm→3", 10→4, 12→5, 15→6, 20→8). Spanish stat columns map
+- **Movement is stored in inches and shown in cm in Spanish.** The Spanish army books print M in
+  centimetres; the data files hold it converted to inches, and `statCell` converts it back for the
+  Spanish UI. Both directions use `MOVEMENT_CM` (`src/data/movement.ts`), the books' own table —
+  not a ×2.5 formula (5"→12, 7"→18) — and `assertArmyIntegrity` rejects any M missing from it.
+  English-source books already print inches. Spanish stat columns map
   M/HA/HP/F/R/H/I/A/L → M/WS/BS/S/T/W/I/A/Ld.
 - Army data is **transcribed from the Spanish 4th/5th-edition Games Workshop army books** (see the
   header comment in each `armies/*.ts` for the exact book/page citation). The **rules engine is

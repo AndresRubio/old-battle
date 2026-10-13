@@ -63,7 +63,7 @@ function statTableLines(
 ): string[] {
   const lines: string[] = []
   if (label) lines.push(`  · ${label}`)
-  const cells = STAT_KEYS.map((k) => statCell(k, statLine, notes))
+  const cells = STAT_KEYS.map((k) => statCell(k, statLine, lang, notes))
   const widths = STAT_KEYS.map((k, i) =>
     Math.max(STAT_COL, STAT_LABEL[lang][k].length + 1, cells[i].length + 1),
   )

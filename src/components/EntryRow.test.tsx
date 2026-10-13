@@ -308,3 +308,31 @@ describe('EntryRow magic standard filter', () => {
     expect(container.querySelector('.mi-filter')).toBeNull()
   })
 })
+
+// OLD-46 — the stat strip prints M in the centimetres the Spanish books print
+// (8" → 20 cm), on the unit's own row and on a cavalry unit's steed row alike.
+describe('EntryRow Movement in centimetres in Spanish (OLD-46)', () => {
+  /** The M-column cell of the stat strip labelled `label`. */
+  const movementFor = (label: string) => {
+    const wrap = Array.from(container.querySelectorAll('.statline-wrap')).find(
+      (el) => el.querySelector('.stat-profile-label')?.textContent === label,
+    )
+    return wrap?.querySelectorAll('.stat-v')[0]?.textContent
+  }
+
+  it('prints the rider and its steed in inches in English', () => {
+    setLang('en')
+    render(<EntryRow entry={entry('emp-white-wolf-knights')} army={army} {...props} />)
+    expand()
+    expect(movementFor('Rider')).toBe('8')
+    expect(movementFor('Barded Warhorse')).toBe('8')
+  })
+
+  it('prints the rider and its steed in centimetres in Spanish', () => {
+    setLang('es')
+    render(<EntryRow entry={entry('emp-white-wolf-knights')} army={army} {...props} />)
+    expand()
+    expect(movementFor('Jinete')).toBe('20')
+    expect(movementFor('Caballo de Guerra con Barda')).toBe('20')
+  })
+})

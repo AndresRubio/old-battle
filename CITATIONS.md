@@ -981,6 +981,43 @@ weapons is legal, so the app does not put weapon options in an `exclusiveGroup` 
 The owner chose this after weighing it against making weapons exclusive everywhere, or for
 regiments only. Do not add weapon exclusivity without revisiting this entry.
 
+#### Movement in centimetres in Spanish — OLD-46 (2026-10-13)
+The data stores M in inches, and the Spanish UI now prints it in the centimetres the Spanish books
+use. Both directions go through `MOVEMENT_CM` (`src/data/movement.ts`), which was read off the
+books rather than derived from a formula:
+
+```
+in:  0  2  3   4   5   6   7   8   9  10  12  24
+cm:  0  5  8  10  12  15  18  20  22  25  30  60
+```
+
+The Spanish army books print exactly these M values: 5, 8, 10, 12, 15, 18, 20, 22, 25, 30, 60. The
+table is one-to-one over them, so inverting it gives back the printed number. Matched by name
+against the M column of every Spanish transcription in `source/transcribed/`, **294 of the data's
+profiles convert back to exactly what the book prints**. The rest either don't match by name, or are war
+machines where the book prints `-` on the machine and the data carries the crew's M. The Bretonnia
+(1997) and Lizardmen (1997) PDFs are English editions printed in inches despite their Spanish
+filenames, so like Norse, Halflings and Dogs of War they have no printed cm. The Spanish UI converts
+them through the same table so that the whole UI is in centimetres. Dice tokens in M stay as printed,
+unit included: Norse and Halfling `2D6"`, Fanatic and Chaos Spawn `5D6cm`.
+
+The cross-check turned up four profiles converted with the wrong row. Without fixing them, the
+Spanish UI would show a cm value the book never prints. All four were vision-verified on the PDF:
+- **Dark Elves Hippogriff** (`de-hippogriff`): M 7 → **8**. `source/1995 elfos oscuros.pdf`, offset
+  +2: **printed p.55 = PDF 57** (MONSTRUOS, *"Hipogrifo 20 5 0 6 5 5 6 3 8"*) and **printed p.80 =
+  PDF 82** (bestiary, same row).
+- **Dark Elves Dark Pegasus mount** (`mount-dark-pegasus`): M 7 → **8**. Printed p.80, *"Pegaso
+  Oscuro 20 3 0 4 4 3 4 2 5"*.
+- **Dark Elves Black Pegasus Sulephet** (Morathi's profile): M 7 → **8**. **Printed p.59 = PDF 61**,
+  *"Pegaso Negro 20 3 0 4 4 3 4 2 5"*; p.55 prints the same row.
+- **Dwarfs Josef Bugman** (`dw-josef-bugman`): M 4 → **3**. `source/1995 Enanos.pdf`, offset +2,
+  **printed p.95 = PDF 97**, *"Josef Bugman 8 6 5 4 5 2 4 3 10"*. He is a Dwarf, and 8 cm is 3".
+
+The Dark Elves error came from the header of `darkElves.ts`, which documented `20→7`; it now reads
+`20→8`, like every other army. Two profiles are left for OLD-47: the Skaven Doomwheel (the book prints
+M `7D6`, and the rules on p.31 and the list on p.67 give different rows) and the Empire Steam Tank
+(the data has M `0`, the book prints `-`).
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

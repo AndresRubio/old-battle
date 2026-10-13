@@ -190,6 +190,80 @@ describe('assertArmyIntegrity', () => {
     })
   })
 
+  // OLD-46 — the Spanish stat strip prints M in the centimetres the books print,
+  // read off MOVEMENT_CM. An inch value missing from that table has no book
+  // value to show, so it must fail at load instead of rendering raw inches in a
+  // centimetre column. Every place a profile can carry an M is checked.
+  describe('Movement has a centimetre equivalent', () => {
+    const line = (M: number) => ({ M, WS: 3, BS: 3, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 7 })
+    const character = (over: Partial<UnitProfile>) =>
+      unit({ id: 'c', role: 'character', isCharacter: true, ...over })
+
+    it("throws on a unit's own M", () => {
+      expect(() => assertArmyIntegrity(army({ units: [unit({ id: 'u', statLine: line(11) })] }))).toThrow(
+        /u: Movement 11" has no centimetre equivalent/,
+      )
+    })
+
+    it("throws on an option's replacement profile (wizard levels)", () => {
+      const u = character({ options: [{ id: 'lvl2', name: 'Level 2', pointsPerModel: 50, statLine: line(11) }] })
+      expect(() => assertArmyIntegrity(army({ units: [u] }))).toThrow(
+        /c\/lvl2: Movement 11" has no centimetre equivalent/,
+      )
+    })
+
+    it("throws on a mount's M and on its display profiles", () => {
+      const mount = character({ mounts: [{ id: 'steed', name: 'Steed', points: 10, statLine: line(11) }] })
+      expect(() => assertArmyIntegrity(army({ units: [mount] }))).toThrow(
+        /c\/steed: Movement 11" has no centimetre equivalent/,
+      )
+      const crewed = character({
+        mounts: [{ id: 'chariot', name: 'Chariot', points: 50, profiles: [{ name: 'Crew', statLine: { M: 11 } }] }],
+      })
+      expect(() => assertArmyIntegrity(army({ units: [crewed] }))).toThrow(
+        /c\/chariot\/Crew: Movement 11" has no centimetre equivalent/,
+      )
+    })
+
+    it("throws on a unit's display profiles", () => {
+      const u = unit({ id: 'ch', role: 'chariot', profiles: [{ name: 'Steed', statLine: { M: 11 } }] })
+      expect(() => assertArmyIntegrity(army({ units: [u] }))).toThrow(
+        /ch\/Steed: Movement 11" has no centimetre equivalent/,
+      )
+    })
+
+    it("throws on a cavalry regiment's steed", () => {
+      const u = unit({ id: 'knights', statLine: line(4), mount: { name: 'Warhorse', statLine: line(11) } })
+      expect(() => assertArmyIntegrity(army({ units: [u] }))).toThrow(
+        /knights\/Warhorse: Movement 11" has no centimetre equivalent/,
+      )
+    })
+
+    it("throws on a mount option's replacement profile", () => {
+      const u = character({
+        mounts: [{
+          id: 'steed', name: 'Steed', points: 10, statLine: line(8),
+          options: [{ id: 'fast', name: 'Fast', pointsPerModel: 1, statLine: line(11) }],
+        }],
+      })
+      expect(() => assertArmyIntegrity(army({ units: [u] }))).toThrow(
+        /c\/steed\/fast: Movement 11" has no centimetre equivalent/,
+      )
+    })
+
+    it('accepts a mapped M, a blank M and a token M', () => {
+      const u = character({
+        statLine: line(4),
+        mounts: [{ id: 'steed', name: 'Steed', points: 10, statLine: line(8) }],
+        profiles: [{ name: 'Chassis', statLine: { T: 7, W: 3 } }],
+      })
+      const { M, ...noM } = line(0)
+      void M
+      const spawn = unit({ id: 'spawn', statLine: noM, statNotes: { M: '5D6cm' } })
+      expect(assertArmyIntegrity(army({ units: [u, spawn] }))).toBeTruthy()
+    })
+  })
+
   it('throws on selection rules referencing unknown units', () => {
     expect(() =>
       assertArmyIntegrity(
