@@ -20,7 +20,7 @@ import {
   t,
 } from '../i18n/lang'
 import { isWizardLevelId } from '../data/unitOptions'
-import { resolveStatNotes, statCell } from './entryView'
+import { companionMountProfile, resolveStatNotes, statCell } from './entryView'
 
 /**
  * An option's label with its price, formatted exactly as the editor shows it:
@@ -91,22 +91,25 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
   // Some options (e.g. O&G shaman wizard levels) replace the whole statLine.
   const statLine = effectiveStatLine(unit, entry.optionIds)
   if (statLine) lines.push(...statTableLines(statLine, lang, undefined, resolveStatNotes(unit, lang)))
+  // The mount row directly beneath the rider, paired exactly as the editor
+  // pairs it: a cavalry regiment's fixed steed, or the profile of the
+  // character's chosen mount — whose label also carries the mount's cost.
+  const mount = entry.mountId ? (unit.mounts ?? []).find((m) => m.id === entry.mountId) : undefined
+  const mountLabel = mount ? `${mountName(mount, lang)} (+${mount.points} ${t('pts', lang)})` : undefined
+  const companion = companionMountProfile(unit, mount)
+  if (companion) {
+    const label = companion === unit.mount ? profileName(companion, lang) : mountLabel
+    lines.push(...statTableLines(companion.statLine, lang, label, resolveStatNotes(companion, lang)))
+  }
   // Extra display-only profiles: chariot crew / chassis / draught beasts, etc.
   for (const p of unit.profiles ?? []) {
     lines.push(...statTableLines(p.statLine, lang, profileName(p, lang), resolveStatNotes(p, lang)))
   }
-  // The chosen mount rides with the character — show its profile too. A
-  // chariot mount contributes its crew / draught-beast / chassis rows instead
-  // of a single statline.
-  const mount = entry.mountId ? (unit.mounts ?? []).find((m) => m.id === entry.mountId) : undefined
-  if (mount) {
-    const label = `${mountName(mount, lang)} (+${mount.points} ${t('pts', lang)})`
-    if (mount.statLine) {
-      lines.push(...statTableLines(mount.statLine, lang, label, resolveStatNotes(mount, lang)))
-    } else lines.push(`  · ${label}`)
-    for (const p of mount.profiles ?? []) {
-      lines.push(...statTableLines(p.statLine, lang, profileName(p, lang), resolveStatNotes(p, lang)))
-    }
+  // A chariot mount has no single statline: it contributes its crew /
+  // draught-beast / chassis rows instead, under its own label.
+  if (mount && !mount.statLine) lines.push(`  · ${mountLabel}`)
+  for (const p of mount?.profiles ?? []) {
+    lines.push(...statTableLines(p.statLine, lang, profileName(p, lang), resolveStatNotes(p, lang)))
   }
 
   // Selected equipment options (wizard levels labelled as in the summary),

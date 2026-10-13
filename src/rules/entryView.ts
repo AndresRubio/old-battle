@@ -127,6 +127,8 @@ export function filterMagicItems(items: MagicItem[], query: string, maxPts: stri
  * beneath the rider — a regiment's fixed steed (`unit.mount`) or the profile
  * of a character's chosen mount. A chariot mount has no single statLine (it
  * contributes crew / beast / chassis rows instead) and yields undefined.
+ * Shared by the editor and the plaintext export, so the two can't pair a rider
+ * with different mounts (OLD-48).
  */
 export function companionMountProfile(
   unit: UnitProfile,
