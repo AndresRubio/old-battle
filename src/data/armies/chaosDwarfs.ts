@@ -230,7 +230,11 @@ const units: UnitProfile[] = [
     nameEs: 'Astragoth, Sumo Sacerdote de Hashut',
     role: 'character',
     pointsPerModel: 358,
-    statLine: chaosDwarf({ WS: 6, BS: 3, S: 4, T: 5, W: 3, I: 2, A: 3, Ld: 10 }),
+    // OLD-59 — printed p.64 = PDF 66: "ASTRAGOTH 15 6 3 5 5 4 5 3 10".
+    // M 15cm is 6" (he is the one Chaos Dwarf who does not move 8cm, because
+    // the walking machine carries him). The entry used to read M 3" S 4 W 3
+    // I 2; four columns were wrong, exactly the four the issue names.
+    statLine: chaosDwarf({ M: 6, WS: 6, BS: 3, S: 5, T: 5, W: 4, I: 5, A: 3, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
     lores: ['chaosDwarf'],
@@ -239,9 +243,10 @@ const units: UnitProfile[] = [
     specialRules: [
       'Special character',
       'Wizard Level 4 (Great Sorcerer)',
-      '3+ armour save (mechanical body)',
-      'Deadly Attack (re-roll all attacks on a hit)',
-      'Charges only 6"; cannot ride a mount',
+      'Walking Machine — 3+ armour save from the machine and his armour',
+      'Mechanical Movement — charges 15cm and cannot march-double; pursues and flees the usual 5D6',
+      'Deadly Attack — if all three attacks hit one target, he attacks it again with all of them',
+      'Cannot ride a mount',
       'Up to 4 magic items',
       CD_SORCERER_RULE,
       CD_BESTIARY_RULES[2],

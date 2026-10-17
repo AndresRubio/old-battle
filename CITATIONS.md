@@ -1179,6 +1179,33 @@ over the rank chart, with option deltas still applied on top. Three tests in `va
 pin it: Zhatan gets 4 while `MAGIC_ITEM_ALLOWANCE.lord` stays 3, every other Chaos Dwarf character
 still follows its rank, and a fifth item raises `magic-items-count`.
 
+#### Astragoth: four wrong characteristics and three rules (OLD-59, 2026-10-17)
+His entry is on **printed p.64 = PDF 66**, which prints `ASTRAGOTH 15 6 3 5 5 4 5 3 10`. The data
+had four columns wrong, the four the issue names:
+
+```
+         M    WS  BS  S    T   W    I    A   Ld
+book     15    6   3  5    5   4    5    3   10
+was      8     6   3  4    5   3    2    3   10   (M stored as 3")
+now      15    6   3  5    5   4    5    3   10   (M stored as 6")
+```
+
+He is the one Chaos Dwarf who does not move 8cm: the walking machine carries him at 15cm, which is
+also why OLD-51 leaves the bestiary Armour and Pursuit rules off him.
+
+The three rules from the same page, each now a glossary article. **ARMAS Y ARMADURA**, which was a
+bare *"3+ armour save (mechanical body)"*: the save comes from the machine he is installed in plus
+his armour, since his legs are petrified. **MOVIMIENTO**, which the data reduced to *"Charges only
+6\""*: he charges 15cm, cannot double his Movement to march, and the one exception is that he
+pursues and flees the ordinary 5D6. **ATAQUE MORTIFERO**, which the data had as *"re-roll all
+attacks on a hit"*, something the book does not say: if he hits the same target with all three
+Attacks, he immediately attacks that target again with all of them.
+
+The alias for the last one is `attacks it again with all of them`, not `deadly attack`. The short
+version also matched the Empire tag *"Protected by Sigmar... Strength 10 Deadly Attack in close
+combat"*, a different rule in a different book. The `rule-tags.txt` snapshot caught it, the second
+time in this batch.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

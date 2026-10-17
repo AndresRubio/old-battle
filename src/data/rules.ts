@@ -207,6 +207,34 @@ export const RULES: RuleDef[] = [
     es: 'Armas impregnadas de un veneno mortal. El efecto exacto varía según el ejército: lo más habitual es que los ataques ganen un bonificador de Fuerza (p. ej. +1 a la Fuerza), aunque algunos venenos no permiten salvación por armadura o causan heridas adicionales. Consulta la ficha de la unidad.',
   },
   {
+    // OLD-59 — Astragoth, Enanos del Caos printed p.64 = PDF 66.
+    id: 'astragoth-walking-machine',
+    aliases: ['walking machine'],
+    titleEn: 'Walking Machine (Astragoth)',
+    titleEs: 'Máquina andante (Astragoth)',
+    en: 'Astragoth is installed inside a machine that lets him walk despite his petrified legs. His armour and the machine’s protection together give him an armour save of 3+.',
+    es: 'Astragoth se encuentra instalado en el interior de una máquina que le permite andar a pesar de sus petrificadas piernas. La combinación de la protección de su máquina y su armadura le proporciona una tirada de salvación por armadura de 3+.',
+  },
+  {
+    id: 'astragoth-movement',
+    aliases: ['mechanical movement'],
+    titleEn: 'Movement (Astragoth)',
+    titleEs: 'Movimiento (Astragoth)',
+    en: 'Astragoth moves faster than an ordinary Chaos Dwarf thanks to his half-mechanical body, which is why his Movement is 15cm rather than the usual 8cm. The machine will not let him go any faster than that, though: he moves only 15cm when he charges, and he cannot double his Movement to march. The one exception is pursuing and fleeing, where he moves the usual 5D6 centimetres.',
+    es: 'Astragoth puede moverse más rápidamente que un Enano del Caos normal gracias a su cuerpo semimecánico, y por eso su Movimiento es de 15 cm en vez de los 8 habituales. Sin embargo, la máquina no le permite moverse más deprisa: tan sólo podrá desplazarse 15 centímetros al efectuar un movimiento de carga, y no podrá duplicar su capacidad de movimiento al efectuar movimiento de marcha. La única excepción es que al perseguir y huir moverá los 5D6 centímetros habituales.',
+  },
+  {
+    id: 'astragoth-deadly-attack',
+    // Alias deliberately narrow. A bare 'deadly attack' also matched the
+    // Empire tag "Protected by Sigmar: ... Strength 10 Deadly Attack in close
+    // combat", which is a different rule in a different book.
+    aliases: ['attacks it again with all of them'],
+    titleEn: 'Deadly Attack (Astragoth)',
+    titleEs: 'Ataque mortífero (Astragoth)',
+    en: 'The steam-driven pistons that replaced Astragoth’s muscles and tendons let him strike with deadly Strength. Besides the increased Strength shown in his profile, he has a special attack called the Deadly Attack: if he hits the same target with all three of his Attacks, his mechanical arms accelerate almost out of control into a savage rain of blows, and he may immediately attack that same target again with all of his attacks.',
+    es: 'Los pistones accionados por vapor que han reemplazado los músculos y tendones de Astragoth le permiten atacar al enemigo con una Fuerza mortífera. Además de aumentar su Fuerza, como puede observarse en su perfil de atributos, Astragoth puede llevar a cabo un ataque especial denominado Ataque Mortífero: si impacta al mismo objetivo con los tres Ataques de que dispone, sus brazos mecánicos se habrán acelerado casi sin control, descargando una salvaje lluvia de golpes, y podrá atacar de nuevo inmediatamente al mismo objetivo con todos sus ataques.',
+  },
+  {
     // OLD-53 — the greenskin troops a Chaos Dwarf army may field, from the
     // same bestiary: Black Orcs printed p.12 = PDF 14, Orcs and Goblins
     // printed p.13 = PDF 15. Specific aliases again, for the same reason as
