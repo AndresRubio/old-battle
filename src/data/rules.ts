@@ -207,6 +207,66 @@ export const RULES: RuleDef[] = [
     es: 'Armas impregnadas de un veneno mortal. El efecto exacto varía según el ejército: lo más habitual es que los ataques ganen un bonificador de Fuerza (p. ej. +1 a la Fuerza), aunque algunos venenos no permiten salvación por armadura o causan heridas adicionales. Consulta la ficha de la unidad.',
   },
   {
+    // OLD-53 — the greenskin troops a Chaos Dwarf army may field, from the
+    // same bestiary: Black Orcs printed p.12 = PDF 14, Orcs and Goblins
+    // printed p.13 = PDF 15. Specific aliases again, for the same reason as
+    // the Hobgoblin block below.
+    id: 'cd-orc-animosity',
+    aliases: ['orc animosity'],
+    titleEn: 'Animosity (Orcs)',
+    titleEs: 'Animosidad (Orcos)',
+    en: 'Orcs are subject to the Orc and Goblin animosity rule as described in the Warhammer bestiary and in the Orcs & Goblins army supplement. If the army includes mobs of Hobgoblins, the Orcs pass their animosity rolls automatically, with no dice rolled at all: they are busier keeping an eye on the treacherous Hobgoblins than on quarrelling among themselves.',
+    es: 'Los Orcos se ven afectados por la regla de Animosidad de Orcos y Goblins, tal y como se describe en el Bestiario de Warhammer o en el suplemento de Ejércitos Orcos y Goblins. Si el ejército incluye peñas de Hobgoblins, los Orcos superarán automáticamente la tirada de Animosidad: no es necesario tirar los dados. Los Orcos están más pendientes de vigilar a los traicioneros Hobgoblins que de pelearse entre ellos.',
+  },
+  {
+    id: 'cd-orc-panic',
+    aliases: ['orc panic'],
+    titleEn: 'Panic (Orcs)',
+    titleEs: 'Pánico (Orcos)',
+    en: 'Orcs know perfectly well that Goblins are cowards who will run as soon as the fighting turns serious, so it hardly surprises them when it happens. The sight of a few Goblins fleeing in panic does not worry an Orc; it just reminds him that he is better than they are. When a Goblin unit breaks and flees near a unit of Orcs during a turn, the Orcs take no panic test.',
+    es: 'Los Orcos tienen muy claro que los Goblins son unos cobardes que saldrán corriendo tan pronto como la lucha empiece en serio, por lo que no les sorprende demasiado cuando ocurre. La visión de unos cuantos Goblins huyendo presos del pánico no preocupa a los Orcos: simplemente les recuerda que son mejores que ellos. Cuando una unidad de Goblins se desmoralice y huya durante un turno cerca de una unidad de Orcos, éstos no tendrán que llevar a cabo un chequeo de pánico.',
+  },
+  {
+    id: 'cd-black-orc-animosity',
+    aliases: ['black orc animosity'],
+    titleEn: 'Animosity (Black Orcs)',
+    titleEs: 'Animosidad (Orcos Negros)',
+    en: 'Black Orcs are untouched by the constant squabbling and brawling that marks the other Orcs and Goblins, so they never take Animosity checks. And because they are not subject to Animosity, they can never be the victim of another greenskin unit’s animosity either.',
+    es: 'Los Orcos Negros no se ven afectados por las continuas trifulcas y peleas que caracterizan a los otros Orcos y Goblins, por lo que nunca tienen que llevar a cabo chequeos de Animosidad. Ten en cuenta que, puesto que no están sujetos a Animosidad, tampoco podrán ser víctimas de la Animosidad de otra unidad de goblinoides.',
+  },
+  {
+    id: 'cd-black-orc-leaders',
+    aliases: ['black orc leaders'],
+    titleEn: 'Black Orc Leaders',
+    titleEs: 'Líderes Orcos Negros',
+    en: 'A Black Orc character may join any unit of ordinary Orcs or Goblins and take command of it. With a Black Orc in charge the unit would rather not squabble, so it is not subject to the Animosity rule while he leads it. Black Orcs want nothing to do with Hobgoblins, so they cannot be chosen to command a Hobgoblin unit.',
+    es: 'Los Personajes Orcos Negros pueden unirse a cualquier unidad de Orcos normales o Goblins y ponerles bajo sus órdenes. Puesto que la unidad está bajo el mando de un Orco Negro, sus miembros preferirán no pelearse entre sí: la unidad no estará sujeta a la regla especial de Animosidad. Los Orcos Negros no quieren saber nada de los Hobgoblins, así que no pueden ser elegidos para mandar una unidad de Hobgoblins.',
+  },
+  {
+    id: 'cd-black-orc-panic',
+    aliases: ['black orc panic'],
+    titleEn: 'Panic (Black Orcs)',
+    titleEs: 'Pánico (Orcos Negros)',
+    en: 'Black Orcs care so little about what happens to ordinary Orcs or Goblins that they take no panic test when they see a broken greenskin unit flee past them. It simply confirms what they already believed: that they are the best. The rule covers the Black Orcs themselves only, not the Orc or Goblin units led by a Black Orc character.',
+    es: 'A los Orcos Negros les importa tan poco lo que les pase a los Orcos normales o a los Goblins que no tendrán que efectuar un chequeo de pánico si ven huir cerca a una unidad de goblinoides desmoralizada: simplemente les convence aún más de que son los mejores. Esta regla se aplica únicamente a los Orcos Negros, no a las unidades de Orcos o Goblins que estén bajo el mando de un personaje Orco Negro.',
+  },
+  {
+    id: 'cd-goblin-fear-elves',
+    aliases: ['goblin fear of elves'],
+    titleEn: 'Fear of Elves (Goblins)',
+    titleEs: 'Miedo a los Elfos (Goblins)',
+    en: 'Goblins dread fighting Elves, partly because of that race’s formidable reputation as warriors and partly because the natural aura of the Elves stirs an irrational terror in them. A Goblin unit fears any Elf unit it does not outnumber by at least two to one, and suffers the effects of fear as described in the psychology rules.',
+    es: 'Los Goblins sienten una gran aprensión a luchar contra los Elfos, en parte por la formidable reputación de esta raza como guerreros y en parte porque el aura natural de los Elfos provoca un temor irracional entre ellos. Cualquier unidad Goblin siente miedo de cualquier unidad de Elfos a la que no supere en número como mínimo en relación de dos a uno, y sufrirá los efectos del miedo tal y como se describe en las Reglas de Psicología.',
+  },
+  {
+    id: 'cd-goblin-animosity',
+    aliases: ['goblin animosity'],
+    titleEn: 'Animosity (Goblins)',
+    titleEs: 'Animosidad (Goblins)',
+    en: 'Goblins are subject to Orc and Goblin animosity. If the army includes mobs of Hobgoblins, the Goblins pass their animosity rolls automatically, with no dice rolled: they distrust the Hobgoblins so deeply that they stop squabbling among themselves and concentrate on watching them closely.',
+    es: 'Los Goblins están afectados por la animosidad de Orcos y Goblins. Si el ejército incluye peñas de Hobgoblins, los Goblins superarán automáticamente las tiradas de animosidad, sin tirar los dados: desconfían tanto de los Hobgoblins que dejarán de pelearse entre ellos y se concentrarán en vigilarlos de cerca.',
+  },
+  {
     // OLD-52 — Hobgoblins, bestiary printed p.11 = PDF 13, and the Sneaky Gitz
     // on printed p.12 = PDF 14. Every alias below is deliberately specific:
     // bare 'animosity', 'panic' or 'poisoned' would reach across the other

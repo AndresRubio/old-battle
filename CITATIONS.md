@@ -1138,6 +1138,26 @@ wins the tie.
 Left alone: the Hobgoblin Hero, a character rather than a regiment, which keeps its plain Animosity
 tag, since the issue asks about regiments.
 
+#### Orc, Black Orc and Goblin rules (OLD-53, 2026-10-17)
+The greenskin regiments a Chaos Dwarf army may field get the bestiary's own rules: Black Orcs from
+**printed p.12 = PDF 14**, Orcs and Goblins from **printed p.13 = PDF 15**. Seven articles.
+
+**Black Orcs** had one summary tag, *"Immune to Animosity & panic from other greenskins"*, standing
+in for three separate rules. ANIMOSIDAD: they never test, and because they are not subject to it
+they can never be the victim of another unit's animosity either. LIDERES ORCOS NEGROS, which was
+missing altogether: a Black Orc character may join and command any Orc or Goblin unit, and that
+unit stops being subject to Animosity while he leads it, but he will not take Hobgoblins. PANICO:
+no test when a broken greenskin unit flees past, and the book is explicit that this covers the
+Black Orcs themselves, not the units a Black Orc character leads.
+
+**Orcs** had a bare "Animosity" tag. The book's version carries the Hobgoblin clause: with
+Hobgoblin mobs in the army the Orcs pass automatically, no dice. PANICO was missing: a fleeing
+Goblin unit never panics Orcs.
+
+**Goblins** had "Animosity" and "Fear Elves". Both are now the book's: the fear applies to any Elf
+unit the Goblins do not outnumber two to one, and animosity carries the same Hobgoblin clause as
+the Orcs'.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

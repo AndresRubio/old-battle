@@ -1,4 +1,11 @@
 export const RULE_PHRASE_ES: Record<string, string> = {
+  'Black Orc Animosity — never tested, and never a target of it': 'Animosidad — nunca la chequean, y nunca son víctimas de ella',
+  'Black Orc Leaders — may command Orc or Goblin units, never Hobgoblins': 'Líderes Orcos Negros — pueden mandar unidades de Orcos o Goblins, nunca de Hobgoblins',
+  'Black Orc Panic — fleeing greenskins never panic them': 'Pánico — los goblinoides que huyen nunca les provocan pánico',
+  'Goblin Animosity — with Hobgoblins in the army they pass automatically': 'Animosidad — con Hobgoblins en el ejército la superan automáticamente',
+  'Goblin Fear of Elves — unless they outnumber them two to one': 'Miedo a los Elfos — salvo que les superen en número dos a uno',
+  'Orc Animosity — with Hobgoblins in the army they pass automatically': 'Animosidad — con Hobgoblins en el ejército la superan automáticamente',
+  'Orc Panic — fleeing Goblins never panic them': 'Pánico — los Goblins que huyen nunca les provocan pánico',
   'Black Orc Officers — a Black Orc character will never lead a Hobgoblin unit': 'Oficiales Orcos Negros — un personaje Orco Negro nunca se pondrá al mando de una unidad de Hobgoblins',
   'Envelop the Flank — any number of models, and the enemy can never envelop them': 'Envolver el flanco — con un número ilimitado de miniaturas, y el enemigo nunca puede envolverlos a ellos',
   'Hobgoblin Animosity — other greenskins in the army pass their checks automatically': 'Animosidad — los demás goblinoides del ejército superan sus chequeos automáticamente',
@@ -136,7 +143,6 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Hidden in a regiment': 'Oculto en un regimiento',
   'Horn attack (S6 charge)': 'Ataque de cornamenta (F6 en carga)',
   'Immune to Animosity': 'Inmune a la Animosidad',
-  'Immune to Animosity & panic from other greenskins': 'Inmune a la Animosidad y al pánico de otros pielverde',
   'Immune to psychology': 'Inmune a la psicología',
   'Joined to a Savage Orc unit: gains an extra magic card (usable only by him)':
     'Unido a una Peña de Orcos Salvajes: obtiene una carta de magia adicional (sólo para él)',
