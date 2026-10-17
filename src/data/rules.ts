@@ -207,6 +207,30 @@ export const RULES: RuleDef[] = [
     es: 'Armas impregnadas de un veneno mortal. El efecto exacto varía según el ejército: lo más habitual es que los ataques ganen un bonificador de Fuerza (p. ej. +1 a la Fuerza), aunque algunos venenos no permiten salvación por armadura o causan heridas adicionales. Consulta la ficha de la unidad.',
   },
   {
+    // OLD-56 — Enanos del Caos printed p.10. Listed BEFORE 'breath-weapon': the
+    // tag reads "Fire Breath — ...", so alias 'fire breath' matches at index 0
+    // and beats the generic 'breath' at index 5. The generic article says the
+    // hits are Strength 4; the Great Taurus breathes at Strength 3, so it needs
+    // its own entry rather than the shared one.
+    id: 'great-taurus-fire-breath',
+    aliases: ['fire breath'],
+    titleEn: 'Fire Breath (Great Taurus)',
+    titleEs: 'Aliento de fuego (Gran Tauro)',
+    en: 'The Great Taurus can blow flames over its enemies. Use the teardrop template, with the narrow end against the creature’s mouth and the wide end over the target. Any model under the template is hit on a 4 or more on 1D6, and each model hit takes a single Strength 3 attack. Damage and saves are resolved normally. The fire may also set buildings alight, as described in the Warhammer rulebook, and causes extra wounds to easily flammable targets such as Treemen and Mummies.',
+    es: 'El Gran Tauro puede soplar llamaradas sobre sus enemigos. Emplea la plantilla en forma de lágrima, colocando la parte estrecha junto a la boca de la criatura y el extremo ancho sobre el objetivo. Cualquier miniatura que se encuentre bajo la plantilla será alcanzada con un resultado de 4 o más en 1D6, y cada miniatura alcanzada recibirá un único ataque de Fuerza 3. El daño y las tiradas de salvación se resuelven normalmente. Además el fuego puede incendiar edificios, tal y como se describe en el reglamento de Warhammer, y causa heridas adicionales a los objetivos fácilmente inflamables como los Hombres Árbol y las Momias.',
+  },
+  {
+    // OLD-56 — Enanos del Caos printed p.10. The book calls this an armour save
+    // ("como si fuera una armadura"), not a ward save, which is what the tag
+    // used to claim.
+    id: 'great-taurus-burning-hide',
+    aliases: ['burning hide'],
+    titleEn: 'Burning Hide (Great Taurus)',
+    titleEs: 'Piel ardiente (Gran Tauro)',
+    en: 'The hide of a Great Taurus glows red-hot and is wreathed in sparks. Its tough skin stops weapon blows as if it were armour, so the creature has an armour save of 4, 5 or 6.',
+    es: 'La piel de los Grandes Tauros brilla al rojo vivo y está rodeada de chispas. Su duro pellejo puede detener los golpes de las armas como si fuera una armadura, por lo que disponen de una tirada de salvación de 4, 5 ó 6.',
+  },
+  {
     id: 'breath-weapon',
     aliases: ['breath weapon', 'breath', 'breathe', 'arma de aliento', 'aliento'],
     titleEn: 'Breath Weapon',

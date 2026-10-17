@@ -62,7 +62,7 @@ const CD_WIZARD_LEVELS: EquipmentOption[] = [
 const GREAT_TAURUS_MOUNT: MountOption = {
   id: 'mount-great-taurus', name: 'Great Taurus', nameEs: 'Gran Tauro',
   points: 225, statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 6, W: 5, I: 7, A: 4, Ld: 8 },
-  specialRules: ['Flying', 'Terror', 'Fiery body (4+ ward save)', 'Fire breath', 'Large target'],
+  specialRules: ['Flying', 'Terror', 'Burning Hide — 4+ armour save', 'Fire Breath — teardrop template, S3 hits on a 4+', 'Large target'],
 }
 const LAMMASU_MOUNT: MountOption = {
   id: 'mount-lammasu', name: 'Lammasu', nameEs: 'Lammasu',
@@ -411,7 +411,7 @@ const units: UnitProfile[] = [
     role: 'monster',
     pointsPerModel: 225,
     statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 6, W: 5, I: 7, A: 4, Ld: 8 },
-    specialRules: ['Flying', 'Terror', 'Fiery body (4+ ward save)', 'Fire breath', 'Large target'],
+    specialRules: ['Flying', 'Terror', 'Burning Hide — 4+ armour save', 'Fire Breath — teardrop template, S3 hits on a 4+', 'Large target'],
   },
   {
     id: 'cd-lammasu',
