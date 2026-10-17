@@ -1018,6 +1018,12 @@ The Dark Elves error came from the header of `darkElves.ts`, which documented `2
 M `7D6`, and the rules on p.31 and the list on p.67 give different rows) and the Empire Steam Tank
 (the data has M `0`, the book prints `-`).
 
+#### Chaos Dwarf allied Orc regiment — Strength (OLD-54, 2026-10-17)
+`cd-orcs` carried S 4. *Ejércitos Warhammer: Enanos del Caos* (1995, ES) prints the row twice and
+both read **S 3**: the army list, **printed p.60 = PDF 62** (*"Orco 10 3 3 3 4 1 2 1 7"*), and the
+bestiary, **printed p.13 = PDF 15** (same row). Toughness 4 was already right; only Strength moved,
+to **3**.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),
