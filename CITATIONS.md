@@ -1024,6 +1024,27 @@ both read **S 3**: the army list, **printed p.60 = PDF 62** (*"Orco 10 3 3 3 4 1
 bestiary, **printed p.13 = PDF 15** (same row). Toughness 4 was already right; only Strength moved,
 to **3**.
 
+#### Chaos Dwarf war machines — the machine's own profile row (OLD-55, 2026-10-17)
+The three entries carried only their crew's statline. The book's MAQUINAS DE GUERRA list,
+**printed p.61 = PDF 63**, prints two rows for each machine: the machine, then its crew. (The issue
+cited p.62; that page is MONSTRUOS. The war machines are on p.61.) All three machine rows read the
+same under the `M HA HP F R H I A L` columns:
+
+```
+LANZAVIROTES   -  -  -  -  7  3  -  -  -
+LANZACOHETES   -  -  -  -  7  3  -  -  -
+CAÑON          -  -  -  -  7  3  -  -  -
+```
+
+Read at 300 dpi against the crew row printed directly beneath each one: the **7 sits under R and
+the 3 under H**, and the F column is a dash — Toughness 7, 3 Wounds, no Strength of its own. The
+Strength that matters is the weapon's, from the table below each profile (Bolt Thrower S5 -1 per
+rank, Death Rocket S5, Earthshaker S7), which the entries already carried. This is the same reading
+and the same fix as the High Elf Repeater Bolt Thrower in OLD-36.
+
+`source/transcribed/chaos-dwarfs.md` had these three rows shifted one column (F 7, R 3); corrected
+there too, with a note.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

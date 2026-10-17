@@ -352,6 +352,20 @@ const units: UnitProfile[] = [
   },
 
   // ===== War machines (0-25%) =====
+  //
+  // OLD-55 — every machine in the book's MAQUINAS DE GUERRA list (printed p.61
+  // = PDF 63) prints TWO profile rows: the machine's own, then its crew's. The
+  // data only carried the crew, so the machine row is added here as a
+  // display-only `profiles` block, the same shape the chariots and the High Elf
+  // bolt thrower (OLD-36) use.
+  //
+  // All three machine rows read the same under the M HA HP F R H I A L columns:
+  //   LANZAVIROTES / LANZACOHETES / CAÑON   -  -  -  -  7  3  -  -  -
+  // Checked at 300 dpi against the crew row printed right below each one: the 7
+  // sits under R and the 3 under H, with the F column a dash. So the machine has
+  // Toughness 7 and 3 Wounds and no Strength of its own, which is what the
+  // weapon tables underneath give (Bolt Thrower S5-1 per rank, Death Rocket S5,
+  // Earthshaker S7).
   {
     id: 'cd-bolt-thrower',
     name: 'Hobgoblin Bolt Thrower',
@@ -359,6 +373,9 @@ const units: UnitProfile[] = [
     role: 'warmachine',
     pointsPerModel: 42,
     statLine: hobgoblin(),
+    profiles: [
+      { name: 'Bolt Thrower (machine)', nameEs: 'Lanzavirotes (máquina)', statLine: { T: 7, W: 3 } },
+    ],
     specialRules: ['War machine', 'Bolt thrower — 48", S5 (-1 per rank passed), D4 wounds', '2 Hobgoblin crew'],
   },
   {
@@ -368,6 +385,9 @@ const units: UnitProfile[] = [
     role: 'warmachine',
     pointsPerModel: 75,
     statLine: chaosDwarf(),
+    profiles: [
+      { name: 'Death Rocket (machine)', nameEs: 'Lanzacohetes (máquina)', statLine: { T: 7, W: 3 } },
+    ],
     specialRules: ['War machine', 'Death Rocket — 48", S5, D3 wounds, save -2', 'Unreliable (misfire table)', '2 Chaos Dwarf crew'],
   },
   {
@@ -377,6 +397,9 @@ const units: UnitProfile[] = [
     role: 'warmachine',
     pointsPerModel: 140,
     statLine: chaosDwarf(),
+    profiles: [
+      { name: 'Earthshaker Cannon (machine)', nameEs: 'Cañón Estremecedor (máquina)', statLine: { T: 7, W: 3 } },
+    ],
     specialRules: ['War machine', 'Earthshaker shell — 12-48", S7, D3 wounds, save -4', 'Shockwave disorders survivors', '3 Chaos Dwarf crew'],
   },
 
