@@ -352,7 +352,13 @@ const units: UnitProfile[] = [
     minSize: 5,
     max: 1,
     options: [SHIELD, TWO_HAND_2, HALBERD_2, SPEARS_1, ADD_HAND_WEAPON],
-    specialRules: ['0-1 choice', 'Light armour & shield (6+)', 'Immune to Animosity & panic from other greenskins'],
+    specialRules: [
+      '0-1 choice',
+      'Light armour & shield (6+)',
+      'Black Orc Animosity — never tested, and never a target of it',
+      'Black Orc Leaders — may command Orc or Goblin units, never Hobgoblins',
+      'Black Orc Panic — fleeing greenskins never panic them',
+    ],
   },
   {
     id: 'cd-orcs',
@@ -365,7 +371,11 @@ const units: UnitProfile[] = [
     statLine: hobgoblin({ WS: 3, S: 3, T: 4, Ld: 7 }),
     minSize: 5,
     options: [LIGHT_ARMOUR_2, SHIELD, TWO_HAND_2, HALBERD_2, SPEARS_1, ADD_HAND_WEAPON, BOWS_2],
-    specialRules: ['Hand weapon', 'Animosity'],
+    specialRules: [
+      'Hand weapon',
+      'Orc Animosity — with Hobgoblins in the army they pass automatically',
+      'Orc Panic — fleeing Goblins never panic them',
+    ],
   },
   {
     id: 'cd-goblins',
@@ -376,7 +386,11 @@ const units: UnitProfile[] = [
     statLine: hobgoblin({ WS: 2, S: 3, T: 3, Ld: 5 }),
     minSize: 5,
     options: [SHIELD_HALF, LIGHT_ARMOUR_1, TWO_HAND_1, HALBERD_1, SPEARS_HALF, SHORTBOW_HALF],
-    specialRules: ['Hand weapon', 'Animosity', 'Fear Elves'],
+    specialRules: [
+      'Hand weapon',
+      'Goblin Fear of Elves — unless they outnumber them two to one',
+      'Goblin Animosity — with Hobgoblins in the army they pass automatically',
+    ],
   },
 
   // ===== War machines (0-25%) =====
