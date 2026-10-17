@@ -1077,6 +1077,39 @@ lightning the weapon produces, since those are cast as spells and fall under the
 Both halves are now in the tag, and the rule has its own glossary entry carrying the full text. The
 tag sits on the Lammasu as a monster and as a character mount; both were changed.
 
+#### The three rules every Chaos Dwarf carries (OLD-51, 2026-10-17)
+From the bestiary, **printed p.9 = PDF 11**, now on every Chaos Dwarf character and regiment, each
+with its own glossary article:
+
+**ARMADURA.** *"los Enanos del Caos poseen un Atributo de Movimiento de 8 centímetros,
+independientemente del tipo de armadura con el que estén equipados."* M 8cm, which is the 3" the
+data already stored, whatever armour the model buys.
+
+**PERSECUCION Y HUIDA.** They pursue and flee 3cm less than other troops, *"el equivalente de
+5D6-3 centímetros en vez de 5D6."*
+
+**MAGIA.** This one is a denial, and getting it backwards would be worse than leaving it out.
+Ordinary Dwarfs dispel on a 4+ with no wizard; the book says *"Esta regla no se aplica a los Enanos
+del Caos; pueden emplear Dispersiones de Magia igual que los humanos o los demás ejércitos."* The
+tag is pinned through `TAG_RULE_OVERRIDES`, because the alias `magic resistance` sits inside its own
+text and would otherwise open the Magic Resistance article and promise the opposite.
+
+**BRUJOS ENANOS DEL CAOS**, same page, replaces the bare tag *"Uses the Chaos Dwarf spell deck"* on
+the Sorcerer: their own deck of ten cards, dealt 1/2/3/4 by level, with discards redrawn from the
+same deck.
+
+Who does **not** get them. Bull Centaurs (their bestiary page is p.10) and the Hobgoblin, Orc,
+Black Orc and Goblin troops (pp.11-13), as the issue states. Astragoth keeps only MAGIA and the
+Sorcerers' deck: his own MOVIMIENTO rule on p.64 gives him M 15cm, a 15cm charge, no march bonus and
+*"los 5D6 centímetros habituales"* when pursuing and fleeing, so the first two rules are replaced,
+not added. The war machine crews are Chaos Dwarfs but are neither characters nor regiments, so they
+were left alone.
+
+One trap on the way: the first draft gave the Pursuit article the alias `pursuit`, which promptly
+attached it to the unrelated Norse tag *"Dwarfs, hate all Orcs and Goblins, Elf Grudge, Dwarf
+movement/pursuit rules"*. The snapshot in `rule-tags.txt` caught it. The alias is now
+`pursues and flees`.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

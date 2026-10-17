@@ -22,6 +22,19 @@ const hobgoblin = (over: Partial<StatLine> = {}): StatLine => ({
   M: 4, WS: 3, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 6, ...over,
 })
 
+// OLD-51 — bestiary printed p.9: the three rules every Chaos Dwarf carries.
+// They belong to the DWARF models only: the book gives Bull Centaurs (p.10) and
+// the Hobgoblin/Orc/Goblin troops (pp.11-13) their own pages with none of these,
+// and the issue excludes them explicitly. Astragoth is also excluded from the
+// first two: his own MOVIMIENTO rule (p.64) replaces them, giving him M 15cm, a
+// 15cm charge, no march bonus and the ordinary 5D6 pursuit.
+const CD_BESTIARY_RULES: string[] = [
+  'Armour — moves 3" (8cm) whatever armour is worn',
+  'Pursuit & Flight — pursues and flees 5D6 minus 3cm',
+  'Magic — no Dwarf magic resistance; dispels like any other army',
+]
+const CD_SORCERER_RULE = 'Chaos Dwarf Sorcerers — their own deck of ten spell cards'
+
 // --- Army-specific equipment options (per-model costs, from the equipment list
 //     p.55 and the per-unit option lines pp.58-60). Same `id` = mutually exclusive
 //     slot reused across units at the unit's own price (cf. Dark Elves). ---
@@ -90,7 +103,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     mounts: CD_MONSTER_MOUNTS,
-    specialRules: ['Commander', 'Up to 3 magic items', 'May ride a Lammasu (+200) or Great Taurus (+225)'],
+    specialRules: ['Commander', 'Up to 3 magic items', 'May ride a Lammasu (+200) or Great Taurus (+225)', ...CD_BESTIARY_RULES],
   },
   {
     id: 'cd-sorcerer',
@@ -105,7 +118,7 @@ const units: UnitProfile[] = [
     canBeGeneral: true,
     options: CD_WIZARD_LEVELS,
     mounts: CD_MONSTER_MOUNTS,
-    specialRules: ['Wizard', 'Uses the Chaos Dwarf spell deck', 'May ride a Lammasu (+200) or Great Taurus (+225)'],
+    specialRules: ['Wizard', CD_SORCERER_RULE, 'May ride a Lammasu (+200) or Great Taurus (+225)', ...CD_BESTIARY_RULES],
   },
   {
     id: 'cd-battle-standard',
@@ -119,7 +132,7 @@ const units: UnitProfile[] = [
     canBeBSB: true,
     isBSB: true,
     max: 1, // book p.56 "0-1 ESTANDARTE DE BATALLA"
-    specialRules: ['0-1', 'Army Battle Standard', 'May carry one magic standard'],
+    specialRules: ['0-1', 'Army Battle Standard', 'May carry one magic standard', ...CD_BESTIARY_RULES],
   },
   {
     id: 'cd-hero',
@@ -131,7 +144,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     mounts: CD_MONSTER_MOUNTS,
-    specialRules: ['Up to 2 magic items', 'May ride a Lammasu (+200) or Great Taurus (+225)'],
+    specialRules: ['Up to 2 magic items', 'May ride a Lammasu (+200) or Great Taurus (+225)', ...CD_BESTIARY_RULES],
   },
   {
     id: 'cd-bull-centaur-commander',
@@ -190,6 +203,7 @@ const units: UnitProfile[] = [
       'Heavy armour, shield & the Hammer of Hashut',
       'May ride a Lammasu (+200) or Great Taurus (+225)',
       'Up to 3 magic items',
+      ...CD_BESTIARY_RULES,
     ],
   },
   {
@@ -211,6 +225,8 @@ const units: UnitProfile[] = [
       'Deadly Attack (re-roll all attacks on a hit)',
       'Charges only 6"; cannot ride a mount',
       'Up to 4 magic items',
+      CD_SORCERER_RULE,
+      CD_BESTIARY_RULES[2],
     ],
   },
   {
@@ -243,7 +259,7 @@ const units: UnitProfile[] = [
     pointsPerModel: 14,
     statLine: chaosDwarf(),
     minSize: 5,
-    specialRules: ['Heavy armour & shield (5+, 4+ vs shooting)', 'Great weapons', 'May carry a magic standard'],
+    specialRules: ['Heavy armour & shield (5+, 4+ vs shooting)', 'Great weapons', 'May carry a magic standard', ...CD_BESTIARY_RULES],
   },
   {
     id: 'cd-blunderbusses',
@@ -254,7 +270,7 @@ const units: UnitProfile[] = [
     statLine: chaosDwarf(),
     minSize: 5,
     options: [SHIELD],
-    specialRules: ['Heavy armour (5+)', 'Blunderbuss volley (fires across the whole front rank)'],
+    specialRules: ['Heavy armour (5+)', 'Blunderbuss volley (fires across the whole front rank)', ...CD_BESTIARY_RULES],
   },
   {
     id: 'cd-bull-centaurs',
