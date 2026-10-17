@@ -1,4 +1,8 @@
 export const RULE_PHRASE_ES: Record<string, string> = {
+  'Armour — moves 3" (8cm) whatever armour is worn': 'Armadura — mueve siempre 8 cm, lleve la armadura que lleve',
+  'Chaos Dwarf Sorcerers — their own deck of ten spell cards': 'Brujos Enanos del Caos — mazo propio de diez cartas de hechizo',
+  'Magic — no Dwarf magic resistance; dispels like any other army': 'Magia — sin la resistencia mágica de los Enanos; dispersan como cualquier otro ejército',
+  'Pursuit & Flight — pursues and flees 5D6 minus 3cm': 'Persecución y huida — persigue y huye 5D6-3 cm',
   '0-1': '0-1',
   '0-1 Army Battle Standard': '0-1 Estandarte de Batalla del Ejército',
   '0-1 choice': '0-1 opción',
@@ -282,7 +286,6 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Up to 2 magic items': 'Hasta 2 objetos mágicos',
   'Up to 2 per regiment of 10+ Warriors/Spearmen/Crossbowmen/City Guard/Corsairs': 'Hasta 2 por regimiento de 10+ Guerreros/Lanceros/Ballesteros/Guardia de la Ciudad/Corsarios',
   'Up to 3 magic items': 'Hasta 3 objetos mágicos',
-  'Uses the Chaos Dwarf spell deck': 'Usa el mazo de hechizos de los Enanos del Caos',
   'Uses the three Chaos spell decks or Dark Magic': 'Usa los tres mazos de hechizos del Caos o Magia Oscura',
   'Usually wears no armour': 'Normalmente no lleva armadura',
   'Vomit attack (S5, no armour save)': 'Ataque de vómito (F5, sin salvación por armadura)',

@@ -207,6 +207,47 @@ export const RULES: RuleDef[] = [
     es: 'Armas impregnadas de un veneno mortal. El efecto exacto varía según el ejército: lo más habitual es que los ataques ganen un bonificador de Fuerza (p. ej. +1 a la Fuerza), aunque algunos venenos no permiten salvación por armadura o causan heridas adicionales. Consulta la ficha de la unidad.',
   },
   {
+    // OLD-51 — Enanos del Caos bestiary, printed p.9 = PDF 11. The three rules
+    // every Chaos Dwarf model carries, plus the Sorcerers' own deck. All four
+    // tags are pinned through TAG_RULE_OVERRIDES: they open with ordinary words
+    // like "Armour" and "Magic", and the Magic one would otherwise be stolen by
+    // the 'magic resistance' alias and tell players the exact opposite of what
+    // the rule says.
+    id: 'chaos-dwarf-armour',
+    aliases: ['whatever armour is worn'],
+    titleEn: 'Armour (Chaos Dwarfs)',
+    titleEs: 'Armadura (Enanos del Caos)',
+    en: 'Chaos Dwarfs are sturdy creatures who bear the weight of armour more easily than frail humans and other races. A Chaos Dwarf therefore has a Movement of 8cm (3"), whatever kind of armour he is equipped with.',
+    es: 'Los Enanos del Caos son seres robustos que pueden soportar más fácilmente que los frágiles humanos y otras razas el peso de las armaduras. Por ello, los Enanos del Caos poseen un Atributo de Movimiento de 8 centímetros, independientemente del tipo de armadura con el que estén equipados.',
+  },
+  {
+    id: 'chaos-dwarf-pursuit',
+    // Alias deliberately narrow. A bare 'pursuit' also matched the Norse tag
+    // "Dwarfs — hate all Orcs and Goblins, Elf Grudge, Dwarf movement/pursuit
+    // rules", which has nothing to do with this article.
+    aliases: ['pursues and flees'],
+    titleEn: 'Pursuit and Flight (Chaos Dwarfs)',
+    titleEs: 'Persecución y huída (Enanos del Caos)',
+    en: 'Chaos Dwarfs are not especially fast, even when running for their lives or chasing a fleeing enemy. They pursue and flee 3cm less than other troops, the equivalent of 5D6 minus 3 centimetres instead of 5D6.',
+    es: 'Los Enanos del Caos no son especialmente rápidos, incluso aunque corran por sus vidas o persigan a un enemigo que huye. Perseguirán y huirán 3 cm menos que las demás tropas, o sea, el equivalente de 5D6-3 centímetros en vez de 5D6.',
+  },
+  {
+    id: 'chaos-dwarf-magic',
+    aliases: ['no dwarf magic resistance'],
+    titleEn: 'Magic (Chaos Dwarfs)',
+    titleEs: 'Magia (Enanos del Caos)',
+    en: 'Ordinary Dwarfs benefit from a natural resistance to magic: their Dispel Magic always works on a 4 or more, even with no wizard to cast it. This rule does NOT apply to Chaos Dwarfs. They use Dispel Magic exactly like humans and every other army.',
+    es: 'Como se describe en Warhammer Magia de Batalla, los Enanos se benefician de su resistencia mágica natural: las Dispersiones de Magia siempre funcionan si se obtiene un resultado de 4+ aunque no tengan hechiceros para lanzarlas. Esta regla NO se aplica a los Enanos del Caos; pueden emplear Dispersiones de Magia igual que los humanos o los demás ejércitos.',
+  },
+  {
+    id: 'chaos-dwarf-sorcerers',
+    aliases: ['chaos dwarf sorcerers'],
+    titleEn: 'Chaos Dwarf Sorcerers (spell deck)',
+    titleEs: 'Brujos Enanos del Caos (mazo de hechizos)',
+    en: 'Chaos Dwarf Sorcerers do not use the spell cards the other Chaos sorcerers use. They have a deck of ten spell cards of their own, dealt the way a single colour of magic is dealt: shuffle the deck, then deal each sorcerer his due (one card for a Sorcerer, two for a Sorcerer Paladin, three for a Master Sorcerer, four for a Great Sorcerer). After looking at them, the player may discard any he wishes and be dealt replacements from the same deck in the same way.',
+    es: 'Los Brujos Enanos del Caos no emplean las mismas cartas de hechizos que los demás Hechiceros del Caos, sino que disponen de su propio mazo de diez cartas de hechizo. Las cartas se reparten de la misma forma que a los hechiceros de un color: primero se mezclan y a continuación se reparte la cantidad precisa a cada brujo (una para un Brujo, dos para un Paladín Brujo, tres para un Maestro Brujo y cuatro para un Gran Brujo). Después de examinar las cartas, el jugador puede descartar las que quiera a cambio de otras repartidas de la misma forma y del mismo mazo.',
+  },
+  {
     // OLD-57 — Enanos del Caos printed p.11. Alias 'magical breath' matches at
     // index 0 of the tag and so beats the generic 'breath' further along it.
     // The old tag only mentioned the 4+ dispel and left out the second half of
@@ -473,6 +514,14 @@ export const RULES: RuleDef[] = [
  * test in `ruleTags.test.ts` fails when that happens.
  */
 export const TAG_RULE_OVERRIDES: Record<string, string | null> = {
+  // OLD-51 — the four Chaos Dwarf bestiary rules (printed p.9). Pinned rather
+  // than left to the alias search: "Magic — no Dwarf magic resistance…" would
+  // otherwise open the Magic Resistance article and claim the very thing the
+  // rule denies, which is the OLD-16 failure all over again.
+  'Armour — moves 3" (8cm) whatever armour is worn': 'chaos-dwarf-armour',
+  'Pursuit & Flight — pursues and flees 5D6 minus 3cm': 'chaos-dwarf-pursuit',
+  'Magic — no Dwarf magic resistance; dispels like any other army': 'chaos-dwarf-magic',
+  'Chaos Dwarf Sorcerers — their own deck of ten spell cards': 'chaos-dwarf-sorcerers',
   // Negations — the tag denies the very rule its words name.
   'Living — not Undead; does not cause fear': null,
   'Living — not Undead; subject to psychology': null,
