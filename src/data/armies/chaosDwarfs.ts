@@ -35,6 +35,16 @@ const CD_BESTIARY_RULES: string[] = [
 ]
 const CD_SORCERER_RULE = 'Chaos Dwarf Sorcerers — their own deck of ten spell cards'
 
+// OLD-52 — bestiary printed p.11: the three rules carried by every Hobgoblin
+// regiment. The Sneaky Gitz get animosity and panic too (p.12 says they are
+// affected "como los demás Hobgoblins") plus four rules of their own, but not
+// the Black Orc officers clause, which p.12 does not repeat for them.
+const HOBGOBLIN_RULES: string[] = [
+  'Hobgoblin Animosity — other greenskins in the army pass their checks automatically',
+  'Hobgoblin Panic — greenskins ignore fleeing Hobgoblins; Hobgoblins must test for them',
+]
+const BLACK_ORC_OFFICERS = 'Black Orc Officers — a Black Orc character will never lead a Hobgoblin unit'
+
 // --- Army-specific equipment options (per-model costs, from the equipment list
 //     p.55 and the per-unit option lines pp.58-60). Same `id` = mutually exclusive
 //     slot reused across units at the unit's own price (cf. Dark Elves). ---
@@ -291,7 +301,7 @@ const units: UnitProfile[] = [
     statLine: hobgoblin(),
     minSize: 5,
     options: [LIGHT_ARMOUR_1],
-    specialRules: ['Hand weapon & shield (6+)', 'Animosity'],
+    specialRules: ['Hand weapon & shield (6+)', ...HOBGOBLIN_RULES, BLACK_ORC_OFFICERS],
   },
   {
     id: 'cd-sneaky-gitz',
@@ -302,9 +312,11 @@ const units: UnitProfile[] = [
     statLine: hobgoblin(),
     minSize: 5,
     specialRules: [
-      'Two poisoned daggers (extra attack, save modifier -1)',
-      'Envelop the flank with any number of models',
-      'Animosity & panic',
+      'Poisoned Daggers — -1 to the enemy armour save',
+      'Sneaky Gitz Attacks — two attacks, from the extra dagger',
+      'Envelop the Flank — any number of models, and the enemy can never envelop them',
+      'Sneaky Git Boss — two daggers, or hand weapon and shield',
+      ...HOBGOBLIN_RULES,
     ],
   },
   {
@@ -316,7 +328,7 @@ const units: UnitProfile[] = [
     statLine: hobgoblin(),
     minSize: 5,
     options: [BOWS_2, LIGHT_ARMOUR_1, SHIELD_HALF],
-    specialRules: ['Hand weapon & bow', 'Animosity'],
+    specialRules: ['Hand weapon & bow', ...HOBGOBLIN_RULES, BLACK_ORC_OFFICERS],
   },
   {
     id: 'cd-wolf-riders',
@@ -328,7 +340,7 @@ const units: UnitProfile[] = [
     mount: { name: 'Giant Wolf', nameEs: 'Lobo Gigante', statLine: GIANT_WOLF_MOUNT.statLine! },
     minSize: 5,
     options: [LIGHT_ARMOUR_2, SHORTBOW_1],
-    specialRules: ['Hand weapon & shield (5+)', 'Fast cavalry (skirmish)', 'Animosity'],
+    specialRules: ['Hand weapon & shield (5+)', 'Fast cavalry (skirmish)', ...HOBGOBLIN_RULES, BLACK_ORC_OFFICERS],
   },
   {
     id: 'cd-black-orcs',
