@@ -254,7 +254,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Skirmishers': 'Hostigadores',
   'Skirmishers (always skirmish)': 'Hostigadores (siempre hostigando)',
   'Slayer Paladin': 'Paladín Matador',
-  'Sorcerous aura — dispels spells on 4+': 'Aura hechiceril — disipa hechizos con 4+',
+  'Magical Breath — dispels spells on 4+; magic weapons at -1 to hit it and its rider': 'Respiración mágica — dispersa hechizos con 4+; las armas mágicas sufren -1 al impactarle a él y a su jinete',
   'Spear & hand weapon': 'Lanza y arma de mano',
   'Spear, hand weapon & shield': 'Lanza, arma de mano y escudo',
   'Spears': 'Lanzas',
