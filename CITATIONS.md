@@ -1206,6 +1206,15 @@ version also matched the Empire tag *"Protected by Sigmar... Strength 10 Deadly 
 combat"*, a different rule in a different book. The `rule-tags.txt` snapshot caught it, the second
 time in this batch.
 
+#### Gorduz Backstabber: his starting kit (OLD-60, 2026-10-17)
+**Printed p.63 = PDF 65**: *"Gorduz el Traicionero está equipado con una Armadura Ligera, un Escudo
+y un Hacha."* The tag said *"Light armour, shield & hand weapon"*, which left out the axe the book
+names and never stated the save. Light armour and shield together are a 5+ on the armour table of
+printed p.54, so the tag now reads `Light armour, shield & axe (5+ save)`.
+
+His profile was already right against the same page, `GORDUZ 10 6 6 4 4 3 5 4 8`, as were the Giant
+Wolf at +4 points and the three magic items.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

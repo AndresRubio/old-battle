@@ -803,7 +803,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Light armour & sword; Elven Steed (5+ save base)': 'Armadura ligera y espada; Corcel Élfico (salvación base de 5+)',
   'Light armour, lance & longbow': 'Armadura ligera, lanza y arco largo',
   'Light armour, shield & Warhorse (no armour save)': 'Armadura ligera, escudo y Caballo de Guerra (sin salvación por armadura)',
-  'Light armour, shield & hand weapon': 'Armadura ligera, escudo y arma de mano',
+  'Light armour, shield & axe (5+ save)': 'Armadura ligera, escudo y hacha (salvación de 5+)',
   'Light armour, shield & magic sword': 'Armadura ligera, escudo y espada mágica',
   'Light armour, shield & spear (5+ save)': 'Armadura ligera, escudo y lanza (salvación de 5+)',
   'Light armour, shield, spear & bow (5+ save)': 'Armadura ligera, escudo, lanza y arco (salvación de 5+)',

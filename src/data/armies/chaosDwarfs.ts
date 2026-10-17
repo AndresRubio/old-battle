@@ -266,7 +266,10 @@ const units: UnitProfile[] = [
     mounts: [GIANT_WOLF_MOUNT],
     specialRules: [
       'Special character (subordinate)',
-      'Light armour, shield & hand weapon',
+      // OLD-60 — printed p.63: "Gorduz el Traicionero está equipado con una
+      // Armadura Ligera, un Escudo y un Hacha." Light armour plus shield is
+      // the 5+ of the p.54 save table.
+      'Light armour, shield & axe (5+ save)',
       'Predestined — survives his final wound on a 4+',
       'May ride a Giant Wolf (+4)',
       'Up to 3 magic items',
