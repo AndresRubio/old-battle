@@ -1062,6 +1062,21 @@ and the extra wounds against flammable targets such as Treemen and Mummies.
 
 The same two tags sit on the Great Taurus as a monster and as a character mount. Both were changed.
 
+#### Lammasu: Magical Breath, the whole rule (OLD-57, 2026-10-17)
+The tag read *"Sorcerous aura, dispels spells on 4+"*, which is only the first half of what
+**printed p.11 = PDF 13** gives the creature, and it opened no glossary article at all.
+
+The book's RESPIRACION MAGICA does two things. The 4+ dispel, once per spell cast at the Lammasu or
+its rider, after which ordinary Dispel Magic cards may still be played. And a close-combat
+protection: *"Si alguien intenta atacar al Lammasu o a su jinete con un arma mágica, la posibilidad
+de impactar siempre se reducirá en -1"*, whatever the other modifiers, so nothing can need better
+than a 2+ and a weapon that would hit automatically must roll a 2 or more. The attacker may choose
+an ordinary weapon instead. It applies only to weapons swung in close combat, not to fireballs or
+lightning the weapon produces, since those are cast as spells and fall under the dispel half.
+
+Both halves are now in the tag, and the rule has its own glossary entry carrying the full text. The
+tag sits on the Lammasu as a monster and as a character mount; both were changed.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

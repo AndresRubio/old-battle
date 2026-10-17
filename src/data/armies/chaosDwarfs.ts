@@ -67,7 +67,7 @@ const GREAT_TAURUS_MOUNT: MountOption = {
 const LAMMASU_MOUNT: MountOption = {
   id: 'mount-lammasu', name: 'Lammasu', nameEs: 'Lammasu',
   points: 200, statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 7, W: 5, I: 6, A: 3, Ld: 8 },
-  specialRules: ['Flying', 'Terror', 'Sorcerous aura — dispels spells on 4+', 'Large target'],
+  specialRules: ['Flying', 'Terror', 'Magical Breath — dispels spells on 4+; magic weapons at -1 to hit it and its rider', 'Large target'],
 }
 const GIANT_WOLF_MOUNT: MountOption = {
   id: 'mount-giant-wolf', name: 'Giant Wolf', nameEs: 'Lobo Gigante',
@@ -420,7 +420,7 @@ const units: UnitProfile[] = [
     role: 'monster',
     pointsPerModel: 200,
     statLine: { M: 6, WS: 6, BS: 0, S: 6, T: 7, W: 5, I: 6, A: 3, Ld: 8 },
-    specialRules: ['Flying', 'Terror', 'Sorcerous aura — dispels spells on 4+', 'Large target'],
+    specialRules: ['Flying', 'Terror', 'Magical Breath — dispels spells on 4+; magic weapons at -1 to hit it and its rider', 'Large target'],
   },
   {
     id: 'cd-hydra',

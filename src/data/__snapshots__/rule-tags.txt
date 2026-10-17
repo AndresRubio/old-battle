@@ -362,6 +362,7 @@ magic-items	Magic items: Chaos Wight Blade +75, Skull Staff +35, Cloak of Mist &
 magic-items	Magic items: Staff of Condemnation +50, Wight Blade of Arkhan +50, Book of the Damned +25, Chariot of Arkhan +50	[undead]
 magic-items	Magic items: Staff of Osiris +50, Crown of the Tomb King +75, Skull Flail +30	[undead]
 magic-resistance	Magic resistance	[wood-elves]
+lammasu-magical-breath	Magical Breath — dispels spells on 4+; magic weapons at -1 to hit it and its rider	[chaos-dwarfs]
 frenzy	Mark of Khorne — frenzy replaced by Destructor reward	[chaos]
 immune-psychology	Mark of Slaanesh — immune to psychology and rout tests	[chaos]
 shield	Massive scimitars, moon-shaped shield (5+ save); no armour	[dogs-of-war]

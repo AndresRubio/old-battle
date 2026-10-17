@@ -207,6 +207,18 @@ export const RULES: RuleDef[] = [
     es: 'Armas impregnadas de un veneno mortal. El efecto exacto varía según el ejército: lo más habitual es que los ataques ganen un bonificador de Fuerza (p. ej. +1 a la Fuerza), aunque algunos venenos no permiten salvación por armadura o causan heridas adicionales. Consulta la ficha de la unidad.',
   },
   {
+    // OLD-57 — Enanos del Caos printed p.11. Alias 'magical breath' matches at
+    // index 0 of the tag and so beats the generic 'breath' further along it.
+    // The old tag only mentioned the 4+ dispel and left out the second half of
+    // the rule, the -1 to hit with magic weapons.
+    id: 'lammasu-magical-breath',
+    aliases: ['magical breath'],
+    titleEn: 'Magical Breath (Lammasu)',
+    titleEs: 'Respiración mágica (Lammasu)',
+    en: 'A Lammasu breathes rippling strands of magic that wreathe it in a cloud of magical protection, and the rule does two things. First, a spell cast at the Lammasu or its rider has no effect on a 4, 5 or 6 on 1D6, exactly as if a Dispel Magic card had been played by a wizard. Only one such roll may be attempted per spell cast at the creature; if the spell is not dispelled this way, Dispel Magic cards may still be used as normal. Second, the smoking black strands of sorcery can block or deflect any attack made against the Lammasu or its rider in close combat with a magic weapon: the chance to hit is always reduced by 1, whatever the other modifiers or special considerations, so it is impossible to need better than a 2+, and a weapon that would normally hit automatically must roll a 2 or more. An enemy carrying a magic weapon may choose to use an ordinary weapon instead. This second ability works only against weapons used in close combat, not against fireballs, lightning or other magical effects the weapon may produce: those are cast as spells, and can be stopped by the Lammasu’s basic ability to dispel spells described above.',
+    es: 'Los Lammasu respiran ondulantes fibras mágicas que los rodean en una nube de protección mágica, y la regla hace dos cosas. Primero, si se lanza un hechizo contra un Lammasu o su jinete, el hechizo no surtirá efecto si se obtiene un resultado de 4, 5 ó 6 en una tirada de 1D6, como si se tratara de una carta de Dispersión de Magia lanzada por un hechicero. Sólo podrá intentarse una tirada como ésta por cada hechizo lanzado contra la criatura; si no se consigue dispersar el hechizo de esta forma, podrán emplearse cartas de Dispersión de Magia normalmente. Segundo, las humeantes fibras negras de hechicería que lo rodean pueden obstruir o desviar cualquier ataque de un arma mágica efectuado contra él o contra su jinete en combate cuerpo a cuerpo: la posibilidad de impactar siempre se reduce en -1 sin tener en cuenta los demás modificadores o consideraciones especiales, por lo que es imposible obtener una probabilidad de impactar superior a 2+, y un arma que normalmente impactaría automáticamente deberá obtener un resultado de 2+. Un enemigo armado con un arma mágica puede usar, si quiere, un arma normal. Esta segunda habilidad sólo sirve contra armas usadas en combate cuerpo a cuerpo y no contra bolas de fuego, rayos u otros efectos mágicos que pueda producir el arma: esos efectos se lanzan como hechizos y pueden ser anulados por la capacidad básica de dispersar hechizos del Lammasu descrita arriba.',
+  },
+  {
     // OLD-56 — Enanos del Caos printed p.10. Listed BEFORE 'breath-weapon': the
     // tag reads "Fire Breath — ...", so alias 'fire breath' matches at index 0
     // and beats the generic 'breath' at index 5. The generic article says the
