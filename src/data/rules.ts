@@ -207,6 +207,68 @@ export const RULES: RuleDef[] = [
     es: 'Armas impregnadas de un veneno mortal. El efecto exacto varía según el ejército: lo más habitual es que los ataques ganen un bonificador de Fuerza (p. ej. +1 a la Fuerza), aunque algunos venenos no permiten salvación por armadura o causan heridas adicionales. Consulta la ficha de la unidad.',
   },
   {
+    // OLD-52 — Hobgoblins, bestiary printed p.11 = PDF 13, and the Sneaky Gitz
+    // on printed p.12 = PDF 14. Every alias below is deliberately specific:
+    // bare 'animosity', 'panic' or 'poisoned' would reach across the other
+    // fifteen armies and re-point tags that have nothing to do with this book.
+    id: 'hobgoblin-animosity',
+    aliases: ['hobgoblin animosity'],
+    titleEn: 'Animosity (Hobgoblins)',
+    titleEs: 'Animosidad (Hobgoblins)',
+    en: 'Hobgoblins suffer animosity like Orcs and Goblins. If the army fields Hobgoblins alongside other Orcs or Goblins, those other greenskins pass their animosity checks automatically, with no roll at all: they distrust the Hobgoblins so deeply that they stop squabbling among themselves and concentrate on watching the treacherous creatures. The Hobgoblins themselves test as normal, and may end up attacking or shooting at Goblins, Orcs or each other.',
+    es: 'Los Hobgoblins están afectados por la animosidad como los Orcos y los Goblins. Si tu ejército incluye unidades de Hobgoblins y algunos tipos de Orcos o Goblins, estos otros tipos de criaturas goblinoides superarán inmediatamente sus chequeos de animosidad: no se precisa ninguna tirada. Esto se debe a que los goblinoides desconfían tanto de los Hobgoblins que dejarán de pelearse entre ellos y se concentrarán en vigilar de cerca a los traicioneros Hobgoblins. Los Hobgoblins deben efectuar los chequeos de animosidad normalmente, pudiendo atacar o disparar a Goblins, Orcos y entre ellos.',
+  },
+  {
+    id: 'hobgoblin-panic',
+    aliases: ['hobgoblin panic'],
+    titleEn: 'Panic (Hobgoblins)',
+    titleEs: 'Pánico (Hobgoblins)',
+    en: 'The panic rule runs one way only. If Hobgoblins break or flee past a unit of any kind of Orcs or Goblins, that unit takes no panic test: watching Hobgoblins run and die brings the other greenskins nothing but grins and roars of laughter. The Hobgoblins get no such favour. They cannot ignore fleeing Goblins the way Orcs can, so they must test for panic whenever an Orc or Goblin unit breaks nearby.',
+    es: 'La regla del pánico funciona en un solo sentido. Si los Hobgoblins se desmoralizan o huyen pasando cerca de una unidad de cualquier tipo de Orcos o Goblins, esa unidad no efectúa ningún chequeo de pánico: ver correr a los Hobgoblins y contemplar cómo caen muertos no provoca en los demás goblinoides nada más que sonrisas de alegría y estallidos de risa. Los Hobgoblins no tienen esa ventaja: no pueden ignorar a los Goblins que huyen (como sí pueden los Orcos), por lo que deben realizar un chequeo de pánico si alguna unidad de Orcos o Goblins resulta desmoralizada cerca de ellos.',
+  },
+  {
+    id: 'black-orc-officers',
+    aliases: ['black orc officers'],
+    titleEn: 'Black Orc Officers',
+    titleEs: 'Oficiales Orcos Negros',
+    en: 'Black Orc Great Chiefs and Warlords may take command of units of other greenskins, but they will never agree to lead a unit of Hobgoblins. Nobody can blame them.',
+    es: 'Los Grandes Jefes y Caudillos Orcos Negros pueden tener bajo su mando a unidades de otros goblinoides, pero nunca aceptarán ponerse al mando de una unidad de Hobgoblins. Nadie puede reprochárselo.',
+  },
+  {
+    id: 'sneaky-gitz-envelop',
+    aliases: ['envelop the flank'],
+    titleEn: 'Envelop the Flank (Sneaky Gitz)',
+    titleEs: 'Envolver el flanco (Escurridizos)',
+    en: 'The first round of close combat is resolved normally. After it, the Sneaky Gitz may envelop the flank whether they won the combat or lost it, moving models from their rear ranks around the sides of the enemy unit. The enemy regiment can never envelop the Sneaky Gitz, not even if it won the combat. And where an ordinary unit may send at most two models around each enemy flank, the Sneaky Gitz may send any number. If more than five models end up surrounding an enemy unit, the flank or rear combat modifier applies (+1 for a flank or +2 for the rear, and the two are not cumulative).',
+    es: 'El primer turno de combate cuerpo a cuerpo se resuelve normalmente. Después, la unidad de Escurridizos podrá envolver el flanco tanto si ha ganado como si ha perdido el combate, desplazando las miniaturas de las filas posteriores contra los flancos de la unidad enemiga. El regimiento enemigo nunca podrá envolver el flanco de los Escurridizos, ¡ni aunque haya ganado el combate! Además, mientras una unidad normal sólo puede envolver con un máximo de dos miniaturas por cada flanco, los Escurridizos pueden hacerlo con un número ilimitado de miniaturas de sus últimas filas. Si hay más de cinco miniaturas rodeando a una unidad enemiga, podrá aplicarse el modificador por atacar por el flanco o la retaguardia (+1 por el flanco ó +2 por retaguardia, no acumulativos).',
+  },
+  {
+    // Alias 'poisoned daggers' shares its starting position with the generic
+    // 'poisoned' alias, and the longer one wins the tie.
+    id: 'sneaky-gitz-daggers',
+    aliases: ['poisoned daggers'],
+    titleEn: 'Poisoned Daggers (Sneaky Gitz)',
+    titleEs: 'Dagas envenenadas (Escurridizos)',
+    en: 'The daggers of the Sneaky Gitz are steeped in a deadly poison, because the slightest cut can kill. Any wound they cause is resolved with an extra -1 to the enemy’s armour save.',
+    es: 'Las dagas de los Escurridizos están empapadas de un veneno mortal, ya que el más ligero corte puede ser mortal. Cualquier herida causada por estas dagas reduce en -1 adicional la tirada de salvación por armadura del enemigo.',
+  },
+  {
+    id: 'sneaky-gitz-attacks',
+    aliases: ['sneaky gitz attacks'],
+    titleEn: 'Sneaky Gitz Attacks',
+    titleEs: 'Ataques de los Escurridizos',
+    en: 'Each Sneaky Git carries a second dagger, so he makes one extra attack: two attacks instead of one.',
+    es: 'Los Escurridizos están equipados con un arma adicional, por lo que pueden efectuar un ataque adicional: dos ataques en vez de sólo uno.',
+  },
+  {
+    id: 'sneaky-git-boss',
+    aliases: ['sneaky git boss'],
+    titleEn: 'Sneaky Git Boss',
+    titleEs: 'Jefe Escurridizo',
+    en: 'A Sneaky Git Boss is an exception to the Paladin rules. He has the same characteristics and the same points value as any other Hobgoblin Boss, and may be armed either with the two poisoned daggers the rest of the unit carries (+1 point for the daggers) or with a hand weapon and shield (+1 point for the shield).',
+    es: 'Un Jefe Escurridizo es una excepción a las reglas de Paladines. Tiene los mismos atributos y el mismo valor en puntos que cualquier otro Jefe Hobgoblin, y puede estar armado con las dos dagas envenenadas habituales de los Escurridizos (+1 punto por las dagas) o con arma de mano y escudo (+1 punto por el escudo).',
+  },
+  {
     // OLD-51 — Enanos del Caos bestiary, printed p.9 = PDF 11. The three rules
     // every Chaos Dwarf model carries, plus the Sorcerers' own deck. All four
     // tags are pinned through TAG_RULE_OVERRIDES: they open with ordinary words

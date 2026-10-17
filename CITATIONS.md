@@ -1110,6 +1110,34 @@ attached it to the unrelated Norse tag *"Dwarfs, hate all Orcs and Goblins, Elf 
 movement/pursuit rules"*. The snapshot in `rule-tags.txt` caught it. The alias is now
 `pursues and flees`.
 
+#### Hobgoblin and Sneaky Gitz rules (OLD-52, 2026-10-17)
+Seven articles, all from the bestiary: Hobgoblins on **printed p.11 = PDF 13**, Sneaky Gitz on
+**printed p.12 = PDF 14**.
+
+Every Hobgoblin regiment (Warriors, Archers, Wolf Riders) now carries three. **ANIMOSIDAD**, where
+the twist is that the army's *other* greenskins pass their checks automatically with no roll, since
+they are too busy watching the Hobgoblins, while the Hobgoblins test as normal. **PANICO**, which
+runs one way: greenskins take no test when Hobgoblins break past them, but Hobgoblins must test
+when Orcs or Goblins break near them, because they cannot ignore fleeing Goblins the way Orcs can.
+**OFICIALES ORCOS NEGROS**, a Black Orc character will take command of other greenskins but never
+of Hobgoblins.
+
+The Sneaky Gitz had three rough tags; they now carry the book's four plus animosity and panic,
+which p.12 gives them *"como los demás Hobgoblins"*. Their own four: the flank envelopment (any
+number of models, after the first round, won or lost, and the enemy can never envelop them back),
+the poisoned daggers (an extra -1 to the enemy's armour save), the second dagger's extra attack,
+and the Sneaky Git Boss, who is an exception to the Paladin rules and may take two daggers or a
+hand weapon and shield. They do not get the Black Orc officers clause: p.12 does not repeat it for
+them.
+
+Aliases here are all specific (`hobgoblin animosity`, `hobgoblin panic`, `poisoned daggers`). Bare
+`animosity`, `panic` or `poisoned` would have reached across the other fifteen armies. The
+`poisoned daggers` alias starts at the same position as the generic `poisoned`, and the longer one
+wins the tie.
+
+Left alone: the Hobgoblin Hero, a character rather than a regiment, which keeps its plain Animosity
+tag, since the issue asks about regiments.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),
