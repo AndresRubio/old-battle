@@ -332,7 +332,9 @@ const units: UnitProfile[] = [
     nameEs: 'Orcos',
     role: 'regiment',
     pointsPerModel: 5.5,
-    statLine: hobgoblin({ WS: 3, S: 4, T: 4, Ld: 7 }),
+    // OLD-54 — book printed p.60 (and the bestiary row on p.13) both read
+    // ORCO 10 3 3 3 4 1 2 1 7, so Strength is 3. The entry used to carry S 4.
+    statLine: hobgoblin({ WS: 3, S: 3, T: 4, Ld: 7 }),
     minSize: 5,
     options: [LIGHT_ARMOUR_2, SHIELD, TWO_HAND_2, HALBERD_2, SPEARS_1, ADD_HAND_WEAPON, BOWS_2],
     specialRules: ['Hand weapon', 'Animosity'],
