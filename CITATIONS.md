@@ -1045,6 +1045,23 @@ and the same fix as the High Elf Repeater Bolt Thrower in OLD-36.
 `source/transcribed/chaos-dwarfs.md` had these three rows shifted one column (F 7, R 3); corrected
 there too, with a note.
 
+#### Great Taurus: Burning Hide and Fire Breath (OLD-56, 2026-10-17)
+Both rules now carry the book's own description, from **printed p.10 = PDF 12**, and each opens its
+own glossary article instead of a generic one.
+
+**Piel Ardiente.** The tag used to read *"Fiery body (4+ ward save)"*, which the book does not
+support. It prints: *"su duro pellejo puede detener los golpes de las armas **como si fuera una
+armadura**. Por ello, los Grandes Tauros disponen de una tirada de salvación de 4, 5 ó 6."* That is
+an armour save, so the tag now reads `Burning Hide — 4+ armour save`.
+
+**Aliento de Fuego.** The tag was the bare words "Fire breath", which opened the shared
+`breath-weapon` article, and that article says the hits are **Strength 4**. The Great Taurus
+breathes at **Strength 3** (*"Cada miniatura alcanzada recibirá un único ataque de Fuerza 3"*), so
+it gets an entry of its own, with the teardrop template, the hit on 4+, the buildings catching fire
+and the extra wounds against flammable targets such as Treemen and Mummies.
+
+The same two tags sit on the Great Taurus as a monster and as a character mount. Both were changed.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),
