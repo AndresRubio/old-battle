@@ -724,7 +724,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Heavy armour, shield & barded Warhorse (2+ save)': 'Armadura pesada, escudo y Caballo de Guerra con barda (salvación de 2+)',
   'Heavy armour, shield & cavalry lance; barded Elven Steed (2+ save)': 'Armadura pesada, escudo y lanza de caballería; Corcel Élfico con barda (salvación de 2+)',
   'Heavy armour, shield & sword': 'Armadura pesada, escudo y espada',
-  'Heavy armour, shield & the Hammer of Hashut': 'Armadura pesada, escudo y el Hammer of Hashut',
+  'Heavy armour & war hammer (5+ save)': 'Armadura pesada y martillo de guerra (salvación de 5+)',
   'Heavy armour, shield, cavalry lance & sword (2+ save)': 'Armadura pesada, escudo, lanza de caballería y espada (salvación de 2+)',
   'Heavy armour, shield, sword and lance (2+ save)': 'Armadura pesada, escudo, espada y lanza (salvación 2+)',
   'Heavy armour, sword & halberd; fights on foot': 'Armadura pesada, espada y alabarda; combate a pie',

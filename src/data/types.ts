@@ -280,6 +280,13 @@ export interface UnitProfile {
    */
   baseCrew?: number
   /**
+   * Overrides the magic-item allowance the character's rank would give, for the
+   * rare entry whose own army-list box grants a different number. Option
+   * `magicItemSlotsDelta` values still apply on top. Chaos Dwarfs printed p.63
+   * gives Zhatan, a Commander, four items where the chart gives a lord three.
+   */
+  magicItemSlots?: number
+  /**
    * Extra display-only profiles shown beneath the main statLine: a chariot's
    * crew / chassis / draught beasts, or a special character's fixed mount.
    */

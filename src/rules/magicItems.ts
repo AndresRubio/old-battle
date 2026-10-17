@@ -56,9 +56,15 @@ export const RESTRICTED_CATEGORIES: ReadonlySet<MagicItemCategory> = new Set([
   'boundSpell',
 ])
 
-/** Effective magic-item allowance for a character entry (rank + any option deltas). */
+/**
+ * Effective magic-item allowance for a character entry: the unit's own
+ * `magicItemSlots` when it declares one, otherwise its rank's figure from the
+ * chart, plus any option deltas on top.
+ */
 export function magicItemAllowance(entry: RosterEntry, unit: UnitProfile): number {
-  const base = unit.characterRank ? MAGIC_ITEM_ALLOWANCE[unit.characterRank] : 0
+  const base =
+    unit.magicItemSlots ??
+    (unit.characterRank ? MAGIC_ITEM_ALLOWANCE[unit.characterRank] : 0)
   const delta = (unit.options ?? [])
     .filter((o) => entry.optionIds.includes(o.id) && o.magicItemSlotsDelta)
     .reduce((sum, o) => sum + (o.magicItemSlotsDelta ?? 0), 0)
