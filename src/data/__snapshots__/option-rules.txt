@@ -9,6 +9,7 @@ barding	nightmare-barding	Nightmare barding
 bow	bow	Bow
 bow	bow	Bow (Long bow)
 bow	bow	Bows
+bow	bows	Bow
 bow	bows	Bows
 bow	crew-bows	Bows for the crew
 chaos-armour	chaos-armour	Chaos armour
@@ -58,6 +59,7 @@ short-bow	og-orc-chariot-bows	Short bows for crew
 short-bow	short-bow	Short bow
 short-bow	short-bow	Short bows
 short-bow	short-bows	Short bows
+sling	sling	Sling
 sling	slings	Slings
 spear	crew-spears	Spears for the crew
 spear	spear	Spear

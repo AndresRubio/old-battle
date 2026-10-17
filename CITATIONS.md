@@ -1215,6 +1215,38 @@ printed p.54, so the tag now reads `Light armour, shield & axe (5+ save)`.
 His profile was already right against the same page, `GORDUZ 10 6 6 4 4 3 5 4 8`, as were the Giant
 Wolf at +4 points and the three magic items.
 
+#### Chaos Dwarf character equipment list (OLD-50, 2026-10-17)
+Characters could buy no ordinary equipment at all. They now carry the list from **printed p.55 =
+PDF 57** ("VALORES EN PUNTOS DEL EQUIPO"), read together with the legend on **printed p.54 = PDF
+56**: an item marked `*` is not available to Chaos Dwarfs or Bull Centaurs, and one marked `**` is
+barred to those two and to Hobgoblins as well.
+
+Every character box on pp.56-57 carries the same sentence, so the entitlement is the book's:
+*"puede equiparse con cualquier combinación de armas y armadura permitida a cualquiera de los tipos
+de tropa de esta lista e incluida en la Lista del Equipo"*. Their EQUIPO line is a free hand weapon
+(*"Arma de mano: Hacha, Maza, Garrote, etc."*), which every character already has, so only the paid
+rows are offered.
+
+Open to all seven characters, at the printed price:
+
+```
+Shield 1 · Light armour 2 · Heavy armour 3 · Handgun 3 · Pistol 2
+Additional hand weapon 1 · Two-handed weapon 2 · Flail 1 · Halberd 2 · Spear 1
+```
+
+The Hobgoblin Hero adds the four `*` rows, which the legend bars only to Dwarfs and Bull Centaurs:
+bow 2, short bow 1, javelin 1, sling 1. The `**` rows go to nobody here, since the three troop
+types that could take them (Orcs, Black Orcs, Goblins) field no characters in this list: barding 4,
+long bow 3, crossbow 3, repeater crossbow 4, cavalry lance 2.
+
+Light and heavy armour share `exclusiveGroup: 'armour'`, so buying both raises
+`options-exclusive-group`, as everywhere else. Names are singular, since a character is one model;
+the plural constants in the same file are the regiments' per-model prices from pp.58-60, a
+different table that happens to share several ids.
+
+The three special characters are left out on purpose. Pages 63-64 arm Zhatan, Gorduz and Astragoth
+by name and never offer them the list, and a test asserts they have no equipment options at all.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),
