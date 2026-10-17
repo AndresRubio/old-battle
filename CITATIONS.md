@@ -1158,6 +1158,27 @@ Goblin unit never panics Orcs.
 unit the Goblins do not outnumber two to one, and animosity carries the same Hobgoblin clause as
 the Orcs'.
 
+#### Zhatan the Black: equipment and a fourth magic item (OLD-58, 2026-10-17)
+All from his entry on **printed p.63 = PDF 65**.
+
+**WS was already right.** The issue reports it as 7; the data has carried 8 since the first commit,
+and the book prints `ZHATAN 8 8 6 4 5 4 6 4 10`. Nothing to change there.
+
+**Equipment.** The tag read *"Heavy armour, shield & the Hammer of Hashut"*, and two thirds of that
+is invented. The book says *"Zhatan está equipado con Armadura Pesada y un Martillo de Guerra."* No
+shield, and an ordinary war hammer rather than a named magic weapon, which is also what makes the
+save the 5+ the issue asks for: heavy armour alone is 5+, while heavy armour and shield would be
+4+. (The army's magic item list does hold a *Black Hammer of Hashut*, which is a different thing
+and is still selectable.)
+
+**Four magic items.** *"Zhatan es un Comandante, y normalmente podría tener hasta tres objetos
+mágicos. En cambio, a causa de su enorme estatura... y el poder de su maestro Gorth, puede tener
+hasta cuatro objetos mágicos."* He is the first non-wizard in the data to be allowed more than his
+rank gives, so `UnitProfile` gains an optional `magicItemSlots`, which `magicItemAllowance` prefers
+over the rank chart, with option deltas still applied on top. Three tests in `validate.test.ts`
+pin it: Zhatan gets 4 while `MAGIC_ITEM_ALLOWANCE.lord` stays 3, every other Chaos Dwarf character
+still follows its rank, and a fifth item raises `magic-items-count`.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

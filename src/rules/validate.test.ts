@@ -1056,6 +1056,50 @@ describe('stale mount options (mount-options-stale)', () => {
   })
 })
 
+// ---- A unit that overrides the rank's allowance (OLD-58) ----------------
+// Zhatan the Black is a Commander, so the chart gives him three items, but his
+// own entry (Enanos del Caos printed p.63) grants a fourth: "a causa de su
+// enorme estatura... puede tener hasta cuatro objetos mágicos". He is the first
+// non-wizard in the data to need more than his rank allows, hence
+// `magicItemSlots` on the unit.
+describe('OLD-58 — a unit may override the allowance its rank gives', () => {
+  const cd = getArmy('chaos-dwarfs')!
+  const zhatan = cd.units.find((u) => u.id === 'cd-zhatan')!
+
+  it('Zhatan is a lord but carries four items', () => {
+    expect(zhatan.characterRank).toBe('lord')
+    expect(MAGIC_ITEM_ALLOWANCE.lord).toBe(3)
+    expect(magicItemAllowance(entry({ unitId: 'cd-zhatan' }), zhatan)).toBe(4)
+  })
+
+  it('every other Chaos Dwarf character still follows its rank', () => {
+    for (const u of cd.units.filter((u) => u.isCharacter && u.id !== 'cd-zhatan')) {
+      expect(magicItemAllowance(entry({ unitId: u.id }), u)).toBe(
+        MAGIC_ITEM_ALLOWANCE[u.characterRank!],
+      )
+    }
+  })
+
+  it('a four-item Zhatan validates, a five-item one does not', () => {
+    const overAllowance = (ids: string[]) =>
+      validateRoster(
+        {
+          id: 'r', name: 'r', armyId: 'chaos-dwarfs', pointsLimit: 3000,
+          entries: [entry({ unitId: 'cd-zhatan', isGeneral: true, magicItemIds: ids })],
+        },
+        cd, 'en',
+      ).filter((v) => v.rule === 'magic-items-count')
+    // Four items from four different restricted categories, so only the count
+    // is under test here.
+    const pick = (cat: string, n: number) =>
+      cd.magicItems.filter((i) => i.category === cat).slice(0, n).map((i) => i.id)
+    const four = [...pick('weapon', 1), ...pick('armour', 1), ...pick('ward', 1), ...pick('enchanted', 1)]
+    expect(four).toHaveLength(4)
+    expect(overAllowance(four)).toHaveLength(0)
+    expect(overAllowance([...four, ...pick('arcane', 1)])).toHaveLength(1)
+  })
+})
+
 // ---- Canonical special cases (Warhammer Magia p.30) ---------------------
 // The allowance chart has two entries beyond the seven generic ranks:
 //   "Wight — 1 (in addition to his Wight Blade)" and

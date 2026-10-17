@@ -204,15 +204,23 @@ const units: UnitProfile[] = [
     statLine: chaosDwarf({ WS: 8, BS: 6, S: 4, T: 5, W: 4, I: 6, A: 4, Ld: 10 }),
     isCharacter: true,
     characterRank: 'lord',
+    // OLD-58 — printed p.63: "Zhatan es un Comandante, y normalmente podria
+    // tener hasta tres objetos magicos. En cambio, a causa de su enorme
+    // estatura... y el poder de su maestro Gorth, puede tener hasta cuatro
+    // objetos magicos." The chart gives a lord three, so the entry overrides it.
+    magicItemSlots: 4,
     canBeGeneral: true,
     max: 1,
     mounts: CD_MONSTER_MOUNTS,
     specialRules: [
       'Special character',
       'Hatred (all enemies)',
-      'Heavy armour, shield & the Hammer of Hashut',
+      // p.63: "Zhatan esta equipado con Armadura Pesada y un Martillo de
+      // Guerra." No shield, and the hammer is an ordinary war hammer, not a
+      // magic item: heavy armour alone is the 5+ save.
+      'Heavy armour & war hammer (5+ save)',
       'May ride a Lammasu (+200) or Great Taurus (+225)',
-      'Up to 3 magic items',
+      'Up to 4 magic items',
       ...CD_BESTIARY_RULES,
     ],
   },
