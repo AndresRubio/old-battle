@@ -6,6 +6,7 @@ import { findRule } from '../rules'
 import { summarize } from '../../rules/summary'
 import type { Roster, StatLine } from '../types'
 import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
+import { isWizardLevelId } from '../unitOptions'
 import { MAGIC_LORES } from '../lores'
 import { RULE_PHRASE_ES } from '../../i18n/rulePhrases'
 
@@ -2429,6 +2430,65 @@ describe('Reino del Caos printed p.105 — Marauder Horsemen and Chaos Ogres mat
   })
 })
 
+describe('OLD-50 — Chaos Dwarf characters buy from the p.55 equipment list', () => {
+  // Printed p.55 "VALORES EN PUNTOS DEL EQUIPO", with the legend on printed
+  // p.54: * is barred to Chaos Dwarfs and Bull Centaurs, ** to those two and
+  // Hobgoblins as well. Every character box on pp.56-57 says the model "puede
+  // equiparse con cualquier combinación de armas y armadura permitida a
+  // cualquiera de los tipos de tropa de esta lista e incluida en la Lista del
+  // Equipo", so these prices are the book's, not estimates.
+  const cd = getArmy('chaos-dwarfs')!
+  const unit = (id: string) => cd.units.find((u) => u.id === id)!
+  const priceOf = (id: string, optionId: string) =>
+    unit(id).options?.find((o) => o.id === optionId)?.pointsPerModel
+
+  // The ten rows with no asterisk, open to every character in the list.
+  const OPEN_ROWS: Array<[string, number]> = [
+    ['shield', 1], ['light-armour', 2], ['heavy-armour', 3],
+    ['handgun', 3], ['pistol', 2],
+    ['add-hand-weapon', 1], ['two-hand', 2], ['flail', 1], ['halberd', 2], ['spears', 1],
+  ]
+  // The * rows: Hobgoblin characters only.
+  const STARRED_ROWS: Array<[string, number]> = [
+    ['bows', 2], ['short-bow', 1], ['javelin', 1], ['sling', 1],
+  ]
+  // The ** rows, which nobody in this army may take.
+  const DOUBLE_STARRED = ['barding', 'longbow', 'crossbow', 'repeater-crossbow', 'cav-lance']
+
+  const CHAOS_DWARF_CHARACTERS = [
+    'cd-general', 'cd-sorcerer', 'cd-battle-standard', 'cd-hero',
+    'cd-bull-centaur-commander', 'cd-bull-centaur-hero',
+  ]
+  const ALL = [...CHAOS_DWARF_CHARACTERS, 'cd-hobgoblin-hero']
+
+  it.each(ALL)('%s buys the ten unrestricted rows at the printed price', (id) => {
+    for (const [optionId, points] of OPEN_ROWS) expect(priceOf(id, optionId), optionId).toBe(points)
+  })
+
+  it.each(CHAOS_DWARF_CHARACTERS)('%s is barred from the * rows (bow, short bow, javelin, sling)', (id) => {
+    for (const [optionId] of STARRED_ROWS) expect(priceOf(id, optionId), optionId).toBeUndefined()
+  })
+
+  it('the Hobgoblin Hero does get the * rows, since the legend only bars Dwarfs and Bull Centaurs', () => {
+    for (const [optionId, points] of STARRED_ROWS) {
+      expect(priceOf('cd-hobgoblin-hero', optionId), optionId).toBe(points)
+    }
+  })
+
+  it.each(ALL)('%s is barred from every ** row', (id) => {
+    for (const optionId of DOUBLE_STARRED) expect(priceOf(id, optionId), optionId).toBeUndefined()
+  })
+
+  it('the three special characters keep the fixed kit their own boxes give them', () => {
+    // pp.63-64 arm Zhatan, Gorduz and Astragoth by name and never offer them
+    // the list, so they have no equipment options at all.
+    for (const id of ['cd-zhatan', 'cd-gorduz', 'cd-astragoth']) {
+      const opts = (unit(id).options ?? []).filter((o) => !isWizardLevelId(o.id))
+      expect(opts, id).toHaveLength(0)
+    }
+  })
+})
+
 describe('a model wears one body armour — light, heavy or Chaos (Reglamento p.30, Reino del Caos p.100)', () => {
   // Reglamento printed p.30 = PDF 32, armour-save table: "Escudo y Armadura
   // Ligera o Armadura Pesada" — light and heavy are never worn together.
@@ -2453,6 +2513,10 @@ describe('a model wears one body armour — light, heavy or Chaos (Reglamento p.
   it('finds every unit that offers more than one (the sweep is not vacuous)', () => {
     expect(offering.map((x) => x.unit).sort()).toEqual([
       'br-battle-standard', 'br-general', 'br-hero',
+      // OLD-50 — the seven Chaos Dwarf characters that carry the p.55
+      // equipment list, which offers light armour and heavy armour.
+      'cd-battle-standard', 'cd-bull-centaur-commander', 'cd-bull-centaur-hero',
+      'cd-general', 'cd-hero', 'cd-hobgoblin-hero', 'cd-sorcerer',
       'ch-battle-standard', 'ch-champion', 'ch-hero', 'ch-lord', 'ch-ogres',
       'no-norse-dwarfs',
       'ud-skeleton-warriors',

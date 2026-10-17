@@ -62,6 +62,54 @@ const SPEARS_1: EquipmentOption = { id: 'spears', name: 'Spears', pointsPerModel
 const SPEARS_HALF: EquipmentOption = { id: 'spears', name: 'Spears', pointsPerModel: 0.5 }
 const ADD_HAND_WEAPON: EquipmentOption = { id: 'add-hand-weapon', name: 'Additional hand weapon', pointsPerModel: 1 }
 
+// --- Character equipment list (OLD-50) ------------------------------------
+// Printed p.55 "VALORES EN PUNTOS DEL EQUIPO", read with the legend on printed
+// p.54: an item marked * is not available to Chaos Dwarfs or Bull Centaurs, and
+// one marked ** is not available to Chaos Dwarfs, Bull Centaurs or Hobgoblins.
+//
+// Each character box on pp.56-57 carries the same line: "puede equiparse con
+// cualquier combinacion de armas y armadura permitida a cualquiera de los tipos
+// de tropa de esta lista e incluida en la Lista del Equipo". Their EQUIPO line
+// is a hand weapon ("Arma de mano: Hacha, Maza, Garrote, etc."), free and
+// already part of every character, so only the paid rows appear here.
+//
+// Names are SINGULAR: a character is one model. The plural constants above are
+// the regiments' per-model prices from the pp.58-60 OPCIONES lines, a different
+// table that shares several ids.
+//
+// The ** rows are therefore bought by nobody in this army (barding 4, long bow
+// 3, crossbow 3, repeater crossbow 4, cavalry lance 2), and the * rows only by
+// the Hobgoblin characters. Light and heavy armour share `exclusiveGroup`
+// 'armour': the Reglamento p.30 never wears both.
+const CD_SHIELD: EquipmentOption = { id: 'shield', name: 'Shield', pointsPerModel: 1 }
+const CD_LIGHT_ARMOUR: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 2, exclusiveGroup: 'armour' }
+const CD_HEAVY_ARMOUR: EquipmentOption = { id: 'heavy-armour', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' }
+const CD_HANDGUN: EquipmentOption = { id: 'handgun', name: 'Handgun', pointsPerModel: 3 }
+const CD_PISTOL: EquipmentOption = { id: 'pistol', name: 'Pistol', pointsPerModel: 2 }
+const CD_EXTRA_HAND_WEAPON: EquipmentOption = { id: 'add-hand-weapon', name: 'Additional hand weapon', pointsPerModel: 1 }
+const CD_TWO_HANDED: EquipmentOption = { id: 'two-hand', name: 'Two-handed weapon', pointsPerModel: 2 }
+const CD_FLAIL: EquipmentOption = { id: 'flail', name: 'Flail', pointsPerModel: 1 }
+const CD_HALBERD: EquipmentOption = { id: 'halberd', name: 'Halberd', pointsPerModel: 2 }
+const CD_SPEAR: EquipmentOption = { id: 'spears', name: 'Spear', pointsPerModel: 1 }
+// * rows, Hobgoblin characters only.
+const CD_BOW: EquipmentOption = { id: 'bows', name: 'Bow', pointsPerModel: 2 }
+const CD_SHORT_BOW: EquipmentOption = { id: 'short-bow', name: 'Short bow', pointsPerModel: 1 }
+const CD_JAVELIN: EquipmentOption = { id: 'javelin', name: 'Javelin', pointsPerModel: 1 }
+const CD_SLING: EquipmentOption = { id: 'sling', name: 'Sling', pointsPerModel: 1 }
+
+/** What a Chaos Dwarf or Bull Centaur character may buy (no * and no ** rows). */
+const CD_CHARACTER_EQUIPMENT: EquipmentOption[] = [
+  CD_SHIELD, CD_LIGHT_ARMOUR, CD_HEAVY_ARMOUR,
+  CD_HANDGUN, CD_PISTOL,
+  CD_EXTRA_HAND_WEAPON, CD_TWO_HANDED, CD_FLAIL, CD_HALBERD, CD_SPEAR,
+]
+
+/** A Hobgoblin character adds the * rows, which only his race may take. */
+const HOBGOBLIN_CHARACTER_EQUIPMENT: EquipmentOption[] = [
+  ...CD_CHARACTER_EQUIPMENT,
+  CD_BOW, CD_SHORT_BOW, CD_JAVELIN, CD_SLING,
+]
+
 // Sorcerer level upgrades — Brujo 59 → Paladín Brujo (L2) 121 → Maestro de Brujos
 // (L3) 219 → Gran Brujo (L4) 328. Deltas +62 / +160 / +269 (p.57).
 //
@@ -112,6 +160,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    options: CD_CHARACTER_EQUIPMENT,
     mounts: CD_MONSTER_MOUNTS,
     specialRules: ['Commander', 'Up to 3 magic items', 'May ride a Lammasu (+200) or Great Taurus (+225)', ...CD_BESTIARY_RULES],
   },
@@ -126,7 +175,7 @@ const units: UnitProfile[] = [
     characterRank: 'wizard1',
     lores: ['chaosDwarf'],
     canBeGeneral: true,
-    options: CD_WIZARD_LEVELS,
+    options: [...CD_WIZARD_LEVELS, ...CD_CHARACTER_EQUIPMENT],
     mounts: CD_MONSTER_MOUNTS,
     specialRules: ['Wizard', CD_SORCERER_RULE, 'May ride a Lammasu (+200) or Great Taurus (+225)', ...CD_BESTIARY_RULES],
   },
@@ -141,6 +190,7 @@ const units: UnitProfile[] = [
     characterRank: 'champion',
     canBeBSB: true,
     isBSB: true,
+    options: CD_CHARACTER_EQUIPMENT,
     max: 1, // book p.56 "0-1 ESTANDARTE DE BATALLA"
     specialRules: ['0-1', 'Army Battle Standard', 'May carry one magic standard', ...CD_BESTIARY_RULES],
   },
@@ -153,6 +203,7 @@ const units: UnitProfile[] = [
     statLine: chaosDwarf({ WS: 6, BS: 5, S: 4, T: 5, W: 2, I: 4, A: 3, Ld: 10 }),
     isCharacter: true,
     characterRank: 'hero',
+    options: CD_CHARACTER_EQUIPMENT,
     mounts: CD_MONSTER_MOUNTS,
     specialRules: ['Up to 2 magic items', 'May ride a Lammasu (+200) or Great Taurus (+225)', ...CD_BESTIARY_RULES],
   },
@@ -167,6 +218,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: false,
     max: 1,
+    options: CD_CHARACTER_EQUIPMENT,
     specialRules: ['0-1 choice', 'Up to 3 magic items', 'Cannot be the army General'],
   },
   {
@@ -179,6 +231,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     canBeGeneral: false,
+    options: CD_CHARACTER_EQUIPMENT,
     specialRules: ['Up to 2 magic items'],
   },
   {
@@ -191,6 +244,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     canBeGeneral: false,
+    options: HOBGOBLIN_CHARACTER_EQUIPMENT,
     specialRules: ['Up to 2 magic items', 'Animosity'],
   },
 
