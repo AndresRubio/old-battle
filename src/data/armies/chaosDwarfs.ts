@@ -324,7 +324,9 @@ const units: UnitProfile[] = [
       // Armadura Ligera, un Escudo y un Hacha." Light armour plus shield is
       // the 5+ of the p.54 save table.
       'Light armour, shield & axe (5+ save)',
-      'Predestined — survives his final wound on a 4+',
+      // OLD-62 — printed p.63: the roll is an unmodified save, and he gets it
+      // "siempre que sufra su última herida", every time, not once.
+      'Predestined — an unmodified save of 4+ each time he suffers his last wound',
       'May ride a Giant Wolf (+4)',
       'Up to 3 magic items',
     ],

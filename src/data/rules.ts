@@ -235,6 +235,17 @@ export const RULES: RuleDef[] = [
     es: 'Los pistones accionados por vapor que han reemplazado los músculos y tendones de Astragoth le permiten atacar al enemigo con una Fuerza mortífera. Además de aumentar su Fuerza, como puede observarse en su perfil de atributos, Astragoth puede llevar a cabo un ataque especial denominado Ataque Mortífero: si impacta al mismo objetivo con los tres Ataques de que dispone, sus brazos mecánicos se habrán acelerado casi sin control, descargando una salvaje lluvia de golpes, y podrá atacar de nuevo inmediatamente al mismo objetivo con todos sus ataques.',
   },
   {
+    // OLD-62 — Gorduz, Enanos del Caos printed p.63 = PDF 65. Alias kept to the
+    // one word, which appears in no other army's tag; the tag leads with it, so
+    // it matches at index 0 and nothing later in the tag can outrank it.
+    id: 'gorduz-predestined',
+    aliases: ['predestined'],
+    titleEn: 'Predestined! (Gorduz)',
+    titleEs: '¡Predestinado! (Gorduz)',
+    en: 'Predestined… Lucky… Slippery…! Call it what you like, Gorduz Backstabber has a special knack for surviving. When he suffers his last wound — the one that would be fatal to anybody else — he may make an unmodified save roll of 4, 5 or 6 on 1D6. He may make and pass this roll every time he suffers his last wound, staying alive until his luck runs out.',
+    es: '¡Predestinado... Afortunado... Escurridizo...! Llámese como se quiera, Gorduz el Traicionero tiene una habilidad especial para sobrevivir. Al sufrir su última (y para otros fatal) herida, puede efectuar una tirada de salvación sin modificar de 4, 5 ó 6 en 1D6. Podrá efectuar y superar esta tirada siempre que sufra su última herida ¡siguiendo vivo hasta que se le acabe la suerte!',
+  },
+  {
     // OLD-53 — the greenskin troops a Chaos Dwarf army may field, from the
     // same bestiary: Black Orcs printed p.12 = PDF 14, Orcs and Goblins
     // printed p.13 = PDF 15. Specific aliases again, for the same reason as
