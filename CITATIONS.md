@@ -1215,6 +1215,28 @@ printed p.54, so the tag now reads `Light armour, shield & axe (5+ save)`.
 His profile was already right against the same page, `GORDUZ 10 6 6 4 4 3 5 4 8`, as were the Giant
 Wolf at +4 points and the three magic items.
 
+#### Gorduz Backstabber: Predestined! (OLD-62, 2026-10-18)
+**Printed p.63 = PDF 65**, under REGLAS ESPECIALES: *"¡Predestinado... Afortunado...
+Escurridizo...! Llámese como se quiera, Gorduz el Traicionero tiene una habilidad especial para
+sobrevivir. Al sufrir su última (y para otros fatal) herida, puede efectuar una tirada de salvación
+sin modificar de 4, 5 ó 6 en 1D6. Podrá efectuar y superar esta tirada siempre que sufra su última
+herida ¡siguiendo vivo hasta que se le acabe la suerte!"*
+
+The tag read *"Predestined — survives his final wound on a 4+"*, which lost two things the book
+says: the roll is an **unmodified save**, and he gets it **every time** he takes his last wound, not
+once. It also matched no glossary alias, so it carried no ⓘ at all. The tag now reads `Predestined
+— an unmodified save of 4+ each time he suffers his last wound` and `RULES` carries the book's text
+under `gorduz-predestined`.
+
+The repo's own transcription (`source/transcribed/chaos-dwarfs.md`) renders the sentence as *"puede
+efectuar una tirada; con 4, 5 ó 6 en 1D6"*, dropping *"de salvación sin modificar"*. The PDF wins,
+and a 400 dpi render of the paragraph was used to read it.
+
+The alias is the single word `predestined`, which appears in no other army's tag. That is
+deliberate: this batch twice caught a broader alias stealing someone else's ⓘ (a bare `pursuit`
+took a Norse tag, a bare `deadly attack` an Empire one). The tag leads with the word, so it matches
+at index 0 and nothing later in the tag can outrank it.
+
 #### Black Orc regiment: its base equipment (OLD-61, 2026-10-18)
 **Printed p.60 = PDF 62**: *"EQUIPO: Los Orcos Negros están equipados con armaduras ligeras y armas
 de mano. TIRADA DE SALVACIÓN: 6+."* The shield is an option the same box prices at +1 point per

@@ -960,7 +960,8 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Plague Sword (slays mortals on 4+)': 'Espada de Plaga (mata a los mortales con 4+)',
   'Poison Dart Blowpipe — range 12", 3 shots per turn at same target, no half-range penalty, poisoned (Strength 5)': 'Cerbatana de Dardos Envenenados — alcance 12", 3 disparos por turno al mismo objetivo, sin penalización a media distancia, envenenado (Fuerza 5)',
   'Poisoned arrows and javelins strike at Strength 4': 'Las flechas y jabalinas envenenadas impactan con Fuerza 4',
-  'Predestined — survives his final wound on a 4+': 'Predestinado: sobrevive a su última herida con un 4+',
+  'Predestined — an unmodified save of 4+ each time he suffers his last wound':
+    'Predestinado: salvación sin modificar de 4+ cada vez que sufre su última herida',
   'Prophetess of the Lady of the Lake (wizard)': 'Prophetess of the Lady of the Lake (hechicera)',
   'Protected by Sigmar: re-roll one failed save per turn; auto-dispel spells on 4-6; Strength 10 Deadly Attack in close combat': 'Protegido por Sigmar: repite la tirada de una salvación fallida por turno; disipa hechizos automáticamente con 4-6; Ataque Mortal de Fuerza 10 en combate cuerpo a cuerpo',
   'Questing Knight Champion (Questing Virtue)': 'Campeón Questing Knight (Questing Virtue)',
