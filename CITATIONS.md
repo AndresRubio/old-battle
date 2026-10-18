@@ -1215,6 +1215,15 @@ printed p.54, so the tag now reads `Light armour, shield & axe (5+ save)`.
 His profile was already right against the same page, `GORDUZ 10 6 6 4 4 3 5 4 8`, as were the Giant
 Wolf at +4 points and the three magic items.
 
+#### Black Orc regiment: its base equipment (OLD-61, 2026-10-18)
+**Printed p.60 = PDF 62**: *"EQUIPO: Los Orcos Negros están equipados con armaduras ligeras y armas
+de mano. TIRADA DE SALVACIÓN: 6+."* The shield is an option the same box prices at +1 point per
+model, and the entry already offered it, so the tag `Light armour & shield (6+)` both folded a paid
+option into the base kit and contradicted itself: light armour plus shield is a 5+ on the armour
+table of **printed p.54 = PDF 56** (*"Escudo o armadura ligera 6+ / Escudo y armadura ligera o sólo
+armadura pesada 5+"*), not the 6+ the book prints for this unit. The 6+ is light armour alone, so
+the tag now reads `Light armour & hand weapons (6+)`.
+
 #### Chaos Dwarf character equipment list (OLD-50, 2026-10-17)
 Characters could buy no ordinary equipment at all. They now carry the list from **printed p.55 =
 PDF 57** ("VALORES EN PUNTOS DEL EQUIPO"), read together with the legend on **printed p.54 = PDF

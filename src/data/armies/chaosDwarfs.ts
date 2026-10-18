@@ -424,7 +424,11 @@ const units: UnitProfile[] = [
     options: [SHIELD, TWO_HAND_2, HALBERD_2, SPEARS_1, ADD_HAND_WEAPON],
     specialRules: [
       '0-1 choice',
-      'Light armour & shield (6+)',
+      // OLD-61 — printed p.60: "EQUIPO: Los Orcos Negros están equipados con
+      // armaduras ligeras y armas de mano. TIRADA DE SALVACIÓN: 6+." The shield
+      // is the +1 option already in `options`; the tag used to fold it into the
+      // base kit, and read 6+ while claiming a kit the p.54 save table puts at 5+.
+      'Light armour & hand weapons (6+)',
       'Black Orc Animosity — never tested, and never a target of it',
       'Black Orc Leaders — may command Orc or Goblin units, never Hobgoblins',
       'Black Orc Panic — fleeing greenskins never panic them',
