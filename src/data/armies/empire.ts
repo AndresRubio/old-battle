@@ -747,7 +747,12 @@ const units: UnitProfile[] = [
     nameEs: 'Tanque a Vapor',
     role: 'warmachine',
     pointsPerModel: 200,
-    statLine: { M: 0, WS: 3, BS: 3, S: 7, T: 10, W: 5, I: 0, A: 0, Ld: 10 },
+    // OLD-47 — printed p.65 = PDF 67, read at 300 dpi:
+    // "Tanque a Vapor  -  3  3  7  10  5  -  -  10". The characteristics were
+    // already right; M, I and A are dashes in the book and were stored as 0,
+    // so the app showed a tank with Movement 0 and no Attacks.
+    statLine: { WS: 3, BS: 3, S: 7, T: 10, W: 5, Ld: 10 },
+    statNotes: { M: '–', I: '–', A: '–' },
     max: 8,
     specialRules: ['0-8', 'Steam-powered (see special rules chapter)'],
   },

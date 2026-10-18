@@ -544,12 +544,44 @@ const units: UnitProfile[] = [
     nameEs: 'Rueda de Muerte',
     role: 'warmachine',
     pointsPerModel: 150,
-    statLine: { M: 7, WS: 0, BS: 0, S: 0, T: 7, W: 3, I: 1, A: 0, Ld: 5 },
+    // OLD-47 — the book prints the Doomwheel as four rows, and prints them
+    // twice: the war-machine rules on printed p.31 = PDF 33 and the army list
+    // on printed p.67 = PDF 69. Both read the same, so there is no
+    // bestiary-versus-list conflict to arbitrate here:
+    //   Generador de Piedra Disformidad  -   -  -  -  5 Especial -  -  -
+    //   Rueda                            7D6 -  -  7  7  3       1  -  -
+    //   Ingeniero Brujo                  12  4  4  4  3  1       5  2  10
+    //   Ratas                            -   3  0  3  2  6       1  6  10
+    // The one cell that differs is the Engineer's M: 12 on p.31 and 5 on p.67.
+    // Those are the same speed in different units (12cm = 5"), and every other
+    // row on p.67 is in centimetres, so p.67 printed that cell in inches. The
+    // data stores inches, hence M 5, which the Spanish UI prints back as 12cm.
+    //
+    // The entry used to read M 7, S 0, Ld 5 with WS/BS/A at 0. None of that is
+    // printed: the Wheel has S 7, and the book puts a dash in those columns.
+    statLine: { S: 7, T: 7, W: 3, I: 1 },
+    statNotes: { M: '7D6cm', WS: '–', BS: '–', A: '–', Ld: '–' },
+    profiles: [
+      {
+        name: 'Warpstone Generator', nameEs: 'Generador de Piedra de Disformidad',
+        statLine: { T: 5 },
+        statNotes: { W: 'Special' }, statNotesEs: { W: 'Especial' },
+      },
+      {
+        name: 'Warlock Engineer', nameEs: 'Ingeniero Brujo',
+        statLine: { M: 5, WS: 4, BS: 4, S: 4, T: 3, W: 1, I: 5, A: 2, Ld: 10 },
+        specialRules: ['Heavy armour (5+ save) and a pistol'],
+      },
+      {
+        name: 'Rats', nameEs: 'Ratas',
+        statLine: { WS: 3, BS: 0, S: 3, T: 2, W: 6, I: 1, A: 6, Ld: 10 },
+        specialRules: ['Immune to psychology and never takes Break tests'],
+      },
+    ],
     specialRules: [
-      'Warpstone-powered war machine; moves 7D6 cm erratically',
-      'Warlock Engineer pilot: WS5 BS4 S4 T4 W3 I5 A1 Ld10',
-      'Rats: WS3 S0 T4 W2 I6 A1 Ld10',
-      'Special save 5+; discharges warp-lightning',
+      'Warpstone-powered war machine; moves 7D6cm erratically',
+      'Each wound on the rats cuts 1D6 from its Movement; six kills them all and it stops',
+      'Discharges warp-lightning',
       'See War Machines section for full rules',
     ],
   },
