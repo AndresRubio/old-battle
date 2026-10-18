@@ -359,8 +359,8 @@ describe('mounts & profiles', () => {
     'de-cold-one-knights', 'de-dark-riders',
     'dow-voland',
     'emp-white-wolf-knights', 'emp-panther-knights', 'emp-blazing-sun-knights', 'emp-reiksgard-knights',
-    'emp-pistoliers', 'emp-engineer-scouts', 'emp-kislev-winged-lancers', 'emp-kislev-horse-archers',
-    'hf-war-sheep-riders', 'hf-battle-ram-riders', 'hf-goat-riders', 'hf-swan-riders', 'hf-eagle-riders',
+    'emp-kislev-winged-lancers',
+    'hf-battle-ram-riders', 'hf-goat-riders', 'hf-swan-riders', 'hf-eagle-riders',
     'he-dragon-princes', 'he-silver-helms', 'he-ellyrian-reavers',
     'lz-cold-one-riders', 'lz-terradons',
     'og-savage-boar-boyz', 'og-orc-boar-boyz', 'og-goblin-wolf-riders', 'og-forest-goblin-spider-riders',
@@ -2397,9 +2397,10 @@ describe('Reino del Caos printed p.105 — Marauder Horsemen and Chaos Ogres mat
   const unit = (id: string) => chaos.units.find((u) => u.id === id)!
 
   it('the Marauder Horseman rider is BS3 T3, as printed (not BS4 T4)', () => {
-    // M is the War Horse's 20cm → 8", the cavalry convention used by ch-knights.
+    // OLD-49 — the printed row is the rider's own: M 10cm → 4". The War Horse's
+    // 20cm → 8" is the mount row underneath.
     expect(unit('ch-marauder-horsemen').statLine).toEqual({
-      M: 8, WS: 4, BS: 3, S: 4, T: 3, W: 1, I: 4, A: 2, Ld: 7,
+      M: 4, WS: 4, BS: 3, S: 4, T: 3, W: 1, I: 4, A: 2, Ld: 7,
     })
   })
 

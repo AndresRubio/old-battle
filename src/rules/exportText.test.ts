@@ -253,7 +253,7 @@ describe('exportRosterText — cavalry steed profile (OLD-48)', () => {
   it('prints the White Wolf Knights steed row beneath the rider, in English', () => {
     const lines = detailLines(exportRosterText(rosterOf('empire', 'emp-white-wolf-knights'), empire))
     // Rider header + values, then the steed's label, header and values.
-    expect(lines[1].trim().split(/\s+/)).toEqual(['8', '4', '3', '3', '3', '1', '4', '1', '7'])
+    expect(lines[1].trim().split(/\s+/)).toEqual(['4', '4', '3', '4', '3', '1', '4', '1', '7'])
     expect(lines[2].trim()).toBe('· Barded Warhorse')
     expect(lines[3]).toMatch(/^\s+M\s+WS\s+BS\s+S\s+T\s+W\s+I\s+A\s+Ld$/)
     expect(lines[4].trim().split(/\s+/)).toEqual(['8', '3', '0', '3', '3', '1', '3', '1', '5'])

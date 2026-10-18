@@ -515,7 +515,6 @@ const units: UnitProfile[] = [
     statLine: { M: 8, WS: 2, BS: 4, S: 2, T: 2, W: 1, I: 5, A: 1, Ld: 8 },
     minSize: 5,
     options: [BOWS_1, SHIELD_HALF],
-    mount: { name: 'War Sheep', nameEs: 'Oveja de Guerra', statLine: { M: 8 }, specialRules: ['Skittish — riders take Break tests at -1 Ld'] },
     specialRules: [
       'Any number of units; hand weapon, spear and light armour; save 5+',
       'Skittish — the riders suffer -1 Leadership when taking Break Tests',

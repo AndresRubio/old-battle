@@ -324,7 +324,8 @@ describe('EntryRow Movement in centimetres in Spanish (OLD-46)', () => {
     setLang('en')
     render(<EntryRow entry={entry('emp-white-wolf-knights')} army={army} {...props} />)
     expand()
-    expect(movementFor('Rider')).toBe('8')
+    // OLD-49 — the rider walks at its own 4"; the horse carries it at 8".
+    expect(movementFor('Rider')).toBe('4')
     expect(movementFor('Barded Warhorse')).toBe('8')
   })
 
@@ -332,7 +333,7 @@ describe('EntryRow Movement in centimetres in Spanish (OLD-46)', () => {
     setLang('es')
     render(<EntryRow entry={entry('emp-white-wolf-knights')} army={army} {...props} />)
     expand()
-    expect(movementFor('Jinete')).toBe('20')
+    expect(movementFor('Jinete')).toBe('10')
     expect(movementFor('Caballo de Guerra con Barda')).toBe('20')
   })
 })

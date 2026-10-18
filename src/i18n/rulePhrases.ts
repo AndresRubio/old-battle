@@ -1345,7 +1345,6 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'Shepherding — a fleeing War Sheep or Battle Ram unit it contacts is automatically rallied': 'Pastoreo — una unidad de Ovejas de Guerra o Carneros de Batalla huyendo con la que contacte se reagrupa automáticamente',
   'Skirmish — expert trackers and woodsmen': 'Hostigan — expertos rastreadores y leñadores',
   'Skittish — rider suffers -1 Leadership on Break tests': 'Asustadiza — el jinete sufre -1 al Liderazgo en los chequeos de Desmoralización',
-  'Skittish — riders take Break tests at -1 Ld': 'Asustadizas — los jinetes hacen los chequeos de Desmoralización con -1 al L',
   'Skittish — the riders suffer -1 Leadership when taking Break Tests': 'Asustadizas — los jinetes sufren -1 al Liderazgo en los chequeos de Desmoralización',
   'Soft scales — unmodified 6+ save': 'Escamas blandas — salvación inmodificable de 6+',
   'Special character — a failed Slayer sent out to befriend an Elf (member of The Comradeship)': 'Personaje especial — un Matador fracasado enviado a hacerse amigo de un Elfo (miembro de La Camaradería)',

@@ -673,10 +673,10 @@ const units: UnitProfile[] = [
     nameEs: 'Caballería Tumularia',
     role: 'regiment',
     pointsPerModel: 26,
-    // Rider profile: M10→4" WS3 BS0 S3 T4 W1 I3 A1 Ld8
-    // Mount (Nightmare): M20→8" WS2 BS0 S3 T3 W1 I2 A1 Ld5
-    // Cavalry unit uses mount's M
-    statLine: { M: 8, WS: 3, BS: 0, S: 3, T: 4, W: 1, I: 3, A: 1, Ld: 8 },
+    // OLD-49 — printed p.64 = PDF 66 prints two rows, and the rider keeps its
+    // own Movement: Tumulario M10→4" WS3 BS0 S3 T4 W1 I3 A1 Ld8, Pesadilla
+    // M20→8" WS2 BS0 S3 T3 W1 I2 A1 Ld5.
+    statLine: { M: 4, WS: 3, BS: 0, S: 3, T: 4, W: 1, I: 3, A: 1, Ld: 8 },
     mount: { name: 'Nightmare', nameEs: 'Pesadilla', statLine: NIGHTMARE_MOUNT.statLine! },
     minSize: 5,
     options: [CAV_LANCE_2, HEAVY_ARMOUR_CAV_2, BARDING_8],
