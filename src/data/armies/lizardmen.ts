@@ -308,7 +308,9 @@ const units: UnitProfile[] = [
     pointsPerModel: 25,
     // Profile p.76: Grt Crested Skink M6 WS2 BS3 S4 T2 W1 I4 A1 Ld6;
     //               Cold One M8 WS3 BS0 S4 T4 W1 I1 A2 Ld3. Combined save 3+.
-    statLine: { M: 8, WS: 2, BS: 3, S: 4, T: 2, W: 1, I: 4, A: 1, Ld: 6 },
+    // OLD-49 — the rider row carries the Skink's own M 6, not the Cold One's 8.
+    // This book is the English edition, so its M is already in inches.
+    statLine: { M: 6, WS: 2, BS: 3, S: 4, T: 2, W: 1, I: 4, A: 1, Ld: 6 },
     mount: { name: 'Cold One', nameEs: 'Saurio Frío', statLine: COLD_ONE_MOUNT.statLine!, specialRules: ['Causes fear', 'Stupidity'] },
     minSize: 5,
     specialRules: [

@@ -1278,6 +1278,53 @@ different table that happens to share several ids.
 The three special characters are left out on purpose. Pages 63-64 arm Zhatan, Gorduz and Astragoth
 by name and never offer them the list, and a test asserts they have no equipment options at all.
 
+#### Cavalry rider Movement, swept army by army (OLD-49, 2026-10-18)
+Of the 38 regiments with a fixed steed, 19 gave the rider the steed's Movement. Every one of those
+19 was read on its own page. Fifteen were wrong and four were faithful to a printed row, which is
+what made this worth checking rather than applying a pattern.
+
+**The 15.** These books print two rows and give the rider its own on-foot Movement. The mount row
+was already right in each case; only the rider moved.
+
+| Units | Page | Printed rider row | Was | Now |
+|---|---|---|---|---|
+| Empire: White Wolf, Panther, Blazing Sun, Reiksgard knights | printed 59-60 = PDF 61-62 | `10 4 3 4 3 1 4 1 7` | M 8 | M 4 |
+| Empire: Kislev Winged Lancers | printed 63 = PDF 65 | `10 4 3 3 3 1 3 1 7` | M 8 | M 4 |
+| Chaos: Chaos Knights | printed 103 = PDF 105 | `10 6 6 4 4 1 6 2 9` | M 8 | M 4 |
+| Chaos: Marauder Horsemen | printed 105 = PDF 107 | `10 4 3 4 3 1 4 2 7` | M 8 | M 4 |
+| Chaos: Bloodletters on Juggernauts | printed 114 = PDF 116 | Desangrador `10 5 5 4 3 1 6 2 10` | M 7 | M 4 |
+| Chaos Dwarfs: Hobgoblin Wolf Riders | printed 60 = PDF 62 | Hobgoblin `10 3 3 3 3 1 2 1 6` | M 9 | M 4 |
+| O&G: Savage Boar Boyz, Orc Boar Boyz, Goblin Wolf Riders, Forest Goblin Spider Riders | printed 82-83 = PDF 84-85 | rider `10 ...` in all four | M 7/7/9/7 | M 4 |
+| Vampire Counts: Wight Cavalry | printed 64 = PDF 66 | Tumulario `10 3 0 3 4 1 3 1 8` | M 8 | M 4 |
+| Lizardmen: Cold One Riders | printed 76 = PDF 78 | Grt Crested Skink `6 2 3 4 2 1 4 1 6` | M 8 | M 6 |
+
+The Lizardmen book is the English edition, so its 6 is already inches; the rest convert 10cm to 4".
+
+**The 4 that were right, and now show it.** These entries print a SINGLE combined row carrying the
+mount's Movement, with no steed profile at all, so their M 8 was faithful. The data nonetheless
+added a steed row the book does not print. Owner's call (OLD-49): drop the steed row so the entry
+matches the page.
+
+- Empire Pistoliers, printed 61 = PDF 63: `Pistolero 20 3 3 3 3 1 3 1 7`, one row.
+- Empire Outriders (Engineer Scouts), printed 61 = PDF 63: `Explorador 20 3 3 3 3 1 3 1 7`, one row.
+- Empire Kislev Horse Archers, printed 64 = PDF 66: `Arquero a Caballo 20 3 3 3 3 1 3 1 7`, one row.
+- Halfling War Sheep Riders, printed 11 = PDF 9: `Halfling 8* 2 4 2 2 1 5 1 8`, one row, and the
+  asterisk has no footnote on the page. It is the only one of the five Halfling rider entries
+  printed this way; Eagle, Swan, Battle Ram and Goat Riders all print the Halfling at M 4 with the
+  mount below. The bestiary's War Sheep (printed 8) is M 8 with every other characteristic a dash,
+  which is presumably why the list gives it no row.
+
+Each of the four keeps its mount in prose on the unit's own rules ("Light armour & Warhorse (5+
+save)"), and the Halflings keep Skittish, so nothing was lost with the row.
+
+**Empire knight Strength, found in the same rows.** The four orders print **S 4**, and the data had
+S 3. The foot entry on the same list settles it: `Caballero a Pie de la Reiksgard 10 4 3 4 3 1 4 1 7`
+(printed 61 = PDF 63). Corrected alongside the Movement.
+
+The other 19 regiments, the ones already giving the rider its own M, were left alone. Four of them
+were vision-checked in passing (the Halfling Eagle, Swan, Battle Ram and Goat Riders on PDF 9) and
+are correct.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

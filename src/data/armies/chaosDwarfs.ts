@@ -408,7 +408,7 @@ const units: UnitProfile[] = [
     nameEs: 'Jinetes de Lobo Hobgoblin',
     role: 'regiment',
     pointsPerModel: 14,
-    statLine: hobgoblin({ M: 9 }),
+    statLine: hobgoblin(),
     mount: { name: 'Giant Wolf', nameEs: 'Lobo Gigante', statLine: GIANT_WOLF_MOUNT.statLine! },
     minSize: 5,
     options: [LIGHT_ARMOUR_2, SHORTBOW_1],

@@ -949,8 +949,8 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 25,
     // PDF p.82: rider M10 HA3 HP3 F3 R4 H1 I2 A1 L7; Boar M18 HA4 HP0 F3 R4 H1 I3 A1 L3
-    // Regiment cavalry: use mount M (18cm = 7")
-    statLine: { M: 7, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
+    // OLD-49 — the rider row keeps its own M 10cm = 4"; the boar's 7" is the mount row.
+    statLine: { M: 4, WS: 3, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
     mount: WAR_BOAR_PROFILE,
     minSize: 5,
     options: [SPEARS_1, BOW_2],
@@ -963,7 +963,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 27,
     // PDF p.82: rider M10 HA4 HP3 F3 R4 H1 I2 A1 L7; Boar M18 HA4 HP0 F3 R4 H1 I3 A1 L3 — cavalry M=7"
-    statLine: { M: 7, WS: 4, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
+    statLine: { M: 4, WS: 4, BS: 3, S: 3, T: 4, W: 1, I: 2, A: 1, Ld: 7 },
     mount: WAR_BOAR_PROFILE,
     minSize: 5,
     options: [SPEARS_1],
@@ -976,7 +976,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 9,
     // PDF p.82: rider M10 HA2 HP3 F3 R3 H1 I2 A1 L5; Wolf M22 HA4 HP0 F3 R3 H1 I3 A1 L3 — cavalry M=9"
-    statLine: { M: 9, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
+    statLine: { M: 4, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
     mount: { name: 'Giant Wolf', nameEs: 'Lobo Gigante', statLine: GIANT_WOLF_STATS },
     minSize: 5,
     options: [SPEARS_1, SHORTBOW_1, LIGHT_ARMOUR_2, SHIELD_1],
@@ -989,7 +989,7 @@ const units: UnitProfile[] = [
     role: 'regiment',
     pointsPerModel: 9,
     // PDF p.83: rider M10 HA2 HP3 F3 R3 H1 I2 A1 L5; Spider M18 — cavalry M=7"
-    statLine: { M: 7, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
+    statLine: { M: 4, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 },
     mount: { name: 'Giant Spider', nameEs: 'Araña Gigante', statLine: GIANT_SPIDER_STATS },
     minSize: 5,
     options: [SHIELD_1, SPEARS_1, SHORTBOW_1],
