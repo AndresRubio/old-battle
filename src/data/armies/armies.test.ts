@@ -2214,6 +2214,41 @@ describe('OLD-43 — units and mounts print the book\'s own token', () => {
     //   "The Ravenswyrd  2D6  6  0  4  4  1  4  2-10  10"
     { army: 'norse', unit: 'no-ravenswyrd', column: 'M', token: '2D6"', page: 'Norsca PDF 33' },
     { army: 'norse', unit: 'no-ravenswyrd', column: 'A', token: '2-10', page: 'Norsca PDF 33' },
+
+    // G — OLD-47. Skaven print the Doomwheel twice and identically, in the
+    // war-machine rules (printed p.31 = PDF 33) and the army list (printed
+    // p.67 = PDF 69): "Rueda  7D6  -  -  7  7  3  1  -  -". The 7D6 is
+    // centimetres, as the MOVIMIENTO text on p.31 says.
+    { army: 'skaven', unit: 'sk-doomwheel', column: 'M', token: '7D6cm', page: 'Skaven printed p.31 and p.67' },
+    { army: 'skaven', unit: 'sk-doomwheel', column: 'WS', token: '–', page: 'Skaven printed p.31 and p.67' },
+    { army: 'skaven', unit: 'sk-doomwheel', column: 'BS', token: '–', page: 'Skaven printed p.31 and p.67' },
+    { army: 'skaven', unit: 'sk-doomwheel', column: 'A', token: '–', page: 'Skaven printed p.31 and p.67' },
+    { army: 'skaven', unit: 'sk-doomwheel', column: 'Ld', token: '–', page: 'Skaven printed p.31 and p.67' },
+
+    // H — OLD-47. Imperio printed p.65 = PDF 67, read at 300 dpi:
+    //   "Tanque a Vapor  -  3  3  7  10  5  -  -  10"
+    { army: 'empire', unit: 'emp-steam-tank', column: 'M', token: '–', page: 'Imperio printed p.65' },
+    { army: 'empire', unit: 'emp-steam-tank', column: 'I', token: '–', page: 'Imperio printed p.65' },
+    { army: 'empire', unit: 'emp-steam-tank', column: 'A', token: '–', page: 'Imperio printed p.65' },
+  ]
+
+  // A note on an extra profile row, keyed by unit and profile name. Only the
+  // chariot chassis needed one before OLD-47, and those are pinned by
+  // CHASSIS_DICE_ATTACKS above; this covers every other column.
+  const PROFILE_NOTED: Array<{
+    army: string
+    unit: string
+    profile: string
+    column: string
+    token: string
+    page: string
+  }> = [
+    // The Doomwheel's generator row prints "Especial" in the Wounds column:
+    //   "Generador de Piedra Disformidad  -  -  -  -  5  Especial  -  -  -"
+    {
+      army: 'skaven', unit: 'sk-doomwheel', profile: 'Warpstone Generator',
+      column: 'W', token: 'Special', page: 'Skaven printed p.31 and p.67',
+    },
   ]
 
   /** The statNotes / statLine pair a row addresses: the unit's, or its mount's. */
@@ -2323,6 +2358,7 @@ describe('OLD-43 — units and mounts print the book\'s own token', () => {
     const pinned = new Set<string>([
       ...CHASSIS_DICE_ATTACKS.map((r) => `${r.unit}/${r.profile}/A`),
       ...NOTED.map((r) => `${r.mount ?? r.unit}/${r.column}`),
+      ...PROFILE_NOTED.map((r) => `${r.unit}/${r.profile}/${r.column}`),
     ])
     const check = (key: string, notes?: Record<string, string>) => {
       for (const column of Object.keys(notes ?? {})) {
@@ -2348,6 +2384,41 @@ describe('OLD-43 — units and mounts print the book\'s own token', () => {
         }
       }
     }
+  })
+})
+
+describe('OLD-47 — the Doomwheel and the Steam Tank match their printed rows', () => {
+  // Both were left out of OLD-46 because their M could not be a number. Read on
+  // the scans at 300 dpi: Skaven printed p.31 = PDF 33 and printed p.67 = PDF
+  // 69 (identical four-row tables), Imperio printed p.65 = PDF 67.
+  const doomwheel = getArmy('skaven')!.units.find((u) => u.id === 'sk-doomwheel')!
+  const tank = getArmy('empire')!.units.find((u) => u.id === 'emp-steam-tank')!
+
+  it('the Wheel row is S7 T7 W3 I1, with 7D6cm and four dashes', () => {
+    expect(doomwheel.statLine).toEqual({ S: 7, T: 7, W: 3, I: 1 })
+    expect(doomwheel.statNotes).toEqual({ M: '7D6cm', WS: '–', BS: '–', A: '–', Ld: '–' })
+  })
+
+  it('its other three printed rows are there, with the book\u2019s values', () => {
+    const row = (name: string) => doomwheel.profiles!.find((p) => p.name === name)!
+    // "Generador de Piedra Disformidad  -  -  -  -  5  Especial  -  -  -"
+    expect(row('Warpstone Generator').statLine).toEqual({ T: 5 })
+    expect(row('Warpstone Generator').statNotes).toEqual({ W: 'Special' })
+    // "Ingeniero Brujo  12  4  4  4  3  1  5  2  10" on p.31; p.67 prints that
+    // first cell as 5, which is the same speed in inches (12cm = 5").
+    expect(row('Warlock Engineer').statLine).toEqual({
+      M: 5, WS: 4, BS: 4, S: 4, T: 3, W: 1, I: 5, A: 2, Ld: 10,
+    })
+    // "Ratas  -  3  0  3  2  6  1  6  10" — six Wounds is what the rules mean
+    // when six wounds kill every rat and the Wheel stops.
+    expect(row('Rats').statLine).toEqual({
+      WS: 3, BS: 0, S: 3, T: 2, W: 6, I: 1, A: 6, Ld: 10,
+    })
+  })
+
+  it('the Steam Tank keeps its characteristics and prints dashes in M, I and A', () => {
+    expect(tank.statLine).toEqual({ WS: 3, BS: 3, S: 7, T: 10, W: 5, Ld: 10 })
+    expect(tank.statNotes).toEqual({ M: '–', I: '–', A: '–' })
   })
 })
 

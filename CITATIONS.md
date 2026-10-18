@@ -1325,6 +1325,43 @@ The other 19 regiments, the ones already giving the rider its own M, were left a
 were vision-checked in passing (the Halfling Eagle, Swan, Battle Ram and Goat Riders on PDF 9) and
 are correct.
 
+#### Doomwheel and Steam Tank, the two profiles OLD-46 parked (OLD-47, 2026-10-18)
+Both were left out of the centimetres work because their Movement could not be a number. Read on
+the scans at 300 dpi, neither turned out to be the book contradicting itself.
+
+**Doomwheel.** Skaven prints it twice, in the war-machine rules (**printed p.31 = PDF 33**) and in
+the army list (**printed p.67 = PDF 69**), and the two tables are the same:
+
+```
+Generador de Piedra Disformidad   -    -  -  -  5  Especial  -  -  -
+Rueda                             7D6  -  -  7  7  3         1  -  -
+Ingeniero Brujo                   12   4  4  4  3  1         5  2  10      (p.67 prints 5)
+Ratas                             -    3  0  3  2  6         1  6  10
+```
+
+The only cell that differs is the Engineer's Movement: 12 on p.31, 5 on p.67. Those are the same
+speed written in different units, since 12cm is 5", and every other row on p.67 is in centimetres,
+so that one cell was printed in inches. The data stores inches, so M 5, and the Spanish UI prints
+it back as 12cm. Nothing to arbitrate.
+
+What the entry had was wrong on its own terms: `M 7, WS 0, BS 0, S 0, T 7, W 3, I 1, A 0, Ld 5`.
+The Wheel has **S 7**, the book puts a dash in WS, BS, A and Ld where the data invented zeros and
+an Ld of 5, and M is the token `7D6cm` (the MOVIMIENTO text on p.31 says centimetres, as with the
+Goblin Fanatic). The other three rows were prose, and wrong in several columns: the Engineer was
+given WS5 BS4 T4 W3 A1 against the printed WS4 BS4 T3 W1 A2, and the rats WS3 S0 T4 W2 I6 A1
+against the printed WS3 BS0 S3 T2 W6 I1 A6. They are now profile rows carrying the printed values,
+like the Chaos Dwarf war machines of OLD-55. The rats' six Wounds is the number the rules mean when
+six wounds kill them all and the Wheel stops.
+
+**Steam Tank.** **Printed p.65 = PDF 67** reads `Tanque a Vapor  -  3  3  7  10  5  -  -  10`. Every
+characteristic in the data was already right. The fault was that the book's dashes in M, I and A
+were stored as `0`, so the app showed a tank with Movement 0, Initiative 0 and no Attacks. They are
+notes now.
+
+Both transcriptions were corrected too. `empire.md` had the tank row as `- - 3 7 10 4[?]`, dropping
+WS and misreading W. `skaven.md` had resolved its own p.31 incident the wrong way, adopting a pass
+that shifted the Wheel row one column, and had the Engineer's Ld as 6 instead of 10.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),
