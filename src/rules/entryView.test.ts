@@ -220,9 +220,21 @@ describe('partitionOptions', () => {
   })
 
   it('yields empty partitions for a unit with no options', () => {
-    const { levelOptions, toggleOptions } = partitionOptions({ ...unit, options: undefined })
+    const { levelOptions, toggleOptions, countedOptions } = partitionOptions({ ...unit, options: undefined })
     expect(levelOptions).toEqual([])
     expect(toggleOptions).toEqual([])
+    expect(countedOptions).toEqual([])
+  })
+
+  it('puts counted options (bought N times) in their own list, never among the toggles (OLD-63)', () => {
+    const hunter: UnitProfile = {
+      ...unit,
+      options: [...unit.options!, { id: 'hounds', name: 'Hounds', pointsPerModel: 5, counted: true }],
+    }
+    const { levelOptions, toggleOptions, countedOptions } = partitionOptions(hunter)
+    expect(levelOptions.map((o) => o.id)).toEqual(['wizard-l2', 'wizard-l3'])
+    expect(toggleOptions.map((o) => o.id)).toEqual(['shield'])
+    expect(countedOptions.map((o) => o.id)).toEqual(['hounds'])
   })
 })
 

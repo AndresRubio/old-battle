@@ -87,17 +87,20 @@ export function magicStandardNeedsBearer(unit: UnitProfile): boolean {
 
 /**
  * Split a unit's options into the mutually-exclusive wizard-level upgrades
- * (rendered as a radio group) and everything else (checkboxes). One statement
- * of the partition, shared by the editor and the plaintext export.
+ * (rendered as a radio group), the `counted` options bought N times (number
+ * inputs, OLD-63) and everything else (checkboxes). One statement of the
+ * partition, shared by the editor and the plaintext export.
  */
 export function partitionOptions(unit: UnitProfile): {
   levelOptions: EquipmentOption[]
   toggleOptions: EquipmentOption[]
+  countedOptions: EquipmentOption[]
 } {
   const options = unit.options ?? []
   return {
     levelOptions: options.filter((o) => isWizardLevelId(o.id)),
-    toggleOptions: options.filter((o) => !isWizardLevelId(o.id)),
+    toggleOptions: options.filter((o) => !isWizardLevelId(o.id) && !o.counted),
+    countedOptions: options.filter((o) => o.counted),
   }
 }
 

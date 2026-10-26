@@ -1,6 +1,6 @@
 import type { Army, Roster, RosterEntry, UnitProfile } from '../data/types'
 import { STANDARD_BEARER_ID, isWizardLevelId } from '../data/unitOptions'
-import { findUnit, isFixedMagicItem } from '../rules/points'
+import { clampOptionCount, findUnit, isFixedMagicItem } from '../rules/points'
 
 let counter = 0
 /**
@@ -77,6 +77,7 @@ export function duplicateEntry(roster: Roster, entryId: string, id?: string): Ro
     id: id ?? genId('entry'),
     optionIds: [...src.optionIds],
     magicItemIds: [...src.magicItemIds],
+    ...(src.optionCounts ? { optionCounts: { ...src.optionCounts } } : {}),
     isGeneral: false,
   }
   const entries = [...roster.entries]
@@ -117,6 +118,28 @@ export function toggleOption(roster: Roster, entryId: string, optionId: string):
       return { ...e, optionIds, magicStandardId }
     }),
   }
+}
+
+/**
+ * Set how many of a `counted` option the entry buys (OLD-63). The count is
+ * stored as a whole number in `[0, maxCount]`: a fraction is floored, a
+ * negative or non-finite value counts as 0, and 0 removes the key (and the
+ * whole `optionCounts` once it is empty, so the entry is back to its saved
+ * shape). An id that is not a counted option of the entry's unit leaves the
+ * roster unchanged.
+ */
+export function setOptionCount(roster: Roster, entryId: string, army: Army, optionId: string, n: number): Roster {
+  const entry = roster.entries.find((e) => e.id === entryId)
+  const unit = entry ? findUnit(army, entry.unitId) : undefined
+  const option = unit?.options?.find((o) => o.id === optionId && o.counted)
+  if (!entry || !option) return roster
+  const count = clampOptionCount(option, n)
+  const optionCounts = { ...entry.optionCounts }
+  if (count > 0) optionCounts[optionId] = count
+  else delete optionCounts[optionId]
+  const next: RosterEntry = { ...entry, optionCounts }
+  if (Object.keys(optionCounts).length === 0) delete next.optionCounts
+  return { ...roster, entries: roster.entries.map((e) => (e.id === entryId ? next : e)) }
 }
 
 /** Select the unit's magic standard (a banner item id), or clear it with `null`. */
@@ -194,6 +217,7 @@ export function selectWizardLevel(roster: Roster, entryId: string, army: Army, o
 export interface EntryActions {
   changeSize(size: number): void
   toggleOption(optionId: string): void
+  setOptionCount(optionId: string, n: number): void
   selectMount(mountId: string | null): void
   selectWizardLevel(optionId: string | null): void
   selectLore(loreId: string | null): void
@@ -219,6 +243,7 @@ export function entryActions(
   return {
     changeSize: (size) => commit((prev) => updateEntry(prev, entryId, { size })),
     toggleOption: (optionId) => commit((prev) => toggleOption(prev, entryId, optionId)),
+    setOptionCount: (optionId, n) => commit((prev) => setOptionCount(prev, entryId, army, optionId, n)),
     selectMount: (mountId) => commit((prev) => selectMount(prev, entryId, army, mountId)),
     selectWizardLevel: (optionId) => commit((prev) => selectWizardLevel(prev, entryId, army, optionId)),
     selectLore: (loreId) => commit((prev) => selectLore(prev, entryId, loreId)),

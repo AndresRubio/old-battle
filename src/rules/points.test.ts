@@ -1,13 +1,17 @@
 import { describe, it, expect } from 'vitest'
 import {
   carriedMagicItems,
+  countedOptionCount,
+  countedOptionPoints,
   effectiveStatLine,
+  flatOptionPoints,
   entryPoints,
   findUnit,
   fixedExtrasPoints,
   isFixedMagicItem,
   listedUnitPoints,
   mountPoints,
+  optionPointsPerModel,
   unitOptionCost,
 } from './points'
 import { getArmy } from '../data/armies'
@@ -575,5 +579,76 @@ describe('OLD-35 — perCrewman unit options scale with the crew bought', () => 
       const mounted = entryPoints(mk({ unitId: c.rider, mountId: c.mountId, optionIds: c.mountOpts }), orcs)
       expect(mounted - riderAlone).toBe(standalone)
     }
+  })
+})
+
+// OLD-63 — a counted option is bought N times (Orion's hunting hounds, +5 per
+// hound, "tantos como se desee", Elfos Silvanos p.71) and priced once per entry.
+describe('counted options (OLD-63)', () => {
+  const synth: Army = {
+    id: 'synth',
+    name: 'Synth',
+    composition: STANDARD_5E_COMPOSITION,
+    magicItems: [],
+    units: [
+      {
+        id: 'hunter',
+        name: 'Hunter',
+        role: 'character',
+        pointsPerModel: 100,
+        isCharacter: true,
+        characterRank: 'lord',
+        options: [
+          { id: 'hounds', name: 'Hounds', pointsPerModel: 5, counted: true },
+          { id: 'guards', name: 'Guards', pointsPerModel: 10, counted: true, maxCount: 2 },
+          { id: 'shield', name: 'Shield', pointsPerModel: 3 },
+        ],
+      },
+    ],
+  }
+  const hunter = synth.units[0]
+  const hounds = hunter.options![0]
+  const guards = hunter.options![1]
+  const withCounts = (optionCounts: Record<string, number>, over: Partial<RosterEntry> = {}) =>
+    mk({ unitId: 'hunter', optionCounts, ...over })
+
+  it('charges pointsPerModel × N once per entry', () => {
+    expect(entryPoints(withCounts({ hounds: 4 }), synth)).toBe(120)
+    expect(countedOptionPoints(hunter, withCounts({ hounds: 4, guards: 1 }))).toBe(30)
+    expect(entryPoints(withCounts({ hounds: 4, guards: 1 }, { optionIds: ['shield'] }), synth)).toBe(133)
+  })
+
+  it('charges nothing for an entry with no counts (saved rosters before OLD-63)', () => {
+    expect(entryPoints(mk({ unitId: 'hunter' }), synth)).toBe(100)
+    expect(countedOptionPoints(hunter, mk({ unitId: 'hunter' }))).toBe(0)
+  })
+
+  it('reads a negative, fractional, non-finite or non-number count safely', () => {
+    expect(countedOptionCount(hounds, withCounts({ hounds: -3 }))).toBe(0)
+    expect(countedOptionCount(hounds, withCounts({ hounds: 2.7 }))).toBe(2)
+    expect(countedOptionCount(hounds, withCounts({ hounds: NaN }))).toBe(0)
+    expect(countedOptionCount(hounds, withCounts({ hounds: Infinity }))).toBe(0)
+    expect(countedOptionCount(hounds, withCounts({ hounds: '4' as unknown as number }))).toBe(0)
+    expect(entryPoints(withCounts({ hounds: 2.7 }), synth)).toBe(110)
+  })
+
+  it('caps a stored count at maxCount', () => {
+    expect(countedOptionCount(guards, withCounts({ guards: 9 }))).toBe(2)
+    expect(entryPoints(withCounts({ guards: 9 }), synth)).toBe(120)
+  })
+
+  it('ignores a count for an option the unit lacks, or for a plain toggle option', () => {
+    expect(entryPoints(withCounts({ ghost: 7, shield: 3 }), synth)).toBe(100)
+  })
+
+  it('never prices a counted option through optionIds', () => {
+    expect(optionPointsPerModel(hunter, ['hounds', 'guards'])).toBe(0)
+    expect(flatOptionPoints(hunter, ['hounds', 'guards'])).toBe(0)
+    expect(entryPoints(mk({ unitId: 'hunter', optionIds: ['hounds'] }), synth)).toBe(100)
+  })
+
+  it('prices Orion with four hounds at 470 (Elfos Silvanos p.70-71: 450 + 4 × 5)', () => {
+    const woodElves = getArmy('wood-elves')!
+    expect(entryPoints(mk({ unitId: 'we-orion', optionCounts: { 'hunting-hounds': 4 } }), woodElves)).toBe(470)
   })
 })

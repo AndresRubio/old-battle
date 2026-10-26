@@ -262,6 +262,8 @@ const STRINGS = {
   moveDown: { en: 'Move down', es: 'Bajar' },
   unknownUnit: { en: 'Unknown unit', es: 'Unidad desconocida' },
   perModel: { en: '/model', es: '/miniatura' },
+  // OLD-63: the unit price of a counted option ("+5 each" hounds).
+  each: { en: 'each', es: 'c/u' },
   pts: { en: 'pts', es: 'ptos' },
   // ExportDialog
   exportTitle: { en: 'Export Army List', es: 'Exportar Lista de Ejército' },
@@ -290,6 +292,7 @@ const OPTION_ES: Record<string, string> = {
   'Battle Standard Bearer': 'Portaestandarte de Batalla',
   // OLD-63: Thorgrim's Throne (Enanos p.94), a player choice.
   'Throne of Power': 'Trono del Poder',
+  'Hunting Hounds': 'Mastines de Caza',
   Shields: 'Escudos',
   'Shields (both crew)': 'Escudos (ambos tripulantes)',
   'Light armour': 'Armadura ligera',

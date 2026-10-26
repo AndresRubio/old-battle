@@ -250,6 +250,10 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Elfos Silvanos p.70-71: the three items are mandatory; the hounds are
+    // "+5 puntos por cada Mastín, tantos como se desee" (OLD-63).
+    fixedMagicItems: [{ id: 'mi-spear-of-kurnous' }, { id: 'mi-horn-of-the-wild-hunt' }, { id: 'mi-cloak-of-isha' }],
+    options: [{ id: 'hunting-hounds', name: 'Hunting Hounds', pointsPerModel: 5, counted: true }],
     specialRules: [
       'Special character',
       'Incarnation of Kurnous — causes fear, immune to psychology',
@@ -270,6 +274,13 @@ const units: UnitProfile[] = [
     characterRank: 'wizard4',
     lores: ['battle', 'high'],
     max: 1,
+    // Elfos Silvanos p.71-72 (OLD-63).
+    fixedMagicItems: [
+      { id: 'mi-staff-of-the-elm' },
+      { id: 'mi-acorns-of-the-eternal-oak' },
+      { id: 'mi-dart-of-death' },
+      { id: 'mi-berry-wine' },
+    ],
     specialRules: [
       'Special character',
       'Great Mage (Level 4, Battle & High Magic)',
@@ -290,6 +301,9 @@ const units: UnitProfile[] = [
     characterRank: 'wizard1',
     lores: ['battle', 'high'],
     max: 1,
+    // Elfos Silvanos p.74 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-staff-of-the-auguries' }],
+    fixedExtras: [{ id: 'othu', name: 'Othu the Owl', nameEs: 'Othu el Búho', points: 15 }],
     specialRules: [
       'Special character (Mage)',
       'Othu the Owl (+15)',
@@ -309,6 +323,9 @@ const units: UnitProfile[] = [
     canBeGeneral: true,
     max: 1,
     profiles: [GWANDOR_PROFILE],
+    // Elfos Silvanos p.75 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-magic-war-paint' }, { id: 'mi-talisman-of-qwarr' }, { id: 'mi-spear-of-daith' }],
+    fixedExtras: [{ id: 'gwandor', name: 'Gwandor the Giant Eagle', nameEs: 'Gwandor el Águila Gigante', points: 95 }],
     specialRules: [
       'Special character',
       'Master of Mages (Level 3, Battle Magic)',
@@ -328,6 +345,9 @@ const units: UnitProfile[] = [
     characterRank: 'champion',
     max: 1,
     profiles: [LOTHLANN_STEED_PROFILE],
+    // Elfos Silvanos p.76 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-battle-banner-of-athel-loren' }],
+    fixedExtras: [{ id: 'elven-steed', name: 'Barded Elven Steed', nameEs: 'Corcel Élfico con Barda', points: 7 }],
     specialRules: [
       'Special character (Battle Standard Bearer)',
       'Sword, Light armour & Shield',
@@ -364,6 +384,8 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     max: 1,
+    // Elfos Silvanos p.77 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-death-rain-arrow' }],
     specialRules: [
       'Special character — Paladin of a Scout unit',
       'Hand weapon, Light armour, Shield & Longbow (5+ save)',
@@ -380,6 +402,8 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     max: 1,
+    // Elfos Silvanos p.77-78 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-orc-skin-drum' }],
     specialRules: [
       'Special character — Paladin of a Wardancer unit',
       'Two hand weapons',
@@ -397,6 +421,8 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     max: 1,
+    // Elfos Silvanos p.78 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-bronze-shield' }, { id: 'mi-bow-of-loren' }],
     specialRules: [
       'Special character (Hero)',
       'Sword, Longbow, Light armour & Shield',
@@ -432,6 +458,9 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     max: 1,
+    // Elfos Silvanos p.79 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-claw-scourge' }],
+    fixedExtras: [{ id: 'falcons', name: 'Falcons', nameEs: 'Halcones', points: 15 }],
     specialRules: [
       'Special character — Paladin of a Warrior or Scout unit (Beastmaster, Paladin-type)',
       'Hand weapon & three Falcons (S3 missile/close attacks, 60cm)',
@@ -449,6 +478,16 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     max: 1,
+    // Elfos Silvanos p.80 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-bolas' }],
+    fixedExtras: [
+      {
+        id: 'sabre-tooth-tigers',
+        name: 'Sabre-Tooth Tigers Colmillo & Garra',
+        nameEs: 'Tigres Dientes de Sable Colmillo y Garra',
+        points: 66,
+      },
+    ],
     specialRules: [
       'Special character (Beastmaster, Paladin-type — one magic item, always Bolas)',
       'Hand weapon; animal-skin cloak (5+ save vs shooting & close combat)',

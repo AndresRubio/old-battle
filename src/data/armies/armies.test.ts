@@ -2746,6 +2746,27 @@ describe('OLD-63: special characters charge their book extras', () => {
     ['skaven', 'sk-snitch', [], 345],
     // Skaven p.74: 138 + Degolladora de Enanos 50 + Armadura de Disformidad 50.
     ['skaven', 'sk-queek', [], 238],
+    // Elfos Silvanos p.70-71: 300 + Lanza de Kurnous 50 + Cuerno de la Caceria Salvaje 50 + Capa de Isha 50
+    // (hounds are a counted option, +5 each: see points.test.ts).
+    ['wood-elves', 'we-orion', [], 450],
+    // Elfos Silvanos p.71-72: 366 + Baculo de Olmo 50 + Bellotas 25 + Venablo de Muerte 25 + Vino de Bayas 25.
+    ['wood-elves', 'we-ariel', [], 491],
+    // Elfos Silvanos p.74: 59 + Othu el Buho 15 + Baculo de los Augurios 30.
+    ['wood-elves', 'we-naieth', [], 104],
+    // Elfos Silvanos p.75: 240 + Pintura de Guerra 5 + Talisman de Qwarr 15 + Lanza de Daith 25 + Gwandor 95.
+    ['wood-elves', 'we-thalandor', [], 380],
+    // Elfos Silvanos p.76: 101 + Estandarte de Athel Loren 50 + Corcel Elfico con Barda 7.
+    ['wood-elves', 'we-lothlann', [], 158],
+    // Elfos Silvanos p.77: 54 + Flecha Lluvia de Muerte 25.
+    ['wood-elves', 'we-scarloc', [], 79],
+    // Elfos Silvanos p.77-78: 75 + Tambor de Piel de Orco 25.
+    ['wood-elves', 'we-wychwethyl', [], 100],
+    // Elfos Silvanos p.78: 106 + Escudo de Bronce 10 + Arco de Loren 50.
+    ['wood-elves', 'we-sceolan', [], 166],
+    // Elfos Silvanos p.79: 51 + Halcones 15 + Flagelo de Garras 25.
+    ['wood-elves', 'we-skaw', [], 91],
+    // Elfos Silvanos p.80: 90 + Tigres Dientes de Sable 66 + Boleadoras 10.
+    ['wood-elves', 'we-gruarth', [], 166],
   ]
 
   it.each(rows)('%s %s with %j costs %d', (armyId, unitId, optionIds, expected) => {

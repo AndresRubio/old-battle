@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine, StatNotes } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
-import { carriedMagicItems, effectiveStatLine, entryPoints, findUnit, mountOptionCost, unitOptionCost } from '../rules/points'
+import { carriedMagicItems, countedOptionCount, effectiveStatLine, entryPoints, findUnit, mountOptionCost, unitOptionCost } from '../rules/points'
 import { magicItemAllowance } from '../rules/magicItems'
 import {
   companionMountProfile,
@@ -108,7 +108,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
   const pts = entryPoints(entry, army)
   // Some options (e.g. O&G shaman wizard levels) replace the whole statLine.
   const statLine = effectiveStatLine(unit, entry.optionIds)
-  const { levelOptions, toggleOptions } = partitionOptions(unit)
+  const { levelOptions, toggleOptions, countedOptions } = partitionOptions(unit)
   const currentLevel = entry.optionIds.find((id) => levelOptions.some((o) => o.id === id)) ?? ''
   const loreIds = unit.lores ?? []
   const selectedLore = entry.loreId ? getLore(entry.loreId) : undefined
@@ -454,37 +454,78 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
             </div>
           )}
 
-          {toggleOptions.length > 0 && (
+          {(toggleOptions.length > 0 || countedOptions.length > 0) && (
             <div className="opt-group">
               <span className="opt-label">{t('options', lang)}</span>
-              <div className="opt-checks">
-                {toggleOptions.map((o) => (
-                  <label key={o.id}>
-                    <input
-                      type="checkbox"
-                      checked={entry.optionIds.includes(o.id)}
-                      onChange={() => actions.toggleOption(o.id)}
-                    />
-                    {optionText(o.name, lang)} (+{unitOptionCost(unit, o, entry.optionIds)}
-                    {isRegiment && !o.flat && !o.perCrewman ? t('perModel', lang) : ''})
-                    {optionInfo(o, lang) && (
-                      <button
-                        type="button"
-                        className="mi-info"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          setActiveOption(o)
-                        }}
-                        title={lang === 'es' ? 'Ver efecto' : 'View effect'}
-                        aria-label={lang === 'es' ? 'Ver efecto' : 'View effect'}
-                      >
-                        ⓘ
-                      </button>
-                    )}
-                  </label>
-                ))}
-              </div>
+              {toggleOptions.length > 0 && (
+                <div className="opt-checks">
+                  {toggleOptions.map((o) => (
+                    <label key={o.id}>
+                      <input
+                        type="checkbox"
+                        checked={entry.optionIds.includes(o.id)}
+                        onChange={() => actions.toggleOption(o.id)}
+                      />
+                      {optionText(o.name, lang)} (+{unitOptionCost(unit, o, entry.optionIds)}
+                      {isRegiment && !o.flat && !o.perCrewman ? t('perModel', lang) : ''})
+                      {optionInfo(o, lang) && (
+                        <button
+                          type="button"
+                          className="mi-info"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            setActiveOption(o)
+                          }}
+                          title={lang === 'es' ? 'Ver efecto' : 'View effect'}
+                          aria-label={lang === 'es' ? 'Ver efecto' : 'View effect'}
+                        >
+                          ⓘ
+                        </button>
+                      )}
+                    </label>
+                  ))}
+                </div>
+              )}
+              {/* Counted options (OLD-63): bought N times, each priced once
+                  per entry, e.g. Orion's hounds at +5 per hound. */}
+              {countedOptions.length > 0 && (
+                <div className="opt-counts">
+                  {countedOptions.map((o) => {
+                    const n = countedOptionCount(o, entry)
+                    return (
+                      <label key={o.id} className="counted-option">
+                        <span className="counted-name">{optionText(o.name, lang)}</span>
+                        <span className="counted-each">(+{o.pointsPerModel} {t('each', lang)})</span>
+                        <input
+                          type="number"
+                          min={0}
+                          max={o.maxCount}
+                          step={1}
+                          value={n}
+                          onChange={(e) => actions.setOptionCount(o.id, e.target.valueAsNumber)}
+                        />
+                        <span className="counted-subtotal">{o.pointsPerModel * n} {t('pts', lang)}</span>
+                        {optionInfo(o, lang) && (
+                          <button
+                            type="button"
+                            className="mi-info"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              setActiveOption(o)
+                            }}
+                            title={lang === 'es' ? 'Ver efecto' : 'View effect'}
+                            aria-label={lang === 'es' ? 'Ver efecto' : 'View effect'}
+                          >
+                            ⓘ
+                          </button>
+                        )}
+                      </label>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           )}
 

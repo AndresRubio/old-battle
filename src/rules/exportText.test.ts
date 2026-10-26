@@ -348,3 +348,43 @@ describe('exportRosterText fixed magic items and fixed extras (OLD-63)', () => {
     expect(es.filter((x) => x === '+ Carromato (+40 ptos)')).toHaveLength(2)
   })
 })
+
+describe('exportRosterText counted options (OLD-63)', () => {
+  const hunter = {
+    id: 'synth-hunter',
+    name: 'Synth Hunter',
+    role: 'character' as const,
+    pointsPerModel: 100,
+    isCharacter: true,
+    characterRank: 'lord' as const,
+    options: [
+      { id: 'hounds', name: 'Hunting Hounds', pointsPerModel: 5, counted: true },
+      { id: 'guards', name: 'Guards', pointsPerModel: 10, counted: true, maxCount: 2 },
+    ],
+  }
+  const synth = { ...empire, units: [...empire.units, hunter] }
+  const r = (optionCounts?: Record<string, number>): Roster => ({
+    id: 'r',
+    name: 'Hunt',
+    armyId: 'empire',
+    pointsLimit: 2000,
+    entries: [{ id: 'h', unitId: 'synth-hunter', size: 1, optionIds: [], magicItemIds: [], isGeneral: true, optionCounts }],
+  })
+  const lines = (text: string) => text.split('\n').map((l) => l.trim())
+
+  it('prints <name> ×N (+total pts) in the list and the detail block when N > 0', () => {
+    const text = exportRosterText(r({ hounds: 4, guards: 0 }), synth)
+    expect(text).toContain('[General] Synth Hunter ............ 120 pts')
+    expect(lines(text)).toContain('+ Hunting Hounds ×4 (+20 pts)')
+    expect(text).toContain('  Options: Hunting Hounds ×4 (+20 pts)')
+    expect(text).not.toContain('Guards')
+  })
+
+  it('prints it in Spanish, with the option name from OPTION_ES', () => {
+    expect(lines(exportRosterText(r({ hounds: 4 }), synth, 'es'))).toContain('+ Mastines de Caza ×4 (+20 ptos)')
+  })
+
+  it('prints nothing for an entry without counts', () => {
+    expect(exportRosterText(r(), synth)).not.toContain('Hunting Hounds')
+  })
+})

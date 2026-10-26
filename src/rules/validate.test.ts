@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { validateRoster } from './validate'
 import { magicItemAllowance, MAGIC_ITEM_ALLOWANCE } from './magicItems'
+import { carriedMagicItems } from './points'
 import {
   STANDARD_5E_COMPOSITION,
   type Army,
@@ -331,6 +332,29 @@ describe('magic banners require a BSB (magic-items-banner-bsb)', () => {
     const r = ros([ch('c1', generalUnit, { isGeneral: true, isBSB: true })])
     const banners = validateRoster(r, empire).filter((v) => v.rule === 'magic-items-banner-bsb')
     expect(banners.length).toBe(0)
+  })
+
+  // OLD-63, Elfos Silvanos p.76: Lothlann always carries the Battle Banner of
+  // Athel Loren; his own page fixes it, so it never asks for the BSB toggle.
+  it("raises nothing for Lothlann's fixed Battle Banner of Athel Loren", () => {
+    const woodElves = getArmy('wood-elves')!
+    const lothlann = woodElves.units.find((u) => u.id === 'we-lothlann')!
+    const r: Roster = {
+      id: 'r',
+      name: 't',
+      armyId: 'wood-elves',
+      pointsLimit: 3000,
+      entries: [
+        { id: 'gen', unitId: 'we-general', size: 1, optionIds: [], magicItemIds: [], isGeneral: true },
+        { id: 'loth', unitId: 'we-lothlann', size: 1, optionIds: [], magicItemIds: [] },
+        // A roster saved before OLD-63 that ticked the banner by hand.
+        { id: 'loth2', unitId: 'we-lothlann', size: 1, optionIds: [], magicItemIds: ['mi-battle-banner-of-athel-loren'] },
+      ],
+    }
+    expect(carriedMagicItems(r.entries[1], lothlann, woodElves).map((c) => [c.item.id, c.fixed])).toEqual([
+      ['mi-battle-banner-of-athel-loren', true],
+    ])
+    expect(validateRoster(r, woodElves).filter((v) => v.rule === 'magic-items-banner-bsb')).toEqual([])
   })
 })
 

@@ -30,11 +30,15 @@ function crewCount(host: Crewed, optionIds: string[]): number {
  */
 const isPerEntry = (o: EquipmentOption) => Boolean(o.flat || o.perCrewman)
 
-/** Points contributed per model by the chosen per-model equipment options. */
+/**
+ * Points contributed per model by the chosen per-model equipment options. A
+ * `counted` option is priced only through `countedOptionPoints`, so a stale id
+ * of one in `optionIds` adds nothing here.
+ */
 export function optionPointsPerModel(unit: UnitProfile, optionIds: string[]): number {
   if (!unit.options) return 0
   return unit.options
-    .filter((o) => optionIds.includes(o.id) && !isPerEntry(o))
+    .filter((o) => optionIds.includes(o.id) && !o.counted && !isPerEntry(o))
     .reduce((sum, o) => sum + o.pointsPerModel, 0)
 }
 
@@ -69,8 +73,40 @@ export function unitOptionCost(unit: UnitProfile, option: EquipmentOption, optio
 export function flatOptionPoints(unit: UnitProfile, optionIds: string[]): number {
   if (!unit.options) return 0
   return unit.options
-    .filter((o) => optionIds.includes(o.id) && isPerEntry(o))
+    .filter((o) => optionIds.includes(o.id) && !o.counted && isPerEntry(o))
     .reduce((sum, o) => sum + unitOptionCost(unit, o, optionIds), 0)
+}
+
+/**
+ * A `counted` option's count as a whole number in `[0, maxCount]` (OLD-63): a
+ * missing, negative, non-finite or non-number value is 0 and a fraction is
+ * floored. The one statement of the rule, used when a count is stored
+ * (`setOptionCount`) and when it is read (`countedOptionCount`).
+ */
+export function clampOptionCount(option: EquipmentOption, raw: unknown): number {
+  if (typeof raw !== 'number' || !Number.isFinite(raw) || raw <= 0) return 0
+  return Math.min(Math.floor(raw), option.maxCount ?? Infinity)
+}
+
+/**
+ * How many of a `counted` option the entry buys (OLD-63), clamped by
+ * `clampOptionCount` so a hand-edited roster can never price a part-hound or
+ * more than the cap. The editor and the export read the count through here
+ * too, so all three agree.
+ */
+export function countedOptionCount(option: EquipmentOption, entry: RosterEntry): number {
+  return clampOptionCount(option, entry.optionCounts?.[option.id])
+}
+
+/**
+ * Points from the unit's `counted` options (OLD-63): `pointsPerModel × N` for
+ * each, once per entry. Counts for ids the unit does not offer as counted
+ * options are ignored.
+ */
+export function countedOptionPoints(unit: UnitProfile, entry: RosterEntry): number {
+  return (unit.options ?? [])
+    .filter((o) => o.counted)
+    .reduce((sum, o) => sum + o.pointsPerModel * countedOptionCount(o, entry), 0)
 }
 
 /** Points from the chosen mount (flat — a character rides one mount). */
@@ -200,7 +236,7 @@ export function listedUnitPoints(unit: UnitProfile, army: Army): number {
   return unit.pointsPerModel + fixedItems + fixedExtrasPoints(unit)
 }
 
-/** Total points for a single roster entry: models * (base + per-model options) + flat options + mount (+ its options) + magic items (fixed and picked) + fixed extras. */
+/** Total points for a single roster entry: models * (base + per-model options) + flat options + counted options + mount (+ its options) + magic items (fixed and picked) + fixed extras. */
 export function entryPoints(entry: RosterEntry, army: Army): number {
   const unit = findUnit(army, entry.unitId)
   if (!unit) return 0
@@ -219,6 +255,7 @@ export function entryPoints(entry: RosterEntry, army: Army): number {
   return (
     modelPoints +
     flatPoints +
+    countedOptionPoints(unit, entry) +
     mountPoints(unit, entry.mountId) +
     mountOptionPoints(unit, entry.mountId, entry.optionIds) +
     magicPoints +

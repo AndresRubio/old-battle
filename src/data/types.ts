@@ -110,6 +110,17 @@ export interface EquipmentOption {
    * gives each level its own row (p.81). Resolved by `effectiveStatLine`.
    */
   statLine?: StatLine
+  /**
+   * Bought N times (OLD-63): Orion's hunting hounds, "+5 puntos por cada
+   * Mastín, tantos como se desee" (Elfos Silvanos p.71). Priced
+   * `pointsPerModel × N` once per entry, never multiplied by unit size. The
+   * count lives in `RosterEntry.optionCounts`; a counted option is never in
+   * `optionIds`. Unit options of a non-regiment only, and never alongside
+   * `flat`, `perCrewman` or `timesModelCost` (enforced by `assertArmyIntegrity`).
+   */
+  counted?: boolean
+  /** Highest count a `counted` option allows. Undefined = no cap. */
+  maxCount?: number
 }
 
 /**
@@ -483,6 +494,12 @@ export interface RosterEntry {
   loreId?: string
   isGeneral?: boolean
   isBSB?: boolean
+  /**
+   * How many of each `counted` option the entry buys, keyed by option id
+   * (OLD-63). Absent on rosters saved before counted options existed; a key is
+   * removed when its count drops to 0. Read it through `countedOptionCount`.
+   */
+  optionCounts?: Record<string, number>
 }
 
 export interface Roster {

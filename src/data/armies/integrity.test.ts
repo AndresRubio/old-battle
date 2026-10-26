@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { assertArmyIntegrity } from './integrity'
 import { ARMIES } from './index'
-import { STANDARD_5E_COMPOSITION, type Army, type UnitProfile } from '../types'
+import { STANDARD_5E_COMPOSITION, type Army, type EquipmentOption, type UnitProfile } from '../types'
 
 const unit = (over: Partial<UnitProfile> & { id: string }): UnitProfile => ({
   name: over.id,
@@ -352,5 +352,66 @@ describe('fixed magic items and fixed extras', () => {
   it('throws when a fixed extra has an empty name', () => {
     const u = hero({ fixedExtras: [{ id: 'x', name: '  ', points: 40 }] })
     expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/kf\/x: fixed extra has no name/)
+  })
+})
+
+// OLD-63 — counted options (an option bought N times, priced pointsPerModel × N
+// once per entry). Only a per-entry option on a non-regiment can be counted.
+describe('counted options', () => {
+  const hero = (opt: Partial<EquipmentOption>, over: Partial<UnitProfile> = {}) =>
+    unit({
+      id: 'or',
+      role: 'character',
+      isCharacter: true,
+      characterRank: 'lord',
+      options: [{ id: 'h', name: 'Hounds', pointsPerModel: 5, ...opt }],
+      ...over,
+    })
+  const withUnit = (u: UnitProfile) => army({ units: [u] })
+
+  it('accepts a counted option with or without a maxCount', () => {
+    expect(assertArmyIntegrity(withUnit(hero({ counted: true })))).toBeTruthy()
+    expect(assertArmyIntegrity(withUnit(hero({ counted: true, maxCount: 15 })))).toBeTruthy()
+  })
+
+  it('throws when maxCount is set without counted', () => {
+    expect(() => assertArmyIntegrity(withUnit(hero({ maxCount: 3 })))).toThrow(/or\/h: maxCount without counted/)
+  })
+
+  it('throws when maxCount is not a whole number >= 0', () => {
+    expect(() => assertArmyIntegrity(withUnit(hero({ counted: true, maxCount: -1 })))).toThrow(
+      /or\/h: maxCount must be a whole number >= 0/,
+    )
+    expect(() => assertArmyIntegrity(withUnit(hero({ counted: true, maxCount: 2.5 })))).toThrow(
+      /or\/h: maxCount must be a whole number >= 0/,
+    )
+  })
+
+  it('throws when a counted option sits on a regiment', () => {
+    const regiment = unit({ id: 'rg', options: [{ id: 'h', name: 'Hounds', pointsPerModel: 5, counted: true }] })
+    expect(() => assertArmyIntegrity(withUnit(regiment))).toThrow(/rg\/h: counted option on a regiment/)
+  })
+
+  it.each(['flat', 'perCrewman', 'timesModelCost'] as const)('throws when a counted option sets %s', (flag) => {
+    const opt: Partial<EquipmentOption> =
+      flag === 'timesModelCost' ? { counted: true, timesModelCost: 2 } : { counted: true, [flag]: true }
+    // perCrewman needs a crewed host to get past the crew check.
+    expect(() => assertArmyIntegrity(withUnit(hero(opt, { baseCrew: 2 })))).toThrow(
+      new RegExp(`or/h: counted option sets ${flag}`),
+    )
+  })
+
+  it('throws when a mount option is counted (mount options are toggles only)', () => {
+    const u = hero({}, {
+      mounts: [
+        {
+          id: 'm',
+          name: 'Mount',
+          points: 10,
+          options: [{ id: 'mh', name: 'Hounds', pointsPerModel: 5, counted: true }],
+        },
+      ],
+    })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/or\/m\/mh: counted options are not supported on mounts/)
   })
 })

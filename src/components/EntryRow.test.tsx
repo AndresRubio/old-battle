@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest'
-import { act } from 'react'
+import { act, useState } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import type { ReactElement } from 'react'
 import { EntryRow } from './EntryRow'
@@ -540,5 +540,82 @@ describe('EntryRow fixed magic items and fixed extras (OLD-63)', () => {
       expect(Array.from(group!.querySelectorAll('li')).map((li) => li.textContent)).toEqual(['Carromato (+40)'])
       expect(rows('.mi-selected')[1].slice(3)).toEqual(['fijo', 'incluido'])
     })
+  })
+})
+
+// OLD-63 — a counted option (Orion's hounds) is a number input, not a checkbox.
+describe('EntryRow counted options (OLD-63)', () => {
+  const hunter: UnitProfile = {
+    id: 'synth-hunter',
+    name: 'Synth Hunter',
+    role: 'character',
+    pointsPerModel: 100,
+    isCharacter: true,
+    characterRank: 'lord',
+    options: [
+      { id: 'hounds', name: 'Hunting Hounds', pointsPerModel: 5, counted: true },
+      { id: 'guards', name: 'Guards', pointsPerModel: 10, counted: true, maxCount: 2 },
+    ],
+  }
+  const synth: Army = { ...army, units: [...army.units, hunter] }
+
+  /** Owns a one-entry roster so every input commits and re-renders, like the Editor. */
+  function Stateful({ start }: { start: RosterEntry }) {
+    const [roster, setRoster] = useState<Roster>({
+      id: 'r1', name: 'R', armyId: 'empire', pointsLimit: 2000, entries: [start],
+    })
+    const actions = entryActions((fn) => setRoster(fn), synth, start.id)
+    return <EntryRow entry={roster.entries[0]} army={synth} actions={actions} canMoveUp={false} canMoveDown={false} />
+  }
+
+  function typeInto(input: HTMLInputElement, value: string) {
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!
+    act(() => {
+      setter.call(input, value)
+      input.dispatchEvent(new Event('input', { bubbles: true }))
+    })
+  }
+
+  const inputs = () => Array.from(container.querySelectorAll<HTMLInputElement>('.counted-option input[type="number"]'))
+  const total = () => container.querySelector('.entry-pts')?.textContent
+  const subtotals = () => Array.from(container.querySelectorAll('.counted-subtotal')).map((el) => el.textContent)
+
+  it('renders a labelled number input per counted option, none as a checkbox', () => {
+    render(<Stateful start={entry('synth-hunter', { size: 1 })} />)
+    expand()
+    const labels = Array.from(container.querySelectorAll('.counted-option')).map((el) => el.querySelector('.counted-name')?.textContent)
+    expect(labels).toEqual(['Hunting Hounds', 'Guards'])
+    expect(Array.from(container.querySelectorAll('.counted-each')).map((el) => el.textContent)).toEqual([
+      '(+5 each)',
+      '(+10 each)',
+    ])
+    const [h, g] = inputs()
+    expect([h.min, h.max, h.value]).toEqual(['0', '', '0'])
+    expect([g.min, g.max, g.value]).toEqual(['0', '2', '0'])
+    expect(container.querySelectorAll('.opt-checks input[type="checkbox"]').length).toBe(0)
+  })
+
+  it('changes the entry total and the subtotal as the count changes', () => {
+    render(<Stateful start={entry('synth-hunter', { size: 1 })} />)
+    expand()
+    expect(total()).toBe('100 pts')
+    typeInto(inputs()[0], '4')
+    expect(total()).toBe('120 pts')
+    expect(inputs()[0].value).toBe('4')
+    expect(subtotals()).toEqual(['20 pts', '0 pts'])
+    typeInto(inputs()[1], '9')
+    // Clamped at maxCount 2.
+    expect(inputs()[1].value).toBe('2')
+    expect(total()).toBe('140 pts')
+    typeInto(inputs()[0], '')
+    expect(total()).toBe('120 pts')
+  })
+
+  it('prints "(+5 c/u)" in Spanish', () => {
+    setLang('es')
+    render(<Stateful start={entry('synth-hunter', { size: 1, optionCounts: { hounds: 3 } })} />)
+    expand()
+    expect(container.querySelector('.counted-each')?.textContent).toBe('(+5 c/u)')
+    expect(subtotals()[0]).toBe('15 ptos')
   })
 })

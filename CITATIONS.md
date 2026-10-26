@@ -1476,6 +1476,37 @@ object. Snikch's and Queek's items are "los primeros dos" of their allowances (p
 Tormenta Demoníaca is "el primero que debe adquirir" (p.71), and Skrolk's two items are "siempre"
 his (p.70).
 
+#### Wood Elves: special characters' extra costs (OLD-63, 2026-10-26)
+**Wood Elves, Elfos Silvanos (1996, ES) printed pp.70-80.** Each page prints its extras under the
+headline as `+N puntos: <objeto>`. Items in the pool are fixed at their card price, which matches
+every page; the rest are `fixedExtras`. Durthu and Drycha print no extras and do not change.
+
+| Character | Page | Table | Fixed items and extras | Bare entry |
+|---|---|---|---|---|
+| Orion | p.70-71 | `+50 Lanza de Kurnous / +50 Cuerno de la Cacería Salvaje / +50 Capa de Isha / +5 por Mastín` | Spear of Kurnous, Horn of the Wild Hunt, Cloak of Isha (cards, 50+50+50); hounds a counted option | 300 to 450 |
+| Ariel | p.71-72 | `+50 Báculo de Olmo / +25 Bellotas del Roble Eterno / +25 Venablo de Muerte / +25 Vino de Bayas` | Staff of the Elm, Acorns of the Eternal Oak, Dart of Death, Berry Wine (cards) | 366 to 491 |
+| Naieth | p.74 | `+15 Othu el Búho / +30 Báculo de los Augurios` | Staff of the Auguries (card, 30); Othu the Owl 15 | 59 to 104 |
+| Thalandor | p.75 | `+5 Pintura de Guerra Mágica / +15 Talismán de Qwarr / +25 Lanza de Daith / +95 Gwandor el Águila Gigante` | Magic War Paint, Talisman of Qwarr, Spear of Daith (cards); Gwandor 95 | 240 to 380 |
+| Lothlann | p.76 | `+50 Estandarte de Athel Loren / +7 Corcel Élfico con Barda` | Battle Banner of Athel Loren (card, 50); Barded Elven Steed 7 | 101 to 158 |
+| Scarloc | p.77 | `+25 Flecha Lluvia de Muerte` | Death Rain Arrow (card, 25) | 54 to 79 |
+| Wychwethyl | p.77-78 | `+25 Tambor de Piel de Orco` | Orc-Skin Drum (card, 25) | 75 to 100 |
+| Sceolan | p.78 | `+10 Escudo de Bronce / +50 Arco de Loren` | Bronze Shield (new, 10), Bow of Loren (card, now 50) | 106 to 166 |
+| Skaw | p.79 | `+15 Halcones / +25 Flagelo de Garras` | Claw Scourge (new, 25); Falcons 15 | 51 to 91 |
+| Gruarth | p.80 | `+66 Tigres Dientes de Sable / +10 Boleadoras` | Bolas (new, 10); Sabre-Tooth Tigers Colmillo & Garra 66 | 90 to 166 |
+
+**Orion's hounds.** p.71: "+5 puntos por cada Mastín, tantos como se desee". The hounds are a
+counted option, `hunting-hounds` (Mastines de Caza), 5 each with no cap; four hounds make 470.
+
+**Three new items.** The pool lacked Sceolan's Escudo de Bronce (p.78, shield, 10), Skaw's Flagelo
+de Garras (p.79, weapon, 25) and Gruarth's Boleadoras (p.80, weapon, 10). Each is a Wood Elf
+special-character item. Their Spanish text is the page's rules paragraph, read in the PDF; the
+English text renders it, with the Bolas' 30 cm range as 12 inches.
+
+**Bow of Loren corrected from 60 to 50.** Elfos Silvanos p.78 prints "+50 puntos: Arco de Loren"
+and the Magia card list prints 50 (Magia p.72); only Magia p.34 prints 60. The item is shared with
+the High Elves (`restrictedTo: ['high-elves', 'wood-elves']`), so it costs 50 there too. Owner
+decision (2026-10-26).
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),
