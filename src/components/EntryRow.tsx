@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine, StatNotes } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
-import { effectiveStatLine, entryPoints, findUnit, mountOptionCost, unitOptionCost } from '../rules/points'
+import { effectiveStatLine, entryPoints, findMagicItem, findUnit, mountOptionCost, unitOptionCost } from '../rules/points'
 import { magicItemAllowance } from '../rules/magicItems'
 import {
   companionMountProfile,
@@ -539,6 +539,38 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
               <span className="opt-label">
                 {t('magicItems', lang)} <span className="muted small">({entry.magicItemIds.length}/{allowance})</span>
               </span>
+
+              {entry.magicItemIds.length > 0 && (
+                <div className="magic-items-selected">
+                  <div className="mi-group-title">{t('selectedItems', lang)}</div>
+                  {entry.magicItemIds.map((id) => {
+                    const item = findMagicItem(army, id)
+                    if (!item) return null
+                    return (
+                      <div key={id} className="mi-item mi-item-selected">
+                        <span className="mi-body">
+                          <span className="mi-head">
+                            <span className="mi-name-wrap">
+                              <span className="mi-name">{magicItemName(item, lang)}</span>
+                            </span>
+                            <span className="mi-pts">{item.points} {t('pts', lang)}</span>
+                          </span>
+                        </span>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-sm btn-danger mi-remove"
+                          onClick={() => actions.toggleMagicItem(item.id)}
+                          title={t('remove', lang)}
+                          aria-label={t('remove', lang)}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
               {itemFilter}
               <div className="magic-items">
                 {(() => {

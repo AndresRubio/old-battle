@@ -1032,6 +1032,24 @@ h1, h2, h3 {
   padding: 0.25rem 0;
   cursor: pointer;
 }
+/* A character's currently-selected items, shown above the general picker. */
+.magic-items-selected {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-raised);
+}
+.mi-item-selected {
+  cursor: default;
+  justify-content: space-between;
+}
+.mi-remove {
+  flex-shrink: 0;
+}
 .mi-item input {
   margin-top: 0.2rem;
   flex-shrink: 0;

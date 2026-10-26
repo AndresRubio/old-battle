@@ -338,6 +338,63 @@ describe('EntryRow Movement in centimetres in Spanish (OLD-46)', () => {
   })
 })
 
+// OLD-65 — a character's currently-selected magic items are listed separately,
+// above the general picker, with an obvious way to remove one.
+describe('EntryRow selected magic items (OLD-65)', () => {
+  const selectedNames = () =>
+    Array.from(container.querySelectorAll('.magic-items-selected .mi-name')).map((el) => el.textContent)
+
+  it('hides the selected-items section when the character has none', () => {
+    setLang('en')
+    render(<EntryRow entry={entry('emp-general', { size: 1 })} army={army} {...props} />)
+    expand()
+    expect(container.querySelector('.magic-items-selected')).toBeNull()
+  })
+
+  it('lists each selected item with its name and points above the general picker', () => {
+    setLang('en')
+    render(
+      <EntryRow
+        entry={entry('emp-general', { size: 1, magicItemIds: ['mi-sword-of-heroes', 'mi-dragon-sword'] })}
+        army={army}
+        {...props}
+      />,
+    )
+    expand()
+    expect(selectedNames()).toEqual(['Sword of Heroes', 'Dragon Sword'])
+    expect(container.querySelector('.magic-items-selected')?.textContent).toContain('60')
+    expect(container.querySelector('.magic-items-selected')?.textContent).toContain('50')
+
+    // The section appears before the general checklist.
+    const groups = Array.from(container.querySelectorAll('.magic-items-selected, .magic-items'))
+    expect(groups[0].className).toContain('magic-items-selected')
+  })
+
+  it('shows the Spanish header and item names', () => {
+    setLang('es')
+    render(
+      <EntryRow entry={entry('emp-general', { size: 1, magicItemIds: ['mi-sword-of-heroes'] })} army={army} {...props} />,
+    )
+    expand()
+    expect(container.querySelector('.magic-items-selected .mi-group-title')?.textContent).toBe('Objetos Seleccionados')
+    expect(selectedNames()).toEqual(['Espada de los Héroes'])
+  })
+
+  it('removing a selected item unchecks it and commits through toggleMagicItem', () => {
+    setLang('en')
+    let roster = {
+      id: 'r', name: 't', armyId: 'empire', pointsLimit: 1000,
+      entries: [entry('emp-general', { size: 1, magicItemIds: ['mi-sword-of-heroes'] })],
+    }
+    const actions = entryActions((fn) => { roster = fn(roster) }, army, 'e1')
+    render(<EntryRow entry={roster.entries[0]} army={army} actions={actions} canMoveUp={false} canMoveDown={false} />)
+    expand()
+    const removeBtn = container.querySelector('.magic-items-selected .mi-remove') as HTMLButtonElement
+    act(() => removeBtn.click())
+    expect(roster.entries[0].magicItemIds).toEqual([])
+  })
+})
+
 // OLD-64 — a character with a documented BSB surcharge gets a toggle.
 describe('EntryRow Battle Standard Bearer toggle', () => {
   const bsbButton = () => (container.querySelector('.bsb-toggle') as HTMLButtonElement | null) ?? undefined
