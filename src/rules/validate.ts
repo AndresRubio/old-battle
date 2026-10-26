@@ -49,6 +49,15 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
     }
   }
 
+  // --- Battle Standard Bearer -------------------------------------------
+  // An army has one BSB. Only checked once a character is TOGGLED into the
+  // role (entry.isBSB): overlaps among dedicated BSB units alone are already
+  // governed by each army's 0-1 / unitGroupCaps data.
+  const bsbs = roster.entries.filter((e) => e.isBSB || findUnit(army, e.unitId)?.isBSB)
+  if (bsbs.length > 1 && roster.entries.some((e) => e.isBSB)) {
+    raise('warning', 'multiple-bsbs', { count: bsbs.length })
+  }
+
   // --- Percentage composition (against the agreed points limit) -----------
   // Thresholds and breach verdicts come from summarize() — the same numbers
   // the summary panel renders, so display and enforcement cannot diverge.

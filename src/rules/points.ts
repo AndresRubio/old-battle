@@ -137,7 +137,17 @@ export function effectiveStatLine(unit: UnitProfile, optionIds: string[]): Parti
   return result
 }
 
-/** Total points for a single roster entry: models * (base + per-model options) + flat options + mount (+ its options) + magic items. */
+/**
+ * Surcharge for a character toggled to act as the army Battle Standard Bearer
+ * (`entry.isBSB`): the unit's own `bsbPoints`. A dedicated BSB unit
+ * (`unit.isBSB`) already has the cost in its profile, and a unit with no
+ * documented `bsbPoints` adds nothing.
+ */
+export function bsbPoints(unit: UnitProfile, entry: RosterEntry): number {
+  return entry.isBSB && unit.canBeBSB && !unit.isBSB ? (unit.bsbPoints ?? 0) : 0
+}
+
+/** Total points for a single roster entry: models * (base + per-model options) + flat options + BSB surcharge + mount (+ its options) + magic items. */
 export function entryPoints(entry: RosterEntry, army: Army): number {
   const unit = findUnit(army, entry.unitId)
   if (!unit) return 0
@@ -159,6 +169,7 @@ export function entryPoints(entry: RosterEntry, army: Army): number {
   return (
     modelPoints +
     flatPoints +
+    bsbPoints(unit, entry) +
     mountPoints(unit, entry.mountId) +
     mountOptionPoints(unit, entry.mountId, entry.optionIds) +
     magicPoints +

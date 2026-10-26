@@ -480,3 +480,30 @@ describe('OLD-35 — perCrewman unit options scale with the crew bought', () => 
     }
   })
 })
+
+describe('entryPoints — optional Battle Standard Bearer surcharge (OLD-64)', () => {
+  // Ludwig Schwartzhelm: "+50 pts to act as Battle Standard Bearer" (his own
+  // specialRules line) — charged only when the entry is toggled isBSB.
+  it('adds Ludwig’s +50 only while he is toggled BSB', () => {
+    const base = entryPoints(mk({ unitId: 'emp-ludwig' }), empire)
+    expect(base).toBe(70)
+    expect(entryPoints(mk({ unitId: 'emp-ludwig', isBSB: true }), empire)).toBe(120)
+    expect(entryPoints(mk({ unitId: 'emp-ludwig', isBSB: false }), empire)).toBe(70)
+  })
+
+  it('reads the surcharge off the unit data, not a hard-coded id', () => {
+    const ludwig = findUnit(empire, 'emp-ludwig')!
+    expect(ludwig.bsbPoints).toBe(50)
+  })
+
+  it('charges nothing extra for a dedicated BSB unit (cost baked into its profile)', () => {
+    const plain = entryPoints(mk({ unitId: 'emp-battle-standard' }), empire)
+    expect(entryPoints(mk({ unitId: 'emp-battle-standard', isBSB: true }), empire)).toBe(plain)
+  })
+
+  it('charges nothing extra for a character with no documented BSB cost', () => {
+    const dow = getArmy('dogs-of-war')!
+    const plain = entryPoints(mk({ unitId: 'dow-paymaster' }), dow)
+    expect(entryPoints(mk({ unitId: 'dow-paymaster', isBSB: true }), dow)).toBe(plain)
+  })
+})

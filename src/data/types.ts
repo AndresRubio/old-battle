@@ -239,6 +239,12 @@ export interface UnitProfile {
    *  dedicated battle-standard character units). Such an entry may carry a magic
    *  banner without the per-entry isBSB toggle. See FAQ v2.20 §23.2. */
   isBSB?: boolean
+  /** Flat points a `canBeBSB` character pays to act as the army Battle Standard
+   *  Bearer (charged by `entryPoints` while `RosterEntry.isBSB` is set). Only
+   *  set where the unit's own book entry prints the surcharge — e.g. Ludwig
+   *  Schwartzhelm's "+50 pts". Its presence is also what offers the per-entry
+   *  BSB toggle in the editor; a `canBeBSB` unit without it gets no toggle. */
+  bsbPoints?: number
   /**
    * Named "special character" (e.g. Zhatan, Grombrindal). Display-only: they
    * still count under their `role` for composition. When omitted it is inferred

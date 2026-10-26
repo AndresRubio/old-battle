@@ -10,6 +10,7 @@ import {
   selectMount,
   selectWizardLevel,
   setGeneral,
+  toggleBSB,
   toggleMagicItem,
   toggleOption,
   updateEntry,
@@ -250,5 +251,33 @@ describe('storage helpers (pure)', () => {
     const b = createRoster('empire', 'B', 2000, 'r2')
     const list = deleteRoster([a, b], 'r1')
     expect(list.map((r) => r.id)).toEqual(['r2'])
+  })
+})
+
+describe('toggleBSB (OLD-64)', () => {
+  const ludwig = empire.units.find((u) => u.id === 'emp-ludwig')!
+
+  it('toggles the entry in and out of acting as the Battle Standard Bearer', () => {
+    let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), ludwig, 'e1')
+    r = toggleBSB(r, 'e1')
+    expect(r.entries[0].isBSB).toBe(true)
+    r = toggleBSB(r, 'e1')
+    expect(r.entries[0].isBSB).toBe(false)
+  })
+
+  it('keeps at most one toggled BSB: turning one on clears every other', () => {
+    let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), ludwig, 'e1')
+    r = addEntry(r, ludwig, 'e2')
+    r = toggleBSB(r, 'e1')
+    r = toggleBSB(r, 'e2')
+    expect(r.entries.filter((e) => e.isBSB).map((e) => e.id)).toEqual(['e2'])
+  })
+
+  it('duplicateEntry never marks the copy as BSB', () => {
+    let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), ludwig, 'e1')
+    r = toggleBSB(r, 'e1')
+    r = duplicateEntry(r, 'e1', 'e1-copy')
+    expect(r.entries[0].isBSB).toBe(true)
+    expect(r.entries[1].isBSB).toBe(false)
   })
 })

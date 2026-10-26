@@ -161,6 +161,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
           <span className="entry-caret">{open ? '▾' : '▸'}</span>
           <span className="entry-name">
             {entry.isGeneral && <span className="general-star" title={t('general', lang)}>★</span>}
+            {entry.isBSB && <span className="general-star" title={t('battleStandard', lang)}>⚑</span>}
             {isRegiment ? `${entry.size}× ` : ''}
             {unitName(unit, lang)}
           </span>
@@ -297,6 +298,12 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
           {unit.isCharacter && !entry.isGeneral && unit.canBeGeneral !== false && (
             <button className="btn btn-sm" onClick={actions.setGeneral}>
               {t('makeGeneral', lang)}
+            </button>
+          )}
+
+          {unit.isCharacter && unit.canBeBSB && unit.bsbPoints !== undefined && (
+            <button className="btn btn-sm bsb-toggle" onClick={actions.toggleBSB}>
+              {entry.isBSB ? t('removeBSB', lang) : `${t('makeBSB', lang)} (+${unit.bsbPoints})`}
             </button>
           )}
 
