@@ -2718,6 +2718,34 @@ describe('OLD-63: special characters charge their book extras', () => {
     ['empire', 'emp-marius-leitdorf', [], 140],
     // Imperio p.74: 200 + Fearfrost 100.
     ['empire', 'emp-zarina-katarin', [], 300],
+    // Enanos p.90: 174 + Weapon Runes 170 + Defence Runes 100 + Talismanic Runes 50.
+    ['dwarfs', 'dw-king-kazador', [], 494],
+    // Enanos p.91: 210 + 90 + 55 + 70.
+    ['dwarfs', 'dw-ungrim-ironfist', [], 425],
+    // Enanos p.92: 309 + 165 + 150 + 45.
+    ['dwarfs', 'dw-kragg-the-grim', [], 669],
+    // Enanos p.93: 225 + Hacha de Gotrek 125.
+    ['dwarfs', 'dw-gotrek', [], 350],
+    // Enanos p.93: 77 + Espada de Felix 50 (Espada de Bronce Fulgurante).
+    ['dwarfs', 'dw-felix', [], 127],
+    // Enanos p.95: 111 + Weapon Runes 40 + Jarra de Cerveza Runica 25 (the card says 50).
+    ['dwarfs', 'dw-josef-bugman', [], 176],
+    // Enanos p.96: 130 + Weapon Runes 25 + Defence Runes 55.
+    ['dwarfs', 'dw-burlok-damminson', [], 210],
+    // Enanos p.94: 160 + Gran Libro 50 + Corona 75 + Armadura de Skaldor 75 + Hacha de Grimnir 125.
+    ['dwarfs', 'dw-thorgrim', [], 485],
+    // ... + Trono del Poder 140: a player choice (owner ruling 2026-10-26).
+    ['dwarfs', 'dw-thorgrim', ['throne-of-power'], 625],
+    // Skaven p.69: 380 + Destripahuesos 45 (always beside Thanquol).
+    ['skaven', 'sk-thanquol', [], 425],
+    // Skaven p.70: 225 + Liber Bubonicus 75 + Baculo de Corrupcion 100.
+    ['skaven', 'sk-skrolk', [], 400],
+    // Skaven p.71: 315 + Tormenta Demoniaca 25.
+    ['skaven', 'sk-ikit-claw', [], 340],
+    // Skaven p.73: 230 + Brazaletes de Poder 40 + Capa de las Sombras 75.
+    ['skaven', 'sk-snitch', [], 345],
+    // Skaven p.74: 138 + Degolladora de Enanos 50 + Armadura de Disformidad 50.
+    ['skaven', 'sk-queek', [], 238],
   ]
 
   it.each(rows)('%s %s with %j costs %d', (armyId, unitId, optionIds, expected) => {

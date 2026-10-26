@@ -288,6 +288,8 @@ const OPTION_ES: Record<string, string> = {
   Shield: 'Escudo',
   // OLD-64: Ludwig Schwartzhelm's +50 option (Imperio p.69).
   'Battle Standard Bearer': 'Portaestandarte de Batalla',
+  // OLD-63: Thorgrim's Throne (Enanos p.94), a player choice.
+  'Throne of Power': 'Trono del Poder',
   Shields: 'Escudos',
   'Shields (both crew)': 'Escudos (ambos tripulantes)',
   'Light armour': 'Armadura ligera',

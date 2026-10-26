@@ -1418,6 +1418,64 @@ Warhorse each, no price printed), Volkmar's War Altar and Zarina's Warhorse keep
 treatment: the unpriced mounts stay as they are and the Altar and Warhorse stay display-only.
 Ludwig (p.69) and Magnus (p.68-69) do not change.
 
+#### Dwarfs and Skaven: special characters' extra costs (OLD-63, 2026-10-26)
+**Dwarfs, Enanos (1995, ES) printed pp.90-96.** Each page prints a cost table of the form
+`<character> N puntos / +Runas de Arma / +Runas de Defensa / +Runas Talismánicas`. The runes are
+priced per group, so each group is a `fixedExtra` (`weapon-runes`, `defence-runes`,
+`talismanic-runes`) named after the object that carries it. The pool's single-rune items stay
+untouched. A bare entry goes from the headline to the sum of its page.
+
+| Character | Page | Table | Fixed extras and items | Bare entry |
+|---|---|---|---|---|
+| King Kazador | p.90 | `+170 Runas de Arma / +100 Runas de Defensa / +50 Runas Talismánicas` | Hammer of Karak Azul 170, Armour of the King of Karak Azul 100, Horn of Storms 50 | 174 to 494 |
+| Ungrim Ironfist | p.91 | `+90 / +55 / +70` | Axe of Dargo 90, Crown of the Slayers 55, Dragon Cloak 70 | 210 to 425 |
+| Kragg the Grim | p.92 | `+165 / +150 / +45` | Hammer of Kragg 165, Armour of Kragg 150, Runic Staff 45 | 309 to 669 |
+| Gotrek | p.93 | `+125 Hacha de Gotrek` | Axe of Gotrek (card, 125) | 225 to 350 |
+| Felix Jaeger | p.93 | `+50 Espada de Félix`; "empuña una Espada de Bronce Fulgurante" | Sword of Shining Bronze (card, 50) | 77 to 127 |
+| Josef Bugman | p.95 | `+40 Runas de Armas / +25 Jarra de Cerveza Rúnica` | Bugman's rune axe 40; Bugman's Tankard at 25 | 111 to 176 |
+| Burlok Damminson | p.96 | `+25 Runas de Armas / +55 Runas de Defensa` | Burlok's Hammer 25, Burlok's Armour 55 | 130 to 210 |
+| Thorgrim Grudgebearer | p.94 | `+50 Gran Libro / +140 Trono / +75 Corona / +75 Armadura de Skaldor / +125 Hacha de Grimnir` | Great Book of Grudges, Dragon Crown of Karaz, Armour of Skaldor, Axe of Grimnir (cards, 50+75+75+125) | 160 to 485 |
+
+King Kazador's hammer: the page lists the Master Rune of Death, the "Runa de Ataque" (+1 to
+Weapon Skill) and the Rune of Power. The data said Rune of Cleaving, which is a different rune and
+would not add up to the 170 the page charges, so the line now reads Rune of Striking (the pool's
+name for "Runa de Ataque").
+
+**Josef Bugman's tankard.** The page prices it at +25 ("+Jarra de Cerveza Rúnica +25 puntos"), the
+magic-item card at 50 (Magia p.38 and p.74). The tankard is a fixed item with `points: 25`, so he
+pays the page price; the card stays at 50 for everyone else. Owner decision (2026-10-26).
+
+**Thorgrim's Throne of Power, +140: user choice (owner ruling 2026-10-26).** The page reads both, in its
+background text (checked in the PDF; the transcription omits it), "Es transportado sobre el Trono del
+Poder por sus cuatro vigorosos porteadores" and, under ESPECIAL (p.94), "Thorgrim puede entrar en combate
+sentado en el Trono del Poder y acompañado por sus cuatro porteadores". The two do not agree on
+whether the Throne is mandatory, so the owner left it to the player: an unticked option,
+`throne-of-power`, 140. The bare entry is 485 and 625 with the Throne. The four
+other items are fixed: the page says he "va armado con el Hacha de Grimnir y entra siempre en
+batalla con la Armadura de Skaldor" and wears the Crown and the Great Book. That is four items
+against a lord's three slots, so `magicItemSlots` is 4.
+
+Gotrek's axe was labelled "Gotrek's Axe of Grimnir" in the data, but the page and the card are the
+Hacha de Gotrek; the line now says Axe of Gotrek. Felix's sword line stays as it was.
+
+**Skaven, Skaven (1995, ES) printed pp.69-74.** Throt does not change.
+
+| Character | Page | Table | Fixed extras and items | Bare entry |
+|---|---|---|---|---|
+| Grey Seer Thanquol | p.69 | `Destripahuesos +45 puntos` | Boneripper (bodyguard) 45 | 380 to 425 |
+| Lord Skrolk | p.70 | `+75 Liber Bubonicus / +100 Báculo de Corrupción` | Liber Bubonicus, Staff of Corruption (cards, 75+100) | 225 to 400 |
+| Ikit Claw | p.71 | `+25 Tormenta Demoníaca` | Daemonic Storm (card, 25) | 315 to 340 |
+| Deathmaster Snikch | p.73 | `+40 Brazaletes de Poder / +75 Capa de las Sombras` | Bracelets of Power, Cloak of Shadows (cards, 40+75) | 230 to 345 |
+| Queek Headtaker | p.74 | `+50 Degolladora de Enanos / +50 Armadura de Disformidad` | Dwarf Cleaver, Warpstone Armour (cards, 50+50) | 138 to 238 |
+
+Thanquol's Boneripper is mandatory: p.69 says "Destripahuesos permanecerá junto a Thanquol en
+todo momento" (checked in the PDF, which the transcription paraphrases). The rule line used to say
+"May be accompanied" and now says "Accompanied by his bodyguard". Skrolk's +100 is the Báculo de
+Corrupción, not the Plague Censer, which has no printed cost; the rule line named the wrong
+object. Snikch's and Queek's items are "los primeros dos" of their allowances (p.73, p.74), Ikit's
+Tormenta Demoníaca is "el primero que debe adquirir" (p.71), and Skrolk's two items are "siempre"
+his (p.70).
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),
