@@ -124,6 +124,9 @@ export function assertArmyIntegrity(army: Army): Army {
     // once per entry. Any other pricing flag would be silently ignored, and a
     // regiment's per-model price already multiplies by its size.
     for (const o of u.options ?? []) {
+      // A negative price (Sturmjarl's card prices, -5) is charged once. Per model
+      // or per count it would scale with the unit size or the count.
+      if (o.pointsPerModel < 0 && !o.flat) fail(`${u.id}/${o.id}: negative option price on a non-flat option`)
       if (o.maxCount !== undefined && !o.counted) fail(`${u.id}/${o.id}: maxCount without counted`)
       if (!o.counted) continue
       if (o.maxCount !== undefined && !(Number.isInteger(o.maxCount) && o.maxCount >= 0)) {

@@ -1314,6 +1314,50 @@ describe('fixed magic items (OLD-63)', () => {
     expect(uniqueMessages(r).some((m) => m.includes('Hammer of Sigmar'))).toBe(true)
   })
 
+  // OLD-63: Bretonnia p.66, Paladines del Caos p.13 and Condes Vampiro p.69
+  // price the page items inside the headline; locking them raises nothing.
+  const bare = (armyId: string, unitId: string, isGeneral: boolean, gen = 'gen'): Roster => ({
+    id: 'r', name: 't', armyId, pointsLimit: 3000,
+    entries: isGeneral
+      ? [entry({ id: 'x', unitId, isGeneral: true })]
+      : [entry({ id: 'g', unitId: gen, isGeneral: true }), entry({ id: 'x', unitId })],
+  })
+  it.each([
+    ['bretonnia', 'br-louen-leoncoeur', true, ''],
+    ['bretonnia', 'br-armand', false, 'br-general'],
+    ['chaos', 'ch-mordrek', false, 'ch-lord'],
+    ['vampire-counts', 'vc-krell', false, 'vc-heinrich-kemmler'],
+  ])('raises no magic-item finding for %s %s', (armyId, unitId, isGeneral, gen) => {
+    const a = getArmy(armyId)!
+    const r = bare(armyId, unitId, isGeneral, gen)
+    expect(carriedMagicItems(r.entries.find((e) => e.id === 'x')!, a.units.find((u) => u.id === unitId)!, a).length)
+      .toBeGreaterThan(0)
+    expect(itemRules(r, a)).toEqual([])
+  })
+
+  // Bretonnia p.73-74: Armand always carries the Banner of the Lady of the Lake;
+  // his page fixes it, so the banner-BSB warning never asks for the toggle.
+  it("raises no banner-BSB warning for Armand's fixed banner", () => {
+    const a = getArmy('bretonnia')!
+    expect(rules(validateRoster(bare('bretonnia', 'br-armand', false, 'br-general'), a))).not.toContain(
+      'magic-items-banner-bsb',
+    )
+  })
+
+  // Paladines del Caos p.21: the Sword of Transformation is Mordrek's; a second
+  // character picking it beside him breaks uniqueness.
+  it('flags the Sword of Transformation when a Chaos Lord picks it beside Mordrek', () => {
+    const chaos = getArmy('chaos')!
+    const r: Roster = {
+      id: 'r', name: 't', armyId: 'chaos', pointsLimit: 3000,
+      entries: [
+        entry({ id: 'g', unitId: 'ch-lord', isGeneral: true, magicItemIds: ['mi-sword-of-transformation'] }),
+        entry({ id: 'm', unitId: 'ch-mordrek' }),
+      ],
+    }
+    expect(rules(validateRoster(r, chaos))).toContain('magic-items-unique')
+  })
+
   it('flags the Hammer when a General picks it beside Karl Franz', () => {
     const r = empRoster([
       kf({ id: 'a' }),

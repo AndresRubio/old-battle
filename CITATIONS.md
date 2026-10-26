@@ -1588,6 +1588,58 @@ fixed extras because p.91 prices both and Grom always arrives with them.
 **Gorbad's War Boar.** p.91 prints no cost for it, so it stays a display profile and adds nothing
 to his 245.
 
+#### Bretonnia, Chaos, Norse, Vampire Counts and Dogs of War: special characters' extra costs (OLD-63, 2026-10-26)
+**Three books print the headline as a total that already holds the items.** Bretonnia (1997, EN)
+p.66: "Each character's points value is a total that includes equipment, mount, magic items".
+Paladines del Caos (1998, ES) p.13: "se indica como un total, que incluye equipo, montura, objetos
+mágicos", and p.21 for Mordrek: "Valor incluido en el total". Condes Vampiro (1999, ES) p.69: "El
+valor en puntos indicado para cada personaje es su coste total (equipo, montura, objetos mágicos
+...)". These characters keep their totals; their page items become fixed with `included: true`
+(adds 0, cannot be bought a second time on top).
+
+| Character | Page | Locked items (`included`) | Bare entry |
+|---|---|---|---|
+| Louen Leoncoeur | Bretonnia p.67 | Crown of Bretonnia; Armour of Brilliance = Magia's Armadura Brillante (75, same effect) | 505 to 505 |
+| Baron Odo | Bretonnia p.69 | Morning Star of Fracasse = Magia's Flagelo de Fracasse (30) | 110 to 110 |
+| Tancred | Bretonnia p.70 | Blade of Couronne | 265 to 265 (268 on the warhorse) |
+| Armand d'Aquitaine | Bretonnia p.73-74 | Banner of the Lady of the Lake | 235 to 235 |
+| Count Mordrek | Paladines del Caos pp.20-21 | Sword of Transformation; Chaos Runeshield | 398 to 398 |
+| Dieter Helsnicht | Condes Vampiro p.70 | Flaming Staff of Death; Chaos Runic Sword | 690 to 690 |
+| Heinrich Kemmler | Condes Vampiro p.71 | Chaos Funerary Sword; Skull Staff | 450 to 450 |
+| Krell | Condes Vampiro p.72 | Black Axe of Krell; Armour of the Defender (`magicItemSlots: 2`) | 280 to 280 |
+| Vlad von Carstein | Condes Vampiro p.78 | Ring of the von Carsteins | 680 to 680 |
+
+**Tancred's mount.** p.70: "The Duke may ride a barded Bretonnian Warhorse (+3 points) or a monster
+chosen from the Monsters List at the appropriate points cost." He now has the Knight mount list
+(warhorse 3, monsters at their list price).
+
+**Dieter's tag.** The Vampire Counts tag listed the Skull Staff, which is Kemmler's (p.71). Dieter's
+p.70 table prints the Báculo Llameante de la Muerte (50), Espada Rúnica del Caos (65) and Pergamino
+de Energía (30); the tag now names the Flaming Staff of Death.
+
+**Krell's slots.** p.72 gives him two magic items; a champion's rank allows one, so
+`magicItemSlots: 2` holds both.
+
+**Norsca (1994, EN), by PDF index.** The pages print the headline without the items.
+
+| Character | PDF | Page prints | Data | Bare entry |
+|---|---|---|---|---|
+| Keorl Thunderhand | 34 | "130 points (+125 Dragon Slayer, +30 Thorim's Ring)" | 130 + Dragon Slayer (the common Matadragones, same effect, 125) + Thorim's Ring (30), both fixed at card price | 285 to 285 |
+| Stürmjarl | 32 | "316 points (+100 Gift of Loki, +30 Runes)" | 316 + Gift of Loki (page price 100) + Runes (page price 30) | 446 to 446 |
+
+**Stürmjarl's two prices.** The magic-item card sheet (PDF 35) prints Gift of Loki 50 and Runes 75,
+so the book disagrees with itself (130 on the character page, 125 on the cards). The data keeps
+the page prices by default and offers one checkbox, "Item-card prices (Gift of Loki 50, Runes
+75)", worth -5 (flat), which gives 441. **user choice (owner ruling 2026-10-26)**. Integrity now
+accepts a negative option price only on a flat option.
+
+**Dogs of War (1998, EN) pp.64-67.**
+
+| Character | Page | Change | Bare entry |
+|---|---|---|---|
+| Mydas the Mean | p.64-65 | "between 5 and 20 bodyguards ... Each extra bodyguard after the first five costs 12 points": counted option, 12 each, up to 15. "a standard bearer and musician at double the points cost of a normal trooper": 2 × 12 = 24 each, flat | 210 to 210 (270 with 5 extra; +24 for each of standard and musician) |
+| Marco Colombo | p.67 | "Marco Colombo carries three magic items ... Gem of Lustria, Gourd of Lustrian Wine and Scroll of Araby"; the Navigator's Telescope is under Special Rules, so it moved out of the magic-items tag | 176 to 176 |
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

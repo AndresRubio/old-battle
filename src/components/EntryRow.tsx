@@ -11,6 +11,7 @@ import {
   magicStandardNeedsBearer,
   partitionOptions,
   resolveStatNotes,
+  signedPoints,
   statCell,
 } from '../rules/entryView'
 import type { EntryActions } from '../state/rosterOps'
@@ -466,7 +467,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                         checked={entry.optionIds.includes(o.id)}
                         onChange={() => actions.toggleOption(o.id)}
                       />
-                      {optionText(o.name, lang)} (+{unitOptionCost(unit, o, entry.optionIds)}
+                      {optionText(o.name, lang)} ({signedPoints(unitOptionCost(unit, o, entry.optionIds))}
                       {isRegiment && !o.flat && !o.perCrewman ? t('perModel', lang) : ''})
                       {optionInfo(o, lang) && (
                         <button
@@ -620,7 +621,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                           checked={entry.optionIds.includes(o.id)}
                           onChange={() => actions.toggleOption(o.id)}
                         />
-                        {optionText(o.name, lang)} (+{cost})
+                        {optionText(o.name, lang)} ({signedPoints(cost)})
                         {optionInfo(o, lang) && (
                           <button
                             type="button"

@@ -387,6 +387,21 @@ describe('counted options', () => {
     )
   })
 
+  // OLD-63: Sturmjarl's card-price option is worth -5 once. A negative price
+  // that scaled with the unit size or a count would be meaningless.
+  it('accepts a negative price on a flat option', () => {
+    expect(assertArmyIntegrity(withUnit(hero({ pointsPerModel: -5, flat: true })))).toBeTruthy()
+  })
+
+  it('throws when a negative price is not flat', () => {
+    expect(() => assertArmyIntegrity(withUnit(hero({ pointsPerModel: -5 })))).toThrow(
+      /or\/h: negative option price on a non-flat option/,
+    )
+    expect(() => assertArmyIntegrity(withUnit(hero({ pointsPerModel: -5, counted: true })))).toThrow(
+      /or\/h: negative option price on a non-flat option/,
+    )
+  })
+
   it('throws when a counted option sits on a regiment', () => {
     const regiment = unit({ id: 'rg', options: [{ id: 'h', name: 'Hounds', pointsPerModel: 5, counted: true }] })
     expect(() => assertArmyIntegrity(withUnit(regiment))).toThrow(/rg\/h: counted option on a regiment/)

@@ -293,6 +293,11 @@ const OPTION_ES: Record<string, string> = {
   // OLD-63: Thorgrim's Throne (Enanos p.94), a player choice.
   'Throne of Power': 'Trono del Poder',
   'Hunting Hounds': 'Mastines de Caza',
+  // OLD-63: Stürmjarl's card prices (Norsca PDF 32, 35); Mydas's bodyguard (Dogs of War p.65).
+  'Item-card prices (Gift of Loki 50, Runes 75)': 'Precios de las cartas (Don de Loki 50, Runas 75)',
+  'Extra bodyguards': 'Guardaespaldas adicionales',
+  'Bodyguard standard bearer': 'Portaestandarte de la guardia',
+  'Bodyguard musician': 'Músico de la guardia',
   Shields: 'Escudos',
   'Shields (both crew)': 'Escudos (ambos tripulantes)',
   'Light armour': 'Armadura ligera',

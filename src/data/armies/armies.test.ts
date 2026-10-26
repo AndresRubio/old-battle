@@ -10,6 +10,7 @@ import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
 import { isWizardLevelId } from '../unitOptions'
 import { MAGIC_LORES } from '../lores'
 import { RULE_PHRASE_ES } from '../../i18n/rulePhrases'
+import { toggleMagicItem } from '../../state/rosterOps'
 
 // The mechanical data-format invariants (unique ids, mount-option namespace,
 // selection-rule references, restrictedTo leaks…) are enforced at CONSTRUCTION
@@ -2699,7 +2700,8 @@ describe('OLD-46 — Movement converts back to the centimetres the book prints',
 // of the headline: fixed magic items, fixed extras, counted options. Every data
 // task adds its rows here BEFORE changing the data and watches them fail.
 describe('OLD-63: special characters charge their book extras', () => {
-  const rows: [string, string, string[], number][] = [
+  // The optional fifth element adds entry fields (a mount, option counts).
+  const rows: [string, string, string[], number, Partial<RosterEntry>?][] = [
     // Imperio p.67-68: 110 + Hammer of Sigmar 100 + Silver Seal 75.
     ['empire', 'emp-karl-franz', [], 285],
     // Imperio p.69-70: 150 + Staff of Power 80 + Jade Griffon 75 + Horn of Sigismund 35.
@@ -2807,11 +2809,98 @@ describe('OLD-63: special characters charge their book extras', () => {
     ['orcs-and-goblins', 'og-morglum', [], 150],
     // Orcos y Goblins p.93: 80 + Pincho de Skarsnik 75 + Gobbla 50.
     ['orcs-and-goblins', 'og-skarsnik', [], 205],
+    // Bretonnia p.66: "Each character's points value is a total that includes
+    // equipment, mount, magic items". The page items are included and locked.
+    // p.67: Crown of Bretonnia and Armour of Brilliance (Magia: Armadura Brillante).
+    ['bretonnia', 'br-louen-leoncoeur', [], 505],
+    // p.69: Morning Star of Fracasse (Magia: Flagelo de Fracasse).
+    ['bretonnia', 'br-odo', [], 110],
+    // p.70: Blade of Couronne; "may ride a barded Bretonnian Warhorse (+3 points)".
+    ['bretonnia', 'br-tancred', [], 265],
+    ['bretonnia', 'br-tancred', [], 268, { mountId: 'mount-warhorse' }],
+    // p.73-74: Banner of the Lady of the Lake.
+    ['bretonnia', 'br-armand', [], 235],
+    // Paladines del Caos p.20-21: "Valor incluido en el total."
+    ['chaos', 'ch-mordrek', [], 398],
+    // Norsca PDF 34: 130 + Dragon Slayer 125 + Thorim's Ring 30.
+    ['norse', 'no-keorl-thunderhand', [], 285],
+    // Norsca PDF 32: 316 + Gift of Loki 100 + Runes 30.
+    ['norse', 'no-sturmjarl', [], 446],
+    // ... at the item-card prices of PDF 35 (50 + 75): user choice (owner ruling 2026-10-26).
+    ['norse', 'no-sturmjarl', ['card-prices'], 441],
+    // Condes Vampiro p.69: each character's value is his total cost, items included.
+    ['vampire-counts', 'vc-dieter-helsnicht', [], 690],
+    ['vampire-counts', 'vc-heinrich-kemmler', [], 450],
+    ['vampire-counts', 'vc-krell', [], 280],
+    ['vampire-counts', 'vc-vlad-von-carstein', [], 680],
+    // Dogs of War p.64-65: Mydas, the Sheikh, the pay chest and 5 bodyguards, 210;
+    // each extra bodyguard 12; standard bearer and musician at double, 24 each.
+    ['dogs-of-war', 'dow-mydas', [], 210],
+    ['dogs-of-war', 'dow-mydas', [], 270, { optionCounts: { 'extra-bodyguards': 5 } }],
+    ['dogs-of-war', 'dow-mydas', ['bodyguard-standard', 'bodyguard-musician'], 258],
+    ['dogs-of-war', 'dow-mydas', ['bodyguard-standard'], 414, { optionCounts: { 'extra-bodyguards': 15 } }],
+    // p.67: 176 including magic items.
+    ['dogs-of-war', 'dow-marco-colombo', [], 176],
   ]
 
-  it.each(rows)('%s %s with %j costs %d', (armyId, unitId, optionIds, expected) => {
-    const entry: RosterEntry = { id: 'e', unitId, size: 1, optionIds, magicItemIds: [] }
+  it.each(rows)('%s %s with %j costs %d', (armyId, unitId, optionIds, expected, extra) => {
+    const entry: RosterEntry = { id: 'e', unitId, size: 1, optionIds, magicItemIds: [], ...extra }
     expect(entryPoints(entry, getArmy(armyId)!)).toBe(expected)
+  })
+
+  // A locked item cannot be bought on top: a stale pick (a roster saved before
+  // OLD-63 ticked it by hand) adds nothing, and toggling it changes nothing.
+  it.each([
+    ['bretonnia', 'br-louen-leoncoeur', 'mi-crown-of-bretonnia', 505],
+    ['bretonnia', 'br-louen-leoncoeur', 'mi-shining-armour', 505],
+    ['bretonnia', 'br-odo', 'mi-flail-of-fracasse', 110],
+    ['bretonnia', 'br-tancred', 'mi-sword-of-couronne', 265],
+    ['bretonnia', 'br-armand', 'mi-banner-of-the-lady-of-the-lake', 235],
+    ['chaos', 'ch-mordrek', 'mi-sword-of-transformation', 398],
+    ['chaos', 'ch-mordrek', 'mi-chaos-runeshield', 398],
+    ['norse', 'no-keorl-thunderhand', 'mi-dragon-slayer', 285],
+    ['norse', 'no-keorl-thunderhand', 'mi-thorims-ring', 285],
+    ['norse', 'no-sturmjarl', 'mi-gift-of-loki', 446],
+    ['norse', 'no-sturmjarl', 'mi-norse-runes', 446],
+    ['vampire-counts', 'vc-dieter-helsnicht', 'mi-flaming-staff-of-death', 690],
+    ['vampire-counts', 'vc-dieter-helsnicht', 'mi-rune-sword-of-chaos-of-grungni-iron-heart', 690],
+    ['vampire-counts', 'vc-heinrich-kemmler', 'mi-funereal-sword-of-chaos', 450],
+    ['vampire-counts', 'vc-heinrich-kemmler', 'mi-skull-staff', 450],
+    ['vampire-counts', 'vc-krell', 'mi-black-axe-of-krell', 280],
+    ['vampire-counts', 'vc-krell', 'mi-armour-of-the-defender', 280],
+    ['vampire-counts', 'vc-vlad-von-carstein', 'mi-carstein-ring', 680],
+  ])('%s %s cannot buy its fixed %s again (stays %d)', (armyId, unitId, itemId, expected) => {
+    const a = getArmy(armyId)!
+    const entry: RosterEntry = { id: 'e', unitId, size: 1, optionIds: [], magicItemIds: [itemId] }
+    expect(entryPoints(entry, a)).toBe(expected)
+    const roster: Roster = { id: 'r', name: 'R', armyId, pointsLimit: 3000, entries: [{ ...entry, magicItemIds: [] }] }
+    expect(toggleMagicItem(roster, 'e', itemId, a)).toBe(roster)
+  })
+
+  // Norsca PDF 34 and 32 print the headline without the items: Keorl 130,
+  // Sturmjarl 316. The items are priced as fixed items, so the totals hold.
+  it('Keorl and Sturmjarl carry the bare page headline and price their items as fixed items', () => {
+    const norse = getArmy('norse')!
+    const keorl = norse.units.find((u) => u.id === 'no-keorl-thunderhand')!
+    const sturmjarl = norse.units.find((u) => u.id === 'no-sturmjarl')!
+    expect(keorl.pointsPerModel).toBe(130)
+    expect(keorl.fixedMagicItems).toEqual([{ id: 'mi-dragon-slayer' }, { id: 'mi-thorims-ring' }])
+    expect(sturmjarl.pointsPerModel).toBe(316)
+    expect(sturmjarl.fixedMagicItems).toEqual([
+      { id: 'mi-gift-of-loki', points: 100 },
+      { id: 'mi-norse-runes', points: 30 },
+    ])
+    // The cards (PDF 35) price them at 50 and 75.
+    expect(norse.magicItems.find((i) => i.id === 'mi-gift-of-loki')!.points).toBe(50)
+    expect(norse.magicItems.find((i) => i.id === 'mi-norse-runes')!.points).toBe(75)
+  })
+
+  // Dogs of War p.67: the Navigator's Telescope is a special rule, not one of
+  // Marco's three magic items.
+  it("lists Marco Colombo's three magic items apart from the Telescope", () => {
+    const marco = getArmy('dogs-of-war')!.units.find((u) => u.id === 'dow-marco-colombo')!
+    expect(marco.specialRules).toContain('Fixed magic items: Gem of Lustria (ward), Gourd of Lustrian Wine, Scroll of Araby')
+    expect(marco.specialRules).toContain("Navigator's Telescope (special rule, not a magic item)")
   })
 
   // Imperio p.67-68: Karl Franz rides a Barded Warhorse (+7) or a Monster; the

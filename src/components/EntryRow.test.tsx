@@ -543,6 +543,43 @@ describe('EntryRow fixed magic items and fixed extras (OLD-63)', () => {
   })
 })
 
+// OLD-63, Bretonnia p.66-67: Louen's headline includes his page items, so the
+// Crown and the Armour of Brilliance print "included" in place of a price.
+describe('EntryRow included fixed items and signed option prices (OLD-63)', () => {
+  const miRows = (selector: string) =>
+    Array.from(container.querySelectorAll(`${selector} .mi-item`)).map((row) => [
+      row.querySelector('.mi-name')?.textContent,
+      (row.querySelector('input[type="checkbox"]') as HTMLInputElement | null)?.disabled,
+      row.querySelector('.mi-fixed-tag')?.textContent,
+      row.querySelector('.mi-pts')?.textContent,
+    ])
+
+  it('shows Louen\'s Crown and Armour tagged "fixed" and "included", with no price', () => {
+    const bretonnia = getArmy('bretonnia')!
+    const p = { ...props, actions: entryActions(() => {}, bretonnia, 'e1') }
+    render(<EntryRow entry={entry('br-louen-leoncoeur', { size: 1 })} army={bretonnia} {...p} />)
+    expand()
+    expect(miRows('.mi-selected')).toEqual([
+      ['Crown of Bretonnia', true, 'fixed', 'included'],
+      ['Shining Armour', true, 'fixed', 'included'],
+    ])
+    expect(container.querySelector('.mi-selected')?.textContent).not.toMatch(/\d+ pts/)
+  })
+
+  // Norsca PDF 32 and 35: the card-price option is worth -5.
+  it("prints Sturmjarl's card-price option as (-5), never (+-5)", () => {
+    const norse = getArmy('norse')!
+    const p = { ...props, actions: entryActions(() => {}, norse, 'e1') }
+    render(<EntryRow entry={entry('no-sturmjarl', { size: 1 })} army={norse} {...p} />)
+    expand()
+    const label = Array.from(container.querySelectorAll('.opt-checks label')).find((el) =>
+      el.textContent?.startsWith('Item-card prices'),
+    )
+    expect(label?.textContent).toContain('Item-card prices (Gift of Loki 50, Runes 75) (-5)')
+    expect(container.textContent).not.toContain('+-5')
+  })
+})
+
 // OLD-63 — a counted option (Orion's hounds) is a number input, not a checkbox.
 describe('EntryRow counted options (OLD-63)', () => {
   const hunter: UnitProfile = {

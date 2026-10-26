@@ -388,3 +388,31 @@ describe('exportRosterText counted options (OLD-63)', () => {
     expect(exportRosterText(r(), synth)).not.toContain('Hunting Hounds')
   })
 })
+
+// OLD-63, Norsca PDF 32 and 35: Sturmjarl's page prices the Gift of Loki and
+// his Runes at 100 and 30, the item cards at 50 and 75. The card-price option
+// is worth -5 and prints with its own sign.
+describe('exportRosterText negative option price (OLD-63)', () => {
+  const norse = getArmy('norse')!
+  const r: Roster = {
+    id: 'r',
+    name: 'Ejsgard',
+    armyId: 'norse',
+    pointsLimit: 2000,
+    entries: [{ id: 's', unitId: 'no-sturmjarl', size: 1, optionIds: ['card-prices'], magicItemIds: [] }],
+  }
+  const lines = (text: string) => text.split('\n').map((l) => l.trim())
+
+  it("prints Sturmjarl's card-price option as (-5 pts), never (+-5)", () => {
+    const text = exportRosterText(r, norse)
+    expect(lines(text)).toContain('+ Item-card prices (Gift of Loki 50, Runes 75) (-5 pts)')
+    expect(text).not.toContain('+-5')
+    expect(text).toContain('Stürmjarl, Shaman Lord of Ejsgard — 441 pts')
+  })
+
+  it('prints it in Spanish', () => {
+    expect(lines(exportRosterText(r, norse, 'es'))).toContain(
+      '+ Precios de las cartas (Don de Loki 50, Runas 75) (-5 ptos)',
+    )
+  })
+})

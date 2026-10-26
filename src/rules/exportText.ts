@@ -21,7 +21,7 @@ import {
   t,
 } from '../i18n/lang'
 import { isWizardLevelId } from '../data/unitOptions'
-import { companionMountProfile, partitionOptions, resolveStatNotes, statCell } from './entryView'
+import { companionMountProfile, partitionOptions, resolveStatNotes, signedPoints, statCell } from './entryView'
 
 /**
  * An option's label with its price, formatted exactly as the editor shows it:
@@ -38,7 +38,7 @@ function optionLabel(
 ): string {
   const name = isWizardLevelId(option.id) ? wizardLevelLabel(option.id, lang) : optionText(option.name, lang)
   const perModel = unit.role === 'regiment' && !option.flat && !option.perCrewman ? t('perModel', lang) : ''
-  return `${name} (+${unitOptionCost(unit, option, optionIds)} ${t('pts', lang)}${perModel})`
+  return `${name} (${signedPoints(unitOptionCost(unit, option, optionIds))} ${t('pts', lang)}${perModel})`
 }
 
 /**

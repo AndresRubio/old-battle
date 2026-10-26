@@ -10,6 +10,15 @@ import { matchesQuery, type Lang } from '../i18n/lang'
  */
 
 /**
+ * A price with its sign, as an option label prints it: `+5`, `-5`, `+0.5`.
+ * Sturmjarl's item-card prices are worth -5 (OLD-63), which a hard-coded `+`
+ * would misprint as `+-5`.
+ */
+export function signedPoints(n: number): string {
+  return n < 0 ? `${n}` : `+${n}`
+}
+
+/**
  * The text one characteristic column shows: the value, or "–" when the book's
  * row leaves that column blank.
  *

@@ -265,14 +265,17 @@ const units: UnitProfile[] = [
     name: 'Keorl Thunderhand, Dragon Slayer',
     nameEs: 'Keorl Mano de Trueno, Matadragones',
     role: 'character',
-    pointsPerModel: 285, // 130 + 125 Dragon Slayer + 30 Thorim's Ring
+    // OLD-63, Norsca PDF 34: "130 points (+125 Dragon Slayer, +30 Thorim's Ring)".
+    // The Dragon Slayer is the common Matadragones (same effect, 125).
+    pointsPerModel: 130,
+    fixedMagicItems: [{ id: 'mi-dragon-slayer' }, { id: 'mi-thorims-ring' }],
     statLine: { M: 4, WS: 7, BS: 6, S: 4, T: 4, W: 3, I: 6, A: 4, Ld: 10 },
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
     specialRules: [
-      "Special character — replaces the General of the Norse (0-1); cost includes the Dragon Slayer sword (+125) and Thorim's Ring (+30)",
+      "Special character — replaces the General of the Norse (0-1); Dragon Slayer sword (+125) and Thorim's Ring (+30) are fixed magic items",
       'Light armour; Counter-charge; may form a shield wall with Huscarls',
       'Beast-Slayer — always strikes first when attacking or attacked by monsters (unless ridden)',
       'Immune to any psychology test caused by monsters',
@@ -284,17 +287,33 @@ const units: UnitProfile[] = [
     name: 'Stürmjarl, Shaman Lord of Ejsgard',
     nameEs: 'Stürmjarl, Señor Chamán de Ejsgard',
     role: 'character',
-    // 446 = 316 + 100 Gift of Loki + 30 Runes as printed in the special-character
-    // entry. NOTE: the Journal's own magic-item cards price these at 50 and 75 —
-    // the source contradicts itself; the printed entry total is kept.
-    pointsPerModel: 446,
+    // OLD-63, Norsca PDF 32: "316 points (+100 Gift of Loki, +30 Runes)". The
+    // card sheet (PDF 35) prices them at 50 and 75; the player picks which
+    // (user choice, owner ruling 2026-10-26). Page prices by default: 446.
+    pointsPerModel: 316,
+    fixedMagicItems: [
+      { id: 'mi-gift-of-loki', points: 100 },
+      { id: 'mi-norse-runes', points: 30 },
+    ],
+    options: [
+      {
+        id: 'card-prices',
+        name: 'Item-card prices (Gift of Loki 50, Runes 75)',
+        pointsPerModel: -5,
+        flat: true,
+        description:
+          "Stürmjarl's page (Norsca PDF 32) prices the Gift of Loki at 100 and his Runes at 30; the magic-item cards (PDF 35) print 50 and 75. Tick to use the card prices: 125 instead of 130, so 441 in all.",
+        descEs:
+          'La página de Stürmjarl (Norsca PDF 32) valora el Don de Loki en 100 y sus Runas en 30; las cartas de objetos mágicos (PDF 35) dicen 50 y 75. Márcalo para usar los precios de las cartas: 125 en lugar de 130, 441 en total.',
+      },
+    ],
     statLine: { M: 4, WS: 5, BS: 4, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 9 },
     isCharacter: true,
     characterRank: 'wizard4',
     lores: ['dark', 'amber', 'ice'],
     max: 1,
     specialRules: [
-      'Special character — Shaman Lord (0-1); cost includes the Gift of Loki (+100) and his Runes (+30)',
+      'Special character — Shaman Lord (0-1); Gift of Loki (+100) and Runes (+30) are fixed magic items; the item cards price them at 50 and 75',
       'Hand weapon; wears no armour (it would interfere with his spellcasting)',
       'Causes fear; Hatred when in the front rank of a Norse unit',
       'Gift of Loki — may cast Dark Magic; after each casting roll a D6: on a 1 he may do nothing until the next magic phase',

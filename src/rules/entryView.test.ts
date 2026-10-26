@@ -8,6 +8,7 @@ import {
   filterMagicItems,
   magicStandardNeedsBearer,
   resolveStatNotes,
+  signedPoints,
   statCell,
 } from './entryView'
 import { mountOptionCost } from './points'
@@ -268,5 +269,16 @@ describe('filterMagicItems', () => {
   it('applies the points ceiling; blank means no cap', () => {
     expect(filterMagicItems(items, '', '50').map((i) => i.id)).toEqual(['a'])
     expect(filterMagicItems(items, '', '').map((i) => i.id)).toEqual(['a', 'b'])
+  })
+})
+
+// OLD-63: an option price with its sign. Sturmjarl's item-card prices are worth
+// -5 (Norsca PDF 32 and 35), which "(+-5)" would misprint.
+describe('signedPoints', () => {
+  it('prints a plus before a positive or zero price and keeps a minus', () => {
+    expect(signedPoints(5)).toBe('+5')
+    expect(signedPoints(-5)).toBe('-5')
+    expect(signedPoints(0.5)).toBe('+0.5')
+    expect(signedPoints(0)).toBe('+0')
   })
 })
