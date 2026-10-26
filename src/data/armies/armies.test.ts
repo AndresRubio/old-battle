@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { ARMIES, getArmy } from './index'
 import { validateRoster } from '../../rules/validate'
-import { entryPoints, pointsByRole, effectiveStatLine } from '../../rules/points'
+import { entryPoints, pointsByRole, effectiveStatLine, carriedMagicItems } from '../../rules/points'
 import { findRule } from '../rules'
 import { summarize } from '../../rules/summary'
 import { MAGIC_ITEM_ALLOWANCE } from '../../rules/magicItems'
@@ -2901,6 +2901,7 @@ describe('OLD-63: special characters charge their book extras', () => {
     ['norse', 'no-sturmjarl', 'mi-norse-runes', 446],
     ['vampire-counts', 'vc-dieter-helsnicht', 'mi-flaming-staff-of-death', 690],
     ['vampire-counts', 'vc-dieter-helsnicht', 'mi-rune-sword-of-chaos-of-grungni-iron-heart', 690],
+    ['vampire-counts', 'vc-dieter-helsnicht', 'mi-power-scroll', 690],
     ['vampire-counts', 'vc-heinrich-kemmler', 'mi-funereal-sword-of-chaos', 450],
     ['vampire-counts', 'vc-heinrich-kemmler', 'mi-skull-staff', 450],
     ['vampire-counts', 'vc-krell', 'mi-black-axe-of-krell', 280],
@@ -2917,6 +2918,23 @@ describe('OLD-63: special characters charge their book extras', () => {
     expect(entryPoints(entry, a)).toBe(expected)
     const roster: Roster = { id: 'r', name: 'R', armyId, pointsLimit: 3000, entries: [{ ...entry, magicItemIds: [] }] }
     expect(toggleMagicItem(roster, 'e', itemId, a)).toBe(roster)
+  })
+
+  // Condes Vampiro p.70: Dieter's 690 holds Staff, Rune Sword and Power Scroll,
+  // three carried items against his level 4 allowance of four.
+  it('Dieter carries three locked items inside 690', () => {
+    const a = getArmy('vampire-counts')!
+    const unit = a.units.find((u) => u.id === 'vc-dieter-helsnicht')!
+    const entry: RosterEntry = { id: 'e', unitId: unit.id, size: 1, optionIds: [], magicItemIds: [] }
+    const carried = carriedMagicItems(entry, unit, a)
+    expect(carried.map((c) => c.item.id)).toEqual([
+      'mi-flaming-staff-of-death',
+      'mi-rune-sword-of-chaos-of-grungni-iron-heart',
+      'mi-power-scroll',
+    ])
+    expect(carried.every((c) => c.fixed && c.included && c.points === 0)).toBe(true)
+    expect(unit.fixedMagicItems!.length).toBeLessThanOrEqual(MAGIC_ITEM_ALLOWANCE[unit.characterRank!])
+    expect(MAGIC_ITEM_ALLOWANCE[unit.characterRank!]).toBe(4)
   })
 
   // Norsca PDF 34 and 32 print the headline without the items: Keorl 130,

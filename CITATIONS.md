@@ -1615,7 +1615,9 @@ chosen from the Monsters List at the appropriate points cost." He now has the Kn
 
 **Dieter's tag.** The Vampire Counts tag listed the Skull Staff, which is Kemmler's (p.71). Dieter's
 p.70 table prints the Báculo Llameante de la Muerte (50), Espada Rúnica del Caos (65) and Pergamino
-de Energía (30); the tag now names the Flaming Staff of Death.
+de Energía (30); the tag now names the Flaming Staff of Death. The Power Scroll (30) is inside his
+690 and locked as included (owner decision 2026-10-26), so he carries three items against an
+allowance of four.
 
 **Krell's slots.** p.72 gives him two magic items; a champion's rank allows one, so
 `magicItemSlots: 2` holds both.

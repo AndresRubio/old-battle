@@ -482,10 +482,11 @@ const units: UnitProfile[] = [
     role: 'character',
     pointsPerModel: 690,
     // OLD-63, p.69: each character's value is his total cost, magic items
-    // included. p.70: the Flaming Staff of Death and the Chaos Runic Sword.
+    // included. p.70: the Flaming Staff of Death, the Chaos Runic Sword and the Power Scroll.
     fixedMagicItems: [
       { id: 'mi-flaming-staff-of-death', included: true },
       { id: 'mi-rune-sword-of-chaos-of-grungni-iron-heart', included: true },
+      { id: 'mi-power-scroll', included: true },
     ],
     statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 10 },
     isCharacter: true,
