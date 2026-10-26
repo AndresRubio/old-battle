@@ -83,6 +83,28 @@ describe('EntryRow cavalry profiles', () => {
   })
 })
 
+// OLD-64 — Ludwig's +50 Battle Standard Bearer option (Imperio p.69).
+describe('EntryRow Ludwig Schwartzhelm battle standard option', () => {
+  const optionLabels = () =>
+    Array.from(container.querySelectorAll('.opt-checks label')).map((el) =>
+      (el.textContent ?? '').replace('ⓘ', '').trim(),
+    )
+
+  it('offers the option with its +50 cost', () => {
+    setLang('en')
+    render(<EntryRow entry={entry('emp-ludwig', { size: 1 })} army={army} {...props} />)
+    expand()
+    expect(optionLabels()).toContain('Battle Standard Bearer (+50)')
+  })
+
+  it('translates the option label to Spanish', () => {
+    setLang('es')
+    render(<EntryRow entry={entry('emp-ludwig', { size: 1 })} army={army} {...props} />)
+    expand()
+    expect(optionLabels()).toContain('Portaestandarte de Batalla (+50)')
+  })
+})
+
 // OLD-8 — a chariot taken as a character's mount renders its own profiles and
 // nested option checkboxes beneath the mount radio list.
 describe('EntryRow chariot mounts (Orcs & Goblins)', () => {
