@@ -6,6 +6,22 @@ import { profileName } from '../i18n/lang'
 
 const empire = getArmy('empire')!
 
+describe('exportRosterText — Battle Standard Bearer surcharge (OLD-64)', () => {
+  const ros = (isBSB: boolean): Roster => ({
+    id: 'r', name: 'n', armyId: 'empire', pointsLimit: 1000,
+    entries: [{ id: '1', unitId: 'emp-ludwig', size: 1, optionIds: [], magicItemIds: [], isBSB }],
+  })
+
+  it('itemises the +50 under Ludwig when he is toggled BSB', () => {
+    expect(exportRosterText(ros(true), empire)).toContain('    + Battle Standard Bearer (+50 pts)')
+    expect(exportRosterText(ros(true), empire, 'es')).toContain('    + Portaestandarte de Batalla (+50 ptos)')
+  })
+
+  it('prints no BSB line when he is not', () => {
+    expect(exportRosterText(ros(false), empire)).not.toContain('+ Battle Standard Bearer')
+  })
+})
+
 describe('exportRosterText', () => {
   const roster: Roster = {
     id: 'r',

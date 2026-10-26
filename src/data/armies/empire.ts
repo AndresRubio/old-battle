@@ -266,8 +266,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     canBeBSB: true,
-    // Imperio p.69: +50 pts when he acts as Battle Standard Bearer. No extra magic item slot.
-    options: [{ id: 'bsb', name: 'Battle Standard Bearer', pointsPerModel: 50, flat: true }],
+    bsbPoints: 50, // his own rule below: "+50 pts to act as Battle Standard Bearer"
     max: 1,
     mounts: [BARDED_WARHORSE_MOUNT],
     specialRules: [

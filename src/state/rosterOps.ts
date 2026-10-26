@@ -79,6 +79,7 @@ export function duplicateEntry(roster: Roster, entryId: string, id?: string): Ro
     magicItemIds: [...src.magicItemIds],
     ...(src.optionCounts ? { optionCounts: { ...src.optionCounts } } : {}),
     isGeneral: false,
+    isBSB: false,
   }
   const entries = [...roster.entries]
   entries.splice(idx + 1, 0, copy)
@@ -202,6 +203,20 @@ export function setGeneral(roster: Roster, entryId: string): Roster {
   }
 }
 
+/**
+ * Toggle an entry in or out of acting as the army Battle Standard Bearer.
+ * Turning it on clears the toggle on every other entry: an army has one BSB.
+ */
+export function toggleBSB(roster: Roster, entryId: string): Roster {
+  const on = !roster.entries.find((e) => e.id === entryId)?.isBSB
+  return {
+    ...roster,
+    entries: roster.entries.map((e) =>
+      e.id === entryId ? { ...e, isBSB: on } : on && e.isBSB ? { ...e, isBSB: false } : e,
+    ),
+  }
+}
+
 /** Wizard level options are mutually exclusive: selecting one clears the others. */
 export function selectWizardLevel(roster: Roster, entryId: string, army: Army, optionId: string | null): Roster {
   const entry = roster.entries.find((e) => e.id === entryId)
@@ -224,6 +239,7 @@ export interface EntryActions {
   toggleMagicItem(itemId: string): void
   selectMagicStandard(itemId: string | null): void
   setGeneral(): void
+  toggleBSB(): void
   duplicate(): void
   moveUp(): void
   moveDown(): void
@@ -250,6 +266,7 @@ export function entryActions(
     toggleMagicItem: (itemId) => commit((prev) => toggleMagicItem(prev, entryId, itemId, army)),
     selectMagicStandard: (itemId) => commit((prev) => selectMagicStandard(prev, entryId, itemId)),
     setGeneral: () => commit((prev) => setGeneral(prev, entryId)),
+    toggleBSB: () => commit((prev) => toggleBSB(prev, entryId)),
     duplicate: () => commit((prev) => duplicateEntry(prev, entryId)),
     moveUp: () => commit((prev) => moveEntry(prev, entryId, -1)),
     moveDown: () => commit((prev) => moveEntry(prev, entryId, 1)),

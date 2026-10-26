@@ -6,7 +6,6 @@ barding	barding	Barding (steeds)
 barding	barding	Barding for warhorse
 barding	mount-chaos-steed-barding	Barding
 barding	nightmare-barding	Nightmare barding
-battle-standard	bsb	Battle Standard Bearer
 bow	bow	Bow
 bow	bow	Bow (Long bow)
 bow	bow	Bows

@@ -66,6 +66,13 @@ export function assertArmyIntegrity(army: Army): Army {
   for (const u of army.units) {
     if (u.pointsPerModel < 0) fail(`${u.id}: negative pointsPerModel`)
 
+    // A BSB surcharge (OLD-64) only means something on a character who may
+    // OPTIONALLY become the BSB — a dedicated BSB unit has it in its base cost.
+    if (u.bsbPoints !== undefined) {
+      if (!u.canBeBSB || u.isBSB) fail(`${u.id}: bsbPoints needs canBeBSB and no isBSB`)
+      if (u.bsbPoints < 0) fail(`${u.id}: negative bsbPoints`)
+    }
+
     // Every characteristic column a unit or a mount claims to have must be
     // either a number or a book token — see `unaccountedStats`.
     if (u.statLine) {

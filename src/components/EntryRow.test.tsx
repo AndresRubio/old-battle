@@ -83,28 +83,6 @@ describe('EntryRow cavalry profiles', () => {
   })
 })
 
-// OLD-64 — Ludwig's +50 Battle Standard Bearer option (Imperio p.69).
-describe('EntryRow Ludwig Schwartzhelm battle standard option', () => {
-  const optionLabels = () =>
-    Array.from(container.querySelectorAll('.opt-checks label')).map((el) =>
-      (el.textContent ?? '').replace('ⓘ', '').trim(),
-    )
-
-  it('offers the option with its +50 cost', () => {
-    setLang('en')
-    render(<EntryRow entry={entry('emp-ludwig', { size: 1 })} army={army} {...props} />)
-    expand()
-    expect(optionLabels()).toContain('Battle Standard Bearer (+50)')
-  })
-
-  it('translates the option label to Spanish', () => {
-    setLang('es')
-    render(<EntryRow entry={entry('emp-ludwig', { size: 1 })} army={army} {...props} />)
-    expand()
-    expect(optionLabels()).toContain('Portaestandarte de Batalla (+50)')
-  })
-})
-
 // OLD-8 — a chariot taken as a character's mount renders its own profiles and
 // nested option checkboxes beneath the mount radio list.
 describe('EntryRow chariot mounts (Orcs & Goblins)', () => {
@@ -654,5 +632,47 @@ describe('EntryRow counted options (OLD-63)', () => {
     expand()
     expect(container.querySelector('.counted-each')?.textContent).toBe('(+5 c/u)')
     expect(subtotals()[0]).toBe('15 ptos')
+  })
+})
+
+// OLD-64 — a character with a documented BSB surcharge gets a toggle.
+describe('EntryRow Battle Standard Bearer toggle', () => {
+  const bsbButton = () => (container.querySelector('.bsb-toggle') as HTMLButtonElement | null) ?? undefined
+
+  it('offers Ludwig the toggle, priced from his data', () => {
+    setLang('en')
+    render(<EntryRow entry={entry('emp-ludwig', { size: 1 })} army={army} {...props} />)
+    expand()
+    expect(bsbButton()?.textContent).toBe('Make Battle Standard Bearer (+50)')
+  })
+
+  it('shows the remove label and adds the +50 once toggled', () => {
+    setLang('es')
+    render(<EntryRow entry={entry('emp-ludwig', { size: 1, isBSB: true })} army={army} {...props} />)
+    expect(container.querySelector('.entry-pts')?.textContent).toMatch(/^120 /)
+    expand()
+    expect(bsbButton()?.textContent).toBe('Quitar Portaestandarte de Batalla')
+  })
+
+  it('commits the toggle through the entry actions', () => {
+    setLang('en')
+    let roster = {
+      id: 'r', name: 't', armyId: 'empire', pointsLimit: 1000,
+      entries: [entry('emp-ludwig', { size: 1 })],
+    }
+    const actions = entryActions((fn) => { roster = fn(roster) }, army, 'e1')
+    render(<EntryRow entry={roster.entries[0]} army={army} actions={actions} canMoveUp={false} canMoveDown={false} />)
+    expand()
+    act(() => bsbButton()!.click())
+    expect(roster.entries[0].isBSB).toBe(true)
+  })
+
+  it('offers no toggle to a canBeBSB character without a documented cost', () => {
+    setLang('en')
+    const dow = getArmy('dogs-of-war')!
+    expect(dow.units.find((u) => u.id === 'dow-paymaster')!.canBeBSB).toBe(true)
+    render(<EntryRow entry={entry('dow-paymaster', { size: 1 })} army={dow} {...props} />)
+    expand()
+    expect(bsbButton()).toBeUndefined()
   })
 })

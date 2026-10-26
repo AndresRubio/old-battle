@@ -229,6 +229,9 @@ const STRINGS = {
   // EntryRow
   general: { en: 'General', es: 'General' },
   makeGeneral: { en: '★ Make General', es: '★ Nombrar General' },
+  battleStandard: { en: 'Battle Standard Bearer', es: 'Portaestandarte de Batalla' },
+  makeBSB: { en: 'Make Battle Standard Bearer', es: 'Nombrar Portaestandarte de Batalla' },
+  removeBSB: { en: 'Remove Battle Standard Bearer', es: 'Quitar Portaestandarte de Batalla' },
   specialAbilities: { en: 'Special Abilities', es: 'Habilidades Especiales' },
   models: { en: 'Models', es: 'Miniaturas' },
   min: { en: 'min', es: 'mín' },
@@ -288,8 +291,6 @@ export const ruleText = (phrase: string, lang: Lang): string =>
 /** Spanish names for the common (English-named) equipment options. */
 const OPTION_ES: Record<string, string> = {
   Shield: 'Escudo',
-  // OLD-64: Ludwig Schwartzhelm's +50 option (Imperio p.69).
-  'Battle Standard Bearer': 'Portaestandarte de Batalla',
   // OLD-63: Thorgrim's Throne (Enanos p.94), a player choice.
   'Throne of Power': 'Trono del Poder',
   'Hunting Hounds': 'Mastines de Caza',

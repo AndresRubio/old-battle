@@ -1365,8 +1365,9 @@ that shifted the Wheel row one column, and had the Engineer's Ld as 6 instead of
 #### Ludwig Schwartzhelm: acting as Battle Standard Bearer (OLD-64, 2026-10-26)
 **Printed p.69**, Ludwig's cost table: `+50 | si actúa como Estandarte de Batalla`. The data flagged
 him `canBeBSB` and carried the cost only as the tag *"+50 pts to act as Battle Standard Bearer"*, so
-the app never added the 50. He now has a flat option `bsb` at +50, charged once. It adds no magic item
-slot, since the book gives him no other magic item. The Sword of Justice's +50 is OLD-63.
+the app never added the 50. He now has `bsbPoints: 50`, and the editor's "Make Battle Standard Bearer"
+toggle (`entry.isBSB`) charges it once: 70 on his own, 120 as Battle Standard Bearer. It adds no magic
+item slot, since the book gives him no other magic item. The Sword of Justice's +50 is OLD-63.
 
 #### Empire: special characters' extra costs (OLD-63, 2026-10-26)
 **Karl Franz, Imperio printed p.67-68**, cost table: `Karl Franz 110 puntos / +100 Martillo de

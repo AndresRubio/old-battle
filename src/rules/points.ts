@@ -173,6 +173,16 @@ export function effectiveStatLine(unit: UnitProfile, optionIds: string[]): Parti
   return result
 }
 
+/**
+ * Surcharge for a character toggled to act as the army Battle Standard Bearer
+ * (`entry.isBSB`): the unit's own `bsbPoints`. A dedicated BSB unit
+ * (`unit.isBSB`) already has the cost in its profile, and a unit with no
+ * documented `bsbPoints` adds nothing.
+ */
+export function bsbPoints(unit: UnitProfile, entry: RosterEntry): number {
+  return entry.isBSB && unit.canBeBSB && !unit.isBSB ? (unit.bsbPoints ?? 0) : 0
+}
+
 /** One magic item an entry carries: a fixed one from the unit's page or one the user picked. */
 export interface CarriedMagicItem {
   item: MagicItem
@@ -236,7 +246,7 @@ export function listedUnitPoints(unit: UnitProfile, army: Army): number {
   return unit.pointsPerModel + fixedItems + fixedExtrasPoints(unit)
 }
 
-/** Total points for a single roster entry: models * (base + per-model options) + flat options + counted options + mount (+ its options) + magic items (fixed and picked) + fixed extras. */
+/** Total points for a single roster entry: models * (base + per-model options) + flat options + counted options + BSB surcharge + mount (+ its options) + magic items (fixed and picked) + fixed extras. */
 export function entryPoints(entry: RosterEntry, army: Army): number {
   const unit = findUnit(army, entry.unitId)
   if (!unit) return 0
@@ -256,6 +266,7 @@ export function entryPoints(entry: RosterEntry, army: Army): number {
     modelPoints +
     flatPoints +
     countedOptionPoints(unit, entry) +
+    bsbPoints(unit, entry) +
     mountPoints(unit, entry.mountId) +
     mountOptionPoints(unit, entry.mountId, entry.optionIds) +
     magicPoints +
