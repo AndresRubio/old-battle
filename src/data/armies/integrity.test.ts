@@ -329,6 +329,22 @@ describe('fixed magic items and fixed extras', () => {
     )
   })
 
+  it('throws when a fixed item names an option the unit does not have', () => {
+    const item = { id: 'mi-a', points: 5, pointsWithOption: 3, pointsOptionId: 'gone' }
+    expect(() => assertArmyIntegrity(withUnit(hero({ fixedMagicItems: [item] })))).toThrow(
+      /kf\/mi-a: pointsOptionId gone is not an option of the unit/,
+    )
+  })
+
+  it('throws when a fixed item has an option price without its option, or the reverse', () => {
+    expect(() =>
+      assertArmyIntegrity(withUnit(hero({ fixedMagicItems: [{ id: 'mi-a', pointsWithOption: 3 }] }))),
+    ).toThrow(/kf\/mi-a: pointsWithOption and pointsOptionId go together/)
+    expect(() =>
+      assertArmyIntegrity(withUnit(hero({ fixedMagicItems: [{ id: 'mi-a', pointsOptionId: 'o' }] }))),
+    ).toThrow(/kf\/mi-a: pointsWithOption and pointsOptionId go together/)
+  })
+
   it('throws when fixed items sit on a non-character', () => {
     const regiment = unit({ id: 'r', fixedMagicItems: [{ id: 'mi-a' }] })
     expect(() => assertArmyIntegrity(withUnit(regiment))).toThrow(/r: has fixed magic items but is not a character/)

@@ -830,7 +830,7 @@ const units: UnitProfile[] = [
     fixedExtras: [{ id: 'chariot-of-arkhan', name: 'Chariot of Arkhan', nameEs: 'Carruaje de Arkhan', points: 50 }],
     profiles: [
       {
-        name: 'Chariot of Arkhan', nameEs: 'Carro de Arkhan',
+        name: 'Chariot of Arkhan', nameEs: 'Carruaje de Arkhan',
         // OLD-33 — printed p.91 = PDF 93: "Carruaje de Arkhan - 4 - 6 6 3 - 1D6 -".
         // OLD-39/OLD-43 — the 1D6 Attacks prints via `statNotes`; StatLine.A stays
         // `number` and unset here. See CITATIONS.md.
@@ -870,7 +870,7 @@ const units: UnitProfile[] = [
       'Immune to psychology',
       'Terror',
       'May ride a Skeletal Steed (+2)',
-      'Magic items: Armour of the Defender +50, Black Axe of Krell +125',
+      'Fixed magic items: Armour of the Defender +50, Black Axe of Krell +125',
     ],
   },
   {
@@ -897,7 +897,7 @@ const units: UnitProfile[] = [
       'Terror',
       'Double wounds from fire/flaming attacks and spells',
       'May ride a Skeletal Steed (+2)',
-      'Magic items: Staff of Osiris +50, Crown of the Tomb King +75, Skull Flail +30',
+      'Fixed magic items: Staff of Osiris +50, Crown of the Tomb King +75, Flail of Skulls +30',
     ],
   },
   {

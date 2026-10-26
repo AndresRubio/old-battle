@@ -678,3 +678,29 @@ describe('entryPoints — optional Battle Standard Bearer surcharge (OLD-64)', (
     expect(entryPoints(mk({ unitId: 'emp-ludwig', optionIds: ['bsb'], isBSB: true }), empire)).toBe(120)
   })
 })
+
+// OLD-70, Norsca PDF 32 and 35: Sturmjarl's page prices the Gift of Loki and the
+// Runes at 100 and 30, the item cards at 50 and 75. Ticking the card-price option
+// moves the locked rows to the card prices, and the option itself costs nothing,
+// so the total is the same 441 as before the rows followed the option.
+describe('Sturmjarl card prices (OLD-70)', () => {
+  const norse = getArmy('norse')!
+  const sturmjarl = norse.units.find((u) => u.id === 'no-sturmjarl')!
+  const rows = (optionIds: string[]) =>
+    carriedMagicItems(mk({ unitId: 'no-sturmjarl', optionIds }), sturmjarl, norse).map((c) => [c.item.id, c.points])
+
+  it('shows the page prices by default and the card prices when the option is ticked', () => {
+    expect(rows([])).toEqual([['mi-gift-of-loki', 100], ['mi-norse-runes', 30]])
+    expect(rows(['card-prices'])).toEqual([['mi-gift-of-loki', 50], ['mi-norse-runes', 75]])
+  })
+
+  it('keeps the totals: 446 by page prices, 441 by card prices, the option itself free', () => {
+    expect(entryPoints(mk({ unitId: 'no-sturmjarl' }), norse)).toBe(446)
+    expect(entryPoints(mk({ unitId: 'no-sturmjarl', optionIds: ['card-prices'] }), norse)).toBe(441)
+    expect(unitOptionCost(sturmjarl, sturmjarl.options!.find((o) => o.id === 'card-prices')!, ['card-prices'])).toBe(0)
+  })
+
+  it('lists him at the page price in the unit picker', () => {
+    expect(listedUnitPoints(sturmjarl, norse)).toBe(446)
+  })
+})

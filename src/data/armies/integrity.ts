@@ -179,6 +179,12 @@ export function assertArmyIntegrity(army: Army): Army {
           fail(`${u.id}/${f.id}: fixed magic item sets both points and included`)
         }
         if (f.points !== undefined && f.points < 0) fail(`${u.id}/${f.id}: negative fixed magic item points`)
+        // OLD-70: the card-price switch needs both halves, and the option must exist.
+        if ((f.pointsWithOption === undefined) !== (f.pointsOptionId === undefined)) {
+          fail(`${u.id}/${f.id}: pointsWithOption and pointsOptionId go together`)
+        } else if (f.pointsOptionId !== undefined && !(u.options ?? []).some((o) => o.id === f.pointsOptionId)) {
+          fail(`${u.id}/${f.id}: pointsOptionId ${f.pointsOptionId} is not an option of the unit`)
+        }
       }
       const dupFixed = dupes(u.fixedMagicItems.map((f) => f.id))
       if (dupFixed.length) fail(`${u.id}: duplicate fixed magic items: ${dupFixed.join(', ')}`)

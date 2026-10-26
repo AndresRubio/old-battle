@@ -495,7 +495,7 @@ const units: UnitProfile[] = [
       'Eternal Damnation — random profile: WS 1D6+4, S 1D3+3, T 1D3+3, A 1D6+1 (re-roll one each Chaos turn)',
       'Rides a barded Chaos Steed (M20→8") → 1+ armour save',
       'No Mark of Chaos',
-      'Fixed magic items: Sword of Change (50), Chaos Runeshield (50), Eternal Damnation reward (15)',
+      'Fixed magic items: Sword of Transformation (50), Chaos Runeshield (50), Eternal Damnation reward (15)',
     ],
   },
   {

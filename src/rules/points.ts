@@ -204,9 +204,13 @@ export function fixedExtrasPoints(unit: UnitProfile): number {
   return (unit.fixedExtras ?? []).reduce((sum, x) => sum + x.points, 0)
 }
 
-/** What a fixed item adds on top of the headline: 0 when included, else the page override or the card price. */
-const fixedItemPoints = (f: FixedMagicItem, item: MagicItem): number =>
-  f.included ? 0 : f.points ?? item.points
+/** What a fixed item adds on top of the headline: 0 when included, else the price of its ticked option (OLD-70), the page override or the card price. */
+const fixedItemPoints = (f: FixedMagicItem, item: MagicItem, optionIds: string[] = []): number =>
+  f.included
+    ? 0
+    : f.pointsWithOption !== undefined && f.pointsOptionId && optionIds.includes(f.pointsOptionId)
+      ? f.pointsWithOption
+      : f.points ?? item.points
 
 /**
  * Every magic item the entry carries (OLD-63): the unit's fixed items first,
@@ -222,7 +226,7 @@ export function carriedMagicItems(entry: RosterEntry, unit: UnitProfile, army: A
     const item = findMagicItem(army, f.id)
     if (!item || seen.has(item.id)) continue
     seen.add(item.id)
-    carried.push({ item, fixed: true, included: Boolean(f.included), points: fixedItemPoints(f, item) })
+    carried.push({ item, fixed: true, included: Boolean(f.included), points: fixedItemPoints(f, item, entry.optionIds) })
   }
   for (const id of entry.magicItemIds) {
     const item = findMagicItem(army, id)

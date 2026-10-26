@@ -292,14 +292,16 @@ const units: UnitProfile[] = [
     // (user choice, owner ruling 2026-10-26). Page prices by default: 446.
     pointsPerModel: 316,
     fixedMagicItems: [
-      { id: 'mi-gift-of-loki', points: 100 },
-      { id: 'mi-norse-runes', points: 30 },
+      { id: 'mi-gift-of-loki', points: 100, pointsWithOption: 50, pointsOptionId: 'card-prices' },
+      { id: 'mi-norse-runes', points: 30, pointsWithOption: 75, pointsOptionId: 'card-prices' },
     ],
     options: [
       {
         id: 'card-prices',
         name: 'Item-card prices (Gift of Loki 50, Runes 75)',
-        pointsPerModel: -5,
+        // The two rows above carry the card prices while this is ticked (OLD-70),
+        // so the option adds nothing itself: 316 + 50 + 75 = 441.
+        pointsPerModel: 0,
         flat: true,
         description:
           "Stürmjarl's page (Norsca PDF 32) prices the Gift of Loki at 100 and his Runes at 30; the magic-item cards (PDF 35) print 50 and 75. Tick to use the card prices: 125 instead of 130, so 441 in all.",

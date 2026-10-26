@@ -209,6 +209,13 @@ export interface FixedMagicItem {
   id: string
   /** This character's page price, when it differs from the item card. The card keeps its price for everyone else. */
   points?: number
+  /**
+   * The price this row shows while the unit's option `pointsOptionId` is ticked on the entry
+   * (OLD-70). Stürmjarl's card-price option moves the two rows to the item-card prices and costs 0.
+   */
+  pointsWithOption?: number
+  /** The option that switches the row to `pointsWithOption`. Must exist on the unit (integrity.ts). */
+  pointsOptionId?: string
   /** The printed headline already contains the item: carried and locked, adds 0 on top of pointsPerModel. */
   included?: boolean
 }

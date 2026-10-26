@@ -406,9 +406,10 @@ describe('exportRosterText counted options (OLD-63)', () => {
 })
 
 // OLD-63, Norsca PDF 32 and 35: Sturmjarl's page prices the Gift of Loki and
-// his Runes at 100 and 30, the item cards at 50 and 75. The card-price option
-// is worth -5 and prints with its own sign.
-describe('exportRosterText negative option price (OLD-63)', () => {
+// his Runes at 100 and 30, the item cards at 50 and 75. With the card-price
+// option ticked (OLD-70) the locked rows print the card prices and the option
+// itself is free.
+describe('exportRosterText Sturmjarl card prices (OLD-63, OLD-70)', () => {
   const norse = getArmy('norse')!
   const r: Roster = {
     id: 'r',
@@ -419,16 +420,24 @@ describe('exportRosterText negative option price (OLD-63)', () => {
   }
   const lines = (text: string) => text.split('\n').map((l) => l.trim())
 
-  it("prints Sturmjarl's card-price option as (-5 pts), never (+-5)", () => {
+  it('prints the rows at the card prices and the option at +0, ticked', () => {
     const text = exportRosterText(r, norse)
-    expect(lines(text)).toContain('+ Item-card prices (Gift of Loki 50, Runes 75) (-5 pts)')
-    expect(text).not.toContain('+-5')
+    expect(lines(text)).toContain('+ Item-card prices (Gift of Loki 50, Runes 75) (+0 pts)')
+    expect(text).toContain('Gift of Loki (50 pts) [fixed]')
+    expect(text).toContain('Runes (Rune-Bones) (75 pts) [fixed]')
     expect(text).toContain('Stürmjarl, Shaman Lord of Ejsgard — 441 pts')
+  })
+
+  it('prints the rows at the page prices when the option is not ticked', () => {
+    const text = exportRosterText({ ...r, entries: [{ ...r.entries[0], optionIds: [] }] }, norse)
+    expect(text).toContain('Gift of Loki (100 pts) [fixed]')
+    expect(text).toContain('Runes (Rune-Bones) (30 pts) [fixed]')
+    expect(text).toContain('Stürmjarl, Shaman Lord of Ejsgard — 446 pts')
   })
 
   it('prints it in Spanish', () => {
     expect(lines(exportRosterText(r, norse, 'es'))).toContain(
-      '+ Precios de las cartas (Don de Loki 50, Runas 75) (-5 ptos)',
+      '+ Precios de las cartas (Don de Loki 50, Runas 75) (+0 ptos)',
     )
   })
 })
