@@ -2794,6 +2794,19 @@ describe('OLD-63: special characters charge their book extras', () => {
     ['undead', 'ud-settra', [], 365],
     // No Muertos p.95: 410 + Espada Runica del Caos 65 + Baculo Llameante 50 + Manticora 200.
     ['undead', 'ud-dieter-helsnicht', [], 725],
+    // Orcos y Goblins p.90: 130 + Corona de la Hechiceria 125 + Serpiente Alada 180.
+    ['orcs-and-goblins', 'og-azhag', [], 435],
+    // Orcos y Goblins p.90: 90 (the Wolf Chariot is a mount, tested below).
+    ['orcs-and-goblins', 'og-oglok', [], 90],
+    // Orcos y Goblins p.91: 80 + Hacha de Grom 50 + Niblit 65 + Carruaje 62.
+    ['orcs-and-goblins', 'og-grom', [], 257],
+    // Orcos y Goblins p.91: 120 + Morgor la Mutiladora 125.
+    ['orcs-and-goblins', 'og-gorbad', [], 245],
+    // Orcos y Goblins p.92: 90 and 150, no extras of their own.
+    ['orcs-and-goblins', 'og-gorfang', [], 90],
+    ['orcs-and-goblins', 'og-morglum', [], 150],
+    // Orcos y Goblins p.93: 80 + Pincho de Skarsnik 75 + Gobbla 50.
+    ['orcs-and-goblins', 'og-skarsnik', [], 205],
   ]
 
   it.each(rows)('%s %s with %j costs %d', (armyId, unitId, optionIds, expected) => {
@@ -2818,6 +2831,33 @@ describe('OLD-63: special characters charge their book extras', () => {
     expect(mountIds('emp-karl-franz')).toEqual(mountIds('emp-kurt-helborg'))
     expect(mountIds('emp-karl-franz')).toEqual(mountIds('emp-supreme-patriarch'))
     expect(empire.units.find((u) => u.id === 'emp-karl-franz')!.profiles).toBeUndefined()
+  })
+
+  // Orcos y Goblins p.88 and pp.90-93: Oglok, Gorfang, Morglum and Skarsnik may enter battle in a
+  // chariot (Wolf Chariot 65, Boar Chariot 81 on p.88); the generic Orc characters keep their list.
+  it.each([
+    ['og-oglok', 'mount-wolf-chariot', 155],
+    ['og-gorfang', 'mount-wolf-chariot', 155],
+    ['og-morglum', 'mount-wolf-chariot', 215],
+    ['og-skarsnik', 'mount-wolf-chariot', 270],
+    ['og-skarsnik', 'mount-boar-chariot', 286],
+  ])('%s on %s costs %d', (unitId, mountId, expected) => {
+    const entry: RosterEntry = { id: 'e', unitId, size: 1, optionIds: [], magicItemIds: [], mountId }
+    expect(entryPoints(entry, getArmy('orcs-and-goblins')!)).toBe(expected)
+  })
+
+  it('only the special Orcs may ride a Wolf Chariot; the generic Orc characters may not', () => {
+    const og = getArmy('orcs-and-goblins')!
+    const mountIds = (id: string) => og.units.find((u) => u.id === id)!.mounts!.map((m) => m.id)
+    for (const id of ['og-oglok', 'og-gorfang', 'og-morglum']) {
+      expect(mountIds(id), id).toContain('mount-wolf-chariot')
+      expect(mountIds(id), id).toContain('mount-boar-chariot')
+      expect(mountIds(id), id).toContain('mount-war-boar')
+    }
+    expect(mountIds('og-skarsnik')).toEqual(['mount-boar-chariot', 'mount-wolf-chariot'])
+    for (const id of ['og-warboss-orc', 'og-warboss-black-orc', 'og-bigboss-orc', 'og-bsb-orc']) {
+      expect(mountIds(id), id).not.toContain('mount-wolf-chariot')
+    }
   })
 
   it('Volkmar fixes his three items and has exactly three slots', () => {

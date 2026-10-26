@@ -1561,6 +1561,33 @@ Magia card (p.36 and p.73) prints a dash in the restriction column, so no race r
 it moves from the Empire-only list to the common pool, so every army can take it. Owner decision
 (2026-10-26).
 
+#### Orcs & Goblins: special characters' extra costs (OLD-63, 2026-10-26)
+**Orcs & Goblins, Orcos y Goblins (1997, ES) printed pp.90-93; chariot prices p.88.** Each page
+lists its extras as `+N puntos` under a headline that excludes them. Items in the pool are fixed
+at their card price, which matches every page (Crown of Sorcery 125, Morgor the Mutilator 125,
+Elf-Biter 50, Skarsnik's Prodder 75).
+
+| Character | Page | Table | Fixed items and extras | Bare entry |
+|---|---|---|---|---|
+| Azhag | p.90 | `+125 Corona de la Hechicería / +180 Serpiente Alada` | Crown of Sorcery (card); Winged Serpent 180 | 130 to 435 |
+| Oglok | p.90 | none; mount "un carruaje tirado por Jabalíes de Guerra o por Lobos Gigantes" | none | 90 (155 in the Wolf Chariot) |
+| Grom | p.91 | `+65 Niblit con Estandarte de Batalla / +62 Carruaje / +50 Hacha de Grom` | Elf-Biter, the Axe of Grom (card); Niblit 65; Wolf Chariot 62 | 80 to 257 |
+| Gorbad | p.91 | `+125 Morgor la Mutiladora` | Morgor the Mutilator (card) | 120 to 245 |
+| Gorfang | p.92 | none; same chariot mount as Oglok | none | 90 (155 in the Wolf Chariot) |
+| Morglum | p.92 | none; same chariot mount as Oglok | none | 150 (215 in the Wolf Chariot) |
+| Skarsnik | p.93 | `+75 Pincho de Skarsnik / +50 Gobbla`; "un carruaje tirado por Jabalíes de Guerra o Lobos Gigantes" | Skarsnik's Prodder (card); Gobbla 50 | 80 to 205 (286 in the Boar Chariot, 270 in the Wolf Chariot) |
+
+**Chariot mounts.** Oglok, Gorfang and Morglum add the Wolf Chariot (65, p.88) to their War Boar,
+monster and Boar Chariot (81, p.88) list through `ORC_SPECIAL_MOUNTS`; the generic Orc characters
+keep `ORC_MOUNTS` and still cannot ride a Wolf Chariot. Skarsnik's list is the two chariots only
+(he has no beast mount on p.93).
+
+**Grom's retinue.** Niblit (+65, with the army Battle Standard) and the Wolf Chariot (+62) are
+fixed extras because p.91 prices both and Grom always arrives with them.
+
+**Gorbad's War Boar.** p.91 prints no cost for it, so it stays a display profile and adds nothing
+to his 245.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),
