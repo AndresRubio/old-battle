@@ -6,7 +6,7 @@ import { EntryRow } from './EntryRow'
 import { getArmy } from '../data/armies'
 import { setLang } from '../i18n/lang'
 import { entryActions } from '../state/rosterOps'
-import type { Roster, RosterEntry } from '../data/types'
+import type { Army, Roster, RosterEntry, UnitProfile } from '../data/types'
 
 const army = getArmy('empire')!
 
@@ -419,5 +419,118 @@ describe('EntryRow selected magic items block (OLD-65)', () => {
     render(<EntryRow entry={withItems([FORTUNE])} army={army} {...props} />)
     expand()
     expect(container.querySelector('.mi-selected .mi-group-title')?.textContent).toBe('Seleccionados')
+  })
+})
+
+describe('EntryRow fixed magic items and fixed extras (OLD-63)', () => {
+  const HAMMER = 'mi-hammer-of-sigmar'
+  const SEAL = 'mi-silver-seal'
+  const kf = (over: Partial<RosterEntry> = {}) => entry('emp-karl-franz', { size: 1, ...over })
+  /** Every magic-item row in a container, as [name, checked, disabled, tag, price]. */
+  const rows = (selector: string) =>
+    Array.from(container.querySelectorAll(`${selector} .mi-item`)).map((row) => {
+      const box = row.querySelector('input[type="checkbox"]') as HTMLInputElement | null
+      return [
+        row.querySelector('.mi-name')?.textContent,
+        box?.checked,
+        box?.disabled,
+        row.querySelector('.mi-fixed-tag')?.textContent,
+        row.querySelector('.mi-pts')?.textContent,
+      ]
+    })
+  const rowFor = (selector: string, name: string) => rows(selector).find((r) => r[0] === name)
+
+  it('counts the fixed items in the header: (2/3) for a bare Karl Franz', () => {
+    render(<EntryRow entry={kf()} army={army} {...props} />)
+    expand()
+    const header = Array.from(container.querySelectorAll('.opt-label')).find((el) =>
+      el.textContent?.startsWith('Magic Items'),
+    )
+    expect(header?.textContent).toBe('Magic Items (2/3)')
+  })
+
+  it('lists the Hammer and the Seal as checked, locked and tagged "fixed", fixed first', () => {
+    render(<EntryRow entry={kf({ magicItemIds: ['mi-sword-of-justice'] })} army={army} {...props} />)
+    expand()
+    expect(rows('.mi-selected')).toEqual([
+      ['Hammer of Sigmar', true, true, 'fixed', '100 pts'],
+      ['The Silver Seal', true, true, 'fixed', '75 pts'],
+      ['Sword of Justice', true, false, undefined, '50 pts'],
+    ])
+    // The same locked rows in the category list.
+    expect(rowFor('.magic-items .mi-group', 'Hammer of Sigmar')).toEqual(['Hammer of Sigmar', true, true, 'fixed', '100 pts'])
+    expect(rowFor('.magic-items .mi-group', 'The Silver Seal')).toEqual(['The Silver Seal', true, true, 'fixed', '75 pts'])
+  })
+
+  it('changes nothing when a fixed row is clicked', () => {
+    const start = { id: 'r1', name: 'R', armyId: 'empire', pointsLimit: 2000, entries: [kf()] } as unknown as Roster
+    let result = start
+    const actions = entryActions((fn) => { result = fn(result) }, army, 'e1')
+    render(<EntryRow entry={kf()} army={army} {...props} actions={actions} />)
+    expand()
+    for (const box of container.querySelectorAll<HTMLInputElement>('.mi-selected input[type="checkbox"]')) {
+      act(() => box.click())
+    }
+    expect(result).toBe(start)
+    expect(result.entries[0].magicItemIds).toEqual([])
+  })
+
+  it('tags them "fijo" in Spanish', () => {
+    setLang('es')
+    render(<EntryRow entry={kf()} army={army} {...props} />)
+    expand()
+    expect(rows('.mi-selected').map((r) => r[3])).toEqual(['fijo', 'fijo'])
+  })
+
+  describe('a synthetic character with an override, an included item, a special item and an extra', () => {
+    const synthUnit: UnitProfile = {
+      id: 'synth-hero',
+      name: 'Synth Hero',
+      role: 'character',
+      pointsPerModel: 100,
+      isCharacter: true,
+      characterRank: 'lord',
+      fixedMagicItems: [{ id: HAMMER, points: 25 }, { id: SEAL, included: true }, { id: 'mi-dragon-bow' }],
+      fixedExtras: [{ id: 'x', name: 'War Wagon', nameEs: 'Carromato', points: 40 }],
+    }
+    const synth: Army = { ...army, units: [...army.units, synthUnit] }
+    const synthProps = { ...props, actions: entryActions(() => {}, synth, 'e1') }
+
+    it('prints the override price, "included" in place of a price, and the special item locked', () => {
+      render(<EntryRow entry={entry('synth-hero', { size: 1 })} army={synth} {...synthProps} />)
+      expand()
+      expect(rows('.mi-selected')).toEqual([
+        ['Hammer of Sigmar', true, true, 'fixed', '25 pts'],
+        ['The Silver Seal', true, true, 'fixed', 'included'],
+        ['Dragon Bow', true, true, 'fixed', '40 pts'],
+      ])
+      // A SPECIAL item on its owner is a locked, checked row in the category list too.
+      expect(rowFor('.magic-items .mi-group', 'Dragon Bow')).toEqual(['Dragon Bow', true, true, 'fixed', '40 pts'])
+    })
+
+    it('keeps a SPECIAL item unselectable on anyone else', () => {
+      render(<EntryRow entry={entry('emp-general', { size: 1 })} army={synth} {...synthProps} />)
+      expand()
+      const bow = Array.from(container.querySelectorAll('.magic-items .mi-item-special .mi-name')).map((el) => el.textContent)
+      expect(bow).toContain('Dragon Bow')
+    })
+
+    it('lists the fixed extras under "Fixed equipment" with their price', () => {
+      render(<EntryRow entry={entry('synth-hero', { size: 1 })} army={synth} {...synthProps} />)
+      expand()
+      const group = container.querySelector('.fixed-extras')
+      expect(group?.querySelector('.opt-label')?.textContent).toBe('Fixed equipment')
+      expect(Array.from(group!.querySelectorAll('li')).map((li) => li.textContent)).toEqual(['War Wagon (+40)'])
+    })
+
+    it('resolves the extra and the tags in Spanish', () => {
+      setLang('es')
+      render(<EntryRow entry={entry('synth-hero', { size: 1 })} army={synth} {...synthProps} />)
+      expand()
+      const group = container.querySelector('.fixed-extras')
+      expect(group?.querySelector('.opt-label')?.textContent).toBe('Equipo fijo')
+      expect(Array.from(group!.querySelectorAll('li')).map((li) => li.textContent)).toEqual(['Carromato (+40)'])
+      expect(rows('.mi-selected')[1].slice(3)).toEqual(['fijo', 'incluido'])
+    })
   })
 })

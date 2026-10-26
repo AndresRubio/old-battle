@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Army, UnitProfile } from '../data/types'
+import { listedUnitPoints } from '../rules/points'
 import {
   useLang,
   GROUP_LABEL,
@@ -78,8 +79,9 @@ export function AddUnitDialog({ army, onAdd, onClose }: Props) {
               <button key={u.id} className="picker-unit" onClick={() => onAdd(u)} title={unitName(u, lang)}>
                 <span className="picker-unit-name">{unitName(u, lang)}</span>
                 <span className="picker-unit-pts">
-                  {u.pointsPerModel}
-                  {u.role === 'regiment' ? t('perModel', lang) : ` ${t('pts', lang)}`}
+                  {/* A regiment lists its per-model price; anything else lists what it
+                      costs once added, fixed items and extras included (OLD-63). */}
+                  {u.role === 'regiment' ? `${u.pointsPerModel}${t('perModel', lang)}` : `${listedUnitPoints(u, army)} ${t('pts', lang)}`}
                 </span>
                 {searching && <span className="picker-unit-group">{GROUP_LABEL[lang][unitGroup(u)]}</span>}
                 {u.max !== undefined && <span className="picker-unit-limit">0-{u.max}</span>}

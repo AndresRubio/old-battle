@@ -289,3 +289,62 @@ describe('exportRosterText — cavalry steed profile (OLD-48)', () => {
     expect(labels).toEqual(['· Orc Boar Chariot (+81 pts)', '· 2 Orc crew', '· 2 War Boars', '· Chariot'])
   })
 })
+
+describe('exportRosterText fixed magic items and fixed extras (OLD-63)', () => {
+  const kfRoster: Roster = {
+    id: 'r',
+    name: 'Reikland',
+    armyId: 'empire',
+    pointsLimit: 2000,
+    entries: [{ id: 'k', unitId: 'emp-karl-franz', size: 1, optionIds: [], magicItemIds: [], isGeneral: true }],
+  }
+  const lines = (text: string) => text.split('\n').map((l) => l.trim())
+
+  it('exports Karl Franz at 285 with both fixed items tagged, in the list and the detail block', () => {
+    const text = exportRosterText(kfRoster, empire)
+    expect(text).toContain('Emperor Karl Franz ............ 285 pts')
+    expect(text).toContain('Emperor Karl Franz — 285 pts')
+    const l = lines(text)
+    expect(l).toContain('* Hammer of Sigmar (100 pts) [fixed]')
+    expect(l).toContain('* The Silver Seal (75 pts) [fixed]')
+    expect(l.some((x) => x.startsWith('* Hammer of Sigmar (100 pts) [fixed] — '))).toBe(true)
+  })
+
+  it('tags them in Spanish', () => {
+    const text = exportRosterText(kfRoster, empire, 'es')
+    expect(text).toContain('El Emperador Karl Franz ............ 285 ptos')
+    const l = lines(text)
+    expect(l).toContain('* Martillo de Sigmar (100 ptos) [fijo]')
+    expect(l).toContain('* El Sello de Plata (75 ptos) [fijo]')
+  })
+
+  it('prints an included item as "(included)" and each fixed extra as + <name> (+N pts)', () => {
+    const synth = {
+      ...empire,
+      units: [
+        ...empire.units,
+        {
+          id: 'synth-hero',
+          name: 'Synth Hero',
+          role: 'character' as const,
+          pointsPerModel: 100,
+          isCharacter: true,
+          characterRank: 'lord' as const,
+          fixedMagicItems: [{ id: 'mi-silver-seal', included: true }],
+          fixedExtras: [{ id: 'x', name: 'War Wagon', nameEs: 'Carromato', points: 40 }],
+        },
+      ],
+    }
+    const r: Roster = {
+      ...kfRoster,
+      entries: [{ id: 's', unitId: 'synth-hero', size: 1, optionIds: [], magicItemIds: [], isGeneral: true }],
+    }
+    const en = lines(exportRosterText(r, synth))
+    expect(en).toContain('* The Silver Seal (included) [fixed]')
+    expect(en.filter((x) => x === '+ War Wagon (+40 pts)')).toHaveLength(2)
+    expect(en).toContain('[General] Synth Hero ............ 140 pts')
+    const es = lines(exportRosterText(r, synth, 'es'))
+    expect(es).toContain('* El Sello de Plata (incluido) [fijo]')
+    expect(es.filter((x) => x === '+ Carromato (+40 ptos)')).toHaveLength(2)
+  })
+})

@@ -186,6 +186,36 @@ export interface ProfileBlock {
   specialRules?: string[]
 }
 
+/**
+ * A magic item the character's own book page always gives him (OLD-63). Locked
+ * on every entry: the engine treats it as carried whether or not its id is in
+ * `entry.magicItemIds`, so saved rosters need no migration and a roster that
+ * already ticked it by hand is not charged twice. It counts toward the
+ * character's allowance and army-wide uniqueness like a picked item.
+ */
+export interface FixedMagicItem {
+  /** Item id in the army's pool. */
+  id: string
+  /** This character's page price, when it differs from the item card. The card keeps its price for everyone else. */
+  points?: number
+  /** The printed headline already contains the item: carried and locked, adds 0 on top of pointsPerModel. */
+  included?: boolean
+}
+
+/**
+ * A fixed, priced extra that is not a magic item: a chariot, an always-ridden
+ * monster, a companion, a rune group (OLD-63). Charged on every entry, shown as
+ * a locked "Fixed equipment" list and exported. Any statline stays in the
+ * display-only `profiles`; this carries only the cost.
+ */
+export interface FixedExtra {
+  id: string
+  name: string
+  /** Spanish name. Falls back to `name`. */
+  nameEs?: string
+  points: number
+}
+
 export interface UnitProfile {
   id: string
   name: string
@@ -291,6 +321,16 @@ export interface UnitProfile {
    * crew / chassis / draught beasts, or a special character's fixed mount.
    */
   profiles?: ProfileBlock[]
+  /**
+   * Magic items this character's own page always gives him, each priced on top
+   * of `pointsPerModel` unless `included` (OLD-63). Characters only.
+   */
+  fixedMagicItems?: FixedMagicItem[]
+  /**
+   * Priced extras the page always charges that are not magic items: a chariot,
+   * a monster always ridden, a companion, a rune group (OLD-63). Characters only.
+   */
+  fixedExtras?: FixedExtra[]
 }
 
 export interface CompositionRules {

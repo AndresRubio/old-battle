@@ -63,8 +63,21 @@ describe('rosterOps', () => {
 
   it('toggles magic items', () => {
     let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), general, 'e1')
-    r = toggleMagicItem(r, 'e1', 'mi-sword-of-strength')
+    r = toggleMagicItem(r, 'e1', 'mi-sword-of-strength', empire)
     expect(r.entries[0].magicItemIds).toEqual(['mi-sword-of-strength'])
+  })
+
+  it("never toggles a magic item the character's own page fixes (OLD-63)", () => {
+    const karlFranz = empire.units.find((u) => u.id === 'emp-karl-franz')!
+    const r = addEntry(createRoster('empire', 'A', 1000, 'r1'), karlFranz, 'e1')
+    expect(toggleMagicItem(r, 'e1', 'mi-hammer-of-sigmar', empire)).toBe(r)
+    // An old saved roster that ticked the Hammer by hand cannot untick it either.
+    const old = updateEntry(r, 'e1', { magicItemIds: ['mi-hammer-of-sigmar'] })
+    expect(toggleMagicItem(old, 'e1', 'mi-hammer-of-sigmar', empire)).toBe(old)
+    // His free pick still toggles.
+    expect(toggleMagicItem(r, 'e1', 'mi-sword-of-justice', empire).entries[0].magicItemIds).toEqual([
+      'mi-sword-of-justice',
+    ])
   })
 
   it('setGeneral marks exactly one entry as general', () => {
@@ -155,9 +168,9 @@ describe('rosterOps', () => {
 
   it('duplicateEntry deep-copies arrays so the copy and original never alias', () => {
     let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), general, 'e1')
-    r = toggleMagicItem(r, 'e1', 'mi-sword-of-strength')
+    r = toggleMagicItem(r, 'e1', 'mi-sword-of-strength', empire)
     r = duplicateEntry(r, 'e1', 'e1-copy')
-    r = toggleMagicItem(r, 'e1-copy', 'mi-dispel-scroll')
+    r = toggleMagicItem(r, 'e1-copy', 'mi-dispel-scroll', empire)
     // Original unchanged when the copy is edited.
     expect(r.entries[0].magicItemIds).toEqual(['mi-sword-of-strength'])
     expect(r.entries[1].magicItemIds).toEqual(['mi-sword-of-strength', 'mi-dispel-scroll'])

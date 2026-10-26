@@ -1198,3 +1198,86 @@ describe('Slann Mage-Priest carries one item above its wizard level', () => {
     expect(actual).toEqual(generic.map((n) => n + 1))
   })
 })
+
+describe('fixed magic items (OLD-63)', () => {
+  // Imperio p.67-68: Karl Franz "puede tener tres objetos mágicos, dos de los
+  // cuales deben ser el Martillo de Sigmar y el Sello de Plata".
+  const empire = getArmy('empire')!
+  const kf = (over: Partial<RosterEntry> = {}): RosterEntry =>
+    entry({ unitId: 'emp-karl-franz', isGeneral: true, ...over })
+  const empRoster = (entries: RosterEntry[]): Roster => ({
+    id: 'r', name: 't', armyId: 'empire', pointsLimit: 3000, entries,
+  })
+  const itemRules = (r: Roster, a: Army = empire) =>
+    rules(validateRoster(r, a)).filter((rule) => rule.startsWith('magic-items'))
+
+  it('raises nothing for a bare Karl Franz', () => {
+    expect(itemRules(empRoster([kf()]))).toEqual([])
+  })
+
+  it('counts the fixed items toward his allowance: two picks make 4 > 3', () => {
+    const vs = validateRoster(empRoster([kf({ magicItemIds: ['mi-jade-amulet', 'mi-dispel-scroll'] })]), empire)
+    const count = vs.find((v) => v.rule === 'magic-items-count')
+    expect(count).toBeDefined()
+    expect(count!.message).toContain('carries 4 magic items but may carry only 3')
+  })
+
+  it('warns when he picks a second magic armour next to the Silver Seal', () => {
+    expect(itemRules(empRoster([kf({ magicItemIds: ['mi-armour-of-the-defender'] })]))).toContain(
+      'magic-items-category',
+    )
+  })
+
+  // The page sets the fixed loadout; validation polices only the user's picks.
+  const synth: Army = {
+    ...army,
+    units: [
+      ...army.units,
+      {
+        id: 'two-swords',
+        name: 'Two Swords',
+        role: 'character',
+        pointsPerModel: 100,
+        isCharacter: true,
+        characterRank: 'lord',
+        canBeGeneral: true,
+        fixedMagicItems: [{ id: 'sword' }, { id: 'sword2' }],
+      },
+      {
+        id: 'banner-hero',
+        name: 'Banner Hero',
+        role: 'character',
+        pointsPerModel: 50,
+        isCharacter: true,
+        characterRank: 'hero',
+        fixedMagicItems: [{ id: 'banner' }],
+      },
+    ],
+  }
+
+  it('raises no category warning for two fixed weapons', () => {
+    const r = roster(2000, [entry({ unitId: 'two-swords', isGeneral: true })])
+    expect(itemRules(r, synth)).not.toContain('magic-items-category')
+  })
+
+  it('raises no banner-BSB warning for a fixed banner on a non-BSB character', () => {
+    const r = roster(2000, [entry({ unitId: 'lord', isGeneral: true }), entry({ unitId: 'banner-hero' })])
+    expect(itemRules(r, synth)).not.toContain('magic-items-banner-bsb')
+  })
+
+  const uniqueMessages = (r: Roster) =>
+    validateRoster(r, empire).filter((v) => v.rule === 'magic-items-unique').map((v) => v.message)
+
+  it('flags the Hammer as not unique when two Karl Franz entries carry it', () => {
+    const r = empRoster([kf({ id: 'a' }), kf({ id: 'b', isGeneral: false })])
+    expect(uniqueMessages(r).some((m) => m.includes('Hammer of Sigmar'))).toBe(true)
+  })
+
+  it('flags the Hammer when a General picks it beside Karl Franz', () => {
+    const r = empRoster([
+      kf({ id: 'a' }),
+      entry({ id: 'b', unitId: 'emp-general', magicItemIds: ['mi-hammer-of-sigmar'] }),
+    ])
+    expect(uniqueMessages(r).some((m) => m.includes('Hammer of Sigmar'))).toBe(true)
+  })
+})

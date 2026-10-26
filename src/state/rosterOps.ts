@@ -1,5 +1,6 @@
 import type { Army, Roster, RosterEntry, UnitProfile } from '../data/types'
 import { STANDARD_BEARER_ID, isWizardLevelId } from '../data/unitOptions'
+import { findUnit, isFixedMagicItem } from '../rules/points'
 
 let counter = 0
 /**
@@ -123,8 +124,14 @@ export function selectMagicStandard(roster: Roster, entryId: string, itemId: str
   return updateEntry(roster, entryId, { magicStandardId: itemId ?? undefined })
 }
 
-/** Toggle a magic item on a character entry. */
-export function toggleMagicItem(roster: Roster, entryId: string, itemId: string): Roster {
+/**
+ * Toggle a magic item on a character entry. An item the unit's own page fixes
+ * (OLD-63) is locked: the roster comes back unchanged.
+ */
+export function toggleMagicItem(roster: Roster, entryId: string, itemId: string, army: Army): Roster {
+  const entry = roster.entries.find((e) => e.id === entryId)
+  const unit = entry ? findUnit(army, entry.unitId) : undefined
+  if (unit && isFixedMagicItem(unit, itemId)) return roster
   return {
     ...roster,
     entries: roster.entries.map((e) => {
@@ -215,7 +222,7 @@ export function entryActions(
     selectMount: (mountId) => commit((prev) => selectMount(prev, entryId, army, mountId)),
     selectWizardLevel: (optionId) => commit((prev) => selectWizardLevel(prev, entryId, army, optionId)),
     selectLore: (loreId) => commit((prev) => selectLore(prev, entryId, loreId)),
-    toggleMagicItem: (itemId) => commit((prev) => toggleMagicItem(prev, entryId, itemId)),
+    toggleMagicItem: (itemId) => commit((prev) => toggleMagicItem(prev, entryId, itemId, army)),
     selectMagicStandard: (itemId) => commit((prev) => selectMagicStandard(prev, entryId, itemId)),
     setGeneral: () => commit((prev) => setGeneral(prev, entryId)),
     duplicate: () => commit((prev) => duplicateEntry(prev, entryId)),

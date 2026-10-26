@@ -1368,6 +1368,23 @@ him `canBeBSB` and carried the cost only as the tag *"+50 pts to act as Battle S
 the app never added the 50. He now has a flat option `bsb` at +50, charged once. It adds no magic item
 slot, since the book gives him no other magic item. The Sword of Justice's +50 is OLD-63.
 
+#### Empire: special characters' extra costs (OLD-63, 2026-10-26)
+**Karl Franz, Imperio printed p.67-68**, cost table: `Karl Franz 110 puntos / +100 Martillo de
+Sigmar / +75 El Sello de Plata`. The text: "El Emperador puede tener tres objetos mágicos, dos de
+los cuales deben ser el Martillo de Sigmar (+100 puntos) y el Sello de Plata (+75 puntos) … un
+objeto mágico adicional". Both items are mandatory (owner ruling 1 of 2026-10-26: the character
+pages win over p.67), so `emp-karl-franz` now carries them as `fixedMagicItems`: always charged at
+their card prices (100 and 75, which match the page), locked in the editor, never bought twice.
+A bare Karl Franz goes from 110 to 285; his one free pick is added on top.
+
+The fixed items count toward his three-item allowance, as the page says. Every page that states
+the number agrees: Kurt Helborg p.71 ("hasta tres objetos mágicos, uno de los cuales debe ser uno
+de los Colmillos Rúnicos … Los otros dos"), the Supreme Patriarch p.70-71 ("hasta cuatro objetos
+mágicos, uno de los cuales debe ser el Báculo de Volans"), Zarina p.74 ("hasta tres … uno de los
+cuales debe ser … Fearfrost"), Dieter Helsnicht, No Muertos p.95 ("hasta cuatro … Dos de ellos
+deben ser"), and Keorl, Norsca PDF 34 ("entitled to carry three magic items. Two of these will
+always be").
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

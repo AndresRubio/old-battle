@@ -1,7 +1,17 @@
 import { describe, it, expect } from 'vitest'
-import { effectiveStatLine, entryPoints, mountPoints, findUnit, unitOptionCost } from './points'
+import {
+  carriedMagicItems,
+  effectiveStatLine,
+  entryPoints,
+  findUnit,
+  fixedExtrasPoints,
+  isFixedMagicItem,
+  listedUnitPoints,
+  mountPoints,
+  unitOptionCost,
+} from './points'
 import { getArmy } from '../data/armies'
-import type { RosterEntry, UnitProfile } from '../data/types'
+import { STANDARD_5E_COMPOSITION, type Army, type RosterEntry, type UnitProfile } from '../data/types'
 
 const empire = getArmy('empire')!
 const bretonnia = getArmy('bretonnia')!
@@ -21,6 +31,85 @@ describe('Ludwig Schwartzhelm battle standard option (OLD-64)', () => {
   it('costs 70 on his own and 120 as Battle Standard Bearer', () => {
     expect(entryPoints(mk({ unitId: 'emp-ludwig' }), empire)).toBe(70)
     expect(entryPoints(mk({ unitId: 'emp-ludwig', optionIds: ['bsb'] }), empire)).toBe(120)
+  })
+})
+
+describe('fixed magic items and fixed extras (OLD-63)', () => {
+  // Imperio p.67-68: Karl Franz 110, +100 Hammer of Sigmar, +75 Silver Seal,
+  // both mandatory, plus one magic item of the player's choice.
+  const karlFranz = empire.units.find((u) => u.id === 'emp-karl-franz')!
+
+  it('charges Karl Franz his two fixed items even when the entry picked none', () => {
+    expect(entryPoints(mk({ unitId: 'emp-karl-franz' }), empire)).toBe(285)
+  })
+
+  it('charges the Hammer once when an old saved roster already ticked it', () => {
+    expect(entryPoints(mk({ unitId: 'emp-karl-franz', magicItemIds: ['mi-hammer-of-sigmar'] }), empire)).toBe(285)
+  })
+
+  it('adds a picked item on top of the fixed ones', () => {
+    expect(entryPoints(mk({ unitId: 'emp-karl-franz', magicItemIds: ['mi-sword-of-justice'] }), empire)).toBe(335)
+  })
+
+  it('lists Karl Franz at his full price in the unit picker', () => {
+    expect(listedUnitPoints(karlFranz, empire)).toBe(285)
+  })
+
+  it('lists fixed items first, then picked ones, each once, dropping unknown ids', () => {
+    const carried = carriedMagicItems(
+      mk({ unitId: 'emp-karl-franz', magicItemIds: ['mi-sword-of-justice', 'mi-silver-seal', 'mi-gone'] }),
+      karlFranz,
+      empire,
+    )
+    expect(carried.map((c) => [c.item.id, c.fixed, c.points])).toEqual([
+      ['mi-hammer-of-sigmar', true, 100],
+      ['mi-silver-seal', true, 75],
+      ['mi-sword-of-justice', false, 50],
+    ])
+    expect(isFixedMagicItem(karlFranz, 'mi-hammer-of-sigmar')).toBe(true)
+    expect(isFixedMagicItem(karlFranz, 'mi-sword-of-justice')).toBe(false)
+  })
+
+  describe('a synthetic character with an override, an included item and an extra', () => {
+    const synth: Army = {
+      id: 'synth',
+      name: 'Synth',
+      composition: STANDARD_5E_COMPOSITION,
+      magicItems: [
+        { id: 'A', name: 'Item A', category: 'weapon', points: 50 },
+        { id: 'B', name: 'Item B', category: 'talisman', points: 30 },
+        { id: 'C', name: 'Item C', category: 'enchanted', points: 15 },
+      ],
+      units: [
+        {
+          id: 'hero',
+          name: 'Hero',
+          role: 'character',
+          pointsPerModel: 100,
+          isCharacter: true,
+          characterRank: 'lord',
+          fixedMagicItems: [{ id: 'A', points: 25 }, { id: 'B', included: true }],
+          fixedExtras: [{ id: 'x', name: 'X', points: 40 }],
+        },
+      ],
+    }
+    const hero = synth.units[0]
+
+    it('prices the override, adds 0 for the included item, and charges the extra', () => {
+      // 100 + A at its page price 25 (card says 50) + B included (0) + X 40.
+      expect(entryPoints(mk({ unitId: 'hero' }), synth)).toBe(165)
+      expect(fixedExtrasPoints(hero)).toBe(40)
+      expect(listedUnitPoints(hero, synth)).toBe(165)
+      const carried = carriedMagicItems(mk({ unitId: 'hero' }), hero, synth)
+      expect(carried.map((c) => [c.item.id, c.points, c.included])).toEqual([
+        ['A', 25, false],
+        ['B', 0, true],
+      ])
+    })
+
+    it('still charges a picked item at its card price', () => {
+      expect(entryPoints(mk({ unitId: 'hero', magicItemIds: ['C', 'B'] }), synth)).toBe(180)
+    })
   })
 })
 

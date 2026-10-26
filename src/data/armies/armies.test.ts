@@ -4,7 +4,8 @@ import { validateRoster } from '../../rules/validate'
 import { entryPoints, pointsByRole, effectiveStatLine } from '../../rules/points'
 import { findRule } from '../rules'
 import { summarize } from '../../rules/summary'
-import type { Roster, StatLine } from '../types'
+import { MAGIC_ITEM_ALLOWANCE } from '../../rules/magicItems'
+import type { Roster, RosterEntry, StatLine } from '../types'
 import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
 import { isWizardLevelId } from '../unitOptions'
 import { MAGIC_LORES } from '../lores'
@@ -2691,5 +2692,33 @@ describe('OLD-46 — Movement converts back to the centimetres the book prints',
     const bugman = getArmy('dwarfs')!.units.find((u) => u.id === 'dw-josef-bugman')!
     // p.95 "Josef Bugman 8 6 5 4 5 2 4 3 10".
     expect(bugman.statLine).toEqual({ M: 3, WS: 6, BS: 5, S: 4, T: 5, W: 2, I: 4, A: 3, Ld: 10 })
+  })
+})
+
+// OLD-63 — each special character pays the extras his own page prices on top
+// of the headline: fixed magic items, fixed extras, counted options. Every data
+// task adds its rows here BEFORE changing the data and watches them fail.
+describe('OLD-63: special characters charge their book extras', () => {
+  const rows: [string, string, string[], number][] = [
+    // Imperio p.67-68: 110 + Hammer of Sigmar 100 + Silver Seal 75.
+    ['empire', 'emp-karl-franz', [], 285],
+  ]
+
+  it.each(rows)('%s %s with %j costs %d', (armyId, unitId, optionIds, expected) => {
+    const entry: RosterEntry = { id: 'e', unitId, size: 1, optionIds, magicItemIds: [] }
+    expect(entryPoints(entry, getArmy(armyId)!)).toBe(expected)
+  })
+
+  // Every page that states the number counts the fixed items inside the
+  // character's allowance (Imperio p.67-68, p.70-71, p.71, p.74; No Muertos
+  // p.95; Norsca PDF 34). A page that fixes more than the rank allows sets
+  // `magicItemSlots` to the page's own number.
+  it("every unit's fixed magic items fit its allowance", () => {
+    const withFixed = ARMIES.flatMap((a) => a.units.filter((u) => (u.fixedMagicItems?.length ?? 0) > 0))
+    expect(withFixed.length).toBeGreaterThan(0)
+    for (const u of withFixed) {
+      const allowance = u.magicItemSlots ?? (u.characterRank ? MAGIC_ITEM_ALLOWANCE[u.characterRank] : 0)
+      expect(u.fixedMagicItems!.length, u.id).toBeLessThanOrEqual(allowance)
+    }
   })
 })

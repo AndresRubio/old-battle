@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import type { Army, EquipmentOption, MagicItem, MagicItemCategory, MountOption, ProfileBlock, StatLine, UnitProfile, UnitRole } from '../data/types'
+import type { Army, EquipmentOption, FixedExtra, MagicItem, MagicItemCategory, MountOption, ProfileBlock, StatLine, UnitProfile, UnitRole } from '../data/types'
 import type { MagicLore, Spell } from '../data/lores'
 import { RULE_PHRASE_ES } from './rulePhrases'
 import { wizardLevelOf } from '../data/unitOptions'
@@ -50,6 +50,8 @@ export const mountName = (m: MountOption, lang: Lang): string =>
   lang === 'es' ? m.nameEs ?? m.name : m.name
 export const profileName = (p: ProfileBlock, lang: Lang): string =>
   lang === 'es' ? p.nameEs ?? p.name : p.name
+export const fixedExtraName = (x: FixedExtra, lang: Lang): string =>
+  lang === 'es' ? x.nameEs ?? x.name : x.name
 
 // --- Bilingual labels ---
 export const ROLE_LABEL: Record<Lang, Record<UnitRole, string>> = {
@@ -240,6 +242,10 @@ const STRINGS = {
   onFoot: { en: 'On foot', es: 'A pie' },
   magicItems: { en: 'Magic Items', es: 'Objetos Mágicos' },
   selectedItems: { en: 'Selected', es: 'Seleccionados' },
+  // OLD-63: items and extras a special character's own page always gives him.
+  fixedItem: { en: 'fixed', es: 'fijo' },
+  includedInCost: { en: 'included', es: 'incluido' },
+  fixedEquipment: { en: 'Fixed equipment', es: 'Equipo fijo' },
   magicStandard: { en: 'Magic Standard', es: 'Estandarte Mágico' },
   magicStandardNone: { en: 'No magic standard', es: 'Sin estandarte mágico' },
   magicStandardNeedsBearer: {

@@ -286,3 +286,71 @@ describe('assertArmyIntegrity', () => {
     ).toThrow(/unitGroupCap "C" references unknown unit ghost/)
   })
 })
+
+// OLD-63 — fixed magic items and fixed extras on a special character's page.
+describe('fixed magic items and fixed extras', () => {
+  const pool = [
+    { id: 'mi-a', name: 'A', category: 'weapon' as const, points: 10 },
+    { id: 'mi-b', name: 'B', category: 'talisman' as const, points: 20 },
+  ]
+  const hero = (over: Partial<UnitProfile>) =>
+    unit({ id: 'kf', role: 'character', isCharacter: true, characterRank: 'lord', ...over })
+  const withUnit = (u: UnitProfile) => army({ units: [u], magicItems: pool })
+
+  it('accepts a well-formed character', () => {
+    const ok = hero({
+      fixedMagicItems: [{ id: 'mi-a', points: 5 }, { id: 'mi-b', included: true }],
+      fixedExtras: [{ id: 'x', name: 'X', points: 40 }],
+    })
+    expect(assertArmyIntegrity(withUnit(ok))).toBeTruthy()
+  })
+
+  it('throws when a fixed item is not in the army pool', () => {
+    expect(() => assertArmyIntegrity(withUnit(hero({ fixedMagicItems: [{ id: 'mi-gone' }] })))).toThrow(
+      /kf: fixed magic item mi-gone is not in the army's magic items/,
+    )
+  })
+
+  it('throws when a unit lists the same fixed item twice', () => {
+    expect(() =>
+      assertArmyIntegrity(withUnit(hero({ fixedMagicItems: [{ id: 'mi-a' }, { id: 'mi-a' }] }))),
+    ).toThrow(/kf: duplicate fixed magic items: mi-a/)
+  })
+
+  it('throws when a fixed item sets both points and included', () => {
+    expect(() =>
+      assertArmyIntegrity(withUnit(hero({ fixedMagicItems: [{ id: 'mi-a', points: 5, included: true }] }))),
+    ).toThrow(/kf\/mi-a: fixed magic item sets both points and included/)
+  })
+
+  it('throws when a fixed item has a negative price', () => {
+    expect(() => assertArmyIntegrity(withUnit(hero({ fixedMagicItems: [{ id: 'mi-a', points: -5 }] })))).toThrow(
+      /kf\/mi-a: negative fixed magic item points/,
+    )
+  })
+
+  it('throws when fixed items sit on a non-character', () => {
+    const regiment = unit({ id: 'r', fixedMagicItems: [{ id: 'mi-a' }] })
+    expect(() => assertArmyIntegrity(withUnit(regiment))).toThrow(/r: has fixed magic items but is not a character/)
+  })
+
+  it('throws when fixed extras sit on a non-character', () => {
+    const regiment = unit({ id: 'r', fixedExtras: [{ id: 'x', name: 'X', points: 40 }] })
+    expect(() => assertArmyIntegrity(withUnit(regiment))).toThrow(/r: has fixed extras but is not a character/)
+  })
+
+  it('throws when fixed extra ids repeat within a unit', () => {
+    const u = hero({ fixedExtras: [{ id: 'x', name: 'X', points: 40 }, { id: 'x', name: 'Y', points: 10 }] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/kf: duplicate fixed extra ids: x/)
+  })
+
+  it('throws when a fixed extra has a negative price', () => {
+    const u = hero({ fixedExtras: [{ id: 'x', name: 'X', points: -1 }] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/kf\/x: negative fixed extra points/)
+  })
+
+  it('throws when a fixed extra has an empty name', () => {
+    const u = hero({ fixedExtras: [{ id: 'x', name: '  ', points: 40 }] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/kf\/x: fixed extra has no name/)
+  })
+})

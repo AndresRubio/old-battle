@@ -222,6 +222,9 @@ const units: UnitProfile[] = [
     canBeGeneral: true,
     max: 1,
     profiles: [GRIFFON_DEATHCLAW_PROFILE],
+    // Imperio p.67-68: "+100 Martillo de Sigmar / +75 El Sello de Plata", both
+    // mandatory, inside his three-item allowance (OLD-63).
+    fixedMagicItems: [{ id: 'mi-hammer-of-sigmar' }, { id: 'mi-silver-seal' }],
     specialRules: [
       'Special character — becomes army General',
       'Heavy armour & sword',

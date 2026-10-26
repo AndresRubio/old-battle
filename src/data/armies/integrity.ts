@@ -62,6 +62,7 @@ export function assertArmyIntegrity(army: Army): Army {
   const dupItems = dupes(army.magicItems.map((i) => i.id))
   if (dupItems.length) fail(`duplicate magic-item ids: ${dupItems.join(', ')}`)
 
+  const itemIds = new Set(army.magicItems.map((i) => i.id))
   for (const u of army.units) {
     if (u.pointsPerModel < 0) fail(`${u.id}: negative pointsPerModel`)
 
@@ -134,6 +135,31 @@ export function assertArmyIntegrity(army: Army): Army {
       }
       // Only characters ride mounts.
       if (!u.isCharacter) fail(`${u.id}: has mounts but is not a character`)
+    }
+
+    // Fixed magic items and fixed extras (OLD-63): a character's own page
+    // prices them on every entry, so a dangling id would silently price 0 and
+    // a duplicate would charge twice.
+    if (u.fixedMagicItems) {
+      if (!u.isCharacter) fail(`${u.id}: has fixed magic items but is not a character`)
+      for (const f of u.fixedMagicItems) {
+        if (!itemIds.has(f.id)) fail(`${u.id}: fixed magic item ${f.id} is not in the army's magic items`)
+        if (f.points !== undefined && f.included) {
+          fail(`${u.id}/${f.id}: fixed magic item sets both points and included`)
+        }
+        if (f.points !== undefined && f.points < 0) fail(`${u.id}/${f.id}: negative fixed magic item points`)
+      }
+      const dupFixed = dupes(u.fixedMagicItems.map((f) => f.id))
+      if (dupFixed.length) fail(`${u.id}: duplicate fixed magic items: ${dupFixed.join(', ')}`)
+    }
+    if (u.fixedExtras) {
+      if (!u.isCharacter) fail(`${u.id}: has fixed extras but is not a character`)
+      for (const x of u.fixedExtras) {
+        if (x.points < 0) fail(`${u.id}/${x.id}: negative fixed extra points`)
+        if (!x.name.trim()) fail(`${u.id}/${x.id}: fixed extra has no name`)
+      }
+      const dupExtras = dupes(u.fixedExtras.map((x) => x.id))
+      if (dupExtras.length) fail(`${u.id}: duplicate fixed extra ids: ${dupExtras.join(', ')}`)
     }
   }
 
