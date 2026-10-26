@@ -3050,3 +3050,52 @@ describe('OLD-63: special characters charge their book extras', () => {
     }
   })
 })
+
+// OLD-67 — special-character profiles that did not match the printed books. Each row
+// is the book's own profile (M WS BS S T W I A Ld, Spanish books M in cm converted
+// through MOVEMENT_CM), checked against the scans; see CITATIONS.md for the pages.
+describe('special character profiles match the printed books (OLD-67)', () => {
+  type Row = { army: string; id: string; page: string; stats: [number, number, number, number, number, number, number, number, number] }
+  const toStatLine = (s: Row['stats']): StatLine => ({ M: s[0], WS: s[1], BS: s[2], S: s[3], T: s[4], W: s[5], I: s[6], A: s[7], Ld: s[8] })
+  const rows: Row[] = [
+    { army: 'empire', id: 'emp-volkmar', page: 'Imperio p.69', stats: [4, 5, 3, 4, 4, 3, 5, 3, 10] },
+    { army: 'empire', id: 'emp-aldebrand-ludenhof', page: 'Imperio p.72', stats: [4, 5, 5, 4, 4, 3, 4, 3, 9] },
+    { army: 'empire', id: 'emp-marius-leitdorf', page: 'Imperio p.73', stats: [4, 5, 5, 4, 4, 3, 4, 3, 9] },
+    { army: 'dwarfs', id: 'dw-felix', page: 'Enanos p.93', stats: [4, 6, 5, 4, 4, 2, 5, 3, 8] },
+    { army: 'dwarfs', id: 'dw-ungrim-ironfist', page: 'Enanos p.91', stats: [3, 7, 6, 4, 5, 3, 5, 4, 10] },
+    { army: 'bretonnia', id: 'br-armand', page: 'Bretonia p.73', stats: [4, 5, 4, 4, 3, 1, 4, 2, 9] },
+    { army: 'lizardmen', id: 'lz-oxayotl', page: 'Hombres Lagarto p.83', stats: [6, 4, 5, 4, 4, 3, 7, 3, 7] },
+    { army: 'undead', id: 'ud-vlad-von-carstein', page: 'No Muertos p.87', stats: [6, 8, 6, 7, 6, 4, 9, 4, 10] },
+    { army: 'undead', id: 'ud-isabella-von-carstein', page: 'No Muertos p.88', stats: [6, 7, 5, 6, 5, 3, 8, 3, 9] },
+    { army: 'vampire-counts', id: 'vc-krell', page: 'Condes Vampiro p.72', stats: [4, 5, 0, 4, 5, 3, 5, 3, 10] },
+    { army: 'vampire-counts', id: 'vc-isabela-von-carstein', page: 'Condes Vampiro p.78', stats: [6, 6, 4, 6, 5, 2, 7, 2, 8] },
+    { army: 'dark-elves', id: 'de-morathi', page: 'Elfos Oscuros p.59', stats: [5, 4, 4, 4, 4, 4, 9, 3, 9] },
+  ]
+  const unitOf = (armyId: string, unitId: string) => {
+    const unit = getArmy(armyId)?.units.find((u) => u.id === unitId)
+    expect(unit, `${armyId}/${unitId}`).toBeDefined()
+    return unit!
+  }
+
+  it.each(rows)('$id: $page', ({ army, id, stats }) => {
+    expect(unitOf(army, id).statLine).toEqual(toStatLine(stats))
+  })
+
+  it('Gorthor: the two Tuskgors pull his chariot with the printed profile (Paladines del Caos p.44)', () => {
+    const tuskgors = unitOf('chaos', 'ch-gorthor').profiles?.find((p) => p.name === '2 Tuskgors')
+    expect(tuskgors?.statLine).toEqual({ M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 2, I: 2, A: 1, Ld: 3 })
+  })
+
+  it("Mordrek's Barded Chaos Steed carries the printed Corcel del Caos row (Paladines del Caos p.20)", () => {
+    const steed = unitOf('chaos', 'ch-mordrek').profiles?.find((p) => p.name === 'Barded Chaos Steed')
+    expect(steed?.statLine).toEqual({ M: 8, WS: 4, BS: 0, S: 4, T: 4, W: 1, I: 4, A: 1, Ld: 5 })
+  })
+
+  it("Bretonnia: Suliman's and Jules' retainer rows carry the printed profile (Bretonia p.69, p.72)", () => {
+    const rules = (id: string) => unitOf('bretonnia', id).specialRules ?? []
+    expect(rules('br-odo')).toContain('Accompanied by Suliman le Saracen (WS4 BS4 S4 T3 W1 I4 A2 Ld7)')
+    expect(rules('br-tristan')).toContain('Accompanied by Jules le Jongleur (WS3 BS3 S3 T3 W1 I4 A1 Ld7)')
+    expect(RULE_PHRASE_ES['Accompanied by Suliman le Saracen (WS4 BS4 S4 T3 W1 I4 A2 Ld7)']).toBe('Acompañado por Suliman le Saracen (HA4 HP4 F4 R3 H1 I4 A2 L7)')
+    expect(RULE_PHRASE_ES['Accompanied by Jules le Jongleur (WS3 BS3 S3 T3 W1 I4 A1 Ld7)']).toBe('Acompañado por Jules le Jongleur (HA3 HP3 F3 R3 H1 I4 A1 L7)')
+  })
+})

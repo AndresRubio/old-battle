@@ -1419,6 +1419,8 @@ Warhorse each, no price printed), Volkmar's War Altar and Zarina's Warhorse keep
 treatment: the unpriced mounts stay as they are and the Altar and Warhorse stay display-only.
 Ludwig (p.69) and Magnus (p.68-69) do not change.
 
+**Profiles corrected (OLD-67, 2026-10-26).** Volkmar (Imperio p.69) prints W3 I5 A3, the data had W4 I3 A5. Aldebrand Ludenhof (p.72) and Marius Leitdorf (p.73) print BS5 like the other Elector Counts, the data had BS4.
+
 #### Dwarfs and Skaven: special characters' extra costs (OLD-63, 2026-10-26)
 **Dwarfs, Enanos (1995, ES) printed pp.90-96.** Each page prints a cost table of the form
 `<character> N puntos / +Runas de Arma / +Runas de Defensa / +Runas Talismánicas`. The runes are
@@ -1476,6 +1478,8 @@ Corrupción, not the Plague Censer, which has no printed cost; the rule line nam
 object. Snikch's and Queek's items are "los primeros dos" of their allowances (p.73, p.74), Ikit's
 Tormenta Demoníaca is "el primero que debe adquirir" (p.71), and Skrolk's two items are "siempre"
 his (p.70).
+
+**Profiles corrected (OLD-67, 2026-10-26).** Dwarfs (Enanos): Felix Jaeger (p.93) prints T4 I5 Ld8, the data had T5 I4 Ld10, which is Bugman's row. His BS stays 5 and M4 WS6 W2 A3 were right; the OLD-67 issue text read BS4 T3 from the same row, and a 300 dpi crop gives BS5 T4. Ungrim Ironfist (p.91) prints M8cm WS7 BS6 S4 T5 W3 I5 A4 Ld10, so the data row was shifted one column; T5 is the base value, the Crown of the Slayers' +1 Toughness stays in the rules text like Kragg's and Bugman's.
 
 #### Wood Elves: special characters' extra costs (OLD-63, 2026-10-26)
 **Wood Elves, Elfos Silvanos (1996, ES) printed pp.70-80.** Each page prints its extras under the
@@ -1562,6 +1566,8 @@ Magia card (p.36 and p.73) prints a dash in the restriction column, so no race r
 it moves from the Empire-only list to the common pool, so every army can take it. Owner decision
 (2026-10-26).
 
+**Profiles corrected (OLD-67, 2026-10-26).** Undead (No Muertos): Vlad von Carstein (p.87) prints M15cm WS8 BS6 S7 T6 W4 I9 A4 Ld10, the data had a copy of Isabella's row for WS to I. The reference table (p.97) prints the same row for the Señor de Vampiros. Isabella von Carstein (p.88) prints A3, the data had A4. Dark Elves (Elfos Oscuros): Morathi (p.59) prints W4 A3, the data had W3 A2.
+
 #### Orcs & Goblins: special characters' extra costs (OLD-63, 2026-10-26)
 **Orcs & Goblins, Orcos y Goblins (1997, ES) printed pp.90-93; chariot prices p.88.** Each page
 lists its extras as `+N puntos` under a headline that excludes them. Items in the pool are fixed
@@ -1643,6 +1649,8 @@ accepts a negative option price only on a flat option.
 | Mydas the Mean | p.64-65 | "between 5 and 20 bodyguards ... Each extra bodyguard after the first five costs 12 points": counted option, 12 each, up to 15. "a standard bearer and musician at double the points cost of a normal trooper": 2 × 12 = 24 each, flat | 210 to 210 (270 with 5 extra; +24 for each of standard and musician) |
 | Marco Colombo | p.67 | "Marco Colombo carries three magic items ... Gem of Lustria, Gourd of Lustrian Wine and Scroll of Araby"; the Navigator's Telescope is under Special Rules, so it moved out of the magic-items tag | 176 to 176 |
 
+**Profiles corrected (OLD-67, 2026-10-26).** Bretonnia (Bretonia, English, inches): Armand d'Aquitaine (p.73) prints T3 W1, the data had T4 W3. Suliman le Saracen, Odo's retainer (p.69), prints T3, and Jules le Jongleur, Tristan's retainer (p.72), prints WS3; both live only in the "Accompanied by" rule text, so the English line and its Spanish key in `RULE_PHRASE_ES` changed together. Vampire Counts (Condes Vampiro): Krell (p.72) prints I5, the data had I3. Isabela von Carstein (p.78) prints BS4, the data had BS5. Chaos (Paladines del Caos): Gorthor's two Tuskgors (p.44) print W2 I2 Ld3, the data had W1 I3 Ld7, and the Reino del Caos bestiary (p.78) prints the same row. Mordrek's Corcel del Caos (p.20) prints WS4 I4, the data had WS3 I3. Gorthor's own row and his Tuskgors' M7 are unchanged.
+
 #### High Elves: special characters' extra costs (OLD-63, 2026-10-26)
 **Altos Elfos (1997, ES) printed pp.81-94.** Each character's page prints the headline in its title
 and a price beside every item, and never says whether the headline holds the items. The owner
@@ -1684,6 +1692,8 @@ default. **User choice (owner ruling 2026-10-26)**, not a book value.
 
 The Dagger of Sotek (card 50) is the one pool item among them: it is now a locked fixed item of
 Tenehuini with `included: true` (owner approval, 2026-10-26), so it cannot be bought a second time.
+
+**Profile corrected (OLD-67, 2026-10-26).** Oxayotl (Hombres Lagarto p.83): the printed Toughness is 4, the data had 3. The rest of his row (M6 WS4 BS5 S4 W3 I7 A3 Ld7) was right.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary

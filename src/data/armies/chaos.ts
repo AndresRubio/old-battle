@@ -142,7 +142,7 @@ const WSORAYCH_PROFILE: ProfileBlock = {
 }
 const MORDREK_STEED_PROFILE: ProfileBlock = {
   name: 'Barded Chaos Steed', nameEs: 'Corcel del Caos con Barda',
-  statLine: { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 3, A: 1, Ld: 5 },
+  statLine: { M: 8, WS: 4, BS: 0, S: 4, T: 4, W: 1, I: 4, A: 1, Ld: 5 },
   specialRules: ['Barded (1+ armour save)'],
 }
 const BLOODGREED_PROFILE: ProfileBlock = {
@@ -663,7 +663,7 @@ const units: UnitProfile[] = [
     profiles: [
       // OLD-33 — Paladines del Caos printed p.44 = PDF 46: "CARRUAJE – – – 7 7 3 1 – –"
       { name: 'Tuskgor Chariot', nameEs: 'Carro de Tuskgors', statLine: { S: 7, T: 7, W: 3, I: 1 }, specialRules: ['Scythed', 'Impact hits'] },
-      { name: '2 Tuskgors', nameEs: '2 Tuskgors', statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 3, A: 1, Ld: 7 }, specialRules: ['4+ armour save'] },
+      { name: '2 Tuskgors', nameEs: '2 Tuskgors', statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 2, I: 2, A: 1, Ld: 3 }, specialRules: ['4+ armour save'] },
     ],
     specialRules: [
       'Special character — Beastman Warlord; always the army General',

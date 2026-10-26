@@ -250,7 +250,7 @@ const units: UnitProfile[] = [
     nameEs: 'Morathi, la Hechicera Bruja',
     role: 'character',
     pointsPerModel: 327,
-    statLine: elf({ WS: 4, BS: 4, S: 4, T: 4, W: 3, I: 9, A: 2, Ld: 9 }),
+    statLine: elf({ WS: 4, BS: 4, S: 4, T: 4, W: 4, I: 9, A: 3, Ld: 9 }),
     isCharacter: true,
     characterRank: 'wizard4',
     lores: ['dark'],
