@@ -1507,6 +1507,60 @@ and the Magia card list prints 50 (Magia p.72); only Magia p.34 prints 60. The i
 the High Elves (`restrictedTo: ['high-elves', 'wood-elves']`), so it costs 50 there too. Owner
 decision (2026-10-26).
 
+#### Dark Elves and Undead: special characters' extra costs (OLD-63, 2026-10-26)
+**Dark Elves, Elfos Oscuros (1995, ES) printed pp.56-63.** Each page lists a table of items with
+`+N puntos` (the Manticore as `Mantícora 200 puntos`) under a headline that does not contain them.
+Items in the pool are fixed at their card price, which matches every page; the mounts and the
+chariot are `fixedExtras`. The Armour of Fortune (15), Enchanted Shield (5), Meteoric Iron Armour
+(25), Black Amulet (50) and the other common cards match the pages.
+
+| Character | Page | Table | Fixed items and extras | Bare entry |
+|---|---|---|---|---|
+| Witch King | p.56-57 | `+50 Corona de Hierro / +60 Armadura del Rey Brujo / +50 Escudo Antihechizos / +75 Destructora / +90 Carruaje Negro` | Iron Crown (new, 50), Armour of the Witch King (new, 60), Anti-Spell Shield, Destroyer (cards); Black Chariot 90 | 350 to 675 |
+| Morathi | p.59 | `+15 Espada Oscura / +25 Amuleto Ámbar / +30 Pergamino de Energía / +25 Pergamino de Dispersión de Magia / +50 Pegaso Negro` | Dark Sword, Amber Amulet, Power Scroll, Dispel Scroll (cards); Black Pegasus Sulephet 50 | 327 to 472 |
+| Hellebron | p.60-61 | `+100 Espada de Muerte / +20 Espada Defensora / +25 Amuleto del Fuego / Mantícora 200 puntos` | Sword of Death, Defender Sword, Amulet of Fire (cards); Manticore 200 | 207 to 552 |
+| Rakarth | p.58 | `+25 Látigo de la Agonía / +15 Armadura de la Suerte / +5 Escudo Encantado / +450 Dragón Negro` | Whip of Agony, Armour of Fortune, Enchanted Shield (cards); Black Dragon Bracchus 450 | 134 to 629 |
+| Kouran | p.60 | `+20 Espada de Hierro Encantado / +25 Armadura de Hierro Meteórico` | both cards | 105 to 150 |
+| Tullaris | p.61-62 | `+50 Hacha de los Verdugos / +50 Amuleto Negro` | both cards | 123 to 223 |
+| Shadowblade | p.62-63 | `+25 Corazón del Infortunio / +10 Poción de Fuerza` | both cards | 115 to 150 |
+
+**Hellebron's unsigned 200.** p.60-61 prints "Mantícora 200 puntos" without the "+" the other rows
+carry. It is read as an add-on: a 207-point entry cannot contain a 200-point monster, and the same
+table shape (items below the headline) holds for every other character. Total 552.
+
+**Hellebron's two weapons.** The Sword of Death and the Defender Sword are both weapons; the page
+fixes both, so the one-per-category rule does not apply to them (it polices only the user's picks).
+
+**Allowance above the rank.** Rakarth is a Hero (2 items) and his page fixes three; Shadowblade is
+a Champion (1 item) and his page fixes two. Both set `magicItemSlots` to the page's number
+(Rakarth 3, Shadowblade 2). Morathi and the Witch King fit their level-4 allowance of 4.
+
+**Two new items.** The pool lacked the Iron Crown (p.56-57, arcane, 50, in the crown group) and the
+Armour of the Witch King (p.56-57, armour, 60). Both are Dark Elf special-character items; their
+Spanish text is the page's rules paragraph and the English text renders it.
+
+**No Muertos (1995, ES) printed pp.86-95.** p.86 says "El valor en puntos del personaje no incluye el
+coste de sus objetos mágicos". Vlad von Carstein, Heinrich Kemmler, Isabella and Manfred do not
+change.
+
+| Character | Page | Table | Fixed items and extras | Bare entry |
+|---|---|---|---|---|
+| Nagash | p.86-87 | `+35 Mortis / +100 Armadura Negra de Nagash / +100 Libro de Nagash / +40 Báculo del Poder` | Mortis, Black Armour, Book of Nagash, Staff of Power (cards) | 475 to 750 |
+| Arkhan | p.91-92 | `+50 Báculo de Condenación / +50 Espada Funeraria de Arkhan / +25 Libro Maldito / +50 Carruaje de Arkhan` | Staff of Damnation, Funereal Sword of Arkhan, The Cursed Book (cards); Chariot of Arkhan 50 | 350 to 525 |
+| Krell | p.92-93 | `+50 Armadura del Defensor / +125 Hacha Negra de Krell` | Armour of the Defender, Black Axe of Krell (cards) | 160 to 335 |
+| Settra | p.94-95 | `+50 Báculo de Osiris / +75 Corona del Rey Funerario / +30 Flagelo de Cráneos` | Staff of Osiris, Flail of Skulls (cards); Crown of the Tomb King at 75 | 210 to 365 |
+| Dieter Helsnicht | p.95 | `+65 Espada Rúnica del Caos / +50 Báculo Llameante de la Muerte / +200 Mantícora` | Rune Sword of Chaos, Flaming Staff of Death (cards); Manticore 200 | 410 to 725 |
+
+**Settra's Crown at 75, the card at 50.** p.94 prints "+75 puntos de la Corona del Rey Funerario";
+the Magia card list (p.38 and p.74) prints 50 for every other Tomb King. His page price is a
+`points` override on his fixed item, so the card stays at 50. **User choice (owner ruling
+2026-10-26).**
+
+**The Armour of the Defender is in the common pool.** Krell's page (p.92-93) fixes it at 50. The
+Magia card (p.36 and p.73) prints a dash in the restriction column, so no race restriction applies;
+it moves from the Empire-only list to the common pool, so every army can take it. Owner decision
+(2026-10-26).
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

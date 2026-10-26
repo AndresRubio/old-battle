@@ -137,7 +137,8 @@ const NIGHTMARE_ONLY_MOUNTS: MountOption[] = [NIGHTMARE_MOUNT]
 const SKELETAL_STEED_ONLY_MOUNTS: MountOption[] = [SKELETAL_STEED_MOUNT]
 
 // --- Fixed (non-selectable) mounts for special characters who always ride one.
-//     Display-only: the cost is already included in the model's points. ---
+//     The profile is display-only; Dieter's Manticore is charged through his
+//     `fixedExtras` (OLD-63), on top of the headline. ---
 const MANTICORE_PROFILE: ProfileBlock = {
   name: 'Manticore', nameEs: 'Mantícora', statLine: MANTICORE_MOUNT.statLine!,
   specialRules: ['Flying', 'Large target', 'Terror'],
@@ -710,6 +711,12 @@ const units: UnitProfile[] = [
     lores: ['necromantic'],
     canBeGeneral: true,
     max: 1,
+    // No Muertos p.86: "El valor en puntos del personaje no incluye el coste de sus objetos
+    // mágicos"; Mortis +35, Armadura Negra +100, Libro +100, Báculo del Poder +40 (OLD-63).
+    fixedMagicItems: [
+      { id: 'mi-mortis-great-sword-of-death' }, { id: 'mi-black-armour-of-nagash' },
+      { id: 'mi-book-of-nagash' }, { id: 'mi-staff-of-power-nagash' },
+    ],
     specialRules: [
       'Special character',
       'Great Necromancer (Wizard Level 4); auto-recovers Necromantic spells',
@@ -817,6 +824,10 @@ const units: UnitProfile[] = [
     lores: ['necromantic'],
     canBeGeneral: true,
     max: 1,
+    // No Muertos p.91: Báculo de Condenación +50, Espada Funeraria de Arkhan +50, Libro Maldito +25,
+    // Carruaje de Arkhan +50 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-staff-of-damnation' }, { id: 'mi-funereal-sword-of-arkhan' }, { id: 'mi-the-cursed-book' }],
+    fixedExtras: [{ id: 'chariot-of-arkhan', name: 'Chariot of Arkhan', nameEs: 'Carruaje de Arkhan', points: 50 }],
     profiles: [
       {
         name: 'Chariot of Arkhan', nameEs: 'Carro de Arkhan',
@@ -835,7 +846,7 @@ const units: UnitProfile[] = [
       'Immune to psychology',
       'Terror',
       'Rides the Chariot of Arkhan (flies; built on a dead Manticore)',
-      'Magic items: Staff of Condemnation +50, Wight Blade of Arkhan +50, Book of the Damned +25, Chariot of Arkhan +50',
+      'Fixed magic items: Staff of Damnation +50, Funereal Sword of Arkhan +50, The Cursed Book +25; Chariot of Arkhan +50',
     ],
   },
   {
@@ -849,6 +860,8 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: true,
     max: 1,
+    // No Muertos p.92: Armadura del Defensor +50, Hacha Negra de Krell +125 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-armour-of-the-defender' }, { id: 'mi-black-axe-of-krell' }],
     mounts: SKELETAL_STEED_ONLY_MOUNTS,
     specialRules: [
       'Special character (independent — need not join a unit)',
@@ -871,6 +884,11 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // No Muertos p.94: Báculo de Osiris +50, "+75 puntos de la Corona del Rey Funerario" (the card
+    // says 50), Flagelo de Cráneos +30 (OLD-63).
+    fixedMagicItems: [
+      { id: 'mi-staff-of-osiris' }, { id: 'mi-crown-of-the-tomb-king', points: 75 }, { id: 'mi-flail-of-skulls' },
+    ],
     mounts: SKELETAL_STEED_ONLY_MOUNTS,
     specialRules: [
       'Special character (independent — need not join a unit)',
@@ -894,13 +912,17 @@ const units: UnitProfile[] = [
     lores: ['necromantic'],
     canBeGeneral: true,
     max: 1,
+    // No Muertos p.95: Espada Rúnica del Caos +65, Báculo Llameante de la Muerte +50,
+    // Mantícora +200 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-rune-sword-of-chaos-of-grungni-iron-heart' }, { id: 'mi-flaming-staff-of-death' }],
+    fixedExtras: [{ id: 'manticore', name: 'Manticore', nameEs: 'Mantícora', points: 200 }],
     profiles: [MANTICORE_PROFILE],
     specialRules: [
       'Special character',
       'Great Necromancer (Wizard Level 4)',
       'Up to 4 magic items',
       'Rides a Manticore (flies; causes terror)',
-      'Magic items: Chaos Runic Sword +65, Death-Calling Staff +50, Manticore +200',
+      'Fixed magic items: Rune Sword of Chaos +65, Flaming Staff of Death +50; Manticore +200',
     ],
   },
 ]

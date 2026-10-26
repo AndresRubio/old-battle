@@ -86,7 +86,8 @@ const LORD_MOUNTS: MountOption[] = [
 ]
 
 // --- Fixed (non-selectable) mounts for special characters who always ride one.
-//     Display-only: the cost is already baked into the model's points. ---
+//     The profile is display-only; the mount's price is charged through the unit's
+//     `fixedExtras` (OLD-63), on top of the character's headline. ---
 const MANTICORE_PROFILE: ProfileBlock = {
   name: 'Manticore', nameEs: 'Mantícora', statLine: MANTICORE_MOUNT.statLine!, specialRules: MANTICORE_MOUNT.specialRules,
 }
@@ -212,6 +213,12 @@ const units: UnitProfile[] = [
     lores: ['dark'],
     canBeGeneral: true,
     max: 1,
+    // Elfos Oscuros p.56-57: "Corona de Hierro +50, Armadura del Rey Brujo +60, Escudo
+    // Antihechizos +50, Destructora +75, Carruaje Negro +90" on top of the 350 (OLD-63).
+    fixedMagicItems: [
+      { id: 'mi-iron-crown' }, { id: 'mi-armour-of-the-witch-king' }, { id: 'mi-anti-spell-shield' }, { id: 'mi-destroyer' },
+    ],
+    fixedExtras: [{ id: 'black-chariot', name: 'Black Chariot', nameEs: 'Carruaje Negro', points: 90 }],
     // OLD-39 — printed p.57 = PDF 59. The PERFIL table prints three rows and the
     // unit had no `profiles` at all, so the chariot he always rides and its team
     // were invisible in the app:
@@ -248,6 +255,12 @@ const units: UnitProfile[] = [
     characterRank: 'wizard4',
     lores: ['dark'],
     max: 1,
+    // Elfos Oscuros p.59: Espada Oscura +15, Amuleto Ámbar +25, Pergamino de Energía +30,
+    // Pergamino de Dispersión +25, Pegaso Negro +50 (OLD-63).
+    fixedMagicItems: [
+      { id: 'mi-dark-sword' }, { id: 'mi-amber-amulet' }, { id: 'mi-power-scroll' }, { id: 'mi-dispel-scroll' },
+    ],
+    fixedExtras: [{ id: 'black-pegasus', name: 'Black Pegasus Sulephet', nameEs: 'Pegaso Negro Sulephet', points: 50 }],
     profiles: [BLACK_PEGASUS_PROFILE],
     specialRules: ['Special character', 'Great Sorceress (Level 4)', 'Rides the Black Pegasus Sulephet', 'Fixed magic items'],
   },
@@ -262,6 +275,11 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Elfos Oscuros p.60-61: Espada de Muerte +100, Espada Defensora +20, Amuleto del Fuego +25
+    // and "Mantícora 200 puntos". The 200 is printed without a "+", but 207 cannot contain a
+    // 200-point monster, so it is an add-on like the others (OLD-63).
+    fixedMagicItems: [{ id: 'mi-sword-of-death' }, { id: 'mi-defender-sword' }, { id: 'mi-amulet-of-fire' }],
+    fixedExtras: [{ id: 'manticore', name: 'Manticore', nameEs: 'Mantícora', points: 200 }],
     profiles: [MANTICORE_PROFILE],
     specialRules: ['Special character', 'Requires a Witch Elf regiment', 'Frenzy', 'Rides a Manticore', 'Fixed magic items'],
   },
@@ -275,6 +293,11 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     max: 1,
+    // Elfos Oscuros p.58: Látigo de la Agonía +25, Armadura de la Suerte +15, Escudo Encantado +5,
+    // Dragón Negro +450. Three items, one above a Hero's two (OLD-63).
+    magicItemSlots: 3,
+    fixedMagicItems: [{ id: 'mi-whip-of-agony' }, { id: 'mi-armour-of-fortune' }, { id: 'mi-enchanted-shield' }],
+    fixedExtras: [{ id: 'black-dragon', name: 'Black Dragon Bracchus', nameEs: 'Dragón Negro Bracchus', points: 450 }],
     profiles: [BLACK_DRAGON_PROFILE],
     specialRules: ['Special character', 'Beastmaster', 'Rides the Black Dragon Bracchus', 'Fixed magic items'],
   },
@@ -288,6 +311,8 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     max: 1,
+    // Elfos Oscuros p.60: Espada de Hierro Encantado +20, Armadura de Hierro Meteórico +25 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-enchanted-iron-sword' }, { id: 'mi-meteoric-iron-armour' }],
     specialRules: ['Special character', 'Requires a Black Guard regiment', 'Fixed magic items'],
   },
   {
@@ -300,6 +325,8 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     max: 1,
+    // Elfos Oscuros p.61-62: Hacha de los Verdugos +50, Amuleto Negro +50 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-executioners-axe' }, { id: 'mi-black-amulet' }],
     specialRules: ['Special character', 'Requires an Executioner regiment', 'Fixed magic items'],
   },
   {
@@ -312,6 +339,10 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     max: 1,
+    // Elfos Oscuros p.62-63: Corazón del Infortunio +25, Poción de Fuerza +10; two items, one above
+    // a Champion's one (OLD-63).
+    magicItemSlots: 2,
+    fixedMagicItems: [{ id: 'mi-heart-of-woe' }, { id: 'mi-potion-of-strength' }],
     specialRules: ['Special character', 'Master of Disguise', 'Hidden', 'Fixed magic items'],
   },
 

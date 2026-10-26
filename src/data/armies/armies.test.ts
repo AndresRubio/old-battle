@@ -2767,6 +2767,33 @@ describe('OLD-63: special characters charge their book extras', () => {
     ['wood-elves', 'we-skaw', [], 91],
     // Elfos Silvanos p.80: 90 + Tigres Dientes de Sable 66 + Boleadoras 10.
     ['wood-elves', 'we-gruarth', [], 166],
+    // Elfos Oscuros p.56-57: 350 + Corona de Hierro 50 + Armadura del Rey Brujo 60 + Escudo Antihechizos 50
+    // + Destructora 75 + Carruaje Negro 90.
+    ['dark-elves', 'de-witch-king', [], 675],
+    // Elfos Oscuros p.59: 327 + Espada Oscura 15 + Amuleto Ambar 25 + Pergamino de Energia 30
+    // + Pergamino de Dispersion 25 + Pegaso Negro 50.
+    ['dark-elves', 'de-morathi', [], 472],
+    // Elfos Oscuros p.60-61: 207 + Espada de Muerte 100 + Espada Defensora 20 + Amuleto del Fuego 25 + Manticora 200.
+    ['dark-elves', 'de-hellebron', [], 552],
+    // Elfos Oscuros p.58: 134 + Latigo de la Agonia 25 + Armadura de la Suerte 15 + Escudo Encantado 5
+    // + Dragon Negro 450.
+    ['dark-elves', 'de-rakarth', [], 629],
+    // Elfos Oscuros p.60: 105 + Espada de Hierro Encantado 20 + Armadura de Hierro Meteorico 25.
+    ['dark-elves', 'de-kouran', [], 150],
+    // Elfos Oscuros p.61-62: 123 + Hacha de los Verdugos 50 + Amuleto Negro 50.
+    ['dark-elves', 'de-tullaris', [], 223],
+    // Elfos Oscuros p.62-63: 115 + Corazon del Infortunio 25 + Pocion de Fuerza 10.
+    ['dark-elves', 'de-shadowblade', [], 150],
+    // No Muertos p.86: 475 + Mortis 35 + Armadura Negra 100 + Libro de Nagash 100 + Baculo del Poder 40.
+    ['undead', 'ud-nagash', [], 750],
+    // No Muertos p.91: 350 + Baculo de Condenacion 50 + Espada Funeraria 50 + Libro Maldito 25 + Carruaje 50.
+    ['undead', 'ud-arkhan-the-black', [], 525],
+    // No Muertos p.92: 160 + Armadura del Defensor 50 + Hacha Negra 125.
+    ['undead', 'ud-krell', [], 335],
+    // No Muertos p.94: 210 + Baculo de Osiris 50 + Corona 75 (the card says 50) + Flagelo de Craneos 30.
+    ['undead', 'ud-settra', [], 365],
+    // No Muertos p.95: 410 + Espada Runica del Caos 65 + Baculo Llameante 50 + Manticora 200.
+    ['undead', 'ud-dieter-helsnicht', [], 725],
   ]
 
   it.each(rows)('%s %s with %j costs %d', (armyId, unitId, optionIds, expected) => {
@@ -2800,6 +2827,25 @@ describe('OLD-63: special characters charge their book extras', () => {
     expect(volkmar.fixedMagicItems!.map((f) => f.id)).toEqual([
       'mi-staff-of-power-grand-theogonist', 'mi-jade-griffon', 'mi-horn-of-sigismund',
     ])
+  })
+
+  // Magia p.36 and p.73 print a dash in the restriction column of the Armour of
+  // the Defender: every army may take it, Krell wears it by his page.
+  it('the Armour of the Defender is in every army pool, once', () => {
+    for (const a of ARMIES) {
+      const copies = a.magicItems.filter((i) => i.id === 'mi-armour-of-the-defender')
+      expect(copies, a.id).toHaveLength(1)
+      expect(copies[0].restrictedTo, a.id).toBeUndefined()
+    }
+  })
+
+  // Settra's page prices the Crown at +75; the card (Magia p.38 and p.74) says 50
+  // for every other Tomb King.
+  it("Settra's Crown costs 75 on his page and 50 on the card", () => {
+    const undead = getArmy('undead')!
+    const settra = undead.units.find((u) => u.id === 'ud-settra')!
+    expect(settra.fixedMagicItems!.find((f) => f.id === 'mi-crown-of-the-tomb-king')!.points).toBe(75)
+    expect(undead.magicItems.find((i) => i.id === 'mi-crown-of-the-tomb-king')!.points).toBe(50)
   })
 
   // Every page that states the number counts the fixed items inside the

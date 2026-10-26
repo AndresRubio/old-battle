@@ -1289,6 +1289,23 @@ describe('fixed magic items (OLD-63)', () => {
     expect(itemRules(r, synth)).not.toContain('magic-items-banner-bsb')
   })
 
+  // Elfos Oscuros p.60-61: Hellebron always carries the Sword of Death and the
+  // Defender Sword, two weapons. The page fixes them, so no category finding.
+  it('raises no category warning for Hellebron, who carries two fixed weapons', () => {
+    const darkElves = getArmy('dark-elves')!
+    const r: Roster = {
+      id: 'r', name: 'Host', armyId: 'dark-elves', pointsLimit: 3000,
+      entries: [
+        entry({ unitId: 'de-hellebron', isGeneral: true }),
+        entry({ unitId: 'de-witch-elves', size: 10 }),
+      ],
+    }
+    const hellebron = darkElves.units.find((u) => u.id === 'de-hellebron')!
+    const weapons = carriedMagicItems(r.entries[0], hellebron, darkElves).filter((c) => c.item.category === 'weapon')
+    expect(weapons.map((c) => c.item.id)).toEqual(['mi-sword-of-death', 'mi-defender-sword'])
+    expect(itemRules(r, darkElves)).not.toContain('magic-items-category')
+  })
+
   const uniqueMessages = (r: Roster) =>
     validateRoster(r, empire).filter((v) => v.rule === 'magic-items-unique').map((v) => v.message)
 
