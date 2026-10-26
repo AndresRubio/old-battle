@@ -1014,6 +1014,9 @@ h1, h2, h3 {
 .mi-group + .mi-group {
   margin-top: 0.7rem;
 }
+.mi-selected {
+  margin-bottom: 0.7rem;
+}
 .mi-group-title {
   font-family: var(--font-display);
   font-size: var(--fs-xs);

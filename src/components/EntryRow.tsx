@@ -129,6 +129,63 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
     !magicStandardNeedsBearer(unit) || entry.optionIds.includes(STANDARD_BEARER_ID)
   const hasOptions = hasAnyOptions(unit)
 
+  /** One magic-item row: shared by the selected block and the category list. */
+  const renderMagicItem = (item: MagicItem) => {
+    const info = (
+      <span className="mi-body">
+        <span className="mi-head">
+          <span className="mi-name-wrap">
+            <span className="mi-name">{magicItemName(item, lang)}</span>
+            <button
+              type="button"
+              className="mi-info"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                setActiveItem(item)
+              }}
+              title={lang === 'es' ? 'Ver texto del objeto' : 'View item text'}
+              aria-label={lang === 'es' ? 'Ver texto del objeto' : 'View item text'}
+            >
+              ⓘ
+            </button>
+            {item.special && (
+              <span className="mi-special-tag">
+                {lang === 'es' ? 'personaje especial' : 'special character'}
+              </span>
+            )}
+          </span>
+          <span className="mi-pts">{item.points} {t('pts', lang)}</span>
+        </span>
+      </span>
+    )
+    // Special-character items: consultable (ⓘ) but not freely selectable.
+    if (item.special) {
+      return (
+        <div
+          key={item.id}
+          className="mi-item mi-item-special"
+          title={lang === 'es' ? 'Objeto de personaje especial — no seleccionable' : 'Special-character item — not selectable'}
+        >
+          <span className="mi-checkbox-spacer" aria-hidden="true" />
+          {info}
+        </div>
+      )
+    }
+    return (
+      <label key={item.id} className="mi-item">
+        <input
+          type="checkbox"
+          checked={entry.magicItemIds.includes(item.id)}
+          onChange={() => actions.toggleMagicItem(item.id)}
+        />
+        {info}
+      </label>
+    )
+  }
+
+  const selectedItems = entry.magicItemIds.flatMap((id) => army.magicItems.find((i) => i.id === id) ?? [])
+
   // Search + max-points filter, shared by a character's magic items and a
   // regiment's magic standard so both pickers narrow the same way.
   const itemFilter = (
@@ -532,6 +589,12 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
               <span className="opt-label">
                 {t('magicItems', lang)} <span className="muted small">({entry.magicItemIds.length}/{allowance})</span>
               </span>
+              {selectedItems.length > 0 && (
+                <div className="mi-selected">
+                  <div className="mi-group-title">{t('selectedItems', lang)}</div>
+                  {selectedItems.map(renderMagicItem)}
+                </div>
+              )}
               {itemFilter}
               <div className="magic-items">
                 {(() => {
@@ -545,59 +608,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                   return (
                     <div key={cat} className="mi-group">
                       <div className="mi-group-title">{CATEGORY_LABEL[lang][cat]}</div>
-                      {items.map((item) => {
-                        const info = (
-                          <span className="mi-body">
-                            <span className="mi-head">
-                              <span className="mi-name-wrap">
-                                <span className="mi-name">{magicItemName(item, lang)}</span>
-                                <button
-                                  type="button"
-                                  className="mi-info"
-                                  onClick={(e) => {
-                                    e.preventDefault()
-                                    e.stopPropagation()
-                                    setActiveItem(item)
-                                  }}
-                                  title={lang === 'es' ? 'Ver texto del objeto' : 'View item text'}
-                                  aria-label={lang === 'es' ? 'Ver texto del objeto' : 'View item text'}
-                                >
-                                  ⓘ
-                                </button>
-                                {item.special && (
-                                  <span className="mi-special-tag">
-                                    {lang === 'es' ? 'personaje especial' : 'special character'}
-                                  </span>
-                                )}
-                              </span>
-                              <span className="mi-pts">{item.points} {t('pts', lang)}</span>
-                            </span>
-                          </span>
-                        )
-                        // Special-character items: consultable (ⓘ) but not freely selectable.
-                        if (item.special) {
-                          return (
-                            <div
-                              key={item.id}
-                              className="mi-item mi-item-special"
-                              title={lang === 'es' ? 'Objeto de personaje especial — no seleccionable' : 'Special-character item — not selectable'}
-                            >
-                              <span className="mi-checkbox-spacer" aria-hidden="true" />
-                              {info}
-                            </div>
-                          )
-                        }
-                        return (
-                          <label key={item.id} className="mi-item">
-                            <input
-                              type="checkbox"
-                              checked={entry.magicItemIds.includes(item.id)}
-                              onChange={() => actions.toggleMagicItem(item.id)}
-                            />
-                            {info}
-                          </label>
-                        )
-                      })}
+                      {items.map(renderMagicItem)}
                     </div>
                   )
                   })
