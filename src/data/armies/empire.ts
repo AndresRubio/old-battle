@@ -100,6 +100,12 @@ const FIGHTER_MOUNTS: MountOption[] = [
   WARHORSE_MOUNT, PEGASUS_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT,
   DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT,
 ]
+/** Special characters who ride "a Barded Warhorse (+7 pts) or a Monster": Karl Franz,
+ *  the Supreme Patriarch and Helborg (Imperio p.67-68, p.70-71, p.71). */
+const BARDED_OR_MONSTER_MOUNTS: MountOption[] = [
+  BARDED_WARHORSE_MOUNT, PEGASUS_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT,
+  DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT,
+]
 /** Wizards may not wear barding; Warhorse + monsters only (same list as fighters). */
 const WIZARD_MOUNTS: MountOption[] = FIGHTER_MOUNTS
 
@@ -111,10 +117,6 @@ const WARHORSE_PROFILE: ProfileBlock = {
 }
 const BARDED_WARHORSE_PROFILE: ProfileBlock = {
   name: 'Barded Warhorse', nameEs: 'Caballo de Guerra con Barda', statLine: WARHORSE_STATS,
-}
-const GRIFFON_DEATHCLAW_PROFILE: ProfileBlock = {
-  name: 'Griffon Deathclaw', nameEs: 'Grifo Garra de la Muerte',
-  statLine: GRIFFON_MOUNT.statLine!, specialRules: GRIFFON_MOUNT.specialRules,
 }
 
 const units: UnitProfile[] = [
@@ -221,7 +223,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
-    profiles: [GRIFFON_DEATHCLAW_PROFILE],
+    mounts: BARDED_OR_MONSTER_MOUNTS,
     // Imperio p.67-68: "+100 Martillo de Sigmar / +75 El Sello de Plata", both
     // mandatory, inside his three-item allowance (OLD-63).
     fixedMagicItems: [{ id: 'mi-hammer-of-sigmar' }, { id: 'mi-silver-seal' }],
@@ -230,7 +232,7 @@ const units: UnitProfile[] = [
       'Heavy armour & sword',
       'Hammer of Sigmar (+100 pts) and Silver Seal (+75 pts) — fixed magic items',
       'One additional magic item',
-      'Rides his Griffon Deathclaw (favourite mount; +150 pts, included)',
+      'May ride a Barded Warhorse (+7 pts) or a Monster; his favourite is the Griffon Deathclaw (+150 pts)',
     ],
   },
   {
@@ -288,6 +290,12 @@ const units: UnitProfile[] = [
     characterRank: 'wizard2',
     lores: ['battle'],
     max: 1,
+    // Imperio p.69-70: "+80 Báculo del Poder / +75 Grifo de Jade / +35 Cuerno de
+    // Sigismund", and "posee tres objetos mágicos" (all three fixed, no extras).
+    magicItemSlots: 3,
+    fixedMagicItems: [
+      { id: 'mi-staff-of-power-grand-theogonist' }, { id: 'mi-jade-griffon' }, { id: 'mi-horn-of-sigismund' },
+    ],
     profiles: [
       {
         name: 'War Altar (chariot)', nameEs: 'Altar de Guerra (carro)',
@@ -301,7 +309,6 @@ const units: UnitProfile[] = [
       'Special character',
       'Wizard level 2 — draws spells from the War Altar (Winds of Magic + 1D3+1 extra cards)',
       'Staff of Power (+80 pts), Jade Griffon (+75 pts), Horn of Sigismund (+35 pts) — fixed magic items',
-      'Three additional magic items',
       'Rides the War Altar (war chariot drawn by Barded Warhorses)',
     ],
   },
@@ -316,11 +323,13 @@ const units: UnitProfile[] = [
     characterRank: 'wizard4',
     lores: ['battle'],
     max: 1,
-    mounts: [BARDED_WARHORSE_MOUNT, PEGASUS_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT, DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT],
+    // Imperio p.70-71: "+75 Báculo de Volans", one of his four magic items.
+    fixedMagicItems: [{ id: 'mi-staff-of-volans' }],
+    mounts: BARDED_OR_MONSTER_MOUNTS,
     specialRules: [
       'Special character (Thyrus Gormann, Bright Wizard Level 4)',
       'Sword; no armour',
-      'Staff of Volans (+75 pts) — must be chosen as one of his magic items',
+      'Staff of Volans (+75 pts) — fixed magic item',
       'Up to 4 magic items total',
       'May ride a Barded Warhorse (+7 pts) or a Monster',
     ],
@@ -336,11 +345,13 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
-    mounts: [BARDED_WARHORSE_MOUNT, PEGASUS_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT, DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT],
+    // Imperio p.71: "+30 Colmillo Rúnico", one of his three magic items.
+    fixedMagicItems: [{ id: 'mi-runefang' }],
+    mounts: BARDED_OR_MONSTER_MOUNTS,
     specialRules: [
       'Special character — Captain of the Reiksgard',
       'Heavy armour & sword',
-      'Runefang (+30 pts) — must be chosen as one of his magic items',
+      'Runefang (+30 pts) — fixed magic item',
       'Up to 3 magic items total',
       'May ride a Barded Warhorse (+7 pts) or a Monster',
     ],
@@ -356,6 +367,8 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Imperio p.72: "+30 Colmillo Rúnico / +25 Talismán de Ulric".
+    fixedMagicItems: [{ id: 'mi-runefang' }, { id: 'mi-talisman-of-ulric' }],
     mounts: [BARDED_WARHORSE_MOUNT],
     specialRules: [
       'Special character',
@@ -375,6 +388,8 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Imperio p.72: "+30 Colmillo Rúnico".
+    fixedMagicItems: [{ id: 'mi-runefang' }],
     mounts: [BARDED_WARHORSE_MOUNT],
     specialRules: [
       'Special character',
@@ -394,6 +409,8 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Imperio p.72-73: "+30 Colmillo Rúnico / +40 Arco del Dragón".
+    fixedMagicItems: [{ id: 'mi-runefang' }, { id: 'mi-dragon-bow' }],
     mounts: [BARDED_WARHORSE_MOUNT],
     specialRules: [
       'Special character',
@@ -413,6 +430,8 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Imperio p.73: "+30 Colmillo Rúnico".
+    fixedMagicItems: [{ id: 'mi-runefang' }],
     mounts: [BARDED_WARHORSE_MOUNT],
     specialRules: [
       'Special character',
@@ -433,6 +452,8 @@ const units: UnitProfile[] = [
     lores: ['ice'],
     canBeGeneral: false,
     max: 1,
+    // Imperio p.74: "+100 Fearfrost", one of her three magic items.
+    fixedMagicItems: [{ id: 'mi-fearfrost' }],
     profiles: [WARHORSE_PROFILE],
     specialRules: [
       'Special character — requires at least one Kislev regiment',

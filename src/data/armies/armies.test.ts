@@ -2702,11 +2702,55 @@ describe('OLD-63: special characters charge their book extras', () => {
   const rows: [string, string, string[], number][] = [
     // Imperio p.67-68: 110 + Hammer of Sigmar 100 + Silver Seal 75.
     ['empire', 'emp-karl-franz', [], 285],
+    // Imperio p.69-70: 150 + Staff of Power 80 + Jade Griffon 75 + Horn of Sigismund 35.
+    ['empire', 'emp-volkmar', [], 340],
+    // Imperio p.70-71: 290 + Staff of Volans 75.
+    ['empire', 'emp-supreme-patriarch', [], 365],
+    // Imperio p.71: 110 + Runefang 30.
+    ['empire', 'emp-kurt-helborg', [], 140],
+    // Imperio p.72: 90 + Runefang 30 + Talisman of Ulric 25.
+    ['empire', 'emp-boris-todbringer', [], 145],
+    // Imperio p.72: 90 + Runefang 30.
+    ['empire', 'emp-aldebrand-ludenhof', [], 120],
+    // Imperio p.72-73: 90 + Runefang 30 + Dragon Bow 40.
+    ['empire', 'emp-valmir-von-raukov', [], 160],
+    // Imperio p.73: 110 + Runefang 30.
+    ['empire', 'emp-marius-leitdorf', [], 140],
+    // Imperio p.74: 200 + Fearfrost 100.
+    ['empire', 'emp-zarina-katarin', [], 300],
   ]
 
   it.each(rows)('%s %s with %j costs %d', (armyId, unitId, optionIds, expected) => {
     const entry: RosterEntry = { id: 'e', unitId, size: 1, optionIds, magicItemIds: [] }
     expect(entryPoints(entry, getArmy(armyId)!)).toBe(expected)
+  })
+
+  // Imperio p.67-68: Karl Franz rides a Barded Warhorse (+7) or a Monster; the
+  // Griffon (+150) is his favourite, no longer included in his headline.
+  it.each([
+    ['mount-barded-warhorse', 292],
+    ['mount-griffon', 435],
+  ])('Karl Franz on %s costs %d', (mountId, expected) => {
+    const entry: RosterEntry = { id: 'e', unitId: 'emp-karl-franz', size: 1, optionIds: [], magicItemIds: [], mountId }
+    expect(entryPoints(entry, getArmy('empire')!)).toBe(expected)
+  })
+
+  it('Karl Franz, Helborg and the Patriarch share one mount list', () => {
+    const empire = getArmy('empire')!
+    const mountIds = (id: string) => empire.units.find((u) => u.id === id)!.mounts?.map((m) => m.id)
+    expect(mountIds('emp-karl-franz')).toBeDefined()
+    expect(mountIds('emp-karl-franz')).toEqual(mountIds('emp-kurt-helborg'))
+    expect(mountIds('emp-karl-franz')).toEqual(mountIds('emp-supreme-patriarch'))
+    expect(empire.units.find((u) => u.id === 'emp-karl-franz')!.profiles).toBeUndefined()
+  })
+
+  it('Volkmar fixes his three items and has exactly three slots', () => {
+    const empire = getArmy('empire')!
+    const volkmar = empire.units.find((u) => u.id === 'emp-volkmar')!
+    expect(volkmar.magicItemSlots).toBe(3)
+    expect(volkmar.fixedMagicItems!.map((f) => f.id)).toEqual([
+      'mi-staff-of-power-grand-theogonist', 'mi-jade-griffon', 'mi-horn-of-sigismund',
+    ])
   })
 
   // Every page that states the number counts the fixed items inside the

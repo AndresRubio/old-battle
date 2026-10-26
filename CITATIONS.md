@@ -1385,6 +1385,39 @@ cuales debe ser … Fearfrost"), Dieter Helsnicht, No Muertos p.95 ("hasta cuatr
 deben ser"), and Keorl, Norsca PDF 34 ("entitled to carry three magic items. Two of these will
 always be").
 
+**Karl Franz's mount, p.67-68.** "Montura: El Emperador puede entrar en combate montado en un
+Caballo de Guerra con barda metálica (+7 puntos incluyendo la barda), o un Monstruo … el favorito
+del Emperador es el Grifo Garra de Muerte (+150 puntos)." The data had him riding the Griffon
+with its 150 buried in the headline and a display-only "Griffon Deathclaw" profile. He now takes
+the same mount list as Helborg (p.71) and the Supreme Patriarch (p.70-71), extracted into one
+constant, and the Griffon is the mount option at +150 that carries its statline (the page prints
+no separate Deathclaw profile). The bare entry stays at 285; 292 on the warhorse, 435 on the Griffon.
+
+**Fixed items of the other eight, one per printed cost table.** Each item is mandatory (owner
+ruling 1 of 2026-10-26: the character pages win over the p.67 note that lets the Electors' Runefangs
+be counted separately for players without Magia de Batalla). Each price below equals the card
+price, so no override is stored.
+
+| Character | Page | Table | Fixed items | Bare entry |
+|---|---|---|---|---|
+| Grand Theogonist Volkmar | p.69-70 | `+80 Báculo del Poder / +75 Grifo de Jade / +35 Cuerno de Sigismund` | Staff of Power, Jade Griffon, Horn of Sigismund | 150 to 340 |
+| Supreme Patriarch | p.70-71 | `+75 Báculo de Volans` | Staff of Volans | 290 to 365 |
+| Kurt Helborg | p.71 | `+30 Colmillo Rúnico` | Runefang | 110 to 140 |
+| Boris Todbringer | p.72 | `+30 Colmillo Rúnico / +25 Talismán de Ulric` | Runefang, Talisman of Ulric | 90 to 145 |
+| Aldebrand Ludenhof | p.72 | `+30 Colmillo Rúnico` | Runefang | 90 to 120 |
+| Valmir von Raukov | p.72-73 | `+30 Colmillo Rúnico / +40 Arco del Dragón` | Runefang, Dragon Bow | 90 to 160 |
+| Marius Leitdorf | p.73 | `+30 Colmillo Rúnico` | Runefang | 110 to 140 |
+| Zarina Katarin | p.74 | `+100 Fearfrost` | Fearfrost | 200 to 300 |
+
+Volkmar's equipment line (p.70) reads "no lleva ni armas ni armadura, pero posee tres objetos
+mágicos", and the three items above are those three, so `magicItemSlots` is 3 and he has no
+free pick. The old rule line "Three additional magic items" contradicted that and is gone. The
+Runefang is `duplicable` because p.67 says "Existen doce Colmillos Rúnicos", so Helborg and
+several Counts can each carry one in the same army. The Electors' mounts (p.72-73, a barded
+Warhorse each, no price printed), Volkmar's War Altar and Zarina's Warhorse keep their current
+treatment: the unpriced mounts stay as they are and the Altar and Warhorse stay display-only.
+Ludwig (p.69) and Magnus (p.68-69) do not change.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

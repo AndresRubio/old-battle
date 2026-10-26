@@ -423,6 +423,14 @@ describe('EntryRow selected magic items block (OLD-65)', () => {
 })
 
 describe('EntryRow fixed magic items and fixed extras (OLD-63)', () => {
+  it('shows Karl Franz a mount selector (Imperio p.67-68)', () => {
+    render(<EntryRow entry={entry('emp-karl-franz', { size: 1 })} army={army} {...props} />)
+    expand()
+    const chips = Array.from(container.querySelectorAll('.mount-chips label')).map((el) => el.textContent)
+    expect(chips).toContain('Griffon +150')
+    expect(chips).toContain('Barded Warhorse +7')
+  })
+
   const HAMMER = 'mi-hammer-of-sigmar'
   const SEAL = 'mi-silver-seal'
   const kf = (over: Partial<RosterEntry> = {}) => entry('emp-karl-franz', { size: 1, ...over })
