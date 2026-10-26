@@ -1,5 +1,5 @@
 import type { Army, EquipmentOption, MagicItem, Roster, RosterEntry, StatLine, StatNotes, UnitProfile } from '../data/types'
-import { effectiveStatLine, entryPoints, findMagicItem, findUnit, unitOptionCost } from './points'
+import { bsbPoints, effectiveStatLine, entryPoints, findMagicItem, findUnit, unitOptionCost } from './points'
 import { summarize } from './summary'
 import { validateRoster } from './validate'
 import {
@@ -185,6 +185,8 @@ export function exportRosterText(roster: Roster, army: Army, lang: Lang = 'en'):
       for (const o of opts) {
         lines.push(`    + ${optionLabel(unit, o, e.optionIds, lang)}`)
       }
+      const bsb = bsbPoints(unit, e)
+      if (bsb > 0) lines.push(`    + ${t('battleStandard', lang)} (+${bsb} ${t('pts', lang)})`)
       const mount = e.mountId ? (unit.mounts ?? []).find((m) => m.id === e.mountId) : undefined
       if (mount) {
         lines.push(`    + ${mountName(mount, lang)} (+${mount.points} ${t('pts', lang)})`)

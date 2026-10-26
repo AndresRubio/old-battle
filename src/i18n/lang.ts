@@ -227,6 +227,9 @@ const STRINGS = {
   // EntryRow
   general: { en: 'General', es: 'General' },
   makeGeneral: { en: '★ Make General', es: '★ Nombrar General' },
+  battleStandard: { en: 'Battle Standard Bearer', es: 'Portaestandarte de Batalla' },
+  makeBSB: { en: 'Make Battle Standard Bearer', es: 'Nombrar Portaestandarte de Batalla' },
+  removeBSB: { en: 'Remove Battle Standard Bearer', es: 'Quitar Portaestandarte de Batalla' },
   specialAbilities: { en: 'Special Abilities', es: 'Habilidades Especiales' },
   models: { en: 'Models', es: 'Miniaturas' },
   min: { en: 'min', es: 'mín' },

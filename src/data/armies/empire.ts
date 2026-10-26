@@ -261,6 +261,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'hero',
     canBeBSB: true,
+    bsbPoints: 50, // his own rule below: "+50 pts to act as Battle Standard Bearer"
     max: 1,
     mounts: [BARDED_WARHORSE_MOUNT],
     specialRules: [

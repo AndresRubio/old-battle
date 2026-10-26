@@ -334,6 +334,45 @@ describe('magic banners require a BSB (magic-items-banner-bsb)', () => {
   })
 })
 
+describe('one Battle Standard Bearer per army (multiple-bsbs, OLD-64)', () => {
+  const empire = getArmy('empire')!
+  const ros = (entries: RosterEntry[]): Roster => ({
+    id: 'r', name: 't', armyId: 'empire', pointsLimit: 3000, entries,
+  })
+  const ch = (id: string, unitId: string, over: Partial<RosterEntry> = {}): RosterEntry => ({
+    id, unitId, size: 1, optionIds: [], magicItemIds: [], ...over,
+  })
+  const bsbFindings = (r: Roster) => validateRoster(r, empire).filter((v) => v.rule === 'multiple-bsbs')
+
+  it('warns when Ludwig is toggled BSB alongside the dedicated Battle Standard Bearer', () => {
+    const r = ros([
+      ch('gen', 'emp-general', { isGeneral: true }),
+      ch('lud', 'emp-ludwig', { isBSB: true }),
+      ch('bsb', 'emp-battle-standard'),
+    ])
+    const found = bsbFindings(r)
+    expect(found).toHaveLength(1)
+    expect(found[0].severity).toBe('warning')
+    expect(validateRoster(r, empire, 'es').find((v) => v.rule === 'multiple-bsbs')!.message).toMatch(
+      /Portaestandarte de Batalla/,
+    )
+  })
+
+  it('is silent for a single toggled BSB', () => {
+    const r = ros([ch('gen', 'emp-general', { isGeneral: true }), ch('lud', 'emp-ludwig', { isBSB: true })])
+    expect(bsbFindings(r)).toHaveLength(0)
+  })
+
+  it('is silent when Ludwig is present but not toggled BSB', () => {
+    const r = ros([
+      ch('gen', 'emp-general', { isGeneral: true }),
+      ch('lud', 'emp-ludwig'),
+      ch('bsb', 'emp-battle-standard'),
+    ])
+    expect(bsbFindings(r)).toHaveLength(0)
+  })
+})
+
 describe('validateRoster — clean list', () => {
   it('produces no violations for a legal 1000pt list', () => {
     const r = roster(1000, [

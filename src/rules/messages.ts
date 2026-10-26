@@ -32,6 +32,7 @@ export interface RuleParams {
   'no-general': Record<string, never>
   'multiple-generals': { count: number }
   'invalid-general': { unit: UnitProfile }
+  'multiple-bsbs': { count: number }
   'characters-over': { cap: CapStatus }
   'regiments-min': { cap: CapStatus }
   'warmachines-over': { cap: CapStatus }
@@ -112,6 +113,10 @@ const MESSAGES: { [K in RuleId]: MessageBuilder<K> } = {
     lang === 'es'
       ? `${un(p, lang)} no puede ser el General del ejército.`
       : `${un(p, lang)} cannot be the army General.`,
+  'multiple-bsbs': (p, lang) =>
+    lang === 'es'
+      ? `Sólo se permite un Portaestandarte de Batalla (hay ${p.count}).`
+      : `Only one Battle Standard Bearer is allowed (found ${p.count}).`,
   'characters-over': ({ cap }, lang) =>
     lang === 'es'
       ? `Los personajes usan ${cap.points} ptos, superando el tope del ${cap.capPct}% (${cap.capPoints} ptos).`
