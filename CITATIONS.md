@@ -1362,6 +1362,12 @@ Both transcriptions were corrected too. `empire.md` had the tank row as `- - 3 7
 WS and misreading W. `skaven.md` had resolved its own p.31 incident the wrong way, adopting a pass
 that shifted the Wheel row one column, and had the Engineer's Ld as 6 instead of 10.
 
+#### Ludwig Schwartzhelm: acting as Battle Standard Bearer (OLD-64, 2026-10-26)
+**Printed p.69**, Ludwig's cost table: `+50 | si actúa como Estandarte de Batalla`. The data flagged
+him `canBeBSB` and carried the cost only as the tag *"+50 pts to act as Battle Standard Bearer"*, so
+the app never added the 50. He now has a flat option `bsb` at +50, charged once. It adds no magic item
+slot, since the book gives him no other magic item. The Sword of Justice's +50 is OLD-63.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

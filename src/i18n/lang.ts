@@ -279,6 +279,8 @@ export const ruleText = (phrase: string, lang: Lang): string =>
 /** Spanish names for the common (English-named) equipment options. */
 const OPTION_ES: Record<string, string> = {
   Shield: 'Escudo',
+  // OLD-64: Ludwig Schwartzhelm's +50 option (Imperio p.69).
+  'Battle Standard Bearer': 'Portaestandarte de Batalla',
   Shields: 'Escudos',
   'Shields (both crew)': 'Escudos (ambos tripulantes)',
   'Light armour': 'Armadura ligera',

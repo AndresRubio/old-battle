@@ -16,6 +16,14 @@ const mk = (over: Partial<RosterEntry> & { unitId: string }): RosterEntry => ({
   ...over,
 })
 
+describe('Ludwig Schwartzhelm battle standard option (OLD-64)', () => {
+  // Imperio p.69: +50 when he acts as Battle Standard Bearer, charged once.
+  it('costs 70 on his own and 120 as Battle Standard Bearer', () => {
+    expect(entryPoints(mk({ unitId: 'emp-ludwig' }), empire)).toBe(70)
+    expect(entryPoints(mk({ unitId: 'emp-ludwig', optionIds: ['bsb'] }), empire)).toBe(120)
+  })
+})
+
 describe('entryPoints — flat vs per-model options', () => {
   it('never multiplies a single-model entry by size — only regiments have a size', () => {
     // `size` is meaningless on a character: the editor offers no size control and
