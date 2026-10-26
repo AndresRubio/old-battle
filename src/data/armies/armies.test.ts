@@ -1,14 +1,16 @@
 import { describe, it, expect } from 'vitest'
 import { ARMIES, getArmy } from './index'
 import { validateRoster } from '../../rules/validate'
-import { entryPoints, pointsByRole, effectiveStatLine } from '../../rules/points'
+import { entryPoints, pointsByRole, effectiveStatLine, carriedMagicItems } from '../../rules/points'
 import { findRule } from '../rules'
 import { summarize } from '../../rules/summary'
-import type { Roster, StatLine } from '../types'
+import { MAGIC_ITEM_ALLOWANCE } from '../../rules/magicItems'
+import type { Roster, RosterEntry, StatLine } from '../types'
 import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
 import { isWizardLevelId } from '../unitOptions'
 import { MAGIC_LORES } from '../lores'
 import { RULE_PHRASE_ES } from '../../i18n/rulePhrases'
+import { toggleMagicItem } from '../../state/rosterOps'
 
 // The mechanical data-format invariants (unique ids, mount-option namespace,
 // selection-rule references, restrictedTo leaks…) are enforced at CONSTRUCTION
@@ -2691,5 +2693,360 @@ describe('OLD-46 — Movement converts back to the centimetres the book prints',
     const bugman = getArmy('dwarfs')!.units.find((u) => u.id === 'dw-josef-bugman')!
     // p.95 "Josef Bugman 8 6 5 4 5 2 4 3 10".
     expect(bugman.statLine).toEqual({ M: 3, WS: 6, BS: 5, S: 4, T: 5, W: 2, I: 4, A: 3, Ld: 10 })
+  })
+})
+
+// OLD-63 — each special character pays the extras his own page prices on top
+// of the headline: fixed magic items, fixed extras, counted options. Every data
+// task adds its rows here BEFORE changing the data and watches them fail.
+describe('OLD-63: special characters charge their book extras', () => {
+  // The optional fifth element adds entry fields (a mount, option counts).
+  const rows: [string, string, string[], number, Partial<RosterEntry>?][] = [
+    // Imperio p.67-68: 110 + Hammer of Sigmar 100 + Silver Seal 75.
+    ['empire', 'emp-karl-franz', [], 285],
+    // Imperio p.69-70: 150 + Staff of Power 80 + Jade Griffon 75 + Horn of Sigismund 35.
+    ['empire', 'emp-volkmar', [], 340],
+    // Imperio p.70-71: 290 + Staff of Volans 75.
+    ['empire', 'emp-supreme-patriarch', [], 365],
+    // Imperio p.71: 110 + Runefang 30.
+    ['empire', 'emp-kurt-helborg', [], 140],
+    // Imperio p.72: 90 + Runefang 30 + Talisman of Ulric 25.
+    ['empire', 'emp-boris-todbringer', [], 145],
+    // Imperio p.72: 90 + Runefang 30.
+    ['empire', 'emp-aldebrand-ludenhof', [], 120],
+    // Imperio p.72-73: 90 + Runefang 30 + Dragon Bow 40.
+    ['empire', 'emp-valmir-von-raukov', [], 160],
+    // Imperio p.73: 110 + Runefang 30.
+    ['empire', 'emp-marius-leitdorf', [], 140],
+    // Imperio p.74: 200 + Fearfrost 100.
+    ['empire', 'emp-zarina-katarin', [], 300],
+    // Enanos p.90: 174 + Weapon Runes 170 + Defence Runes 100 + Talismanic Runes 50.
+    ['dwarfs', 'dw-king-kazador', [], 494],
+    // Enanos p.91: 210 + 90 + 55 + 70.
+    ['dwarfs', 'dw-ungrim-ironfist', [], 425],
+    // Enanos p.92: 309 + 165 + 150 + 45.
+    ['dwarfs', 'dw-kragg-the-grim', [], 669],
+    // Enanos p.93: 225 + Hacha de Gotrek 125.
+    ['dwarfs', 'dw-gotrek', [], 350],
+    // Enanos p.93: 77 + Espada de Felix 50 (Espada de Bronce Fulgurante).
+    ['dwarfs', 'dw-felix', [], 127],
+    // Enanos p.95: 111 + Weapon Runes 40 + Jarra de Cerveza Runica 25 (the card says 50).
+    ['dwarfs', 'dw-josef-bugman', [], 176],
+    // Enanos p.96: 130 + Weapon Runes 25 + Defence Runes 55.
+    ['dwarfs', 'dw-burlok-damminson', [], 210],
+    // Enanos p.94: 160 + Gran Libro 50 + Corona 75 + Armadura de Skaldor 75 + Hacha de Grimnir 125.
+    ['dwarfs', 'dw-thorgrim', [], 485],
+    // ... + Trono del Poder 140: a player choice (owner ruling 2026-10-26).
+    ['dwarfs', 'dw-thorgrim', ['throne-of-power'], 625],
+    // Skaven p.69: 380 + Destripahuesos 45 (always beside Thanquol).
+    ['skaven', 'sk-thanquol', [], 425],
+    // Skaven p.70: 225 + Liber Bubonicus 75 + Baculo de Corrupcion 100.
+    ['skaven', 'sk-skrolk', [], 400],
+    // Skaven p.71: 315 + Tormenta Demoniaca 25.
+    ['skaven', 'sk-ikit-claw', [], 340],
+    // Skaven p.73: 230 + Brazaletes de Poder 40 + Capa de las Sombras 75.
+    ['skaven', 'sk-snitch', [], 345],
+    // Skaven p.74: 138 + Degolladora de Enanos 50 + Armadura de Disformidad 50.
+    ['skaven', 'sk-queek', [], 238],
+    // Elfos Silvanos p.70-71: 300 + Lanza de Kurnous 50 + Cuerno de la Caceria Salvaje 50 + Capa de Isha 50
+    // (hounds are a counted option, +5 each: see points.test.ts).
+    ['wood-elves', 'we-orion', [], 450],
+    // Elfos Silvanos p.71-72: 366 + Baculo de Olmo 50 + Bellotas 25 + Venablo de Muerte 25 + Vino de Bayas 25.
+    ['wood-elves', 'we-ariel', [], 491],
+    // Elfos Silvanos p.74: 59 + Othu el Buho 15 + Baculo de los Augurios 30.
+    ['wood-elves', 'we-naieth', [], 104],
+    // Elfos Silvanos p.75: 240 + Pintura de Guerra 5 + Talisman de Qwarr 15 + Lanza de Daith 25 + Gwandor 95.
+    ['wood-elves', 'we-thalandor', [], 380],
+    // Elfos Silvanos p.76: 101 + Estandarte de Athel Loren 50 + Corcel Elfico con Barda 7.
+    ['wood-elves', 'we-lothlann', [], 158],
+    // Elfos Silvanos p.77: 54 + Flecha Lluvia de Muerte 25.
+    ['wood-elves', 'we-scarloc', [], 79],
+    // Elfos Silvanos p.77-78: 75 + Tambor de Piel de Orco 25.
+    ['wood-elves', 'we-wychwethyl', [], 100],
+    // Elfos Silvanos p.78: 106 + Escudo de Bronce 10 + Arco de Loren 50.
+    ['wood-elves', 'we-sceolan', [], 166],
+    // Elfos Silvanos p.79: 51 + Halcones 15 + Flagelo de Garras 25.
+    ['wood-elves', 'we-skaw', [], 91],
+    // Elfos Silvanos p.80: 90 + Tigres Dientes de Sable 66 + Boleadoras 10.
+    ['wood-elves', 'we-gruarth', [], 166],
+    // Elfos Oscuros p.56-57: 350 + Corona de Hierro 50 + Armadura del Rey Brujo 60 + Escudo Antihechizos 50
+    // + Destructora 75 + Carruaje Negro 90.
+    ['dark-elves', 'de-witch-king', [], 675],
+    // Elfos Oscuros p.59: 327 + Espada Oscura 15 + Amuleto Ambar 25 + Pergamino de Energia 30
+    // + Pergamino de Dispersion 25 + Pegaso Negro 50.
+    ['dark-elves', 'de-morathi', [], 472],
+    // Elfos Oscuros p.60-61: 207 + Espada de Muerte 100 + Espada Defensora 20 + Amuleto del Fuego 25 + Manticora 200.
+    ['dark-elves', 'de-hellebron', [], 552],
+    // Elfos Oscuros p.58: 134 + Latigo de la Agonia 25 + Armadura de la Suerte 15 + Escudo Encantado 5
+    // + Dragon Negro 450.
+    ['dark-elves', 'de-rakarth', [], 629],
+    // Elfos Oscuros p.60: 105 + Espada de Hierro Encantado 20 + Armadura de Hierro Meteorico 25.
+    ['dark-elves', 'de-kouran', [], 150],
+    // Elfos Oscuros p.61-62: 123 + Hacha de los Verdugos 50 + Amuleto Negro 50.
+    ['dark-elves', 'de-tullaris', [], 223],
+    // Elfos Oscuros p.62-63: 115 + Corazon del Infortunio 25 + Pocion de Fuerza 10.
+    ['dark-elves', 'de-shadowblade', [], 150],
+    // No Muertos p.86: 475 + Mortis 35 + Armadura Negra 100 + Libro de Nagash 100 + Baculo del Poder 40.
+    ['undead', 'ud-nagash', [], 750],
+    // No Muertos p.91: 350 + Baculo de Condenacion 50 + Espada Funeraria 50 + Libro Maldito 25 + Carruaje 50.
+    ['undead', 'ud-arkhan-the-black', [], 525],
+    // No Muertos p.92: 160 + Armadura del Defensor 50 + Hacha Negra 125.
+    ['undead', 'ud-krell', [], 335],
+    // No Muertos p.94: 210 + Baculo de Osiris 50 + Corona 75 (the card says 50) + Flagelo de Craneos 30.
+    ['undead', 'ud-settra', [], 365],
+    // No Muertos p.95: 410 + Espada Runica del Caos 65 + Baculo Llameante 50 + Manticora 200.
+    ['undead', 'ud-dieter-helsnicht', [], 725],
+    // Orcos y Goblins p.90: 130 + Corona de la Hechiceria 125 + Serpiente Alada 180.
+    ['orcs-and-goblins', 'og-azhag', [], 435],
+    // Orcos y Goblins p.90: 90 (the Wolf Chariot is a mount, tested below).
+    ['orcs-and-goblins', 'og-oglok', [], 90],
+    // Orcos y Goblins p.91: 80 + Hacha de Grom 50 + Niblit 65 + Carruaje 62.
+    ['orcs-and-goblins', 'og-grom', [], 257],
+    // Orcos y Goblins p.91: 120 + Morgor la Mutiladora 125.
+    ['orcs-and-goblins', 'og-gorbad', [], 245],
+    // Orcos y Goblins p.92: 90 and 150, no extras of their own.
+    ['orcs-and-goblins', 'og-gorfang', [], 90],
+    ['orcs-and-goblins', 'og-morglum', [], 150],
+    // Orcos y Goblins p.93: 80 + Pincho de Skarsnik 75 + Gobbla 50.
+    ['orcs-and-goblins', 'og-skarsnik', [], 205],
+    // Bretonnia p.66: "Each character's points value is a total that includes
+    // equipment, mount, magic items". The page items are included and locked.
+    // p.67: Crown of Bretonnia and Armour of Brilliance (Magia: Armadura Brillante).
+    ['bretonnia', 'br-louen-leoncoeur', [], 505],
+    // p.69: Morning Star of Fracasse (Magia: Flagelo de Fracasse).
+    ['bretonnia', 'br-odo', [], 110],
+    // p.70: Blade of Couronne; "may ride a barded Bretonnian Warhorse (+3 points)".
+    ['bretonnia', 'br-tancred', [], 265],
+    ['bretonnia', 'br-tancred', [], 268, { mountId: 'mount-warhorse' }],
+    // p.73-74: Banner of the Lady of the Lake.
+    ['bretonnia', 'br-armand', [], 235],
+    // Paladines del Caos p.20-21: "Valor incluido en el total."
+    ['chaos', 'ch-mordrek', [], 398],
+    // Norsca PDF 34: 130 + Dragon Slayer 125 + Thorim's Ring 30.
+    ['norse', 'no-keorl-thunderhand', [], 285],
+    // Norsca PDF 32: 316 + Gift of Loki 100 + Runes 30.
+    ['norse', 'no-sturmjarl', [], 446],
+    // ... at the item-card prices of PDF 35 (50 + 75): user choice (owner ruling 2026-10-26).
+    ['norse', 'no-sturmjarl', ['card-prices'], 441],
+    // Condes Vampiro p.69: each character's value is his total cost, items included.
+    ['vampire-counts', 'vc-dieter-helsnicht', [], 690],
+    ['vampire-counts', 'vc-heinrich-kemmler', [], 450],
+    ['vampire-counts', 'vc-krell', [], 280],
+    ['vampire-counts', 'vc-vlad-von-carstein', [], 680],
+    // Dogs of War p.64-65: Mydas, the Sheikh, the pay chest and 5 bodyguards, 210;
+    // each extra bodyguard 12; standard bearer and musician at double, 24 each.
+    ['dogs-of-war', 'dow-mydas', [], 210],
+    ['dogs-of-war', 'dow-mydas', [], 270, { optionCounts: { 'extra-bodyguards': 5 } }],
+    ['dogs-of-war', 'dow-mydas', ['bodyguard-standard', 'bodyguard-musician'], 258],
+    ['dogs-of-war', 'dow-mydas', ['bodyguard-standard'], 414, { optionCounts: { 'extra-bodyguards': 15 } }],
+    // p.67: 176 including magic items.
+    ['dogs-of-war', 'dow-marco-colombo', [], 176],
+    // Altos Elfos pp.81-94 and Lizardmen pp.79-89 print each item's price beside a
+    // headline and never say whether the headline holds them. Default: today's
+    // headline. 'items-on-top' adds the page items: user choice (owner ruling 2026-10-26).
+    // Altos Elfos p.82: 285; + Piedra de Medianoche 50 + Corona Sombria 15 + Arco Lunar 50.
+    ['high-elves', 'he-alith-anar', [], 285],
+    ['high-elves', 'he-alith-anar', ['items-on-top'], 400],
+    // p.83: 467; + Espada Colmillo 50 + Yelmo de Yvresse 10 + Talisman de Hoeth 85.
+    ['high-elves', 'he-eltharion', [], 467],
+    ['high-elves', 'he-eltharion', ['items-on-top'], 612],
+    // p.89: 555; + Capa de Estrellas 45 + Espada de Bel-Korhadris 60 + Libro del Fenix 75 + Baculo de Cyeos 25.
+    ['high-elves', 'he-belannaer', [], 555],
+    ['high-elves', 'he-belannaer', ['items-on-top'], 760],
+    // p.91: 198; + Hacha Chayal 65 + Piel de Charandis 10.
+    ['high-elves', 'he-korhil', [], 198],
+    ['high-elves', 'he-korhil', ['items-on-top'], 273],
+    // p.92: 425; + Colmillo Solar 125 + Armadura del Dragon de Aenarion 75 + Corazon de Avelorn 50.
+    ['high-elves', 'he-tyrion', [], 425],
+    ['high-elves', 'he-tyrion', ['items-on-top'], 675],
+    // p.93: 630; + Baculo Lunar 20 + Corona de Guerra de Saphery 125 + Espada de Teclis 100 + Pergamino de Hoeth 55.
+    ['high-elves', 'he-teclis', [], 630],
+    ['high-elves', 'he-teclis', ['items-on-top'], 930],
+    // p.94: 275; + Lanza Estelar 60 + Cuerno del Dragon 15 + Armadura de Caledor 30 (his dragon is a mount).
+    ['high-elves', 'he-imrik', [], 275],
+    ['high-elves', 'he-imrik', ['items-on-top'], 380],
+    // Lizardmen pp.79-80: 620; + Standard 25 + Death Mask 50 + Mace 50 + Amulet 25 + Glyph 20.
+    ['lizardmen', 'lz-venerable-lord-kroak', [], 620],
+    ['lizardmen', 'lz-venerable-lord-kroak', ['items-on-top'], 790],
+    // p.85: 105; + Piranha Blade 35.
+    ['lizardmen', 'lz-itzi-bitzi', [], 105],
+    ['lizardmen', 'lz-itzi-bitzi', ['items-on-top'], 140],
+    // p.86: 120; + Dagger of Sotek 50 + Totem of Sotek 10.
+    ['lizardmen', 'lz-tenehuini', [], 120],
+    ['lizardmen', 'lz-tenehuini', ['items-on-top'], 180],
+    // p.89: 900; + Cobra Mace 15 + Plaque of Tepec 50 + Plaque of Xoloc 50 + Itxi Grubs 50
+    // + Egg of the Quango 10 + Sunburst Standard of Hexoatl 50.
+    ['lizardmen', 'lz-lord-mazdamundi', [], 900],
+    ['lizardmen', 'lz-lord-mazdamundi', ['items-on-top'], 1125],
+  ]
+
+  it.each(rows)('%s %s with %j costs %d', (armyId, unitId, optionIds, expected, extra) => {
+    const entry: RosterEntry = { id: 'e', unitId, size: 1, optionIds, magicItemIds: [], ...extra }
+    expect(entryPoints(entry, getArmy(armyId)!)).toBe(expected)
+  })
+
+  // A locked item cannot be bought on top: a stale pick (a roster saved before
+  // OLD-63 ticked it by hand) adds nothing, and toggling it changes nothing.
+  it.each([
+    ['bretonnia', 'br-louen-leoncoeur', 'mi-crown-of-bretonnia', 505],
+    ['bretonnia', 'br-louen-leoncoeur', 'mi-shining-armour', 505],
+    ['bretonnia', 'br-odo', 'mi-flail-of-fracasse', 110],
+    ['bretonnia', 'br-tancred', 'mi-sword-of-couronne', 265],
+    ['bretonnia', 'br-armand', 'mi-banner-of-the-lady-of-the-lake', 235],
+    ['chaos', 'ch-mordrek', 'mi-sword-of-transformation', 398],
+    ['chaos', 'ch-mordrek', 'mi-chaos-runeshield', 398],
+    ['norse', 'no-keorl-thunderhand', 'mi-dragon-slayer', 285],
+    ['norse', 'no-keorl-thunderhand', 'mi-thorims-ring', 285],
+    ['norse', 'no-sturmjarl', 'mi-gift-of-loki', 446],
+    ['norse', 'no-sturmjarl', 'mi-norse-runes', 446],
+    ['vampire-counts', 'vc-dieter-helsnicht', 'mi-flaming-staff-of-death', 690],
+    ['vampire-counts', 'vc-dieter-helsnicht', 'mi-rune-sword-of-chaos-of-grungni-iron-heart', 690],
+    ['vampire-counts', 'vc-dieter-helsnicht', 'mi-power-scroll', 690],
+    ['vampire-counts', 'vc-heinrich-kemmler', 'mi-funereal-sword-of-chaos', 450],
+    ['vampire-counts', 'vc-heinrich-kemmler', 'mi-skull-staff', 450],
+    ['vampire-counts', 'vc-krell', 'mi-black-axe-of-krell', 280],
+    ['vampire-counts', 'vc-krell', 'mi-armour-of-the-defender', 280],
+    ['vampire-counts', 'vc-vlad-von-carstein', 'mi-carstein-ring', 680],
+    ['high-elves', 'he-eltharion', 'mi-talisman-of-hoeth', 467],
+    ['high-elves', 'he-teclis', 'mi-war-crown-of-saphery', 630],
+    ['high-elves', 'he-teclis', 'mi-sword-of-teclis', 630],
+    ['high-elves', 'he-imrik', 'mi-star-lance', 275],
+    ['lizardmen', 'lz-tenehuini', 'mi-dagger-of-sotek', 120],
+  ])('%s %s cannot buy its fixed %s again (stays %d)', (armyId, unitId, itemId, expected) => {
+    const a = getArmy(armyId)!
+    const entry: RosterEntry = { id: 'e', unitId, size: 1, optionIds: [], magicItemIds: [itemId] }
+    expect(entryPoints(entry, a)).toBe(expected)
+    const roster: Roster = { id: 'r', name: 'R', armyId, pointsLimit: 3000, entries: [{ ...entry, magicItemIds: [] }] }
+    expect(toggleMagicItem(roster, 'e', itemId, a)).toBe(roster)
+  })
+
+  // Condes Vampiro p.70: Dieter's 690 holds Staff, Rune Sword and Power Scroll,
+  // three carried items against his level 4 allowance of four.
+  it('Dieter carries three locked items inside 690', () => {
+    const a = getArmy('vampire-counts')!
+    const unit = a.units.find((u) => u.id === 'vc-dieter-helsnicht')!
+    const entry: RosterEntry = { id: 'e', unitId: unit.id, size: 1, optionIds: [], magicItemIds: [] }
+    const carried = carriedMagicItems(entry, unit, a)
+    expect(carried.map((c) => c.item.id)).toEqual([
+      'mi-flaming-staff-of-death',
+      'mi-rune-sword-of-chaos-of-grungni-iron-heart',
+      'mi-power-scroll',
+    ])
+    expect(carried.every((c) => c.fixed && c.included && c.points === 0)).toBe(true)
+    expect(unit.fixedMagicItems!.length).toBeLessThanOrEqual(MAGIC_ITEM_ALLOWANCE[unit.characterRank!])
+    expect(MAGIC_ITEM_ALLOWANCE[unit.characterRank!]).toBe(4)
+  })
+
+  // Norsca PDF 34 and 32 print the headline without the items: Keorl 130,
+  // Sturmjarl 316. The items are priced as fixed items, so the totals hold.
+  it('Keorl and Sturmjarl carry the bare page headline and price their items as fixed items', () => {
+    const norse = getArmy('norse')!
+    const keorl = norse.units.find((u) => u.id === 'no-keorl-thunderhand')!
+    const sturmjarl = norse.units.find((u) => u.id === 'no-sturmjarl')!
+    expect(keorl.pointsPerModel).toBe(130)
+    expect(keorl.fixedMagicItems).toEqual([{ id: 'mi-dragon-slayer' }, { id: 'mi-thorims-ring' }])
+    expect(sturmjarl.pointsPerModel).toBe(316)
+    expect(sturmjarl.fixedMagicItems).toEqual([
+      { id: 'mi-gift-of-loki', points: 100 },
+      { id: 'mi-norse-runes', points: 30 },
+    ])
+    // The cards (PDF 35) price them at 50 and 75.
+    expect(norse.magicItems.find((i) => i.id === 'mi-gift-of-loki')!.points).toBe(50)
+    expect(norse.magicItems.find((i) => i.id === 'mi-norse-runes')!.points).toBe(75)
+  })
+
+  // Dogs of War p.67: the Navigator's Telescope is a special rule, not one of
+  // Marco's three magic items.
+  it("lists Marco Colombo's three magic items apart from the Telescope", () => {
+    const marco = getArmy('dogs-of-war')!.units.find((u) => u.id === 'dow-marco-colombo')!
+    expect(marco.specialRules).toContain('Fixed magic items: Gem of Lustria (ward), Gourd of Lustrian Wine, Scroll of Araby')
+    expect(marco.specialRules).toContain("Navigator's Telescope (special rule, not a magic item)")
+  })
+
+  // Imperio p.67-68: Karl Franz rides a Barded Warhorse (+7) or a Monster; the
+  // Griffon (+150) is his favourite, no longer included in his headline.
+  it.each([
+    ['mount-barded-warhorse', 292],
+    ['mount-griffon', 435],
+  ])('Karl Franz on %s costs %d', (mountId, expected) => {
+    const entry: RosterEntry = { id: 'e', unitId: 'emp-karl-franz', size: 1, optionIds: [], magicItemIds: [], mountId }
+    expect(entryPoints(entry, getArmy('empire')!)).toBe(expected)
+  })
+
+  it('Karl Franz, Helborg and the Patriarch share one mount list', () => {
+    const empire = getArmy('empire')!
+    const mountIds = (id: string) => empire.units.find((u) => u.id === id)!.mounts?.map((m) => m.id)
+    expect(mountIds('emp-karl-franz')).toBeDefined()
+    expect(mountIds('emp-karl-franz')).toEqual(mountIds('emp-kurt-helborg'))
+    expect(mountIds('emp-karl-franz')).toEqual(mountIds('emp-supreme-patriarch'))
+    expect(empire.units.find((u) => u.id === 'emp-karl-franz')!.profiles).toBeUndefined()
+  })
+
+  // Orcos y Goblins p.88 and pp.90-93: Oglok, Gorfang, Morglum and Skarsnik may enter battle in a
+  // chariot (Wolf Chariot 65, Boar Chariot 81 on p.88); the generic Orc characters keep their list.
+  it.each([
+    ['og-oglok', 'mount-wolf-chariot', 155],
+    ['og-gorfang', 'mount-wolf-chariot', 155],
+    ['og-morglum', 'mount-wolf-chariot', 215],
+    ['og-skarsnik', 'mount-wolf-chariot', 270],
+    ['og-skarsnik', 'mount-boar-chariot', 286],
+  ])('%s on %s costs %d', (unitId, mountId, expected) => {
+    const entry: RosterEntry = { id: 'e', unitId, size: 1, optionIds: [], magicItemIds: [], mountId }
+    expect(entryPoints(entry, getArmy('orcs-and-goblins')!)).toBe(expected)
+  })
+
+  it('only the special Orcs may ride a Wolf Chariot; the generic Orc characters may not', () => {
+    const og = getArmy('orcs-and-goblins')!
+    const mountIds = (id: string) => og.units.find((u) => u.id === id)!.mounts!.map((m) => m.id)
+    for (const id of ['og-oglok', 'og-gorfang', 'og-morglum']) {
+      expect(mountIds(id), id).toContain('mount-wolf-chariot')
+      expect(mountIds(id), id).toContain('mount-boar-chariot')
+      expect(mountIds(id), id).toContain('mount-war-boar')
+    }
+    expect(mountIds('og-skarsnik')).toEqual(['mount-boar-chariot', 'mount-wolf-chariot'])
+    for (const id of ['og-warboss-orc', 'og-warboss-black-orc', 'og-bigboss-orc', 'og-bsb-orc']) {
+      expect(mountIds(id), id).not.toContain('mount-wolf-chariot')
+    }
+  })
+
+  it('Volkmar fixes his three items and has exactly three slots', () => {
+    const empire = getArmy('empire')!
+    const volkmar = empire.units.find((u) => u.id === 'emp-volkmar')!
+    expect(volkmar.magicItemSlots).toBe(3)
+    expect(volkmar.fixedMagicItems!.map((f) => f.id)).toEqual([
+      'mi-staff-of-power-grand-theogonist', 'mi-jade-griffon', 'mi-horn-of-sigismund',
+    ])
+  })
+
+  // Magia p.36 and p.73 print a dash in the restriction column of the Armour of
+  // the Defender: every army may take it, Krell wears it by his page.
+  it('the Armour of the Defender is in every army pool, once', () => {
+    for (const a of ARMIES) {
+      const copies = a.magicItems.filter((i) => i.id === 'mi-armour-of-the-defender')
+      expect(copies, a.id).toHaveLength(1)
+      expect(copies[0].restrictedTo, a.id).toBeUndefined()
+    }
+  })
+
+  // Settra's page prices the Crown at +75; the card (Magia p.38 and p.74) says 50
+  // for every other Tomb King.
+  it("Settra's Crown costs 75 on his page and 50 on the card", () => {
+    const undead = getArmy('undead')!
+    const settra = undead.units.find((u) => u.id === 'ud-settra')!
+    expect(settra.fixedMagicItems!.find((f) => f.id === 'mi-crown-of-the-tomb-king')!.points).toBe(75)
+    expect(undead.magicItems.find((i) => i.id === 'mi-crown-of-the-tomb-king')!.points).toBe(50)
+  })
+
+  // Every page that states the number counts the fixed items inside the
+  // character's allowance (Imperio p.67-68, p.70-71, p.71, p.74; No Muertos
+  // p.95; Norsca PDF 34). A page that fixes more than the rank allows sets
+  // `magicItemSlots` to the page's own number.
+  it("every unit's fixed magic items fit its allowance", () => {
+    const withFixed = ARMIES.flatMap((a) => a.units.filter((u) => (u.fixedMagicItems?.length ?? 0) > 0))
+    expect(withFixed.length).toBeGreaterThan(0)
+    for (const u of withFixed) {
+      const allowance = u.magicItemSlots ?? (u.characterRank ? MAGIC_ITEM_ALLOWANCE[u.characterRank] : 0)
+      expect(u.fixedMagicItems!.length, u.id).toBeLessThanOrEqual(allowance)
+    }
   })
 })

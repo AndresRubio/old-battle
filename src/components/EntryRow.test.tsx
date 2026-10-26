@@ -1,12 +1,12 @@
 import { describe, it, expect, afterEach } from 'vitest'
-import { act } from 'react'
+import { act, useState } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import type { ReactElement } from 'react'
 import { EntryRow } from './EntryRow'
 import { getArmy } from '../data/armies'
 import { setLang } from '../i18n/lang'
 import { entryActions } from '../state/rosterOps'
-import type { Roster, RosterEntry } from '../data/types'
+import type { Army, Roster, RosterEntry, UnitProfile } from '../data/types'
 
 const army = getArmy('empire')!
 
@@ -419,5 +419,240 @@ describe('EntryRow selected magic items block (OLD-65)', () => {
     render(<EntryRow entry={withItems([FORTUNE])} army={army} {...props} />)
     expand()
     expect(container.querySelector('.mi-selected .mi-group-title')?.textContent).toBe('Seleccionados')
+  })
+})
+
+describe('EntryRow fixed magic items and fixed extras (OLD-63)', () => {
+  it('shows Karl Franz a mount selector (Imperio p.67-68)', () => {
+    render(<EntryRow entry={entry('emp-karl-franz', { size: 1 })} army={army} {...props} />)
+    expand()
+    const chips = Array.from(container.querySelectorAll('.mount-chips label')).map((el) => el.textContent)
+    expect(chips).toContain('Griffon +150')
+    expect(chips).toContain('Barded Warhorse +7')
+  })
+
+  const HAMMER = 'mi-hammer-of-sigmar'
+  const SEAL = 'mi-silver-seal'
+  const kf = (over: Partial<RosterEntry> = {}) => entry('emp-karl-franz', { size: 1, ...over })
+  /** Every magic-item row in a container, as [name, checked, disabled, tag, price]. */
+  const rows = (selector: string) =>
+    Array.from(container.querySelectorAll(`${selector} .mi-item`)).map((row) => {
+      const box = row.querySelector('input[type="checkbox"]') as HTMLInputElement | null
+      return [
+        row.querySelector('.mi-name')?.textContent,
+        box?.checked,
+        box?.disabled,
+        row.querySelector('.mi-fixed-tag')?.textContent,
+        row.querySelector('.mi-pts')?.textContent,
+      ]
+    })
+  const rowFor = (selector: string, name: string) => rows(selector).find((r) => r[0] === name)
+
+  it('counts the fixed items in the header: (2/3) for a bare Karl Franz', () => {
+    render(<EntryRow entry={kf()} army={army} {...props} />)
+    expand()
+    const header = Array.from(container.querySelectorAll('.opt-label')).find((el) =>
+      el.textContent?.startsWith('Magic Items'),
+    )
+    expect(header?.textContent).toBe('Magic Items (2/3)')
+  })
+
+  it('lists the Hammer and the Seal as checked, locked and tagged "fixed", fixed first', () => {
+    render(<EntryRow entry={kf({ magicItemIds: ['mi-sword-of-justice'] })} army={army} {...props} />)
+    expand()
+    expect(rows('.mi-selected')).toEqual([
+      ['Hammer of Sigmar', true, true, 'fixed', '100 pts'],
+      ['The Silver Seal', true, true, 'fixed', '75 pts'],
+      ['Sword of Justice', true, false, undefined, '50 pts'],
+    ])
+    // The same locked rows in the category list.
+    expect(rowFor('.magic-items .mi-group', 'Hammer of Sigmar')).toEqual(['Hammer of Sigmar', true, true, 'fixed', '100 pts'])
+    expect(rowFor('.magic-items .mi-group', 'The Silver Seal')).toEqual(['The Silver Seal', true, true, 'fixed', '75 pts'])
+  })
+
+  it('changes nothing when a fixed row is clicked', () => {
+    const start = { id: 'r1', name: 'R', armyId: 'empire', pointsLimit: 2000, entries: [kf()] } as unknown as Roster
+    let result = start
+    const actions = entryActions((fn) => { result = fn(result) }, army, 'e1')
+    render(<EntryRow entry={kf()} army={army} {...props} actions={actions} />)
+    expand()
+    for (const box of container.querySelectorAll<HTMLInputElement>('.mi-selected input[type="checkbox"]')) {
+      act(() => box.click())
+    }
+    expect(result).toBe(start)
+    expect(result.entries[0].magicItemIds).toEqual([])
+  })
+
+  it('tags them "fijo" in Spanish', () => {
+    setLang('es')
+    render(<EntryRow entry={kf()} army={army} {...props} />)
+    expand()
+    expect(rows('.mi-selected').map((r) => r[3])).toEqual(['fijo', 'fijo'])
+  })
+
+  describe('a synthetic character with an override, an included item, a special item and an extra', () => {
+    const synthUnit: UnitProfile = {
+      id: 'synth-hero',
+      name: 'Synth Hero',
+      role: 'character',
+      pointsPerModel: 100,
+      isCharacter: true,
+      characterRank: 'lord',
+      fixedMagicItems: [{ id: HAMMER, points: 25 }, { id: SEAL, included: true }, { id: 'mi-dragon-bow' }],
+      fixedExtras: [{ id: 'x', name: 'War Wagon', nameEs: 'Carromato', points: 40 }],
+    }
+    const synth: Army = { ...army, units: [...army.units, synthUnit] }
+    const synthProps = { ...props, actions: entryActions(() => {}, synth, 'e1') }
+
+    it('prints the override price, "included" in place of a price, and the special item locked', () => {
+      render(<EntryRow entry={entry('synth-hero', { size: 1 })} army={synth} {...synthProps} />)
+      expand()
+      expect(rows('.mi-selected')).toEqual([
+        ['Hammer of Sigmar', true, true, 'fixed', '25 pts'],
+        ['The Silver Seal', true, true, 'fixed', 'included'],
+        ['Dragon Bow', true, true, 'fixed', '40 pts'],
+      ])
+      // A SPECIAL item on its owner is a locked, checked row in the category list too.
+      expect(rowFor('.magic-items .mi-group', 'Dragon Bow')).toEqual(['Dragon Bow', true, true, 'fixed', '40 pts'])
+    })
+
+    it('keeps a SPECIAL item unselectable on anyone else', () => {
+      render(<EntryRow entry={entry('emp-general', { size: 1 })} army={synth} {...synthProps} />)
+      expand()
+      const bow = Array.from(container.querySelectorAll('.magic-items .mi-item-special .mi-name')).map((el) => el.textContent)
+      expect(bow).toContain('Dragon Bow')
+    })
+
+    it('lists the fixed extras under "Fixed equipment" with their price', () => {
+      render(<EntryRow entry={entry('synth-hero', { size: 1 })} army={synth} {...synthProps} />)
+      expand()
+      const group = container.querySelector('.fixed-extras')
+      expect(group?.querySelector('.opt-label')?.textContent).toBe('Fixed equipment')
+      expect(Array.from(group!.querySelectorAll('li')).map((li) => li.textContent)).toEqual(['War Wagon (+40)'])
+    })
+
+    it('resolves the extra and the tags in Spanish', () => {
+      setLang('es')
+      render(<EntryRow entry={entry('synth-hero', { size: 1 })} army={synth} {...synthProps} />)
+      expand()
+      const group = container.querySelector('.fixed-extras')
+      expect(group?.querySelector('.opt-label')?.textContent).toBe('Equipo fijo')
+      expect(Array.from(group!.querySelectorAll('li')).map((li) => li.textContent)).toEqual(['Carromato (+40)'])
+      expect(rows('.mi-selected')[1].slice(3)).toEqual(['fijo', 'incluido'])
+    })
+  })
+})
+
+// OLD-63, Bretonnia p.66-67: Louen's headline includes his page items, so the
+// Crown and the Armour of Brilliance print "included" in place of a price.
+describe('EntryRow included fixed items and signed option prices (OLD-63)', () => {
+  const miRows = (selector: string) =>
+    Array.from(container.querySelectorAll(`${selector} .mi-item`)).map((row) => [
+      row.querySelector('.mi-name')?.textContent,
+      (row.querySelector('input[type="checkbox"]') as HTMLInputElement | null)?.disabled,
+      row.querySelector('.mi-fixed-tag')?.textContent,
+      row.querySelector('.mi-pts')?.textContent,
+    ])
+
+  it('shows Louen\'s Crown and Armour tagged "fixed" and "included", with no price', () => {
+    const bretonnia = getArmy('bretonnia')!
+    const p = { ...props, actions: entryActions(() => {}, bretonnia, 'e1') }
+    render(<EntryRow entry={entry('br-louen-leoncoeur', { size: 1 })} army={bretonnia} {...p} />)
+    expand()
+    expect(miRows('.mi-selected')).toEqual([
+      ['Crown of Bretonnia', true, 'fixed', 'included'],
+      ['Shining Armour', true, 'fixed', 'included'],
+    ])
+    expect(container.querySelector('.mi-selected')?.textContent).not.toMatch(/\d+ pts/)
+  })
+
+  // Norsca PDF 32 and 35: the card-price option is worth -5.
+  it("prints Sturmjarl's card-price option as (-5), never (+-5)", () => {
+    const norse = getArmy('norse')!
+    const p = { ...props, actions: entryActions(() => {}, norse, 'e1') }
+    render(<EntryRow entry={entry('no-sturmjarl', { size: 1 })} army={norse} {...p} />)
+    expand()
+    const label = Array.from(container.querySelectorAll('.opt-checks label')).find((el) =>
+      el.textContent?.startsWith('Item-card prices'),
+    )
+    expect(label?.textContent).toContain('Item-card prices (Gift of Loki 50, Runes 75) (-5)')
+    expect(container.textContent).not.toContain('+-5')
+  })
+})
+
+// OLD-63 — a counted option (Orion's hounds) is a number input, not a checkbox.
+describe('EntryRow counted options (OLD-63)', () => {
+  const hunter: UnitProfile = {
+    id: 'synth-hunter',
+    name: 'Synth Hunter',
+    role: 'character',
+    pointsPerModel: 100,
+    isCharacter: true,
+    characterRank: 'lord',
+    options: [
+      { id: 'hounds', name: 'Hunting Hounds', pointsPerModel: 5, counted: true },
+      { id: 'guards', name: 'Guards', pointsPerModel: 10, counted: true, maxCount: 2 },
+    ],
+  }
+  const synth: Army = { ...army, units: [...army.units, hunter] }
+
+  /** Owns a one-entry roster so every input commits and re-renders, like the Editor. */
+  function Stateful({ start }: { start: RosterEntry }) {
+    const [roster, setRoster] = useState<Roster>({
+      id: 'r1', name: 'R', armyId: 'empire', pointsLimit: 2000, entries: [start],
+    })
+    const actions = entryActions((fn) => setRoster(fn), synth, start.id)
+    return <EntryRow entry={roster.entries[0]} army={synth} actions={actions} canMoveUp={false} canMoveDown={false} />
+  }
+
+  function typeInto(input: HTMLInputElement, value: string) {
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!
+    act(() => {
+      setter.call(input, value)
+      input.dispatchEvent(new Event('input', { bubbles: true }))
+    })
+  }
+
+  const inputs = () => Array.from(container.querySelectorAll<HTMLInputElement>('.counted-option input[type="number"]'))
+  const total = () => container.querySelector('.entry-pts')?.textContent
+  const subtotals = () => Array.from(container.querySelectorAll('.counted-subtotal')).map((el) => el.textContent)
+
+  it('renders a labelled number input per counted option, none as a checkbox', () => {
+    render(<Stateful start={entry('synth-hunter', { size: 1 })} />)
+    expand()
+    const labels = Array.from(container.querySelectorAll('.counted-option')).map((el) => el.querySelector('.counted-name')?.textContent)
+    expect(labels).toEqual(['Hunting Hounds', 'Guards'])
+    expect(Array.from(container.querySelectorAll('.counted-each')).map((el) => el.textContent)).toEqual([
+      '(+5 each)',
+      '(+10 each)',
+    ])
+    const [h, g] = inputs()
+    expect([h.min, h.max, h.value]).toEqual(['0', '', '0'])
+    expect([g.min, g.max, g.value]).toEqual(['0', '2', '0'])
+    expect(container.querySelectorAll('.opt-checks input[type="checkbox"]').length).toBe(0)
+  })
+
+  it('changes the entry total and the subtotal as the count changes', () => {
+    render(<Stateful start={entry('synth-hunter', { size: 1 })} />)
+    expand()
+    expect(total()).toBe('100 pts')
+    typeInto(inputs()[0], '4')
+    expect(total()).toBe('120 pts')
+    expect(inputs()[0].value).toBe('4')
+    expect(subtotals()).toEqual(['20 pts', '0 pts'])
+    typeInto(inputs()[1], '9')
+    // Clamped at maxCount 2.
+    expect(inputs()[1].value).toBe('2')
+    expect(total()).toBe('140 pts')
+    typeInto(inputs()[0], '')
+    expect(total()).toBe('120 pts')
+  })
+
+  it('prints "(+5 c/u)" in Spanish', () => {
+    setLang('es')
+    render(<Stateful start={entry('synth-hunter', { size: 1, optionCounts: { hounds: 3 } })} />)
+    expand()
+    expect(container.querySelector('.counted-each')?.textContent).toBe('(+5 c/u)')
+    expect(subtotals()[0]).toBe('15 ptos')
   })
 })

@@ -473,6 +473,13 @@ const units: UnitProfile[] = [
     nameEs: 'Louen Corazón de León (Rey de Bretonia)',
     role: 'character',
     pointsPerModel: 505,
+    // OLD-63, p.66: "Each character's points value is a total that includes
+    // equipment, mount, magic items". p.67: the Crown of Bretonnia and the Armour
+    // of Brilliance (Magia's Armadura Brillante, 75, same effect) are locked.
+    fixedMagicItems: [
+      { id: 'mi-crown-of-bretonnia', included: true },
+      { id: 'mi-shining-armour', included: true },
+    ],
     statLine: human({ WS: 6, BS: 6, S: 4, T: 4, W: 3, I: 6, A: 4, Ld: 10 }),
     isCharacter: true,
     characterRank: 'lord',
@@ -514,6 +521,9 @@ const units: UnitProfile[] = [
     nameEs: "Barón Odo d'Outremer (con Suliman el Sarraceno)",
     role: 'character',
     pointsPerModel: 110,
+    // OLD-63, p.69: the Morning Star of Fracasse (Magia's Flagelo de Fracasse,
+    // 30) is in the 110 total (p.66).
+    fixedMagicItems: [{ id: 'mi-flail-of-fracasse', included: true }],
     statLine: human({ WS: 4, BS: 4, S: 4, T: 3, W: 1, I: 4, A: 2, Ld: 8 }),
     isCharacter: true,
     characterRank: 'champion',
@@ -551,6 +561,11 @@ const units: UnitProfile[] = [
     nameEs: 'Tancred, Duque de Quenelles',
     role: 'character',
     pointsPerModel: 265,
+    // OLD-63, p.70: the Blade of Couronne is in the 265 total (p.66). "The Duke
+    // may ride a barded Bretonnian Warhorse (+3 points) or a monster chosen from
+    // the Monsters List at the appropriate points cost."
+    fixedMagicItems: [{ id: 'mi-sword-of-couronne', included: true }],
+    mounts: KNIGHT_MOUNTS,
     statLine: human({ WS: 6, BS: 6, S: 4, T: 4, W: 3, I: 6, A: 4, Ld: 10 }),
     isCharacter: true,
     characterRank: 'lord',
@@ -647,6 +662,8 @@ const units: UnitProfile[] = [
     nameEs: "Armand d'Aquitaine (Portaestandarte de Batalla)",
     role: 'character',
     pointsPerModel: 235,
+    // OLD-63, p.73-74: the Banner of the Lady of the Lake is in the 235 total (p.66).
+    fixedMagicItems: [{ id: 'mi-banner-of-the-lady-of-the-lake', included: true }],
     statLine: human({ WS: 5, BS: 4, S: 4, T: 4, W: 3, I: 4, A: 2, Ld: 9 }),
     isCharacter: true,
     characterRank: 'champion',

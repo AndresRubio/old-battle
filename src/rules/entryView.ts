@@ -10,6 +10,15 @@ import { matchesQuery, type Lang } from '../i18n/lang'
  */
 
 /**
+ * A price with its sign, as an option label prints it: `+5`, `-5`, `+0.5`.
+ * Sturmjarl's item-card prices are worth -5 (OLD-63), which a hard-coded `+`
+ * would misprint as `+-5`.
+ */
+export function signedPoints(n: number): string {
+  return n < 0 ? `${n}` : `+${n}`
+}
+
+/**
  * The text one characteristic column shows: the value, or "–" when the book's
  * row leaves that column blank.
  *
@@ -87,17 +96,20 @@ export function magicStandardNeedsBearer(unit: UnitProfile): boolean {
 
 /**
  * Split a unit's options into the mutually-exclusive wizard-level upgrades
- * (rendered as a radio group) and everything else (checkboxes). One statement
- * of the partition, shared by the editor and the plaintext export.
+ * (rendered as a radio group), the `counted` options bought N times (number
+ * inputs, OLD-63) and everything else (checkboxes). One statement of the
+ * partition, shared by the editor and the plaintext export.
  */
 export function partitionOptions(unit: UnitProfile): {
   levelOptions: EquipmentOption[]
   toggleOptions: EquipmentOption[]
+  countedOptions: EquipmentOption[]
 } {
   const options = unit.options ?? []
   return {
     levelOptions: options.filter((o) => isWizardLevelId(o.id)),
-    toggleOptions: options.filter((o) => !isWizardLevelId(o.id)),
+    toggleOptions: options.filter((o) => !isWizardLevelId(o.id) && !o.counted),
+    countedOptions: options.filter((o) => o.counted),
   }
 }
 

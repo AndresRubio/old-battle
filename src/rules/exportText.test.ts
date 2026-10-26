@@ -289,3 +289,130 @@ describe('exportRosterText — cavalry steed profile (OLD-48)', () => {
     expect(labels).toEqual(['· Orc Boar Chariot (+81 pts)', '· 2 Orc crew', '· 2 War Boars', '· Chariot'])
   })
 })
+
+describe('exportRosterText fixed magic items and fixed extras (OLD-63)', () => {
+  const kfRoster: Roster = {
+    id: 'r',
+    name: 'Reikland',
+    armyId: 'empire',
+    pointsLimit: 2000,
+    entries: [{ id: 'k', unitId: 'emp-karl-franz', size: 1, optionIds: [], magicItemIds: [], isGeneral: true }],
+  }
+  const lines = (text: string) => text.split('\n').map((l) => l.trim())
+
+  it('exports Karl Franz at 285 with both fixed items tagged, in the list and the detail block', () => {
+    const text = exportRosterText(kfRoster, empire)
+    expect(text).toContain('Emperor Karl Franz ............ 285 pts')
+    expect(text).toContain('Emperor Karl Franz — 285 pts')
+    const l = lines(text)
+    expect(l).toContain('* Hammer of Sigmar (100 pts) [fixed]')
+    expect(l).toContain('* The Silver Seal (75 pts) [fixed]')
+    expect(l.some((x) => x.startsWith('* Hammer of Sigmar (100 pts) [fixed] — '))).toBe(true)
+  })
+
+  it('tags them in Spanish', () => {
+    const text = exportRosterText(kfRoster, empire, 'es')
+    expect(text).toContain('El Emperador Karl Franz ............ 285 ptos')
+    const l = lines(text)
+    expect(l).toContain('* Martillo de Sigmar (100 ptos) [fijo]')
+    expect(l).toContain('* El Sello de Plata (75 ptos) [fijo]')
+  })
+
+  it('prints an included item as "(included)" and each fixed extra as + <name> (+N pts)', () => {
+    const synth = {
+      ...empire,
+      units: [
+        ...empire.units,
+        {
+          id: 'synth-hero',
+          name: 'Synth Hero',
+          role: 'character' as const,
+          pointsPerModel: 100,
+          isCharacter: true,
+          characterRank: 'lord' as const,
+          fixedMagicItems: [{ id: 'mi-silver-seal', included: true }],
+          fixedExtras: [{ id: 'x', name: 'War Wagon', nameEs: 'Carromato', points: 40 }],
+        },
+      ],
+    }
+    const r: Roster = {
+      ...kfRoster,
+      entries: [{ id: 's', unitId: 'synth-hero', size: 1, optionIds: [], magicItemIds: [], isGeneral: true }],
+    }
+    const en = lines(exportRosterText(r, synth))
+    expect(en).toContain('* The Silver Seal (included) [fixed]')
+    expect(en.filter((x) => x === '+ War Wagon (+40 pts)')).toHaveLength(2)
+    expect(en).toContain('[General] Synth Hero ............ 140 pts')
+    const es = lines(exportRosterText(r, synth, 'es'))
+    expect(es).toContain('* El Sello de Plata (incluido) [fijo]')
+    expect(es.filter((x) => x === '+ Carromato (+40 ptos)')).toHaveLength(2)
+  })
+})
+
+describe('exportRosterText counted options (OLD-63)', () => {
+  const hunter = {
+    id: 'synth-hunter',
+    name: 'Synth Hunter',
+    role: 'character' as const,
+    pointsPerModel: 100,
+    isCharacter: true,
+    characterRank: 'lord' as const,
+    options: [
+      { id: 'hounds', name: 'Hunting Hounds', pointsPerModel: 5, counted: true },
+      { id: 'guards', name: 'Guards', pointsPerModel: 10, counted: true, maxCount: 2 },
+    ],
+  }
+  const synth = { ...empire, units: [...empire.units, hunter] }
+  const r = (optionCounts?: Record<string, number>): Roster => ({
+    id: 'r',
+    name: 'Hunt',
+    armyId: 'empire',
+    pointsLimit: 2000,
+    entries: [{ id: 'h', unitId: 'synth-hunter', size: 1, optionIds: [], magicItemIds: [], isGeneral: true, optionCounts }],
+  })
+  const lines = (text: string) => text.split('\n').map((l) => l.trim())
+
+  it('prints <name> ×N (+total pts) in the list and the detail block when N > 0', () => {
+    const text = exportRosterText(r({ hounds: 4, guards: 0 }), synth)
+    expect(text).toContain('[General] Synth Hunter ............ 120 pts')
+    expect(lines(text)).toContain('+ Hunting Hounds ×4 (+20 pts)')
+    expect(text).toContain('  Options: Hunting Hounds ×4 (+20 pts)')
+    expect(text).not.toContain('Guards')
+  })
+
+  it('prints it in Spanish, with the option name from OPTION_ES', () => {
+    expect(lines(exportRosterText(r({ hounds: 4 }), synth, 'es'))).toContain('+ Mastines de Caza ×4 (+20 ptos)')
+  })
+
+  it('prints nothing for an entry without counts', () => {
+    expect(exportRosterText(r(), synth)).not.toContain('Hunting Hounds')
+  })
+})
+
+// OLD-63, Norsca PDF 32 and 35: Sturmjarl's page prices the Gift of Loki and
+// his Runes at 100 and 30, the item cards at 50 and 75. The card-price option
+// is worth -5 and prints with its own sign.
+describe('exportRosterText negative option price (OLD-63)', () => {
+  const norse = getArmy('norse')!
+  const r: Roster = {
+    id: 'r',
+    name: 'Ejsgard',
+    armyId: 'norse',
+    pointsLimit: 2000,
+    entries: [{ id: 's', unitId: 'no-sturmjarl', size: 1, optionIds: ['card-prices'], magicItemIds: [] }],
+  }
+  const lines = (text: string) => text.split('\n').map((l) => l.trim())
+
+  it("prints Sturmjarl's card-price option as (-5 pts), never (+-5)", () => {
+    const text = exportRosterText(r, norse)
+    expect(lines(text)).toContain('+ Item-card prices (Gift of Loki 50, Runes 75) (-5 pts)')
+    expect(text).not.toContain('+-5')
+    expect(text).toContain('Stürmjarl, Shaman Lord of Ejsgard — 441 pts')
+  })
+
+  it('prints it in Spanish', () => {
+    expect(lines(exportRosterText(r, norse, 'es'))).toContain(
+      '+ Precios de las cartas (Don de Loki 50, Runas 75) (-5 ptos)',
+    )
+  })
+})

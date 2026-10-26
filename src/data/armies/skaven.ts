@@ -232,6 +232,8 @@ const units: UnitProfile[] = [
     lores: ['skaven'],
     canBeGeneral: true,
     max: 1,
+    // Skaven p.69: "Destripahuesos +45"; he stays beside Thanquol at all times (OLD-63).
+    fixedExtras: [{ id: 'boneripper', name: 'Boneripper (bodyguard)', nameEs: 'Destripahuesos (guardaespaldas)', points: 45 }],
     specialRules: [
       'Special character',
       'Replaces the army Warlord as General if taken',
@@ -239,7 +241,7 @@ const units: UnitProfile[] = [
       'Fights with claws & teeth (no armour or weapon)',
       'Blessing of the Horned Rat (may pass a wound to a nearby model on 4+)',
       'May re-roll a failed Warpstone test',
-      'May be accompanied by Boneripper bodyguard (+45 pts)',
+      'Accompanied by his bodyguard Boneripper (+45 pts)',
       'Up to 4 magic items',
     ],
   },
@@ -255,6 +257,8 @@ const units: UnitProfile[] = [
     lores: ['skaven'],
     canBeGeneral: true,
     max: 1,
+    // Skaven p.70: "+75 Liber Bubonicus / +100 Báculo de Corrupción", two of his three items.
+    fixedMagicItems: [{ id: 'mi-liber-bubonicus' }, { id: 'mi-staff-of-corruption' }],
     specialRules: [
       'Special character',
       'Replaces the army Warlord as General if taken',
@@ -264,7 +268,7 @@ const units: UnitProfile[] = [
       'Aura of Pestilence (-1 WS/BS/I to models in base contact; Clan Pestilens immune)',
       'No armour; wields the Plague Censer & Liber Bubonicus',
       'Level 2 Plague wizard (Liber Bubonicus, +75 pts)',
-      'Plague Censer (+100 pts)',
+      'Staff of Corruption (+100 pts)',
       'Up to 3 magic items total',
     ],
   },
@@ -280,6 +284,8 @@ const units: UnitProfile[] = [
     lores: ['skaven'],
     canBeGeneral: true,
     max: 1,
+    // Skaven p.71: "+25 Tormenta Demoníaca", his first magic item.
+    fixedMagicItems: [{ id: 'mi-daemonic-storm' }],
     specialRules: [
       'Special character',
       'Replaces the army Warlord as General if taken (must spend 25% on war machines)',
@@ -322,6 +328,8 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
+    // Skaven p.73: the first two of his three items are the Brazaletes (+40) and the Capa (+75).
+    fixedMagicItems: [{ id: 'mi-bracelets-of-power' }, { id: 'mi-cloak-of-shadows' }],
     specialRules: [
       'Special character',
       'Independent character — may only join Sewer Runners or act alone',
@@ -344,6 +352,8 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Skaven p.74: the first two of his four items are the Degolladora (+50) and the Armadura (+50).
+    fixedMagicItems: [{ id: 'mi-dwarf-cleaver' }, { id: 'mi-warpstone-armour' }],
     specialRules: [
       'Special character',
       'Replaces the army Warlord as General if taken; requires at least one Skaven Warriors regiment',

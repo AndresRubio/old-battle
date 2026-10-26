@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, MagicItem, MountOption, RosterEntry, StatLine, UnitProfile, UnitRole } from '../data/types'
+import type { Army, EquipmentOption, FixedMagicItem, MagicItem, MountOption, RosterEntry, StatLine, UnitProfile, UnitRole } from '../data/types'
 
 export function findUnit(army: Army, unitId: string): UnitProfile | undefined {
   return army.units.find((u) => u.id === unitId)
@@ -30,11 +30,15 @@ function crewCount(host: Crewed, optionIds: string[]): number {
  */
 const isPerEntry = (o: EquipmentOption) => Boolean(o.flat || o.perCrewman)
 
-/** Points contributed per model by the chosen per-model equipment options. */
+/**
+ * Points contributed per model by the chosen per-model equipment options. A
+ * `counted` option is priced only through `countedOptionPoints`, so a stale id
+ * of one in `optionIds` adds nothing here.
+ */
 export function optionPointsPerModel(unit: UnitProfile, optionIds: string[]): number {
   if (!unit.options) return 0
   return unit.options
-    .filter((o) => optionIds.includes(o.id) && !isPerEntry(o))
+    .filter((o) => optionIds.includes(o.id) && !o.counted && !isPerEntry(o))
     .reduce((sum, o) => sum + o.pointsPerModel, 0)
 }
 
@@ -69,8 +73,40 @@ export function unitOptionCost(unit: UnitProfile, option: EquipmentOption, optio
 export function flatOptionPoints(unit: UnitProfile, optionIds: string[]): number {
   if (!unit.options) return 0
   return unit.options
-    .filter((o) => optionIds.includes(o.id) && isPerEntry(o))
+    .filter((o) => optionIds.includes(o.id) && !o.counted && isPerEntry(o))
     .reduce((sum, o) => sum + unitOptionCost(unit, o, optionIds), 0)
+}
+
+/**
+ * A `counted` option's count as a whole number in `[0, maxCount]` (OLD-63): a
+ * missing, negative, non-finite or non-number value is 0 and a fraction is
+ * floored. The one statement of the rule, used when a count is stored
+ * (`setOptionCount`) and when it is read (`countedOptionCount`).
+ */
+export function clampOptionCount(option: EquipmentOption, raw: unknown): number {
+  if (typeof raw !== 'number' || !Number.isFinite(raw) || raw <= 0) return 0
+  return Math.min(Math.floor(raw), option.maxCount ?? Infinity)
+}
+
+/**
+ * How many of a `counted` option the entry buys (OLD-63), clamped by
+ * `clampOptionCount` so a hand-edited roster can never price a part-hound or
+ * more than the cap. The editor and the export read the count through here
+ * too, so all three agree.
+ */
+export function countedOptionCount(option: EquipmentOption, entry: RosterEntry): number {
+  return clampOptionCount(option, entry.optionCounts?.[option.id])
+}
+
+/**
+ * Points from the unit's `counted` options (OLD-63): `pointsPerModel × N` for
+ * each, once per entry. Counts for ids the unit does not offer as counted
+ * options are ignored.
+ */
+export function countedOptionPoints(unit: UnitProfile, entry: RosterEntry): number {
+  return (unit.options ?? [])
+    .filter((o) => o.counted)
+    .reduce((sum, o) => sum + o.pointsPerModel * countedOptionCount(o, entry), 0)
 }
 
 /** Points from the chosen mount (flat — a character rides one mount). */
@@ -137,7 +173,70 @@ export function effectiveStatLine(unit: UnitProfile, optionIds: string[]): Parti
   return result
 }
 
-/** Total points for a single roster entry: models * (base + per-model options) + flat options + mount (+ its options) + magic items. */
+/** One magic item an entry carries: a fixed one from the unit's page or one the user picked. */
+export interface CarriedMagicItem {
+  item: MagicItem
+  /** Given by the character's own page (`UnitProfile.fixedMagicItems`): locked on every entry. */
+  fixed: boolean
+  /** A fixed item the printed headline already prices in. */
+  included: boolean
+  /** What the item adds to the entry: 0 when included, else the page override or the card price. */
+  points: number
+}
+
+/** True when the unit's own page fixes this item on every entry (OLD-63). */
+export function isFixedMagicItem(unit: UnitProfile, itemId: string): boolean {
+  return (unit.fixedMagicItems ?? []).some((f) => f.id === itemId)
+}
+
+/** Points of the unit's fixed extras (chariot, monster, companion, rune group). */
+export function fixedExtrasPoints(unit: UnitProfile): number {
+  return (unit.fixedExtras ?? []).reduce((sum, x) => sum + x.points, 0)
+}
+
+/** What a fixed item adds on top of the headline: 0 when included, else the page override or the card price. */
+const fixedItemPoints = (f: FixedMagicItem, item: MagicItem): number =>
+  f.included ? 0 : f.points ?? item.points
+
+/**
+ * Every magic item the entry carries (OLD-63): the unit's fixed items first,
+ * in data order, then the entry's picks that are not fixed. Each id appears
+ * once and ids missing from the army's pool are dropped. Fixed items are
+ * derived from the unit, never written into the entry, so a saved roster that
+ * already ticked one by hand is deduplicated here instead of charged twice.
+ */
+export function carriedMagicItems(entry: RosterEntry, unit: UnitProfile, army: Army): CarriedMagicItem[] {
+  const carried: CarriedMagicItem[] = []
+  const seen = new Set<string>()
+  for (const f of unit.fixedMagicItems ?? []) {
+    const item = findMagicItem(army, f.id)
+    if (!item || seen.has(item.id)) continue
+    seen.add(item.id)
+    carried.push({ item, fixed: true, included: Boolean(f.included), points: fixedItemPoints(f, item) })
+  }
+  for (const id of entry.magicItemIds) {
+    const item = findMagicItem(army, id)
+    if (!item || seen.has(item.id)) continue
+    seen.add(item.id)
+    carried.push({ item, fixed: false, included: false, points: item.points })
+  }
+  return carried
+}
+
+/**
+ * The price the unit picker shows: the headline plus everything the page
+ * always charges on top (non-included fixed items, fixed extras), so a
+ * character lists at what he costs once added.
+ */
+export function listedUnitPoints(unit: UnitProfile, army: Army): number {
+  const fixedItems = (unit.fixedMagicItems ?? []).reduce((sum, f) => {
+    const item = findMagicItem(army, f.id)
+    return sum + (item ? fixedItemPoints(f, item) : 0)
+  }, 0)
+  return unit.pointsPerModel + fixedItems + fixedExtrasPoints(unit)
+}
+
+/** Total points for a single roster entry: models * (base + per-model options) + flat options + counted options + mount (+ its options) + magic items (fixed and picked) + fixed extras. */
 export function entryPoints(entry: RosterEntry, army: Army): number {
   const unit = findUnit(army, entry.unitId)
   if (!unit) return 0
@@ -149,19 +248,18 @@ export function entryPoints(entry: RosterEntry, army: Army): number {
   const models = unit.role === 'regiment' ? entry.size : 1
   const modelPoints = equippedModelCost(unit, entry.optionIds) * models
   const flatPoints = flatOptionPoints(unit, entry.optionIds)
-  const magicPoints = entry.magicItemIds.reduce((sum, id) => {
-    const item = findMagicItem(army, id)
-    return sum + (item ? item.points : 0)
-  }, 0)
+  const magicPoints = carriedMagicItems(entry, unit, army).reduce((sum, c) => sum + c.points, 0)
   // A unit's magic standard (carried by its standard bearer) adds its own points.
   const standard = entry.magicStandardId ? findMagicItem(army, entry.magicStandardId) : undefined
   const standardPoints = standard ? standard.points : 0
   return (
     modelPoints +
     flatPoints +
+    countedOptionPoints(unit, entry) +
     mountPoints(unit, entry.mountId) +
     mountOptionPoints(unit, entry.mountId, entry.optionIds) +
     magicPoints +
+    fixedExtrasPoints(unit) +
     standardPoints
   )
 }

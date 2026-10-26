@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { validateRoster } from './validate'
 import { magicItemAllowance, MAGIC_ITEM_ALLOWANCE } from './magicItems'
+import { carriedMagicItems } from './points'
 import {
   STANDARD_5E_COMPOSITION,
   type Army,
@@ -331,6 +332,29 @@ describe('magic banners require a BSB (magic-items-banner-bsb)', () => {
     const r = ros([ch('c1', generalUnit, { isGeneral: true, isBSB: true })])
     const banners = validateRoster(r, empire).filter((v) => v.rule === 'magic-items-banner-bsb')
     expect(banners.length).toBe(0)
+  })
+
+  // OLD-63, Elfos Silvanos p.76: Lothlann always carries the Battle Banner of
+  // Athel Loren; his own page fixes it, so it never asks for the BSB toggle.
+  it("raises nothing for Lothlann's fixed Battle Banner of Athel Loren", () => {
+    const woodElves = getArmy('wood-elves')!
+    const lothlann = woodElves.units.find((u) => u.id === 'we-lothlann')!
+    const r: Roster = {
+      id: 'r',
+      name: 't',
+      armyId: 'wood-elves',
+      pointsLimit: 3000,
+      entries: [
+        { id: 'gen', unitId: 'we-general', size: 1, optionIds: [], magicItemIds: [], isGeneral: true },
+        { id: 'loth', unitId: 'we-lothlann', size: 1, optionIds: [], magicItemIds: [] },
+        // A roster saved before OLD-63 that ticked the banner by hand.
+        { id: 'loth2', unitId: 'we-lothlann', size: 1, optionIds: [], magicItemIds: ['mi-battle-banner-of-athel-loren'] },
+      ],
+    }
+    expect(carriedMagicItems(r.entries[1], lothlann, woodElves).map((c) => [c.item.id, c.fixed])).toEqual([
+      ['mi-battle-banner-of-athel-loren', true],
+    ])
+    expect(validateRoster(r, woodElves).filter((v) => v.rule === 'magic-items-banner-bsb')).toEqual([])
   })
 })
 
@@ -1196,5 +1220,190 @@ describe('Slann Mage-Priest carries one item above its wizard level', () => {
       magicItemAllowance(entry({ unitId: 'lz-slann', optionIds }), slann),
     )
     expect(actual).toEqual(generic.map((n) => n + 1))
+  })
+})
+
+describe('fixed magic items (OLD-63)', () => {
+  // Imperio p.67-68: Karl Franz "puede tener tres objetos mágicos, dos de los
+  // cuales deben ser el Martillo de Sigmar y el Sello de Plata".
+  const empire = getArmy('empire')!
+  const kf = (over: Partial<RosterEntry> = {}): RosterEntry =>
+    entry({ unitId: 'emp-karl-franz', isGeneral: true, ...over })
+  const empRoster = (entries: RosterEntry[]): Roster => ({
+    id: 'r', name: 't', armyId: 'empire', pointsLimit: 3000, entries,
+  })
+  const itemRules = (r: Roster, a: Army = empire) =>
+    rules(validateRoster(r, a)).filter((rule) => rule.startsWith('magic-items'))
+
+  it('raises nothing for a bare Karl Franz', () => {
+    expect(itemRules(empRoster([kf()]))).toEqual([])
+  })
+
+  it('counts the fixed items toward his allowance: two picks make 4 > 3', () => {
+    const vs = validateRoster(empRoster([kf({ magicItemIds: ['mi-jade-amulet', 'mi-dispel-scroll'] })]), empire)
+    const count = vs.find((v) => v.rule === 'magic-items-count')
+    expect(count).toBeDefined()
+    expect(count!.message).toContain('carries 4 magic items but may carry only 3')
+  })
+
+  it('warns when he picks a second magic armour next to the Silver Seal', () => {
+    expect(itemRules(empRoster([kf({ magicItemIds: ['mi-armour-of-the-defender'] })]))).toContain(
+      'magic-items-category',
+    )
+  })
+
+  // The page sets the fixed loadout; validation polices only the user's picks.
+  const synth: Army = {
+    ...army,
+    units: [
+      ...army.units,
+      {
+        id: 'two-swords',
+        name: 'Two Swords',
+        role: 'character',
+        pointsPerModel: 100,
+        isCharacter: true,
+        characterRank: 'lord',
+        canBeGeneral: true,
+        fixedMagicItems: [{ id: 'sword' }, { id: 'sword2' }],
+      },
+      {
+        id: 'banner-hero',
+        name: 'Banner Hero',
+        role: 'character',
+        pointsPerModel: 50,
+        isCharacter: true,
+        characterRank: 'hero',
+        fixedMagicItems: [{ id: 'banner' }],
+      },
+    ],
+  }
+
+  it('raises no category warning for two fixed weapons', () => {
+    const r = roster(2000, [entry({ unitId: 'two-swords', isGeneral: true })])
+    expect(itemRules(r, synth)).not.toContain('magic-items-category')
+  })
+
+  it('raises no banner-BSB warning for a fixed banner on a non-BSB character', () => {
+    const r = roster(2000, [entry({ unitId: 'lord', isGeneral: true }), entry({ unitId: 'banner-hero' })])
+    expect(itemRules(r, synth)).not.toContain('magic-items-banner-bsb')
+  })
+
+  // Elfos Oscuros p.60-61: Hellebron always carries the Sword of Death and the
+  // Defender Sword, two weapons. The page fixes them, so no category finding.
+  it('raises no category warning for Hellebron, who carries two fixed weapons', () => {
+    const darkElves = getArmy('dark-elves')!
+    const r: Roster = {
+      id: 'r', name: 'Host', armyId: 'dark-elves', pointsLimit: 3000,
+      entries: [
+        entry({ unitId: 'de-hellebron', isGeneral: true }),
+        entry({ unitId: 'de-witch-elves', size: 10 }),
+      ],
+    }
+    const hellebron = darkElves.units.find((u) => u.id === 'de-hellebron')!
+    const weapons = carriedMagicItems(r.entries[0], hellebron, darkElves).filter((c) => c.item.category === 'weapon')
+    expect(weapons.map((c) => c.item.id)).toEqual(['mi-sword-of-death', 'mi-defender-sword'])
+    expect(itemRules(r, darkElves)).not.toContain('magic-items-category')
+  })
+
+  const uniqueMessages = (r: Roster) =>
+    validateRoster(r, empire).filter((v) => v.rule === 'magic-items-unique').map((v) => v.message)
+
+  it('flags the Hammer as not unique when two Karl Franz entries carry it', () => {
+    const r = empRoster([kf({ id: 'a' }), kf({ id: 'b', isGeneral: false })])
+    expect(uniqueMessages(r).some((m) => m.includes('Hammer of Sigmar'))).toBe(true)
+  })
+
+  // OLD-63: Bretonnia p.66, Paladines del Caos p.13 and Condes Vampiro p.69
+  // price the page items inside the headline; locking them raises nothing.
+  const bare = (armyId: string, unitId: string, isGeneral: boolean, gen = 'gen'): Roster => ({
+    id: 'r', name: 't', armyId, pointsLimit: 3000,
+    entries: isGeneral
+      ? [entry({ id: 'x', unitId, isGeneral: true })]
+      : [entry({ id: 'g', unitId: gen, isGeneral: true }), entry({ id: 'x', unitId })],
+  })
+  it.each([
+    ['bretonnia', 'br-louen-leoncoeur', true, ''],
+    ['bretonnia', 'br-armand', false, 'br-general'],
+    ['chaos', 'ch-mordrek', false, 'ch-lord'],
+    ['vampire-counts', 'vc-krell', false, 'vc-heinrich-kemmler'],
+  ])('raises no magic-item finding for %s %s', (armyId, unitId, isGeneral, gen) => {
+    const a = getArmy(armyId)!
+    const r = bare(armyId, unitId, isGeneral, gen)
+    expect(carriedMagicItems(r.entries.find((e) => e.id === 'x')!, a.units.find((u) => u.id === unitId)!, a).length)
+      .toBeGreaterThan(0)
+    expect(itemRules(r, a)).toEqual([])
+  })
+
+  // OLD-63: the High Elf and Lizardmen special characters offer 'items-on-top'
+  // (user choice, owner ruling 2026-10-26); ticking it raises no magic-item finding.
+  it.each([
+    ['high-elves', 'he-general', 'he-alith-anar'],
+    ['high-elves', 'he-general', 'he-eltharion'],
+    ['high-elves', 'he-general', 'he-belannaer'],
+    ['high-elves', 'he-general', 'he-korhil'],
+    ['high-elves', 'he-general', 'he-tyrion'],
+    ['high-elves', 'he-general', 'he-teclis'],
+    ['high-elves', 'he-general', 'he-imrik'],
+    ['lizardmen', 'lz-slann', 'lz-venerable-lord-kroak'],
+    ['lizardmen', 'lz-slann', 'lz-itzi-bitzi'],
+    ['lizardmen', 'lz-slann', 'lz-tenehuini'],
+    ['lizardmen', 'lz-slann', 'lz-lord-mazdamundi'],
+  ])('raises no magic-item finding for %s %s with %s ticking items-on-top', (armyId, gen, unitId) => {
+    const a = getArmy(armyId)!
+    const r: Roster = {
+      id: 'r', name: 't', armyId, pointsLimit: 3000,
+      entries: [
+        entry({ id: 'g', unitId: gen, isGeneral: true }),
+        entry({ id: 'x', unitId, optionIds: ['items-on-top'] }),
+      ],
+    }
+    expect(a.units.find((u) => u.id === unitId)!.options?.map((o) => o.id)).toContain('items-on-top')
+    expect(itemRules(r, a)).toEqual([])
+  })
+
+  // Altos Elfos p.93: the Sword of Teclis is Teclis's; a second High Elf picking
+  // it beside him breaks uniqueness.
+  it('flags the Sword of Teclis when a High Elf General picks it beside Teclis', () => {
+    const he = getArmy('high-elves')!
+    const r: Roster = {
+      id: 'r', name: 't', armyId: 'high-elves', pointsLimit: 3000,
+      entries: [
+        entry({ id: 'g', unitId: 'he-general', isGeneral: true, magicItemIds: ['mi-sword-of-teclis'] }),
+        entry({ id: 't', unitId: 'he-teclis' }),
+      ],
+    }
+    expect(rules(validateRoster(r, he))).toContain('magic-items-unique')
+  })
+
+  // Bretonnia p.73-74: Armand always carries the Banner of the Lady of the Lake;
+  // his page fixes it, so the banner-BSB warning never asks for the toggle.
+  it("raises no banner-BSB warning for Armand's fixed banner", () => {
+    const a = getArmy('bretonnia')!
+    expect(rules(validateRoster(bare('bretonnia', 'br-armand', false, 'br-general'), a))).not.toContain(
+      'magic-items-banner-bsb',
+    )
+  })
+
+  // Paladines del Caos p.21: the Sword of Transformation is Mordrek's; a second
+  // character picking it beside him breaks uniqueness.
+  it('flags the Sword of Transformation when a Chaos Lord picks it beside Mordrek', () => {
+    const chaos = getArmy('chaos')!
+    const r: Roster = {
+      id: 'r', name: 't', armyId: 'chaos', pointsLimit: 3000,
+      entries: [
+        entry({ id: 'g', unitId: 'ch-lord', isGeneral: true, magicItemIds: ['mi-sword-of-transformation'] }),
+        entry({ id: 'm', unitId: 'ch-mordrek' }),
+      ],
+    }
+    expect(rules(validateRoster(r, chaos))).toContain('magic-items-unique')
+  })
+
+  it('flags the Hammer when a General picks it beside Karl Franz', () => {
+    const r = empRoster([
+      kf({ id: 'a' }),
+      entry({ id: 'b', unitId: 'emp-general', magicItemIds: ['mi-hammer-of-sigmar'] }),
+    ])
+    expect(uniqueMessages(r).some((m) => m.includes('Hammer of Sigmar'))).toBe(true)
   })
 })

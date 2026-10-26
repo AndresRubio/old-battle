@@ -476,6 +476,12 @@ const units: UnitProfile[] = [
     nameEs: 'Conde Mordrek el Condenado',
     role: 'character',
     pointsPerModel: 398,
+    // OLD-63, p.13 and p.21: the Sword of Transformation and the Chaos Runeshield
+    // are in the 398 total ("Valor incluido en el total").
+    fixedMagicItems: [
+      { id: 'mi-sword-of-transformation', included: true },
+      { id: 'mi-chaos-runeshield', included: true },
+    ],
     // Eternal Damnation randomises WS/S/T/A each turn — representative values shown.
     statLine: statline({ M: 8, WS: 7, BS: 9, S: 5, T: 5, W: 3, I: 9, A: 4, Ld: 10 }),
     isCharacter: true,

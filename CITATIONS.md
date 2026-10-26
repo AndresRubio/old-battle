@@ -1368,6 +1368,322 @@ him `canBeBSB` and carried the cost only as the tag *"+50 pts to act as Battle S
 the app never added the 50. He now has a flat option `bsb` at +50, charged once. It adds no magic item
 slot, since the book gives him no other magic item. The Sword of Justice's +50 is OLD-63.
 
+#### Empire: special characters' extra costs (OLD-63, 2026-10-26)
+**Karl Franz, Imperio printed p.67-68**, cost table: `Karl Franz 110 puntos / +100 Martillo de
+Sigmar / +75 El Sello de Plata`. The text: "El Emperador puede tener tres objetos mágicos, dos de
+los cuales deben ser el Martillo de Sigmar (+100 puntos) y el Sello de Plata (+75 puntos) … un
+objeto mágico adicional". Both items are mandatory (owner ruling 1 of 2026-10-26: the character
+pages win over p.67), so `emp-karl-franz` now carries them as `fixedMagicItems`: always charged at
+their card prices (100 and 75, which match the page), locked in the editor, never bought twice.
+A bare Karl Franz goes from 110 to 285; his one free pick is added on top.
+
+The fixed items count toward his three-item allowance, as the page says. Every page that states
+the number agrees: Kurt Helborg p.71 ("hasta tres objetos mágicos, uno de los cuales debe ser uno
+de los Colmillos Rúnicos … Los otros dos"), the Supreme Patriarch p.70-71 ("hasta cuatro objetos
+mágicos, uno de los cuales debe ser el Báculo de Volans"), Zarina p.74 ("hasta tres … uno de los
+cuales debe ser … Fearfrost"), Dieter Helsnicht, No Muertos p.95 ("hasta cuatro … Dos de ellos
+deben ser"), and Keorl, Norsca PDF 34 ("entitled to carry three magic items. Two of these will
+always be").
+
+**Karl Franz's mount, p.67-68.** "Montura: El Emperador puede entrar en combate montado en un
+Caballo de Guerra con barda metálica (+7 puntos incluyendo la barda), o un Monstruo … el favorito
+del Emperador es el Grifo Garra de Muerte (+150 puntos)." The data had him riding the Griffon
+with its 150 buried in the headline and a display-only "Griffon Deathclaw" profile. He now takes
+the same mount list as Helborg (p.71) and the Supreme Patriarch (p.70-71), extracted into one
+constant, and the Griffon is the mount option at +150 that carries its statline (the page prints
+no separate Deathclaw profile). The bare entry stays at 285; 292 on the warhorse, 435 on the Griffon.
+
+**Fixed items of the other eight, one per printed cost table.** Each item is mandatory (owner
+ruling 1 of 2026-10-26: the character pages win over the p.67 note that lets the Electors' Runefangs
+be counted separately for players without Magia de Batalla). Each price below equals the card
+price, so no override is stored.
+
+| Character | Page | Table | Fixed items | Bare entry |
+|---|---|---|---|---|
+| Grand Theogonist Volkmar | p.69-70 | `+80 Báculo del Poder / +75 Grifo de Jade / +35 Cuerno de Sigismund` | Staff of Power, Jade Griffon, Horn of Sigismund | 150 to 340 |
+| Supreme Patriarch | p.70-71 | `+75 Báculo de Volans` | Staff of Volans | 290 to 365 |
+| Kurt Helborg | p.71 | `+30 Colmillo Rúnico` | Runefang | 110 to 140 |
+| Boris Todbringer | p.72 | `+30 Colmillo Rúnico / +25 Talismán de Ulric` | Runefang, Talisman of Ulric | 90 to 145 |
+| Aldebrand Ludenhof | p.72 | `+30 Colmillo Rúnico` | Runefang | 90 to 120 |
+| Valmir von Raukov | p.72-73 | `+30 Colmillo Rúnico / +40 Arco del Dragón` | Runefang, Dragon Bow | 90 to 160 |
+| Marius Leitdorf | p.73 | `+30 Colmillo Rúnico` | Runefang | 110 to 140 |
+| Zarina Katarin | p.74 | `+100 Fearfrost` | Fearfrost | 200 to 300 |
+
+Volkmar's equipment line (p.70) reads "no lleva ni armas ni armadura, pero posee tres objetos
+mágicos", and the three items above are those three, so `magicItemSlots` is 3 and he has no
+free pick. The old rule line "Three additional magic items" contradicted that and is gone. The
+Runefang is `duplicable` because p.67 says "Existen doce Colmillos Rúnicos", so Helborg and
+several Counts can each carry one in the same army. The Electors' mounts (p.72-73, a barded
+Warhorse each, no price printed), Volkmar's War Altar and Zarina's Warhorse keep their current
+treatment: the unpriced mounts stay as they are and the Altar and Warhorse stay display-only.
+Ludwig (p.69) and Magnus (p.68-69) do not change.
+
+#### Dwarfs and Skaven: special characters' extra costs (OLD-63, 2026-10-26)
+**Dwarfs, Enanos (1995, ES) printed pp.90-96.** Each page prints a cost table of the form
+`<character> N puntos / +Runas de Arma / +Runas de Defensa / +Runas Talismánicas`. The runes are
+priced per group, so each group is a `fixedExtra` (`weapon-runes`, `defence-runes`,
+`talismanic-runes`) named after the object that carries it. The pool's single-rune items stay
+untouched. A bare entry goes from the headline to the sum of its page.
+
+| Character | Page | Table | Fixed extras and items | Bare entry |
+|---|---|---|---|---|
+| King Kazador | p.90 | `+170 Runas de Arma / +100 Runas de Defensa / +50 Runas Talismánicas` | Hammer of Karak Azul 170, Armour of the King of Karak Azul 100, Horn of Storms 50 | 174 to 494 |
+| Ungrim Ironfist | p.91 | `+90 / +55 / +70` | Axe of Dargo 90, Crown of the Slayers 55, Dragon Cloak 70 | 210 to 425 |
+| Kragg the Grim | p.92 | `+165 / +150 / +45` | Hammer of Kragg 165, Armour of Kragg 150, Runic Staff 45 | 309 to 669 |
+| Gotrek | p.93 | `+125 Hacha de Gotrek` | Axe of Gotrek (card, 125) | 225 to 350 |
+| Felix Jaeger | p.93 | `+50 Espada de Félix`; "empuña una Espada de Bronce Fulgurante" | Sword of Shining Bronze (card, 50) | 77 to 127 |
+| Josef Bugman | p.95 | `+40 Runas de Armas / +25 Jarra de Cerveza Rúnica` | Bugman's rune axe 40; Bugman's Tankard at 25 | 111 to 176 |
+| Burlok Damminson | p.96 | `+25 Runas de Armas / +55 Runas de Defensa` | Burlok's Hammer 25, Burlok's Armour 55 | 130 to 210 |
+| Thorgrim Grudgebearer | p.94 | `+50 Gran Libro / +140 Trono / +75 Corona / +75 Armadura de Skaldor / +125 Hacha de Grimnir` | Great Book of Grudges, Dragon Crown of Karaz, Armour of Skaldor, Axe of Grimnir (cards, 50+75+75+125) | 160 to 485 |
+
+King Kazador's hammer: the page lists the Master Rune of Death, the "Runa de Ataque" (+1 to
+Weapon Skill) and the Rune of Power. The data said Rune of Cleaving, which is a different rune and
+would not add up to the 170 the page charges, so the line now reads Rune of Striking (the pool's
+name for "Runa de Ataque").
+
+**Josef Bugman's tankard.** The page prices it at +25 ("+Jarra de Cerveza Rúnica +25 puntos"), the
+magic-item card at 50 (Magia p.38 and p.74). The tankard is a fixed item with `points: 25`, so he
+pays the page price; the card stays at 50 for everyone else. Owner decision (2026-10-26).
+
+**Thorgrim's Throne of Power, +140: user choice (owner ruling 2026-10-26).** The page reads both, in its
+background text (checked in the PDF; the transcription omits it), "Es transportado sobre el Trono del
+Poder por sus cuatro vigorosos porteadores" and, under ESPECIAL (p.94), "Thorgrim puede entrar en combate
+sentado en el Trono del Poder y acompañado por sus cuatro porteadores". The two do not agree on
+whether the Throne is mandatory, so the owner left it to the player: an unticked option,
+`throne-of-power`, 140. The bare entry is 485 and 625 with the Throne. The four
+other items are fixed: the page says he "va armado con el Hacha de Grimnir y entra siempre en
+batalla con la Armadura de Skaldor" and wears the Crown and the Great Book. That is four items
+against a lord's three slots, so `magicItemSlots` is 4.
+
+Gotrek's axe was labelled "Gotrek's Axe of Grimnir" in the data, but the page and the card are the
+Hacha de Gotrek; the line now says Axe of Gotrek. Felix's sword line stays as it was.
+
+**Skaven, Skaven (1995, ES) printed pp.69-74.** Throt does not change.
+
+| Character | Page | Table | Fixed extras and items | Bare entry |
+|---|---|---|---|---|
+| Grey Seer Thanquol | p.69 | `Destripahuesos +45 puntos` | Boneripper (bodyguard) 45 | 380 to 425 |
+| Lord Skrolk | p.70 | `+75 Liber Bubonicus / +100 Báculo de Corrupción` | Liber Bubonicus, Staff of Corruption (cards, 75+100) | 225 to 400 |
+| Ikit Claw | p.71 | `+25 Tormenta Demoníaca` | Daemonic Storm (card, 25) | 315 to 340 |
+| Deathmaster Snikch | p.73 | `+40 Brazaletes de Poder / +75 Capa de las Sombras` | Bracelets of Power, Cloak of Shadows (cards, 40+75) | 230 to 345 |
+| Queek Headtaker | p.74 | `+50 Degolladora de Enanos / +50 Armadura de Disformidad` | Dwarf Cleaver, Warpstone Armour (cards, 50+50) | 138 to 238 |
+
+Thanquol's Boneripper is mandatory: p.69 says "Destripahuesos permanecerá junto a Thanquol en
+todo momento" (checked in the PDF, which the transcription paraphrases). The rule line used to say
+"May be accompanied" and now says "Accompanied by his bodyguard". Skrolk's +100 is the Báculo de
+Corrupción, not the Plague Censer, which has no printed cost; the rule line named the wrong
+object. Snikch's and Queek's items are "los primeros dos" of their allowances (p.73, p.74), Ikit's
+Tormenta Demoníaca is "el primero que debe adquirir" (p.71), and Skrolk's two items are "siempre"
+his (p.70).
+
+#### Wood Elves: special characters' extra costs (OLD-63, 2026-10-26)
+**Wood Elves, Elfos Silvanos (1996, ES) printed pp.70-80.** Each page prints its extras under the
+headline as `+N puntos: <objeto>`. Items in the pool are fixed at their card price, which matches
+every page; the rest are `fixedExtras`. Durthu and Drycha print no extras and do not change.
+
+| Character | Page | Table | Fixed items and extras | Bare entry |
+|---|---|---|---|---|
+| Orion | p.70-71 | `+50 Lanza de Kurnous / +50 Cuerno de la Cacería Salvaje / +50 Capa de Isha / +5 por Mastín` | Spear of Kurnous, Horn of the Wild Hunt, Cloak of Isha (cards, 50+50+50); hounds a counted option | 300 to 450 |
+| Ariel | p.71-72 | `+50 Báculo de Olmo / +25 Bellotas del Roble Eterno / +25 Venablo de Muerte / +25 Vino de Bayas` | Staff of the Elm, Acorns of the Eternal Oak, Dart of Death, Berry Wine (cards) | 366 to 491 |
+| Naieth | p.74 | `+15 Othu el Búho / +30 Báculo de los Augurios` | Staff of the Auguries (card, 30); Othu the Owl 15 | 59 to 104 |
+| Thalandor | p.75 | `+5 Pintura de Guerra Mágica / +15 Talismán de Qwarr / +25 Lanza de Daith / +95 Gwandor el Águila Gigante` | Magic War Paint, Talisman of Qwarr, Spear of Daith (cards); Gwandor 95 | 240 to 380 |
+| Lothlann | p.76 | `+50 Estandarte de Athel Loren / +7 Corcel Élfico con Barda` | Battle Banner of Athel Loren (card, 50); Barded Elven Steed 7 | 101 to 158 |
+| Scarloc | p.77 | `+25 Flecha Lluvia de Muerte` | Death Rain Arrow (card, 25) | 54 to 79 |
+| Wychwethyl | p.77-78 | `+25 Tambor de Piel de Orco` | Orc-Skin Drum (card, 25) | 75 to 100 |
+| Sceolan | p.78 | `+10 Escudo de Bronce / +50 Arco de Loren` | Bronze Shield (new, 10), Bow of Loren (card, now 50) | 106 to 166 |
+| Skaw | p.79 | `+15 Halcones / +25 Flagelo de Garras` | Claw Scourge (new, 25); Falcons 15 | 51 to 91 |
+| Gruarth | p.80 | `+66 Tigres Dientes de Sable / +10 Boleadoras` | Bolas (new, 10); Sabre-Tooth Tigers Colmillo & Garra 66 | 90 to 166 |
+
+**Orion's hounds.** p.71: "+5 puntos por cada Mastín, tantos como se desee". The hounds are a
+counted option, `hunting-hounds` (Mastines de Caza), 5 each with no cap; four hounds make 470.
+
+**Three new items.** The pool lacked Sceolan's Escudo de Bronce (p.78, shield, 10), Skaw's Flagelo
+de Garras (p.79, weapon, 25) and Gruarth's Boleadoras (p.80, weapon, 10). Each is a Wood Elf
+special-character item. Their Spanish text is the page's rules paragraph, read in the PDF; the
+English text renders it, with the Bolas' 30 cm range as 12 inches.
+
+**Bow of Loren corrected from 60 to 50.** Elfos Silvanos p.78 prints "+50 puntos: Arco de Loren"
+and the Magia card list prints 50 (Magia p.72); only Magia p.34 prints 60. The item is shared with
+the High Elves (`restrictedTo: ['high-elves', 'wood-elves']`), so it costs 50 there too. Owner
+decision (2026-10-26).
+
+#### Dark Elves and Undead: special characters' extra costs (OLD-63, 2026-10-26)
+**Dark Elves, Elfos Oscuros (1995, ES) printed pp.56-63.** Each page lists a table of items with
+`+N puntos` (the Manticore as `Mantícora 200 puntos`) under a headline that does not contain them.
+Items in the pool are fixed at their card price, which matches every page; the mounts and the
+chariot are `fixedExtras`. The Armour of Fortune (15), Enchanted Shield (5), Meteoric Iron Armour
+(25), Black Amulet (50) and the other common cards match the pages.
+
+| Character | Page | Table | Fixed items and extras | Bare entry |
+|---|---|---|---|---|
+| Witch King | p.56-57 | `+50 Corona de Hierro / +60 Armadura del Rey Brujo / +50 Escudo Antihechizos / +75 Destructora / +90 Carruaje Negro` | Iron Crown (new, 50), Armour of the Witch King (new, 60), Anti-Spell Shield, Destroyer (cards); Black Chariot 90 | 350 to 675 |
+| Morathi | p.59 | `+15 Espada Oscura / +25 Amuleto Ámbar / +30 Pergamino de Energía / +25 Pergamino de Dispersión de Magia / +50 Pegaso Negro` | Dark Sword, Amber Amulet, Power Scroll, Dispel Scroll (cards); Black Pegasus Sulephet 50 | 327 to 472 |
+| Hellebron | p.60-61 | `+100 Espada de Muerte / +20 Espada Defensora / +25 Amuleto del Fuego / Mantícora 200 puntos` | Sword of Death, Defender Sword, Amulet of Fire (cards); Manticore 200 | 207 to 552 |
+| Rakarth | p.58 | `+25 Látigo de la Agonía / +15 Armadura de la Suerte / +5 Escudo Encantado / +450 Dragón Negro` | Whip of Agony, Armour of Fortune, Enchanted Shield (cards); Black Dragon Bracchus 450 | 134 to 629 |
+| Kouran | p.60 | `+20 Espada de Hierro Encantado / +25 Armadura de Hierro Meteórico` | both cards | 105 to 150 |
+| Tullaris | p.61-62 | `+50 Hacha de los Verdugos / +50 Amuleto Negro` | both cards | 123 to 223 |
+| Shadowblade | p.62-63 | `+25 Corazón del Infortunio / +10 Poción de Fuerza` | both cards | 115 to 150 |
+
+**Hellebron's unsigned 200.** p.60-61 prints "Mantícora 200 puntos" without the "+" the other rows
+carry. It is read as an add-on: a 207-point entry cannot contain a 200-point monster, and the same
+table shape (items below the headline) holds for every other character. Total 552.
+
+**Hellebron's two weapons.** The Sword of Death and the Defender Sword are both weapons; the page
+fixes both, so the one-per-category rule does not apply to them (it polices only the user's picks).
+
+**Allowance above the rank.** Rakarth is a Hero (2 items) and his page fixes three; Shadowblade is
+a Champion (1 item) and his page fixes two. Both set `magicItemSlots` to the page's number
+(Rakarth 3, Shadowblade 2). Morathi and the Witch King fit their level-4 allowance of 4.
+
+**Two new items.** The pool lacked the Iron Crown (p.56-57, arcane, 50, in the crown group) and the
+Armour of the Witch King (p.56-57, armour, 60). Both are Dark Elf special-character items; their
+Spanish text is the page's rules paragraph and the English text renders it.
+
+**No Muertos (1995, ES) printed pp.86-95.** p.86 says "El valor en puntos del personaje no incluye el
+coste de sus objetos mágicos". Vlad von Carstein, Heinrich Kemmler, Isabella and Manfred do not
+change.
+
+| Character | Page | Table | Fixed items and extras | Bare entry |
+|---|---|---|---|---|
+| Nagash | p.86-87 | `+35 Mortis / +100 Armadura Negra de Nagash / +100 Libro de Nagash / +40 Báculo del Poder` | Mortis, Black Armour, Book of Nagash, Staff of Power (cards) | 475 to 750 |
+| Arkhan | p.91-92 | `+50 Báculo de Condenación / +50 Espada Funeraria de Arkhan / +25 Libro Maldito / +50 Carruaje de Arkhan` | Staff of Damnation, Funereal Sword of Arkhan, The Cursed Book (cards); Chariot of Arkhan 50 | 350 to 525 |
+| Krell | p.92-93 | `+50 Armadura del Defensor / +125 Hacha Negra de Krell` | Armour of the Defender, Black Axe of Krell (cards) | 160 to 335 |
+| Settra | p.94-95 | `+50 Báculo de Osiris / +75 Corona del Rey Funerario / +30 Flagelo de Cráneos` | Staff of Osiris, Flail of Skulls (cards); Crown of the Tomb King at 75 | 210 to 365 |
+| Dieter Helsnicht | p.95 | `+65 Espada Rúnica del Caos / +50 Báculo Llameante de la Muerte / +200 Mantícora` | Rune Sword of Chaos, Flaming Staff of Death (cards); Manticore 200 | 410 to 725 |
+
+**Settra's Crown at 75, the card at 50.** p.94 prints "+75 puntos de la Corona del Rey Funerario";
+the Magia card list (p.38 and p.74) prints 50 for every other Tomb King. His page price is a
+`points` override on his fixed item, so the card stays at 50. **User choice (owner ruling
+2026-10-26).**
+
+**The Armour of the Defender is in the common pool.** Krell's page (p.92-93) fixes it at 50. The
+Magia card (p.36 and p.73) prints a dash in the restriction column, so no race restriction applies;
+it moves from the Empire-only list to the common pool, so every army can take it. Owner decision
+(2026-10-26).
+
+#### Orcs & Goblins: special characters' extra costs (OLD-63, 2026-10-26)
+**Orcs & Goblins, Orcos y Goblins (1997, ES) printed pp.90-93; chariot prices p.88.** Each page
+lists its extras as `+N puntos` under a headline that excludes them. Items in the pool are fixed
+at their card price, which matches every page (Crown of Sorcery 125, Morgor the Mutilator 125,
+Elf-Biter 50, Skarsnik's Prodder 75).
+
+| Character | Page | Table | Fixed items and extras | Bare entry |
+|---|---|---|---|---|
+| Azhag | p.90 | `+125 Corona de la Hechicería / +180 Serpiente Alada` | Crown of Sorcery (card); Winged Serpent 180 | 130 to 435 |
+| Oglok | p.90 | none; mount "un carruaje tirado por Jabalíes de Guerra o por Lobos Gigantes" | none | 90 (155 in the Wolf Chariot) |
+| Grom | p.91 | `+65 Niblit con Estandarte de Batalla / +62 Carruaje / +50 Hacha de Grom` | Elf-Biter, the Axe of Grom (card); Niblit 65; Wolf Chariot 62 | 80 to 257 |
+| Gorbad | p.91 | `+125 Morgor la Mutiladora` | Morgor the Mutilator (card) | 120 to 245 |
+| Gorfang | p.92 | none; same chariot mount as Oglok | none | 90 (155 in the Wolf Chariot) |
+| Morglum | p.92 | none; same chariot mount as Oglok | none | 150 (215 in the Wolf Chariot) |
+| Skarsnik | p.93 | `+75 Pincho de Skarsnik / +50 Gobbla`; "un carruaje tirado por Jabalíes de Guerra o Lobos Gigantes" | Skarsnik's Prodder (card); Gobbla 50 | 80 to 205 (286 in the Boar Chariot, 270 in the Wolf Chariot) |
+
+**Chariot mounts.** Oglok, Gorfang and Morglum add the Wolf Chariot (65, p.88) to their War Boar,
+monster and Boar Chariot (81, p.88) list through `ORC_SPECIAL_MOUNTS`; the generic Orc characters
+keep `ORC_MOUNTS` and still cannot ride a Wolf Chariot. Skarsnik's list is the two chariots only
+(he has no beast mount on p.93).
+
+**Grom's retinue.** Niblit (+65, with the army Battle Standard) and the Wolf Chariot (+62) are
+fixed extras because p.91 prices both and Grom always arrives with them.
+
+**Gorbad's War Boar.** p.91 prints no cost for it, so it stays a display profile and adds nothing
+to his 245.
+
+#### Bretonnia, Chaos, Norse, Vampire Counts and Dogs of War: special characters' extra costs (OLD-63, 2026-10-26)
+**Three books print the headline as a total that already holds the items.** Bretonnia (1997, EN)
+p.66: "Each character's points value is a total that includes equipment, mount, magic items".
+Paladines del Caos (1998, ES) p.13: "se indica como un total, que incluye equipo, montura, objetos
+mágicos", and p.21 for Mordrek: "Valor incluido en el total". Condes Vampiro (1999, ES) p.69: "El
+valor en puntos indicado para cada personaje es su coste total (equipo, montura, objetos mágicos
+...)". These characters keep their totals; their page items become fixed with `included: true`
+(adds 0, cannot be bought a second time on top).
+
+| Character | Page | Locked items (`included`) | Bare entry |
+|---|---|---|---|
+| Louen Leoncoeur | Bretonnia p.67 | Crown of Bretonnia; Armour of Brilliance = Magia's Armadura Brillante (75, same effect) | 505 to 505 |
+| Baron Odo | Bretonnia p.69 | Morning Star of Fracasse = Magia's Flagelo de Fracasse (30) | 110 to 110 |
+| Tancred | Bretonnia p.70 | Blade of Couronne | 265 to 265 (268 on the warhorse) |
+| Armand d'Aquitaine | Bretonnia p.73-74 | Banner of the Lady of the Lake | 235 to 235 |
+| Count Mordrek | Paladines del Caos pp.20-21 | Sword of Transformation; Chaos Runeshield | 398 to 398 |
+| Dieter Helsnicht | Condes Vampiro p.70 | Flaming Staff of Death; Chaos Runic Sword | 690 to 690 |
+| Heinrich Kemmler | Condes Vampiro p.71 | Chaos Funerary Sword; Skull Staff | 450 to 450 |
+| Krell | Condes Vampiro p.72 | Black Axe of Krell; Armour of the Defender (`magicItemSlots: 2`) | 280 to 280 |
+| Vlad von Carstein | Condes Vampiro p.78 | Ring of the von Carsteins | 680 to 680 |
+
+**Tancred's mount.** p.70: "The Duke may ride a barded Bretonnian Warhorse (+3 points) or a monster
+chosen from the Monsters List at the appropriate points cost." He now has the Knight mount list
+(warhorse 3, monsters at their list price).
+
+**Dieter's tag.** The Vampire Counts tag listed the Skull Staff, which is Kemmler's (p.71). Dieter's
+p.70 table prints the Báculo Llameante de la Muerte (50), Espada Rúnica del Caos (65) and Pergamino
+de Energía (30); the tag now names the Flaming Staff of Death. The Power Scroll (30) is inside his
+690 and locked as included (owner decision 2026-10-26), so he carries three items against an
+allowance of four.
+
+**Krell's slots.** p.72 gives him two magic items; a champion's rank allows one, so
+`magicItemSlots: 2` holds both.
+
+**Norsca (1994, EN), by PDF index.** The pages print the headline without the items.
+
+| Character | PDF | Page prints | Data | Bare entry |
+|---|---|---|---|---|
+| Keorl Thunderhand | 34 | "130 points (+125 Dragon Slayer, +30 Thorim's Ring)" | 130 + Dragon Slayer (the common Matadragones, same effect, 125) + Thorim's Ring (30), both fixed at card price | 285 to 285 |
+| Stürmjarl | 32 | "316 points (+100 Gift of Loki, +30 Runes)" | 316 + Gift of Loki (page price 100) + Runes (page price 30) | 446 to 446 |
+
+**Stürmjarl's two prices.** The magic-item card sheet (PDF 35) prints Gift of Loki 50 and Runes 75,
+so the book disagrees with itself (130 on the character page, 125 on the cards). The data keeps
+the page prices by default and offers one checkbox, "Item-card prices (Gift of Loki 50, Runes
+75)", worth -5 (flat), which gives 441. **user choice (owner ruling 2026-10-26)**. Integrity now
+accepts a negative option price only on a flat option.
+
+**Dogs of War (1998, EN) pp.64-67.**
+
+| Character | Page | Change | Bare entry |
+|---|---|---|---|
+| Mydas the Mean | p.64-65 | "between 5 and 20 bodyguards ... Each extra bodyguard after the first five costs 12 points": counted option, 12 each, up to 15. "a standard bearer and musician at double the points cost of a normal trooper": 2 × 12 = 24 each, flat | 210 to 210 (270 with 5 extra; +24 for each of standard and musician) |
+| Marco Colombo | p.67 | "Marco Colombo carries three magic items ... Gem of Lustria, Gourd of Lustrian Wine and Scroll of Araby"; the Navigator's Telescope is under Special Rules, so it moved out of the magic-items tag | 176 to 176 |
+
+#### High Elves: special characters' extra costs (OLD-63, 2026-10-26)
+**Altos Elfos (1997, ES) printed pp.81-94.** Each character's page prints the headline in its title
+and a price beside every item, and never says whether the headline holds the items. The owner
+ruled on 2026-10-26 that the player decides: each character below has a flat option
+`items-on-top` ("Items not included in the headline cost"), unticked by default. Unticked, the
+total is the printed headline, as before. Ticked, it adds the sum of the page's items.
+**User choice (owner ruling 2026-10-26)**, not a book value.
+
+| Character | Page | Items on the page | Sum | Default to ticked |
+|---|---|---|---|---|
+| Alith Anar | p.82 | Piedra de Medianoche 50, Corona Sombría 15, Arco Lunar 50 | 115 | 285 to 400 |
+| Eltharion | p.83 | Espada Colmillo 50, Yelmo de Yvresse 10, Talismán de Hoeth 85 | 145 | 467 to 612 |
+| Belannaer | p.89 | Capa de Estrellas 45, Espada de Bel-Korhadris 60, Libro del Fénix 75, Báculo de Cyeos 25 | 205 | 555 to 760 |
+| Korhil | p.91 | Hacha Chayal 65, Piel de Charandis 10 | 75 | 198 to 273 |
+| Tyrion | p.92 | Colmillo Solar 125, Armadura del Dragón de Aenarion 75, Corazón de Avelorn 50 | 250 | 425 to 675 |
+| Teclis | p.93 | Báculo Lunar 20, Corona de Guerra de Saphery 125, Espada de Teclis 100, Pergamino de Hoeth 55 | 300 | 630 to 930 |
+| Imrik | p.94 | Lanza Estelar 60, Cuerno del Dragón 15, Armadura de Caledor 30 | 105 | 275 to 380 (plus his dragon) |
+
+Four items the pool also sells are now `fixedMagicItems` with `included: true` (owner approval,
+2026-10-26): Talisman of Hoeth on Eltharion (card 85), War Crown of Saphery and Sword of Teclis on
+Teclis (cards 125 and 100) and Star Lance on Imrik (card 60). Each page price equals its card
+price. They are locked in the editor and add 0 on their own, because the option carries their
+price when ticked, so no reading charges them twice or lets a second pick buy them again. The
+other items on these pages are not in the pool and stay as text and option sum only. Alarielle
+(p.84) does not change: her page states that the headline includes her items.
+
+#### Lizardmen: special characters' extra costs (OLD-63, 2026-10-26)
+**Warhammer Armies: Lizardmen (1997, EN) printed pp.79-89.** Same case as the High Elves: each
+page prints a cost beside a headline and a price beside every item, and does not say whether the
+headline includes them. Each character below has the flat option `items-on-top`, unticked by
+default. **User choice (owner ruling 2026-10-26)**, not a book value.
+
+| Character | Page | Items on the page | Sum | Default to ticked |
+|---|---|---|---|---|
+| Venerable Lord Kroak | pp.79-80 | Standard of the Sacred Serpent 25, Gold Death Mask 50, Ceremonial Mace of Malachite 50, Amulet of Itza 25, Glyph of Potec 20 | 170 | 620 to 790 |
+| Itzi-Bitzi | p.85 | Piranha Blade 35 | 35 | 105 to 140 |
+| Tenehuini | p.86 | Dagger of Sotek 50, Totem of Sotek 10 | 60 | 120 to 180 |
+| Lord Mazdamundi | p.89 | Cobra Mace of Mazdamundi 15, Plaque of Tepec 50, Plaque of Xoloc 50, Itxi Grubs 50, Egg of the Quango 10, Sunburst Standard of Hexoatl 50 | 225 | 900 to 1125 |
+
+The Dagger of Sotek (card 50) is the one pool item among them: it is now a locked fixed item of
+Tenehuini with `included: true` (owner approval, 2026-10-26), so it cannot be bought a second time.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

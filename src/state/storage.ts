@@ -10,6 +10,17 @@ function hasStorage(): boolean {
   }
 }
 
+/**
+ * `RosterEntry.optionCounts` (OLD-63): absent on rosters saved before counted
+ * options existed, otherwise a plain object of finite counts >= 0. Fractions
+ * pass here; the engine floors them when it reads the count.
+ */
+function isOptionCounts(x: unknown): boolean {
+  if (x === undefined) return true
+  if (typeof x !== 'object' || x === null || Array.isArray(x)) return false
+  return Object.values(x).every((n) => typeof n === 'number' && Number.isFinite(n) && n >= 0)
+}
+
 function isEntry(x: unknown): x is RosterEntry {
   if (typeof x !== 'object' || x === null) return false
   const e = x as Record<string, unknown>
@@ -18,7 +29,8 @@ function isEntry(x: unknown): x is RosterEntry {
     typeof e.unitId === 'string' &&
     typeof e.size === 'number' &&
     Array.isArray(e.optionIds) &&
-    Array.isArray(e.magicItemIds)
+    Array.isArray(e.magicItemIds) &&
+    isOptionCounts(e.optionCounts)
   )
 }
 

@@ -62,6 +62,7 @@ export function assertArmyIntegrity(army: Army): Army {
   const dupItems = dupes(army.magicItems.map((i) => i.id))
   if (dupItems.length) fail(`duplicate magic-item ids: ${dupItems.join(', ')}`)
 
+  const itemIds = new Set(army.magicItems.map((i) => i.id))
   for (const u of army.units) {
     if (u.pointsPerModel < 0) fail(`${u.id}: negative pointsPerModel`)
 
@@ -119,7 +120,31 @@ export function assertArmyIntegrity(army: Army): Army {
     if (regimentPerCrewman.length) {
       fail(`${u.id}: perCrewman option ${regimentPerCrewman[0].id} on a regiment (models are not crew)`)
     }
+    // Counted options (OLD-63) are bought N times and priced pointsPerModel × N
+    // once per entry. Any other pricing flag would be silently ignored, and a
+    // regiment's per-model price already multiplies by its size.
+    for (const o of u.options ?? []) {
+      // A negative price (Sturmjarl's card prices, -5) is charged once. Per model
+      // or per count it would scale with the unit size or the count.
+      if (o.pointsPerModel < 0 && !o.flat) fail(`${u.id}/${o.id}: negative option price on a non-flat option`)
+      if (o.maxCount !== undefined && !o.counted) fail(`${u.id}/${o.id}: maxCount without counted`)
+      if (!o.counted) continue
+      if (o.maxCount !== undefined && !(Number.isInteger(o.maxCount) && o.maxCount >= 0)) {
+        fail(`${u.id}/${o.id}: maxCount must be a whole number >= 0`)
+      }
+      if (u.role === 'regiment') fail(`${u.id}/${o.id}: counted option on a regiment`)
+      for (const flag of ['flat', 'perCrewman', 'timesModelCost'] as const) {
+        if (o[flag]) fail(`${u.id}/${o.id}: counted option sets ${flag}`)
+      }
+    }
+
     for (const m of u.mounts ?? []) {
+      // Mount options are toggles priced by mountOptionPoints, which has no counts.
+      for (const o of m.options ?? []) {
+        if (o.counted || o.maxCount !== undefined) {
+          fail(`${u.id}/${m.id}/${o.id}: counted options are not supported on mounts`)
+        }
+      }
       const mCrewOpts = (m.options ?? []).filter((o) => o.perCrewman || o.addsCrewman)
       if (mCrewOpts.length && m.baseCrew === undefined) {
         fail(`${u.id}/${m.id}: crew options (${mCrewOpts.map((o) => o.id).join(', ')}) but no baseCrew`)
@@ -134,6 +159,31 @@ export function assertArmyIntegrity(army: Army): Army {
       }
       // Only characters ride mounts.
       if (!u.isCharacter) fail(`${u.id}: has mounts but is not a character`)
+    }
+
+    // Fixed magic items and fixed extras (OLD-63): a character's own page
+    // prices them on every entry, so a dangling id would silently price 0 and
+    // a duplicate would charge twice.
+    if (u.fixedMagicItems) {
+      if (!u.isCharacter) fail(`${u.id}: has fixed magic items but is not a character`)
+      for (const f of u.fixedMagicItems) {
+        if (!itemIds.has(f.id)) fail(`${u.id}: fixed magic item ${f.id} is not in the army's magic items`)
+        if (f.points !== undefined && f.included) {
+          fail(`${u.id}/${f.id}: fixed magic item sets both points and included`)
+        }
+        if (f.points !== undefined && f.points < 0) fail(`${u.id}/${f.id}: negative fixed magic item points`)
+      }
+      const dupFixed = dupes(u.fixedMagicItems.map((f) => f.id))
+      if (dupFixed.length) fail(`${u.id}: duplicate fixed magic items: ${dupFixed.join(', ')}`)
+    }
+    if (u.fixedExtras) {
+      if (!u.isCharacter) fail(`${u.id}: has fixed extras but is not a character`)
+      for (const x of u.fixedExtras) {
+        if (x.points < 0) fail(`${u.id}/${x.id}: negative fixed extra points`)
+        if (!x.name.trim()) fail(`${u.id}/${x.id}: fixed extra has no name`)
+      }
+      const dupExtras = dupes(u.fixedExtras.map((x) => x.id))
+      if (dupExtras.length) fail(`${u.id}: duplicate fixed extra ids: ${dupExtras.join(', ')}`)
     }
   }
 

@@ -1,5 +1,5 @@
-import type { Army, EquipmentOption, MagicItem, Roster, RosterEntry, StatLine, StatNotes, UnitProfile } from '../data/types'
-import { effectiveStatLine, entryPoints, findMagicItem, findUnit, unitOptionCost } from './points'
+import type { Army, EquipmentOption, Roster, RosterEntry, StatLine, StatNotes, UnitProfile } from '../data/types'
+import { type CarriedMagicItem, carriedMagicItems, countedOptionCount, effectiveStatLine, entryPoints, findMagicItem, findUnit, unitOptionCost } from './points'
 import { summarize } from './summary'
 import { validateRoster } from './validate'
 import {
@@ -15,12 +15,13 @@ import {
   profileName,
   magicItemName,
   magicItemDesc,
+  fixedExtraName,
   ruleText,
   wizardLevelLabel,
   t,
 } from '../i18n/lang'
 import { isWizardLevelId } from '../data/unitOptions'
-import { companionMountProfile, resolveStatNotes, statCell } from './entryView'
+import { companionMountProfile, partitionOptions, resolveStatNotes, signedPoints, statCell } from './entryView'
 
 /**
  * An option's label with its price, formatted exactly as the editor shows it:
@@ -37,7 +38,38 @@ function optionLabel(
 ): string {
   const name = isWizardLevelId(option.id) ? wizardLevelLabel(option.id, lang) : optionText(option.name, lang)
   const perModel = unit.role === 'regiment' && !option.flat && !option.perCrewman ? t('perModel', lang) : ''
-  return `${name} (+${unitOptionCost(unit, option, optionIds)} ${t('pts', lang)}${perModel})`
+  return `${name} (${signedPoints(unitOptionCost(unit, option, optionIds))} ${t('pts', lang)}${perModel})`
+}
+
+/**
+ * A carried magic item as the editor shows it: its price ("included" when the
+ * headline already contains it) and, for an item the character's own page
+ * fixes (OLD-63), the "fixed" tag.
+ */
+function carriedItemLabel(c: CarriedMagicItem, lang: Lang): string {
+  const price = c.included ? t('includedInCost', lang) : `${c.points} ${t('pts', lang)}`
+  const tag = c.fixed ? ` [${t('fixedItem', lang)}]` : ''
+  return `${magicItemName(c.item, lang)} (${price})${tag}`
+}
+
+/**
+ * The entry's counted options (OLD-63) bought at least once, one
+ * `<name> ×N (+total pts)` label each.
+ */
+function countedOptionLabels(unit: UnitProfile, entry: RosterEntry, lang: Lang): string[] {
+  return partitionOptions(unit).countedOptions.flatMap((o) => {
+    const n = countedOptionCount(o, entry)
+    return n > 0 ? [`${optionText(o.name, lang)} ×${n} (+${o.pointsPerModel * n} ${t('pts', lang)})`] : []
+  })
+}
+
+/** The unit's options the entry toggled on. A counted option is never one, even as a stale id in optionIds. */
+const toggledOptions = (unit: UnitProfile, optionIds: string[]): EquipmentOption[] =>
+  (unit.options ?? []).filter((o) => optionIds.includes(o.id) && !o.counted)
+
+/** The unit's fixed extras (OLD-63), one `+ <name> (+N pts)` label each. */
+function fixedExtraLabels(unit: UnitProfile, lang: Lang): string[] {
+  return (unit.fixedExtras ?? []).map((x) => `+ ${fixedExtraName(x, lang)} (+${x.points} ${t('pts', lang)})`)
 }
 
 /** The nine characteristic columns, in the canonical M/WS/BS/S/T/W/I/A/Ld order. */
@@ -114,11 +146,13 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
 
   // Selected equipment options (wizard levels labelled as in the summary),
   // plus the chosen mount's own selected options (e.g. a chariot's crew).
-  const opts = (unit.options ?? []).filter((o) => entry.optionIds.includes(o.id))
+  const opts = toggledOptions(unit, entry.optionIds)
+  const counted = countedOptionLabels(unit, entry, lang)
   const mountOpts = (mount?.options ?? []).filter((o) => entry.optionIds.includes(o.id))
-  if (opts.length > 0 || mountOpts.length > 0) {
+  if (opts.length > 0 || counted.length > 0 || mountOpts.length > 0) {
     const labels = [
       ...opts.map((o) => optionLabel(unit, o, entry.optionIds, lang)),
+      ...counted,
       ...mountOpts.map((o) => optionText(o.name, lang)),
     ]
     lines.push(`  ${t('options', lang)}: ${labels.join(', ')}`)
@@ -129,16 +163,18 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
     lines.push(`  ${t('specialAbilities', lang)}: ${rules.join(', ')}`)
   }
 
-  const items = entry.magicItemIds
-    .map((id) => findMagicItem(army, id))
-    .filter((i): i is MagicItem => i !== undefined)
+  const extras = fixedExtraLabels(unit, lang)
+  if (extras.length > 0) {
+    lines.push(`  ${t('fixedEquipment', lang)}:`)
+    for (const x of extras) lines.push(`    ${x}`)
+  }
+
+  const items = carriedMagicItems(entry, unit, army)
   if (items.length > 0) {
     lines.push(`  ${t('magicItems', lang)}:`)
-    for (const item of items) {
-      const desc = magicItemDesc(item, lang)
-      lines.push(
-        `    * ${magicItemName(item, lang)} (${item.points} ${t('pts', lang)})${desc ? ` — ${desc}` : ''}`,
-      )
+    for (const c of items) {
+      const desc = magicItemDesc(c.item, lang)
+      lines.push(`    * ${carriedItemLabel(c, lang)}${desc ? ` — ${desc}` : ''}`)
     }
   }
 
@@ -181,10 +217,10 @@ export function exportRosterText(roster: Roster, army: Army, lang: Lang = 'en'):
       const star = e.isGeneral ? `[${t('general', lang)}] ` : ''
       lines.push(`${star}${prefix}${unitName(unit, lang)} ............ ${entryPoints(e, army)} ${t('pts', lang)}`)
 
-      const opts = (unit.options ?? []).filter((o) => e.optionIds.includes(o.id))
-      for (const o of opts) {
+      for (const o of toggledOptions(unit, e.optionIds)) {
         lines.push(`    + ${optionLabel(unit, o, e.optionIds, lang)}`)
       }
+      for (const c of countedOptionLabels(unit, e, lang)) lines.push(`    + ${c}`)
       const mount = e.mountId ? (unit.mounts ?? []).find((m) => m.id === e.mountId) : undefined
       if (mount) {
         lines.push(`    + ${mountName(mount, lang)} (+${mount.points} ${t('pts', lang)})`)
@@ -192,10 +228,8 @@ export function exportRosterText(roster: Roster, army: Army, lang: Lang = 'en'):
           lines.push(`      + ${optionText(o.name, lang)}`)
         }
       }
-      for (const id of e.magicItemIds) {
-        const item = findMagicItem(army, id)
-        if (item) lines.push(`    * ${magicItemName(item, lang)} (${item.points} ${t('pts', lang)})`)
-      }
+      for (const x of fixedExtraLabels(unit, lang)) lines.push(`    ${x}`)
+      for (const c of carriedMagicItems(e, unit, army)) lines.push(`    * ${carriedItemLabel(c, lang)}`)
       const std = e.magicStandardId ? findMagicItem(army, e.magicStandardId) : undefined
       if (std) lines.push(`    * ${magicItemName(std, lang)} (${std.points} ${t('pts', lang)})`)
     }

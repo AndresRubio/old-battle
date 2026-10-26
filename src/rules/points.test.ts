@@ -1,7 +1,21 @@
 import { describe, it, expect } from 'vitest'
-import { effectiveStatLine, entryPoints, mountPoints, findUnit, unitOptionCost } from './points'
+import {
+  carriedMagicItems,
+  countedOptionCount,
+  countedOptionPoints,
+  effectiveStatLine,
+  flatOptionPoints,
+  entryPoints,
+  findUnit,
+  fixedExtrasPoints,
+  isFixedMagicItem,
+  listedUnitPoints,
+  mountPoints,
+  optionPointsPerModel,
+  unitOptionCost,
+} from './points'
 import { getArmy } from '../data/armies'
-import type { RosterEntry, UnitProfile } from '../data/types'
+import { STANDARD_5E_COMPOSITION, type Army, type RosterEntry, type UnitProfile } from '../data/types'
 
 const empire = getArmy('empire')!
 const bretonnia = getArmy('bretonnia')!
@@ -21,6 +35,85 @@ describe('Ludwig Schwartzhelm battle standard option (OLD-64)', () => {
   it('costs 70 on his own and 120 as Battle Standard Bearer', () => {
     expect(entryPoints(mk({ unitId: 'emp-ludwig' }), empire)).toBe(70)
     expect(entryPoints(mk({ unitId: 'emp-ludwig', optionIds: ['bsb'] }), empire)).toBe(120)
+  })
+})
+
+describe('fixed magic items and fixed extras (OLD-63)', () => {
+  // Imperio p.67-68: Karl Franz 110, +100 Hammer of Sigmar, +75 Silver Seal,
+  // both mandatory, plus one magic item of the player's choice.
+  const karlFranz = empire.units.find((u) => u.id === 'emp-karl-franz')!
+
+  it('charges Karl Franz his two fixed items even when the entry picked none', () => {
+    expect(entryPoints(mk({ unitId: 'emp-karl-franz' }), empire)).toBe(285)
+  })
+
+  it('charges the Hammer once when an old saved roster already ticked it', () => {
+    expect(entryPoints(mk({ unitId: 'emp-karl-franz', magicItemIds: ['mi-hammer-of-sigmar'] }), empire)).toBe(285)
+  })
+
+  it('adds a picked item on top of the fixed ones', () => {
+    expect(entryPoints(mk({ unitId: 'emp-karl-franz', magicItemIds: ['mi-sword-of-justice'] }), empire)).toBe(335)
+  })
+
+  it('lists Karl Franz at his full price in the unit picker', () => {
+    expect(listedUnitPoints(karlFranz, empire)).toBe(285)
+  })
+
+  it('lists fixed items first, then picked ones, each once, dropping unknown ids', () => {
+    const carried = carriedMagicItems(
+      mk({ unitId: 'emp-karl-franz', magicItemIds: ['mi-sword-of-justice', 'mi-silver-seal', 'mi-gone'] }),
+      karlFranz,
+      empire,
+    )
+    expect(carried.map((c) => [c.item.id, c.fixed, c.points])).toEqual([
+      ['mi-hammer-of-sigmar', true, 100],
+      ['mi-silver-seal', true, 75],
+      ['mi-sword-of-justice', false, 50],
+    ])
+    expect(isFixedMagicItem(karlFranz, 'mi-hammer-of-sigmar')).toBe(true)
+    expect(isFixedMagicItem(karlFranz, 'mi-sword-of-justice')).toBe(false)
+  })
+
+  describe('a synthetic character with an override, an included item and an extra', () => {
+    const synth: Army = {
+      id: 'synth',
+      name: 'Synth',
+      composition: STANDARD_5E_COMPOSITION,
+      magicItems: [
+        { id: 'A', name: 'Item A', category: 'weapon', points: 50 },
+        { id: 'B', name: 'Item B', category: 'talisman', points: 30 },
+        { id: 'C', name: 'Item C', category: 'enchanted', points: 15 },
+      ],
+      units: [
+        {
+          id: 'hero',
+          name: 'Hero',
+          role: 'character',
+          pointsPerModel: 100,
+          isCharacter: true,
+          characterRank: 'lord',
+          fixedMagicItems: [{ id: 'A', points: 25 }, { id: 'B', included: true }],
+          fixedExtras: [{ id: 'x', name: 'X', points: 40 }],
+        },
+      ],
+    }
+    const hero = synth.units[0]
+
+    it('prices the override, adds 0 for the included item, and charges the extra', () => {
+      // 100 + A at its page price 25 (card says 50) + B included (0) + X 40.
+      expect(entryPoints(mk({ unitId: 'hero' }), synth)).toBe(165)
+      expect(fixedExtrasPoints(hero)).toBe(40)
+      expect(listedUnitPoints(hero, synth)).toBe(165)
+      const carried = carriedMagicItems(mk({ unitId: 'hero' }), hero, synth)
+      expect(carried.map((c) => [c.item.id, c.points, c.included])).toEqual([
+        ['A', 25, false],
+        ['B', 0, true],
+      ])
+    })
+
+    it('still charges a picked item at its card price', () => {
+      expect(entryPoints(mk({ unitId: 'hero', magicItemIds: ['C', 'B'] }), synth)).toBe(180)
+    })
   })
 })
 
@@ -486,5 +579,76 @@ describe('OLD-35 — perCrewman unit options scale with the crew bought', () => 
       const mounted = entryPoints(mk({ unitId: c.rider, mountId: c.mountId, optionIds: c.mountOpts }), orcs)
       expect(mounted - riderAlone).toBe(standalone)
     }
+  })
+})
+
+// OLD-63 — a counted option is bought N times (Orion's hunting hounds, +5 per
+// hound, "tantos como se desee", Elfos Silvanos p.71) and priced once per entry.
+describe('counted options (OLD-63)', () => {
+  const synth: Army = {
+    id: 'synth',
+    name: 'Synth',
+    composition: STANDARD_5E_COMPOSITION,
+    magicItems: [],
+    units: [
+      {
+        id: 'hunter',
+        name: 'Hunter',
+        role: 'character',
+        pointsPerModel: 100,
+        isCharacter: true,
+        characterRank: 'lord',
+        options: [
+          { id: 'hounds', name: 'Hounds', pointsPerModel: 5, counted: true },
+          { id: 'guards', name: 'Guards', pointsPerModel: 10, counted: true, maxCount: 2 },
+          { id: 'shield', name: 'Shield', pointsPerModel: 3 },
+        ],
+      },
+    ],
+  }
+  const hunter = synth.units[0]
+  const hounds = hunter.options![0]
+  const guards = hunter.options![1]
+  const withCounts = (optionCounts: Record<string, number>, over: Partial<RosterEntry> = {}) =>
+    mk({ unitId: 'hunter', optionCounts, ...over })
+
+  it('charges pointsPerModel × N once per entry', () => {
+    expect(entryPoints(withCounts({ hounds: 4 }), synth)).toBe(120)
+    expect(countedOptionPoints(hunter, withCounts({ hounds: 4, guards: 1 }))).toBe(30)
+    expect(entryPoints(withCounts({ hounds: 4, guards: 1 }, { optionIds: ['shield'] }), synth)).toBe(133)
+  })
+
+  it('charges nothing for an entry with no counts (saved rosters before OLD-63)', () => {
+    expect(entryPoints(mk({ unitId: 'hunter' }), synth)).toBe(100)
+    expect(countedOptionPoints(hunter, mk({ unitId: 'hunter' }))).toBe(0)
+  })
+
+  it('reads a negative, fractional, non-finite or non-number count safely', () => {
+    expect(countedOptionCount(hounds, withCounts({ hounds: -3 }))).toBe(0)
+    expect(countedOptionCount(hounds, withCounts({ hounds: 2.7 }))).toBe(2)
+    expect(countedOptionCount(hounds, withCounts({ hounds: NaN }))).toBe(0)
+    expect(countedOptionCount(hounds, withCounts({ hounds: Infinity }))).toBe(0)
+    expect(countedOptionCount(hounds, withCounts({ hounds: '4' as unknown as number }))).toBe(0)
+    expect(entryPoints(withCounts({ hounds: 2.7 }), synth)).toBe(110)
+  })
+
+  it('caps a stored count at maxCount', () => {
+    expect(countedOptionCount(guards, withCounts({ guards: 9 }))).toBe(2)
+    expect(entryPoints(withCounts({ guards: 9 }), synth)).toBe(120)
+  })
+
+  it('ignores a count for an option the unit lacks, or for a plain toggle option', () => {
+    expect(entryPoints(withCounts({ ghost: 7, shield: 3 }), synth)).toBe(100)
+  })
+
+  it('never prices a counted option through optionIds', () => {
+    expect(optionPointsPerModel(hunter, ['hounds', 'guards'])).toBe(0)
+    expect(flatOptionPoints(hunter, ['hounds', 'guards'])).toBe(0)
+    expect(entryPoints(mk({ unitId: 'hunter', optionIds: ['hounds'] }), synth)).toBe(100)
+  })
+
+  it('prices Orion with four hounds at 470 (Elfos Silvanos p.70-71: 450 + 4 × 5)', () => {
+    const woodElves = getArmy('wood-elves')!
+    expect(entryPoints(mk({ unitId: 'we-orion', optionCounts: { 'hunting-hounds': 4 } }), woodElves)).toBe(470)
   })
 })

@@ -215,6 +215,14 @@ const units: UnitProfile[] = [
     nameEs: 'Mydas el Mezquino',
     role: 'character',
     pointsPerModel: 210,
+    // OLD-63, p.64-65: "between 5 and 20 bodyguards ... Each extra bodyguard after
+    // the first five costs 12 points. The bodyguard may include a standard bearer
+    // and musician at double the points cost of a normal trooper" (2 x 12 = 24).
+    options: [
+      { id: 'extra-bodyguards', name: 'Extra bodyguards', pointsPerModel: 12, counted: true, maxCount: 15 },
+      { id: 'bodyguard-standard', name: 'Bodyguard standard bearer', pointsPerModel: 24, flat: true },
+      { id: 'bodyguard-musician', name: 'Bodyguard musician', pointsPerModel: 24, flat: true },
+    ],
     statLine: { M: 4, WS: 5, BS: 5, S: 4, T: 4, W: 2, I: 5, A: 3, Ld: 8 },
     isCharacter: true,
     characterRank: 'champion',
@@ -264,7 +272,8 @@ const units: UnitProfile[] = [
       'Sword, lance, light armour, crossbow & shield; rides a warhorse',
       'May be hired as an independent character by any army that includes at least one Tilean Regiment of Renown',
       'Crossbow Hunter — may move and shoot the crossbow from the saddle',
-      "Fixed magic items: Gem of Lustria (ward), Gourd of Lustrian Wine, Scroll of Araby, Navigator's Telescope",
+      'Fixed magic items: Gem of Lustria (ward), Gourd of Lustrian Wine, Scroll of Araby',
+      "Navigator's Telescope (special rule, not a magic item)",
     ],
   },
 

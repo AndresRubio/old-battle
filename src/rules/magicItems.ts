@@ -5,7 +5,7 @@ import type {
   RosterEntry,
   UnitProfile,
 } from '../data/types'
-import { findMagicItem } from './points'
+import { carriedMagicItems, findMagicItem, findUnit, type CarriedMagicItem } from './points'
 import type { Finding } from './messages'
 
 /**
@@ -77,9 +77,16 @@ export function magicItemAllowance(entry: RosterEntry, unit: UnitProfile): numbe
  * item per restricted category, one crown and one helm (FAQ v2.20 §19.5), and
  * only a Battle Standard Bearer may carry a magic banner (FAQ v2.20 §23.2).
  * Returns nothing when the entry carries no items.
+ *
+ * Works on the CARRIED items (OLD-63): the unit's fixed items plus the user's
+ * picks. Fixed items count toward the allowance like picked ones, since every
+ * page that states the number includes them. The page sets the fixed loadout,
+ * so a category clash, a crown/helm clash or a banner on a non-BSB is reported
+ * only when at least one item involved is user-picked.
  */
 export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, army: Army): Finding[] {
-  if (entry.magicItemIds.length === 0) return []
+  const carried = carriedMagicItems(entry, unit, army)
+  if (carried.length === 0) return []
   if (!unit.isCharacter) {
     return [
       {
@@ -94,24 +101,30 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
   const findings: Finding[] = []
 
   const allowance = magicItemAllowance(entry, unit)
-  if (entry.magicItemIds.length > allowance) {
+  if (carried.length > allowance) {
     findings.push({
       severity: 'warning',
       rule: 'magic-items-count',
-      params: { unit, carried: entry.magicItemIds.length, allowance },
+      params: { unit, carried: carried.length, allowance },
       entryId: entry.id,
     })
   }
 
-  // One per restricted category
-  const seen = new Map<MagicItemCategory, number>()
-  for (const id of entry.magicItemIds) {
-    const item = findMagicItem(army, id)
-    if (!item) continue
-    seen.set(item.category, (seen.get(item.category) ?? 0) + 1)
+  /** Count per key, and whether any item behind the count is user-picked. */
+  const tally = <K>(keyOf: (c: CarriedMagicItem) => K | undefined) => {
+    const out = new Map<K, { count: number; picked: boolean }>()
+    for (const c of carried) {
+      const key = keyOf(c)
+      if (key === undefined) continue
+      const prev = out.get(key) ?? { count: 0, picked: false }
+      out.set(key, { count: prev.count + 1, picked: prev.picked || !c.fixed })
+    }
+    return out
   }
-  for (const [category, count] of seen) {
-    if (count > 1 && RESTRICTED_CATEGORIES.has(category)) {
+
+  // One per restricted category
+  for (const [category, { count, picked }] of tally((c) => c.item.category)) {
+    if (count > 1 && picked && RESTRICTED_CATEGORIES.has(category)) {
       findings.push({
         severity: 'warning',
         rule: 'magic-items-category',
@@ -122,13 +135,8 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
   }
 
   // FAQ v2.20 §19.5: a character may wear at most one crown and one helm.
-  const groupCounts = new Map<'crown' | 'helm', number>()
-  for (const id of entry.magicItemIds) {
-    const g = findMagicItem(army, id)?.exclusiveGroup
-    if (g) groupCounts.set(g, (groupCounts.get(g) ?? 0) + 1)
-  }
-  for (const [group, count] of groupCounts) {
-    if (count > 1) {
+  for (const [group, { count, picked }] of tally((c) => c.item.exclusiveGroup)) {
+    if (count > 1 && picked) {
       findings.push({
         severity: 'warning',
         rule: 'magic-items-exclusive-group',
@@ -139,8 +147,8 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
   }
 
   // FAQ v2.20 §23.2: only a Battle Standard Bearer may carry a magic banner.
-  const carriesBanner = entry.magicItemIds.some((id) => findMagicItem(army, id)?.category === 'banner')
-  if (carriesBanner && !(entry.isBSB || unit.isBSB)) {
+  const picksBanner = carried.some((c) => !c.fixed && c.item.category === 'banner')
+  if (picksBanner && !(entry.isBSB || unit.isBSB)) {
     findings.push({
       severity: 'warning',
       rule: 'magic-items-banner-bsb',
@@ -156,12 +164,15 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
  * Army-wide item uniqueness — 5th ed (Magic supplement p.33): the same magic
  * item may not be included in an army more than once. Exceptions are flagged
  * `duplicable` on the item (Dispel Scrolls, Chaos Armour, Familiars). A unit's
- * magic standard shares the uniqueness pool with characters' items.
+ * magic standard shares the uniqueness pool with characters' items, and a
+ * character's fixed items (OLD-63) count like picked ones.
  */
 export function armyItemUniquenessFindings(entries: RosterEntry[], army: Army): Finding[] {
   const itemUsers = new Map<string, number>()
   for (const e of entries) {
-    for (const id of e.magicItemIds) {
+    const unit = findUnit(army, e.unitId)
+    const ids = unit ? carriedMagicItems(e, unit, army).map((c) => c.item.id) : e.magicItemIds
+    for (const id of ids) {
       itemUsers.set(id, (itemUsers.get(id) ?? 0) + 1)
     }
     if (e.magicStandardId) {

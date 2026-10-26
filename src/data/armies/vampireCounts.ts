@@ -481,6 +481,13 @@ const units: UnitProfile[] = [
     nameEs: 'Dieter Helsnicht, Señor de la Muerte',
     role: 'character',
     pointsPerModel: 690,
+    // OLD-63, p.69: each character's value is his total cost, magic items
+    // included. p.70: the Flaming Staff of Death, the Chaos Runic Sword and the Power Scroll.
+    fixedMagicItems: [
+      { id: 'mi-flaming-staff-of-death', included: true },
+      { id: 'mi-rune-sword-of-chaos-of-grungni-iron-heart', included: true },
+      { id: 'mi-power-scroll', included: true },
+    ],
     statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 10 },
     isCharacter: true,
     characterRank: 'wizard4',
@@ -493,7 +500,7 @@ const units: UnitProfile[] = [
       'Level 4 wizard; may freely mix Necromancy and Dark Magic spells',
       'Lord of Death — his Manticore never rolls on the Magically Dominated Monster table',
       'Rides a Manticore',
-      'Fixed magic items: Skull Staff, Chaos Runic Sword, Power Scroll',
+      'Fixed magic items: Flaming Staff of Death, Chaos Runic Sword, Power Scroll',
     ],
   },
   {
@@ -502,6 +509,11 @@ const units: UnitProfile[] = [
     nameEs: 'Heinrich Kemmler, el Señor de los Nigromantes',
     role: 'character',
     pointsPerModel: 450,
+    // OLD-63, p.69 and p.71: the Chaos Funerary Sword and the Skull Staff are in the total.
+    fixedMagicItems: [
+      { id: 'mi-funereal-sword-of-chaos', included: true },
+      { id: 'mi-skull-staff', included: true },
+    ],
     statLine: { M: 4, WS: 4, BS: 4, S: 4, T: 4, W: 4, I: 6, A: 3, Ld: 10 },
     isCharacter: true,
     characterRank: 'wizard4',
@@ -521,6 +533,13 @@ const units: UnitProfile[] = [
     nameEs: 'Krell, Señor de la No Muerte',
     role: 'character',
     pointsPerModel: 280,
+    // OLD-63, p.69 and p.72: the Black Axe and the Armour of the Defender are in
+    // the total. He always uses both, two items where a champion's rank gives one.
+    fixedMagicItems: [
+      { id: 'mi-black-axe-of-krell', included: true },
+      { id: 'mi-armour-of-the-defender', included: true },
+    ],
+    magicItemSlots: 2,
     statLine: { M: 4, WS: 5, BS: 0, S: 4, T: 5, W: 3, I: 3, A: 3, Ld: 10 },
     isCharacter: true,
     characterRank: 'champion',
@@ -607,6 +626,8 @@ const units: UnitProfile[] = [
     nameEs: 'Vlad von Carstein',
     role: 'character',
     pointsPerModel: 680,
+    // OLD-63, p.69 and p.78: the Ring of the von Carsteins is in the total.
+    fixedMagicItems: [{ id: 'mi-carstein-ring', included: true }],
     statLine: { M: 6, WS: 8, BS: 6, S: 7, T: 6, W: 4, I: 9, A: 4, Ld: 10 },
     isCharacter: true,
     characterRank: 'wizard3',

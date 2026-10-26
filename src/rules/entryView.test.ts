@@ -8,6 +8,7 @@ import {
   filterMagicItems,
   magicStandardNeedsBearer,
   resolveStatNotes,
+  signedPoints,
   statCell,
 } from './entryView'
 import { mountOptionCost } from './points'
@@ -220,9 +221,21 @@ describe('partitionOptions', () => {
   })
 
   it('yields empty partitions for a unit with no options', () => {
-    const { levelOptions, toggleOptions } = partitionOptions({ ...unit, options: undefined })
+    const { levelOptions, toggleOptions, countedOptions } = partitionOptions({ ...unit, options: undefined })
     expect(levelOptions).toEqual([])
     expect(toggleOptions).toEqual([])
+    expect(countedOptions).toEqual([])
+  })
+
+  it('puts counted options (bought N times) in their own list, never among the toggles (OLD-63)', () => {
+    const hunter: UnitProfile = {
+      ...unit,
+      options: [...unit.options!, { id: 'hounds', name: 'Hounds', pointsPerModel: 5, counted: true }],
+    }
+    const { levelOptions, toggleOptions, countedOptions } = partitionOptions(hunter)
+    expect(levelOptions.map((o) => o.id)).toEqual(['wizard-l2', 'wizard-l3'])
+    expect(toggleOptions.map((o) => o.id)).toEqual(['shield'])
+    expect(countedOptions.map((o) => o.id)).toEqual(['hounds'])
   })
 })
 
@@ -256,5 +269,16 @@ describe('filterMagicItems', () => {
   it('applies the points ceiling; blank means no cap', () => {
     expect(filterMagicItems(items, '', '50').map((i) => i.id)).toEqual(['a'])
     expect(filterMagicItems(items, '', '').map((i) => i.id)).toEqual(['a', 'b'])
+  })
+})
+
+// OLD-63: an option price with its sign. Sturmjarl's item-card prices are worth
+// -5 (Norsca PDF 32 and 35), which "(+-5)" would misprint.
+describe('signedPoints', () => {
+  it('prints a plus before a positive or zero price and keeps a minus', () => {
+    expect(signedPoints(5)).toBe('+5')
+    expect(signedPoints(-5)).toBe('-5')
+    expect(signedPoints(0.5)).toBe('+0.5')
+    expect(signedPoints(0)).toBe('+0')
   })
 })

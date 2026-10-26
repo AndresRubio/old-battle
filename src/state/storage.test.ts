@@ -146,3 +146,43 @@ describe('upsertRoster / updateRoster / deleteRoster', () => {
     expect(deleteRoster(list, 'missing')).toEqual(list)
   })
 })
+
+// OLD-63 — counted options persist in optionCounts; a malformed value drops the
+// roster like any other damaged entry, and a missing one loads unchanged.
+describe('loadRosters optionCounts (OLD-63)', () => {
+  it('round-trips an entry with counts and still loads one without', () => {
+    stubStorage()
+    const rosters = [
+      roster('a', { entries: [entry('e1', { unitId: 'we-orion', size: 1, optionCounts: { 'hunting-hounds': 4 } })] }),
+      roster('b', { entries: [entry('e1')] }),
+    ]
+    saveRosters(rosters)
+    expect(loadRosters()).toEqual(rosters)
+  })
+
+  it('accepts an empty object and a zero or fractional count', () => {
+    stubStorage({
+      [KEY]: JSON.stringify([roster('ok', { entries: [entry('e1', { optionCounts: {} }), entry('e2', { optionCounts: { h: 0, g: 1.5 } })] })]),
+    })
+    expect(loadRosters().map((r) => r.id)).toEqual(['ok'])
+  })
+
+  it('drops a roster whose optionCounts is not an object of finite numbers >= 0', () => {
+    const bad = (id: string, optionCounts: unknown) =>
+      roster(id, { entries: [entry('e1', { optionCounts: optionCounts as Record<string, number> })] })
+    stubStorage({
+      [KEY]: JSON.stringify([
+        bad('null', null),
+        bad('array', [1, 2]),
+        bad('string', 'four'),
+        bad('number', 4),
+        bad('negative', { h: -1 }),
+        bad('string-value', { h: '4' }),
+        // Infinity and NaN serialise to null.
+        bad('non-finite', { h: Infinity }),
+        roster('intact', { entries: [entry('e1', { optionCounts: { h: 4 } })] }),
+      ]),
+    })
+    expect(loadRosters().map((r) => r.id)).toEqual(['intact'])
+  })
+})

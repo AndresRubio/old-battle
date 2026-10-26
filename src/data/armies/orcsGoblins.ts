@@ -302,6 +302,9 @@ const MONSTER_MOUNTS: MountOption[] = [
 // Character mount lists (p.88): orc characters ride the Boar Chariot, goblin
 // characters (all kinds) the Wolf Chariot.
 const ORC_MOUNTS: MountOption[] = [WAR_BOAR_MOUNT, ORC_BOAR_CHARIOT_MOUNT, ...MONSTER_MOUNTS]
+// Oglok, Gorfang and Morglum (pp.90-92) may also enter battle in a chariot drawn by War
+// Boars or by Giant Wolves; the generic Orc characters keep ORC_MOUNTS (OLD-63).
+const ORC_SPECIAL_MOUNTS: MountOption[] = [...ORC_MOUNTS, GOBLIN_WOLF_CHARIOT_MOUNT]
 const GOBLIN_MOUNTS: MountOption[] = [GIANT_WOLF_MOUNT, GOBLIN_WOLF_CHARIOT_MOUNT, ...MONSTER_MOUNTS]
 const FOREST_GOBLIN_MOUNTS: MountOption[] = [GIANT_SPIDER_MOUNT, GOBLIN_WOLF_CHARIOT_MOUNT, ...MONSTER_MOUNTS]
 // Night Goblins never ride a beast — "a monster or chariot only".
@@ -805,6 +808,9 @@ const units: UnitProfile[] = [
     lores: ['waaagh'],
     canBeGeneral: true,
     max: 1,
+    // Orcos y Goblins p.90: Corona de la Hechicería +125, Serpiente Alada +180 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-crown-of-sorcery' }],
+    fixedExtras: [{ id: 'winged-serpent', name: 'Winged Serpent', nameEs: 'Serpiente Alada', points: 180 }],
     profiles: [WINGED_SERPENT_PROFILE],
     specialRules: [
       'Special character (Orc Warboss)',
@@ -826,7 +832,7 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
-    mounts: ORC_MOUNTS,
+    mounts: ORC_SPECIAL_MOUNTS,
     specialRules: [
       'Special character (Orc Big Boss)',
       'Light armour & shield',
@@ -846,6 +852,13 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Orcos y Goblins p.91: Hacha de Grom +50, Niblit +65 con el Estandarte de Batalla,
+    // Carruaje +62 (OLD-63).
+    fixedMagicItems: [{ id: 'mi-elf-biter-the-axe-of-grom' }],
+    fixedExtras: [
+      { id: 'niblit', name: 'Niblit, with the army Battle Standard', nameEs: 'Niblit, con el Estandarte de Batalla', points: 65 },
+      { id: 'wolf-chariot', name: 'Wolf Chariot', nameEs: 'Carruaje de lobos', points: 62 },
+    ],
     specialRules: [
       'Special character (Goblin Warboss)',
       'Light armour & Hacha de Grom (great axe, +50 pts, mandatory)',
@@ -867,6 +880,8 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Orcos y Goblins p.91: Morgor la Mutiladora +125. The War Boar prints no cost (OLD-63).
+    fixedMagicItems: [{ id: 'mi-morgor-the-mutilator' }],
     profiles: [WAR_BOAR_PROFILE],
     specialRules: [
       'Special character (Orc Warboss)',
@@ -887,7 +902,7 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
-    mounts: ORC_MOUNTS,
+    mounts: ORC_SPECIAL_MOUNTS,
     specialRules: [
       'Special character (Orc Big Boss)',
       'Light armour, shield & magic sword',
@@ -908,7 +923,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
-    mounts: ORC_MOUNTS,
+    mounts: ORC_SPECIAL_MOUNTS,
     specialRules: [
       'Special character (Black Orc Warboss)',
       'Light armour & an axe in each hand',
@@ -929,6 +944,10 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Orcos y Goblins p.93: Pincho de Skarsnik +75, Gobbla +50; a Boar or Wolf Chariot (OLD-63).
+    fixedMagicItems: [{ id: 'mi-skarsniks-prodder' }],
+    fixedExtras: [{ id: 'gobbla', name: 'Gobbla', nameEs: 'Gobbla', points: 50 }],
+    mounts: [ORC_BOAR_CHARIOT_MOUNT, GOBLIN_WOLF_CHARIOT_MOUNT],
     specialRules: [
       'Special character (Night Goblin Warboss)',
       'Light armour',

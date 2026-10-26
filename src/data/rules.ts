@@ -691,6 +691,8 @@ export const TAG_RULE_OVERRIDES: Record<string, string | null> = {
     null,
   // Proper names that merely contain a rule word.
   'Lance formation': null, // the Bretonnian FORMATION, not the cavalry weapon
+  // OLD-63, Dogs of War p.67: the tag says the Telescope is NOT a magic item.
+  "Navigator's Telescope (special rule, not a magic item)": null,
   'Breath of Life — regains a wound on 4+ each Chaos turn; can even reincarnate': null,
   'Must take the Storm Daemon as his first magic item (+25 pts); up to 4 magic items': 'magic-items',
   'The Storm Daemon (Tormenta Demoníaca) halberd: S6, casts Warp Lightning (1D6 hits)': null,

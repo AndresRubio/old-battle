@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine, StatNotes } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
-import { effectiveStatLine, entryPoints, findUnit, mountOptionCost, unitOptionCost } from '../rules/points'
+import { carriedMagicItems, countedOptionCount, effectiveStatLine, entryPoints, findUnit, mountOptionCost, unitOptionCost } from '../rules/points'
 import { magicItemAllowance } from '../rules/magicItems'
 import {
   companionMountProfile,
@@ -11,10 +11,11 @@ import {
   magicStandardNeedsBearer,
   partitionOptions,
   resolveStatNotes,
+  signedPoints,
   statCell,
 } from '../rules/entryView'
 import type { EntryActions } from '../state/rosterOps'
-import { useLang, t, type Lang, unitName, profileName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionInfo, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel } from '../i18n/lang'
+import { useLang, t, type Lang, unitName, profileName, fixedExtraName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionInfo, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel } from '../i18n/lang'
 import { STANDARD_BEARER_ID } from '../data/unitOptions'
 import { findRule, type RuleDef } from '../data/rules'
 import { RuleDialog } from './RuleDialog'
@@ -108,11 +109,15 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
   const pts = entryPoints(entry, army)
   // Some options (e.g. O&G shaman wizard levels) replace the whole statLine.
   const statLine = effectiveStatLine(unit, entry.optionIds)
-  const { levelOptions, toggleOptions } = partitionOptions(unit)
+  const { levelOptions, toggleOptions, countedOptions } = partitionOptions(unit)
   const currentLevel = entry.optionIds.find((id) => levelOptions.some((o) => o.id === id)) ?? ''
   const loreIds = unit.lores ?? []
   const selectedLore = entry.loreId ? getLore(entry.loreId) : undefined
   const allowance = unit.isCharacter ? magicItemAllowance(entry, unit) : 0
+  // Fixed items (OLD-63) first, then the user's picks: what the entry carries.
+  const carried = unit.isCharacter ? carriedMagicItems(entry, unit, army) : []
+  const fixedItems = new Map(carried.filter((c) => c.fixed).map((c) => [c.item.id, c]))
+  const fixedExtras = unit.fixedExtras ?? []
   const mounts = unit.mounts ?? []
   const selectedMount = mounts.find((m) => m.id === entry.mountId)
   // Cavalry: pair the rider's own statLine with a mount profile shown as a
@@ -131,6 +136,10 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
 
   /** One magic-item row: shared by the selected block and the category list. */
   const renderMagicItem = (item: MagicItem) => {
+    // A fixed item (OLD-63) is carried on every entry: checked, locked, tagged,
+    // and priced at this character's page price ("included" when the headline
+    // already contains it).
+    const fixed = fixedItems.get(item.id)
     const info = (
       <span className="mi-body">
         <span className="mi-head">
@@ -154,11 +163,22 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                 {lang === 'es' ? 'personaje especial' : 'special character'}
               </span>
             )}
+            {fixed && <span className="mi-special-tag mi-fixed-tag">{t('fixedItem', lang)}</span>}
           </span>
-          <span className="mi-pts">{item.points} {t('pts', lang)}</span>
+          <span className="mi-pts">
+            {fixed?.included ? t('includedInCost', lang) : `${fixed ? fixed.points : item.points} ${t('pts', lang)}`}
+          </span>
         </span>
       </span>
     )
+    if (fixed) {
+      return (
+        <label key={item.id} className="mi-item mi-item-fixed">
+          <input type="checkbox" checked disabled readOnly />
+          {info}
+        </label>
+      )
+    }
     // Special-character items: consultable (ⓘ) but not freely selectable.
     if (item.special) {
       return (
@@ -184,7 +204,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
     )
   }
 
-  const selectedItems = entry.magicItemIds.flatMap((id) => army.magicItems.find((i) => i.id === id) ?? [])
+  const selectedItems = carried.map((c) => c.item)
 
   // Search + max-points filter, shared by a character's magic items and a
   // regiment's magic standard so both pickers narrow the same way.
@@ -435,37 +455,78 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
             </div>
           )}
 
-          {toggleOptions.length > 0 && (
+          {(toggleOptions.length > 0 || countedOptions.length > 0) && (
             <div className="opt-group">
               <span className="opt-label">{t('options', lang)}</span>
-              <div className="opt-checks">
-                {toggleOptions.map((o) => (
-                  <label key={o.id}>
-                    <input
-                      type="checkbox"
-                      checked={entry.optionIds.includes(o.id)}
-                      onChange={() => actions.toggleOption(o.id)}
-                    />
-                    {optionText(o.name, lang)} (+{unitOptionCost(unit, o, entry.optionIds)}
-                    {isRegiment && !o.flat && !o.perCrewman ? t('perModel', lang) : ''})
-                    {optionInfo(o, lang) && (
-                      <button
-                        type="button"
-                        className="mi-info"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          setActiveOption(o)
-                        }}
-                        title={lang === 'es' ? 'Ver efecto' : 'View effect'}
-                        aria-label={lang === 'es' ? 'Ver efecto' : 'View effect'}
-                      >
-                        ⓘ
-                      </button>
-                    )}
-                  </label>
-                ))}
-              </div>
+              {toggleOptions.length > 0 && (
+                <div className="opt-checks">
+                  {toggleOptions.map((o) => (
+                    <label key={o.id}>
+                      <input
+                        type="checkbox"
+                        checked={entry.optionIds.includes(o.id)}
+                        onChange={() => actions.toggleOption(o.id)}
+                      />
+                      {optionText(o.name, lang)} ({signedPoints(unitOptionCost(unit, o, entry.optionIds))}
+                      {isRegiment && !o.flat && !o.perCrewman ? t('perModel', lang) : ''})
+                      {optionInfo(o, lang) && (
+                        <button
+                          type="button"
+                          className="mi-info"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            setActiveOption(o)
+                          }}
+                          title={lang === 'es' ? 'Ver efecto' : 'View effect'}
+                          aria-label={lang === 'es' ? 'Ver efecto' : 'View effect'}
+                        >
+                          ⓘ
+                        </button>
+                      )}
+                    </label>
+                  ))}
+                </div>
+              )}
+              {/* Counted options (OLD-63): bought N times, each priced once
+                  per entry, e.g. Orion's hounds at +5 per hound. */}
+              {countedOptions.length > 0 && (
+                <div className="opt-counts">
+                  {countedOptions.map((o) => {
+                    const n = countedOptionCount(o, entry)
+                    return (
+                      <label key={o.id} className="counted-option">
+                        <span className="counted-name">{optionText(o.name, lang)}</span>
+                        <span className="counted-each">(+{o.pointsPerModel} {t('each', lang)})</span>
+                        <input
+                          type="number"
+                          min={0}
+                          max={o.maxCount}
+                          step={1}
+                          value={n}
+                          onChange={(e) => actions.setOptionCount(o.id, e.target.valueAsNumber)}
+                        />
+                        <span className="counted-subtotal">{o.pointsPerModel * n} {t('pts', lang)}</span>
+                        {optionInfo(o, lang) && (
+                          <button
+                            type="button"
+                            className="mi-info"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              setActiveOption(o)
+                            }}
+                            title={lang === 'es' ? 'Ver efecto' : 'View effect'}
+                            aria-label={lang === 'es' ? 'Ver efecto' : 'View effect'}
+                          >
+                            ⓘ
+                          </button>
+                        )}
+                      </label>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           )}
 
@@ -560,7 +621,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                           checked={entry.optionIds.includes(o.id)}
                           onChange={() => actions.toggleOption(o.id)}
                         />
-                        {optionText(o.name, lang)} (+{cost})
+                        {optionText(o.name, lang)} ({signedPoints(cost)})
                         {optionInfo(o, lang) && (
                           <button
                             type="button"
@@ -584,10 +645,23 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
             </div>
           )}
 
+          {fixedExtras.length > 0 && (
+            <div className="opt-group fixed-extras">
+              <span className="opt-label">{t('fixedEquipment', lang)}</span>
+              <ul className="fixed-extra-list">
+                {fixedExtras.map((x) => (
+                  <li key={x.id}>
+                    {fixedExtraName(x, lang)} (+{x.points})
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {unit.isCharacter && (
             <div className="opt-group">
               <span className="opt-label">
-                {t('magicItems', lang)} <span className="muted small">({entry.magicItemIds.length}/{allowance})</span>
+                {t('magicItems', lang)} <span className="muted small">({carried.length}/{allowance})</span>
               </span>
               {selectedItems.length > 0 && (
                 <div className="mi-selected">

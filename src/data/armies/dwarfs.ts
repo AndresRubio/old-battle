@@ -220,10 +220,17 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Enanos p.90: the book prices the runes per group, "+Runas de Arma +170 / +Runas de
+    // Defensa +100 / +Runas Talismánicas +50", all carried by his fixed kit (OLD-63).
+    fixedExtras: [
+      { id: 'weapon-runes', name: 'Weapon Runes (Hammer of Karak Azul)', nameEs: 'Runas de Arma (Martillo de Karak Azul)', points: 170 },
+      { id: 'defence-runes', name: 'Defence Runes (Armour of the King of Karak Azul)', nameEs: 'Runas de Defensa (Armadura del Rey de Karak Azul)', points: 100 },
+      { id: 'talismanic-runes', name: 'Talismanic Runes (Horn of Storms)', nameEs: 'Runas Talismánicas (Cuerno de las Tormentas)', points: 50 },
+    ],
     specialRules: [
       'Special character (+1 rune modifier)',
       'Weapon Runes +170 / Defence Runes +100 / Talismanic Runes +50 (total 494 pts)',
-      'Hammer of Karak Azul (two-handed; Master Rune of Death, Rune of Cleaving, Rune of Power)',
+      'Hammer of Karak Azul (two-handed; Master Rune of Death, Rune of Striking, Rune of Power)',
       'Armour of the King of Karak Azul; the Horn of Storms',
     ],
   },
@@ -238,6 +245,12 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Enanos p.91: runes priced per group, +90 / +55 / +70 (OLD-63).
+    fixedExtras: [
+      { id: 'weapon-runes', name: 'Weapon Runes (Axe of Dargo)', nameEs: 'Runas de Arma (Hacha de Dargo)', points: 90 },
+      { id: 'defence-runes', name: 'Defence Runes (Crown of the Slayers)', nameEs: 'Runas de Defensa (Corona de los Matadores)', points: 55 },
+      { id: 'talismanic-runes', name: 'Talismanic Runes (Dragon Cloak)', nameEs: 'Runas Talismánicas (Capa de Dragón)', points: 70 },
+    ],
     specialRules: [
       'Special character (+1 rune modifier)',
       'Weapon Runes +90 / Defence Runes +55 / Talismanic Runes +70 (total 425 pts)',
@@ -256,6 +269,12 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
+    // Enanos p.92: runes priced per group, +165 / +150 / +45 (OLD-63).
+    fixedExtras: [
+      { id: 'weapon-runes', name: 'Weapon Runes (Hammer of Kragg)', nameEs: 'Runas de Arma (Martillo de Kragg)', points: 165 },
+      { id: 'defence-runes', name: 'Defence Runes (Armour of Kragg)', nameEs: 'Runas de Defensa (Armadura de Kragg)', points: 150 },
+      { id: 'talismanic-runes', name: 'Talismanic Runes (Runic Staff)', nameEs: 'Runas Talismánicas (Bastón Rúnico)', points: 45 },
+    ],
     specialRules: [
       'Special character (runesmith; +1 rune modifier, profile S modifier +10)',
       'Weapon Runes +165 / Defence Runes +150 / Talismanic Runes +45 (total 669 pts)',
@@ -274,9 +293,11 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: false,
     max: 1,
+    // Enanos p.93: "+Hacha de Gotrek +125", always carried (OLD-63).
+    fixedMagicItems: [{ id: 'mi-axe-of-gotrek' }],
     specialRules: [
       'Special character (Slayer; must be fielded with Felix)',
-      "Gotrek's Axe of Grimnir +125 pts (two-handed rune axe)",
+      'Axe of Gotrek +125 pts (two-handed rune axe)',
       'Slayer rules apply; The Doom of Gotrek (4+ ignores an otherwise fatal wound, protects vs magic)',
     ],
   },
@@ -291,6 +312,8 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
+    // Enanos p.93: "empuña una Espada de Bronce Fulgurante" (+50), always carried (OLD-63).
+    fixedMagicItems: [{ id: 'mi-sword-of-shining-bronze' }],
     specialRules: [
       'Special character (human; must be fielded with Gotrek)',
       "Sword of Felix +50 pts (Sword of Bronze Fulgurante — +2 attacks)",
@@ -308,10 +331,26 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    // Enanos p.94: he "va armado con el Hacha de Grimnir", "entra siempre en batalla con la
+    // Armadura de Skaldor" and wears the Corona and the Gran Libro: four fixed items, one more
+    // than a lord's three slots. The Throne is a player choice: the page reads both "Es
+    // transportado sobre el Trono" and "puede entrar en combate sentado en el Trono".
+    magicItemSlots: 4,
+    fixedMagicItems: [
+      { id: 'mi-great-book-of-grudges' }, { id: 'mi-dragon-crown-of-karaz' },
+      { id: 'mi-armour-of-skaldor' }, { id: 'mi-axe-of-grimnir' },
+    ],
+    options: [
+      {
+        id: 'throne-of-power', name: 'Throne of Power', pointsPerModel: 140, flat: true,
+        description: 'Thorgrim may enter battle seated on the Throne of Power, carried by four bearers (Enanos p.94). The page reads both "is carried on the Throne" and "may enter combat seated on the Throne", so the player decides.',
+        descEs: 'Thorgrim puede entrar en combate sentado en el Trono del Poder, acompañado por sus cuatro porteadores (Enanos p.94). La página dice a la vez "Es transportado sobre el Trono" y "puede entrar en combate sentado en el Trono", así que decide el jugador.',
+      },
+    ],
     specialRules: [
       'Special character (High King)',
-      'Great Book of Grudges +50 / Throne of Power +140 / Crown of the Dragon of Karaz +75 / Armour of Skaldor +75 / Axe of Grimnir +125 (total 625 pts)',
-      'Carried on the Throne of Power by four bearers; subject to Hatred (all enemies)',
+      'Great Book of Grudges +50 / Throne of Power +140 / Crown of the Dragon of Karaz +75 / Armour of Skaldor +75 / Axe of Grimnir +125 (total 485 pts, 625 with the Throne)',
+      'May be carried on the Throne of Power by four bearers (+140 pts); subject to Hatred (all enemies)',
     ],
   },
   {
@@ -325,6 +364,12 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
+    // Enanos p.95: "+Runas de Armas +40 / +Jarra de Cerveza Rúnica +25". The tankard is a
+    // fixed item at his page price; the magic-item card stays at 50 (Magia p.38, p.74).
+    fixedExtras: [
+      { id: 'weapon-runes', name: "Weapon Runes (Bugman's rune axe)", nameEs: 'Runas de Arma (hacha rúnica de Bugman)', points: 40 },
+    ],
+    fixedMagicItems: [{ id: 'mi-bugmans-tankard', points: 25 }],
     specialRules: [
       'Special character (+1 rune modifier)',
       'Weapon Runes +40 / Bugman\'s Ale Tankard +25 (total 176 pts)',
@@ -342,6 +387,11 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
+    // Enanos p.96: runes priced per group, +25 / +55 (OLD-63).
+    fixedExtras: [
+      { id: 'weapon-runes', name: "Weapon Runes (Burlok's Hammer)", nameEs: 'Runas de Arma (Martillo de Burlok)', points: 25 },
+      { id: 'defence-runes', name: "Defence Runes (Burlok's Armour)", nameEs: 'Runas de Defensa (Armadura de Burlok)', points: 55 },
+    ],
     specialRules: [
       'Special character (Master Engineer; +1 rune modifier)',
       'Weapon Runes +25 / Defence Runes +55 (total 210 pts)',

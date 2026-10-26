@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { assertArmyIntegrity } from './integrity'
 import { ARMIES } from './index'
-import { STANDARD_5E_COMPOSITION, type Army, type UnitProfile } from '../types'
+import { STANDARD_5E_COMPOSITION, type Army, type EquipmentOption, type UnitProfile } from '../types'
 
 const unit = (over: Partial<UnitProfile> & { id: string }): UnitProfile => ({
   name: over.id,
@@ -284,5 +284,149 @@ describe('assertArmyIntegrity', () => {
         army({ selectionRules: { unitGroupCaps: [{ ids: ['ghost'], max: 1, labelEn: 'C', labelEs: 'C' }] } }),
       ),
     ).toThrow(/unitGroupCap "C" references unknown unit ghost/)
+  })
+})
+
+// OLD-63 — fixed magic items and fixed extras on a special character's page.
+describe('fixed magic items and fixed extras', () => {
+  const pool = [
+    { id: 'mi-a', name: 'A', category: 'weapon' as const, points: 10 },
+    { id: 'mi-b', name: 'B', category: 'talisman' as const, points: 20 },
+  ]
+  const hero = (over: Partial<UnitProfile>) =>
+    unit({ id: 'kf', role: 'character', isCharacter: true, characterRank: 'lord', ...over })
+  const withUnit = (u: UnitProfile) => army({ units: [u], magicItems: pool })
+
+  it('accepts a well-formed character', () => {
+    const ok = hero({
+      fixedMagicItems: [{ id: 'mi-a', points: 5 }, { id: 'mi-b', included: true }],
+      fixedExtras: [{ id: 'x', name: 'X', points: 40 }],
+    })
+    expect(assertArmyIntegrity(withUnit(ok))).toBeTruthy()
+  })
+
+  it('throws when a fixed item is not in the army pool', () => {
+    expect(() => assertArmyIntegrity(withUnit(hero({ fixedMagicItems: [{ id: 'mi-gone' }] })))).toThrow(
+      /kf: fixed magic item mi-gone is not in the army's magic items/,
+    )
+  })
+
+  it('throws when a unit lists the same fixed item twice', () => {
+    expect(() =>
+      assertArmyIntegrity(withUnit(hero({ fixedMagicItems: [{ id: 'mi-a' }, { id: 'mi-a' }] }))),
+    ).toThrow(/kf: duplicate fixed magic items: mi-a/)
+  })
+
+  it('throws when a fixed item sets both points and included', () => {
+    expect(() =>
+      assertArmyIntegrity(withUnit(hero({ fixedMagicItems: [{ id: 'mi-a', points: 5, included: true }] }))),
+    ).toThrow(/kf\/mi-a: fixed magic item sets both points and included/)
+  })
+
+  it('throws when a fixed item has a negative price', () => {
+    expect(() => assertArmyIntegrity(withUnit(hero({ fixedMagicItems: [{ id: 'mi-a', points: -5 }] })))).toThrow(
+      /kf\/mi-a: negative fixed magic item points/,
+    )
+  })
+
+  it('throws when fixed items sit on a non-character', () => {
+    const regiment = unit({ id: 'r', fixedMagicItems: [{ id: 'mi-a' }] })
+    expect(() => assertArmyIntegrity(withUnit(regiment))).toThrow(/r: has fixed magic items but is not a character/)
+  })
+
+  it('throws when fixed extras sit on a non-character', () => {
+    const regiment = unit({ id: 'r', fixedExtras: [{ id: 'x', name: 'X', points: 40 }] })
+    expect(() => assertArmyIntegrity(withUnit(regiment))).toThrow(/r: has fixed extras but is not a character/)
+  })
+
+  it('throws when fixed extra ids repeat within a unit', () => {
+    const u = hero({ fixedExtras: [{ id: 'x', name: 'X', points: 40 }, { id: 'x', name: 'Y', points: 10 }] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/kf: duplicate fixed extra ids: x/)
+  })
+
+  it('throws when a fixed extra has a negative price', () => {
+    const u = hero({ fixedExtras: [{ id: 'x', name: 'X', points: -1 }] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/kf\/x: negative fixed extra points/)
+  })
+
+  it('throws when a fixed extra has an empty name', () => {
+    const u = hero({ fixedExtras: [{ id: 'x', name: '  ', points: 40 }] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/kf\/x: fixed extra has no name/)
+  })
+})
+
+// OLD-63 — counted options (an option bought N times, priced pointsPerModel × N
+// once per entry). Only a per-entry option on a non-regiment can be counted.
+describe('counted options', () => {
+  const hero = (opt: Partial<EquipmentOption>, over: Partial<UnitProfile> = {}) =>
+    unit({
+      id: 'or',
+      role: 'character',
+      isCharacter: true,
+      characterRank: 'lord',
+      options: [{ id: 'h', name: 'Hounds', pointsPerModel: 5, ...opt }],
+      ...over,
+    })
+  const withUnit = (u: UnitProfile) => army({ units: [u] })
+
+  it('accepts a counted option with or without a maxCount', () => {
+    expect(assertArmyIntegrity(withUnit(hero({ counted: true })))).toBeTruthy()
+    expect(assertArmyIntegrity(withUnit(hero({ counted: true, maxCount: 15 })))).toBeTruthy()
+  })
+
+  it('throws when maxCount is set without counted', () => {
+    expect(() => assertArmyIntegrity(withUnit(hero({ maxCount: 3 })))).toThrow(/or\/h: maxCount without counted/)
+  })
+
+  it('throws when maxCount is not a whole number >= 0', () => {
+    expect(() => assertArmyIntegrity(withUnit(hero({ counted: true, maxCount: -1 })))).toThrow(
+      /or\/h: maxCount must be a whole number >= 0/,
+    )
+    expect(() => assertArmyIntegrity(withUnit(hero({ counted: true, maxCount: 2.5 })))).toThrow(
+      /or\/h: maxCount must be a whole number >= 0/,
+    )
+  })
+
+  // OLD-63: Sturmjarl's card-price option is worth -5 once. A negative price
+  // that scaled with the unit size or a count would be meaningless.
+  it('accepts a negative price on a flat option', () => {
+    expect(assertArmyIntegrity(withUnit(hero({ pointsPerModel: -5, flat: true })))).toBeTruthy()
+  })
+
+  it('throws when a negative price is not flat', () => {
+    expect(() => assertArmyIntegrity(withUnit(hero({ pointsPerModel: -5 })))).toThrow(
+      /or\/h: negative option price on a non-flat option/,
+    )
+    expect(() => assertArmyIntegrity(withUnit(hero({ pointsPerModel: -5, counted: true })))).toThrow(
+      /or\/h: negative option price on a non-flat option/,
+    )
+  })
+
+  it('throws when a counted option sits on a regiment', () => {
+    const regiment = unit({ id: 'rg', options: [{ id: 'h', name: 'Hounds', pointsPerModel: 5, counted: true }] })
+    expect(() => assertArmyIntegrity(withUnit(regiment))).toThrow(/rg\/h: counted option on a regiment/)
+  })
+
+  it.each(['flat', 'perCrewman', 'timesModelCost'] as const)('throws when a counted option sets %s', (flag) => {
+    const opt: Partial<EquipmentOption> =
+      flag === 'timesModelCost' ? { counted: true, timesModelCost: 2 } : { counted: true, [flag]: true }
+    // perCrewman needs a crewed host to get past the crew check.
+    expect(() => assertArmyIntegrity(withUnit(hero(opt, { baseCrew: 2 })))).toThrow(
+      new RegExp(`or/h: counted option sets ${flag}`),
+    )
+  })
+
+  it('throws when a mount option is counted (mount options are toggles only)', () => {
+    const u = hero({}, {
+      mounts: [
+        {
+          id: 'm',
+          name: 'Mount',
+          points: 10,
+          options: [{ id: 'mh', name: 'Hounds', pointsPerModel: 5, counted: true }],
+        },
+      ],
+    })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/or\/m\/mh: counted options are not supported on mounts/)
   })
 })

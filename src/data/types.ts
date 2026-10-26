@@ -110,6 +110,17 @@ export interface EquipmentOption {
    * gives each level its own row (p.81). Resolved by `effectiveStatLine`.
    */
   statLine?: StatLine
+  /**
+   * Bought N times (OLD-63): Orion's hunting hounds, "+5 puntos por cada
+   * Mastín, tantos como se desee" (Elfos Silvanos p.71). Priced
+   * `pointsPerModel × N` once per entry, never multiplied by unit size. The
+   * count lives in `RosterEntry.optionCounts`; a counted option is never in
+   * `optionIds`. Unit options of a non-regiment only, and never alongside
+   * `flat`, `perCrewman` or `timesModelCost` (enforced by `assertArmyIntegrity`).
+   */
+  counted?: boolean
+  /** Highest count a `counted` option allows. Undefined = no cap. */
+  maxCount?: number
 }
 
 /**
@@ -184,6 +195,36 @@ export interface ProfileBlock {
   /** Spanish overrides for `statNotes`, per column. See `UnitProfile.statNotesEs`. */
   statNotesEs?: StatNotes
   specialRules?: string[]
+}
+
+/**
+ * A magic item the character's own book page always gives him (OLD-63). Locked
+ * on every entry: the engine treats it as carried whether or not its id is in
+ * `entry.magicItemIds`, so saved rosters need no migration and a roster that
+ * already ticked it by hand is not charged twice. It counts toward the
+ * character's allowance and army-wide uniqueness like a picked item.
+ */
+export interface FixedMagicItem {
+  /** Item id in the army's pool. */
+  id: string
+  /** This character's page price, when it differs from the item card. The card keeps its price for everyone else. */
+  points?: number
+  /** The printed headline already contains the item: carried and locked, adds 0 on top of pointsPerModel. */
+  included?: boolean
+}
+
+/**
+ * A fixed, priced extra that is not a magic item: a chariot, an always-ridden
+ * monster, a companion, a rune group (OLD-63). Charged on every entry, shown as
+ * a locked "Fixed equipment" list and exported. Any statline stays in the
+ * display-only `profiles`; this carries only the cost.
+ */
+export interface FixedExtra {
+  id: string
+  name: string
+  /** Spanish name. Falls back to `name`. */
+  nameEs?: string
+  points: number
 }
 
 export interface UnitProfile {
@@ -291,6 +332,16 @@ export interface UnitProfile {
    * crew / chassis / draught beasts, or a special character's fixed mount.
    */
   profiles?: ProfileBlock[]
+  /**
+   * Magic items this character's own page always gives him, each priced on top
+   * of `pointsPerModel` unless `included` (OLD-63). Characters only.
+   */
+  fixedMagicItems?: FixedMagicItem[]
+  /**
+   * Priced extras the page always charges that are not magic items: a chariot,
+   * a monster always ridden, a companion, a rune group (OLD-63). Characters only.
+   */
+  fixedExtras?: FixedExtra[]
 }
 
 export interface CompositionRules {
@@ -443,6 +494,12 @@ export interface RosterEntry {
   loreId?: string
   isGeneral?: boolean
   isBSB?: boolean
+  /**
+   * How many of each `counted` option the entry buys, keyed by option id
+   * (OLD-63). Absent on rosters saved before counted options existed; a key is
+   * removed when its count drops to 0. Read it through `countedOptionCount`.
+   */
+  optionCounts?: Record<string, number>
 }
 
 export interface Roster {

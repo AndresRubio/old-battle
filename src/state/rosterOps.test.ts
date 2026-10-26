@@ -3,6 +3,7 @@ import {
   addEntry,
   createRoster,
   duplicateEntry,
+  entryActions,
   moveEntry,
   removeEntry,
   selectLore,
@@ -10,12 +11,14 @@ import {
   selectMount,
   selectWizardLevel,
   setGeneral,
+  setOptionCount,
   toggleMagicItem,
   toggleOption,
   updateEntry,
 } from './rosterOps'
 import { deleteRoster, upsertRoster } from './storage'
 import { getArmy } from '../data/armies'
+import type { Army, Roster, UnitProfile } from '../data/types'
 
 const empire = getArmy('empire')!
 const halberdiers = empire.units.find((u) => u.id === 'emp-halberdiers')!
@@ -63,8 +66,21 @@ describe('rosterOps', () => {
 
   it('toggles magic items', () => {
     let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), general, 'e1')
-    r = toggleMagicItem(r, 'e1', 'mi-sword-of-strength')
+    r = toggleMagicItem(r, 'e1', 'mi-sword-of-strength', empire)
     expect(r.entries[0].magicItemIds).toEqual(['mi-sword-of-strength'])
+  })
+
+  it("never toggles a magic item the character's own page fixes (OLD-63)", () => {
+    const karlFranz = empire.units.find((u) => u.id === 'emp-karl-franz')!
+    const r = addEntry(createRoster('empire', 'A', 1000, 'r1'), karlFranz, 'e1')
+    expect(toggleMagicItem(r, 'e1', 'mi-hammer-of-sigmar', empire)).toBe(r)
+    // An old saved roster that ticked the Hammer by hand cannot untick it either.
+    const old = updateEntry(r, 'e1', { magicItemIds: ['mi-hammer-of-sigmar'] })
+    expect(toggleMagicItem(old, 'e1', 'mi-hammer-of-sigmar', empire)).toBe(old)
+    // His free pick still toggles.
+    expect(toggleMagicItem(r, 'e1', 'mi-sword-of-justice', empire).entries[0].magicItemIds).toEqual([
+      'mi-sword-of-justice',
+    ])
   })
 
   it('setGeneral marks exactly one entry as general', () => {
@@ -155,9 +171,9 @@ describe('rosterOps', () => {
 
   it('duplicateEntry deep-copies arrays so the copy and original never alias', () => {
     let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), general, 'e1')
-    r = toggleMagicItem(r, 'e1', 'mi-sword-of-strength')
+    r = toggleMagicItem(r, 'e1', 'mi-sword-of-strength', empire)
     r = duplicateEntry(r, 'e1', 'e1-copy')
-    r = toggleMagicItem(r, 'e1-copy', 'mi-dispel-scroll')
+    r = toggleMagicItem(r, 'e1-copy', 'mi-dispel-scroll', empire)
     // Original unchanged when the copy is edited.
     expect(r.entries[0].magicItemIds).toEqual(['mi-sword-of-strength'])
     expect(r.entries[1].magicItemIds).toEqual(['mi-sword-of-strength', 'mi-dispel-scroll'])
@@ -250,5 +266,72 @@ describe('storage helpers (pure)', () => {
     const b = createRoster('empire', 'B', 2000, 'r2')
     const list = deleteRoster([a, b], 'r1')
     expect(list.map((r) => r.id)).toEqual(['r2'])
+  })
+})
+
+// OLD-63 — counted options: an option bought N times, stored in optionCounts.
+describe('setOptionCount (OLD-63)', () => {
+  const hunter: UnitProfile = {
+    id: 'hunter',
+    name: 'Hunter',
+    role: 'character',
+    pointsPerModel: 100,
+    isCharacter: true,
+    characterRank: 'lord',
+    options: [
+      { id: 'hounds', name: 'Hounds', pointsPerModel: 5, counted: true },
+      { id: 'guards', name: 'Guards', pointsPerModel: 10, counted: true, maxCount: 2 },
+      { id: 'shield', name: 'Shield', pointsPerModel: 3 },
+    ],
+  }
+  const synth: Army = { ...empire, units: [...empire.units, hunter] }
+  const base = addEntry(createRoster('empire', 'A', 1000, 'r1'), hunter, 'e1')
+  const counts = (r: Roster) => r.entries[0].optionCounts
+
+  it('stores an integer count and replaces it on the next call', () => {
+    let r = setOptionCount(base, 'e1', synth, 'hounds', 4)
+    expect(counts(r)).toEqual({ hounds: 4 })
+    r = setOptionCount(r, 'e1', synth, 'hounds', 6)
+    expect(counts(r)).toEqual({ hounds: 6 })
+    expect(r.entries[0].optionIds).toEqual([])
+  })
+
+  it('floors a fractional count and clamps at maxCount', () => {
+    expect(counts(setOptionCount(base, 'e1', synth, 'hounds', 2.9))).toEqual({ hounds: 2 })
+    expect(counts(setOptionCount(base, 'e1', synth, 'guards', 9))).toEqual({ guards: 2 })
+  })
+
+  it('removes the key at 0, and for a negative or non-finite count', () => {
+    let r = setOptionCount(base, 'e1', synth, 'hounds', 3)
+    r = setOptionCount(r, 'e1', synth, 'guards', 1)
+    expect(counts(setOptionCount(r, 'e1', synth, 'hounds', 0))).toEqual({ guards: 1 })
+    expect(counts(setOptionCount(r, 'e1', synth, 'hounds', -2))).toEqual({ guards: 1 })
+    expect(counts(setOptionCount(r, 'e1', synth, 'hounds', NaN))).toEqual({ guards: 1 })
+    expect(counts(setOptionCount(r, 'e1', synth, 'hounds', Infinity))).toEqual({ guards: 1 })
+    // The last key gone: the entry is back to its pre-OLD-63 shape.
+    const cleared = setOptionCount(setOptionCount(r, 'e1', synth, 'hounds', 0), 'e1', synth, 'guards', 0)
+    expect('optionCounts' in cleared.entries[0]).toBe(false)
+  })
+
+  it('leaves the roster unchanged for an option that is not a counted option of the unit', () => {
+    expect(setOptionCount(base, 'e1', synth, 'shield', 2)).toBe(base)
+    expect(setOptionCount(base, 'e1', synth, 'ghost', 2)).toBe(base)
+    expect(setOptionCount(base, 'nope', synth, 'hounds', 2)).toBe(base)
+  })
+
+  it('duplicateEntry clones optionCounts so the copy never aliases the original', () => {
+    let r = setOptionCount(base, 'e1', synth, 'hounds', 3)
+    r = duplicateEntry(r, 'e1', 'e1-copy')
+    expect(r.entries[1].optionCounts).toEqual({ hounds: 3 })
+    expect(r.entries[1].optionCounts).not.toBe(r.entries[0].optionCounts)
+    r = setOptionCount(r, 'e1-copy', synth, 'hounds', 5)
+    expect(r.entries[0].optionCounts).toEqual({ hounds: 3 })
+    expect(r.entries[1].optionCounts).toEqual({ hounds: 5 })
+  })
+
+  it('entryActions.setOptionCount commits through the bound transform', () => {
+    let r = base
+    entryActions((fn) => { r = fn(r) }, synth, 'e1').setOptionCount('hounds', 4)
+    expect(counts(r)).toEqual({ hounds: 4 })
   })
 })

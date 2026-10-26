@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import type { Army, EquipmentOption, MagicItem, MagicItemCategory, MountOption, ProfileBlock, StatLine, UnitProfile, UnitRole } from '../data/types'
+import type { Army, EquipmentOption, FixedExtra, MagicItem, MagicItemCategory, MountOption, ProfileBlock, StatLine, UnitProfile, UnitRole } from '../data/types'
 import type { MagicLore, Spell } from '../data/lores'
 import { RULE_PHRASE_ES } from './rulePhrases'
 import { wizardLevelOf } from '../data/unitOptions'
@@ -50,6 +50,8 @@ export const mountName = (m: MountOption, lang: Lang): string =>
   lang === 'es' ? m.nameEs ?? m.name : m.name
 export const profileName = (p: ProfileBlock, lang: Lang): string =>
   lang === 'es' ? p.nameEs ?? p.name : p.name
+export const fixedExtraName = (x: FixedExtra, lang: Lang): string =>
+  lang === 'es' ? x.nameEs ?? x.name : x.name
 
 // --- Bilingual labels ---
 export const ROLE_LABEL: Record<Lang, Record<UnitRole, string>> = {
@@ -240,6 +242,10 @@ const STRINGS = {
   onFoot: { en: 'On foot', es: 'A pie' },
   magicItems: { en: 'Magic Items', es: 'Objetos Mágicos' },
   selectedItems: { en: 'Selected', es: 'Seleccionados' },
+  // OLD-63: items and extras a special character's own page always gives him.
+  fixedItem: { en: 'fixed', es: 'fijo' },
+  includedInCost: { en: 'included', es: 'incluido' },
+  fixedEquipment: { en: 'Fixed equipment', es: 'Equipo fijo' },
   magicStandard: { en: 'Magic Standard', es: 'Estandarte Mágico' },
   magicStandardNone: { en: 'No magic standard', es: 'Sin estandarte mágico' },
   magicStandardNeedsBearer: {
@@ -256,6 +262,8 @@ const STRINGS = {
   moveDown: { en: 'Move down', es: 'Bajar' },
   unknownUnit: { en: 'Unknown unit', es: 'Unidad desconocida' },
   perModel: { en: '/model', es: '/miniatura' },
+  // OLD-63: the unit price of a counted option ("+5 each" hounds).
+  each: { en: 'each', es: 'c/u' },
   pts: { en: 'pts', es: 'ptos' },
   // ExportDialog
   exportTitle: { en: 'Export Army List', es: 'Exportar Lista de Ejército' },
@@ -282,6 +290,16 @@ const OPTION_ES: Record<string, string> = {
   Shield: 'Escudo',
   // OLD-64: Ludwig Schwartzhelm's +50 option (Imperio p.69).
   'Battle Standard Bearer': 'Portaestandarte de Batalla',
+  // OLD-63: Thorgrim's Throne (Enanos p.94), a player choice.
+  'Throne of Power': 'Trono del Poder',
+  'Hunting Hounds': 'Mastines de Caza',
+  // OLD-63: Stürmjarl's card prices (Norsca PDF 32, 35); Mydas's bodyguard (Dogs of War p.65).
+  'Item-card prices (Gift of Loki 50, Runes 75)': 'Precios de las cartas (Don de Loki 50, Runas 75)',
+  // OLD-63: High Elf and Lizardmen special characters' page items (Altos Elfos pp.82-94, Lizardmen pp.79-89), a player choice.
+  'Items not included in the headline cost': 'Objetos no incluidos en el coste de cabecera',
+  'Extra bodyguards': 'Guardaespaldas adicionales',
+  'Bodyguard standard bearer': 'Portaestandarte de la guardia',
+  'Bodyguard musician': 'Músico de la guardia',
   Shields: 'Escudos',
   'Shields (both crew)': 'Escudos (ambos tripulantes)',
   'Light armour': 'Armadura ligera',
