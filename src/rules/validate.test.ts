@@ -1335,6 +1335,47 @@ describe('fixed magic items (OLD-63)', () => {
     expect(itemRules(r, a)).toEqual([])
   })
 
+  // OLD-63: the High Elf and Lizardmen special characters offer 'items-on-top'
+  // (user choice, owner ruling 2026-10-26); ticking it raises no magic-item finding.
+  it.each([
+    ['high-elves', 'he-general', 'he-alith-anar'],
+    ['high-elves', 'he-general', 'he-eltharion'],
+    ['high-elves', 'he-general', 'he-belannaer'],
+    ['high-elves', 'he-general', 'he-korhil'],
+    ['high-elves', 'he-general', 'he-tyrion'],
+    ['high-elves', 'he-general', 'he-teclis'],
+    ['high-elves', 'he-general', 'he-imrik'],
+    ['lizardmen', 'lz-slann', 'lz-venerable-lord-kroak'],
+    ['lizardmen', 'lz-slann', 'lz-itzi-bitzi'],
+    ['lizardmen', 'lz-slann', 'lz-tenehuini'],
+    ['lizardmen', 'lz-slann', 'lz-lord-mazdamundi'],
+  ])('raises no magic-item finding for %s %s with %s ticking items-on-top', (armyId, gen, unitId) => {
+    const a = getArmy(armyId)!
+    const r: Roster = {
+      id: 'r', name: 't', armyId, pointsLimit: 3000,
+      entries: [
+        entry({ id: 'g', unitId: gen, isGeneral: true }),
+        entry({ id: 'x', unitId, optionIds: ['items-on-top'] }),
+      ],
+    }
+    expect(a.units.find((u) => u.id === unitId)!.options?.map((o) => o.id)).toContain('items-on-top')
+    expect(itemRules(r, a)).toEqual([])
+  })
+
+  // Altos Elfos p.93: the Sword of Teclis is Teclis's; a second High Elf picking
+  // it beside him breaks uniqueness.
+  it('flags the Sword of Teclis when a High Elf General picks it beside Teclis', () => {
+    const he = getArmy('high-elves')!
+    const r: Roster = {
+      id: 'r', name: 't', armyId: 'high-elves', pointsLimit: 3000,
+      entries: [
+        entry({ id: 'g', unitId: 'he-general', isGeneral: true, magicItemIds: ['mi-sword-of-teclis'] }),
+        entry({ id: 't', unitId: 'he-teclis' }),
+      ],
+    }
+    expect(rules(validateRoster(r, he))).toContain('magic-items-unique')
+  })
+
   // Bretonnia p.73-74: Armand always carries the Banner of the Lady of the Lake;
   // his page fixes it, so the banner-BSB warning never asks for the toggle.
   it("raises no banner-BSB warning for Armand's fixed banner", () => {

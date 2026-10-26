@@ -2841,6 +2841,43 @@ describe('OLD-63: special characters charge their book extras', () => {
     ['dogs-of-war', 'dow-mydas', ['bodyguard-standard'], 414, { optionCounts: { 'extra-bodyguards': 15 } }],
     // p.67: 176 including magic items.
     ['dogs-of-war', 'dow-marco-colombo', [], 176],
+    // Altos Elfos pp.81-94 and Lizardmen pp.79-89 print each item's price beside a
+    // headline and never say whether the headline holds them. Default: today's
+    // headline. 'items-on-top' adds the page items: user choice (owner ruling 2026-10-26).
+    // Altos Elfos p.82: 285; + Piedra de Medianoche 50 + Corona Sombria 15 + Arco Lunar 50.
+    ['high-elves', 'he-alith-anar', [], 285],
+    ['high-elves', 'he-alith-anar', ['items-on-top'], 400],
+    // p.83: 467; + Espada Colmillo 50 + Yelmo de Yvresse 10 + Talisman de Hoeth 85.
+    ['high-elves', 'he-eltharion', [], 467],
+    ['high-elves', 'he-eltharion', ['items-on-top'], 612],
+    // p.89: 555; + Capa de Estrellas 45 + Espada de Bel-Korhadris 60 + Libro del Fenix 75 + Baculo de Cyeos 25.
+    ['high-elves', 'he-belannaer', [], 555],
+    ['high-elves', 'he-belannaer', ['items-on-top'], 760],
+    // p.91: 198; + Hacha Chayal 65 + Piel de Charandis 10.
+    ['high-elves', 'he-korhil', [], 198],
+    ['high-elves', 'he-korhil', ['items-on-top'], 273],
+    // p.92: 425; + Colmillo Solar 125 + Armadura del Dragon de Aenarion 75 + Corazon de Avelorn 50.
+    ['high-elves', 'he-tyrion', [], 425],
+    ['high-elves', 'he-tyrion', ['items-on-top'], 675],
+    // p.93: 630; + Baculo Lunar 20 + Corona de Guerra de Saphery 125 + Espada de Teclis 100 + Pergamino de Hoeth 55.
+    ['high-elves', 'he-teclis', [], 630],
+    ['high-elves', 'he-teclis', ['items-on-top'], 930],
+    // p.94: 275; + Lanza Estelar 60 + Cuerno del Dragon 15 + Armadura de Caledor 30 (his dragon is a mount).
+    ['high-elves', 'he-imrik', [], 275],
+    ['high-elves', 'he-imrik', ['items-on-top'], 380],
+    // Lizardmen pp.79-80: 620; + Standard 25 + Death Mask 50 + Mace 50 + Amulet 25 + Glyph 20.
+    ['lizardmen', 'lz-venerable-lord-kroak', [], 620],
+    ['lizardmen', 'lz-venerable-lord-kroak', ['items-on-top'], 790],
+    // p.85: 105; + Piranha Blade 35.
+    ['lizardmen', 'lz-itzi-bitzi', [], 105],
+    ['lizardmen', 'lz-itzi-bitzi', ['items-on-top'], 140],
+    // p.86: 120; + Dagger of Sotek 50 + Totem of Sotek 10.
+    ['lizardmen', 'lz-tenehuini', [], 120],
+    ['lizardmen', 'lz-tenehuini', ['items-on-top'], 180],
+    // p.89: 900; + Cobra Mace 15 + Plaque of Tepec 50 + Plaque of Xoloc 50 + Itxi Grubs 50
+    // + Egg of the Quango 10 + Sunburst Standard of Hexoatl 50.
+    ['lizardmen', 'lz-lord-mazdamundi', [], 900],
+    ['lizardmen', 'lz-lord-mazdamundi', ['items-on-top'], 1125],
   ]
 
   it.each(rows)('%s %s with %j costs %d', (armyId, unitId, optionIds, expected, extra) => {
@@ -2869,6 +2906,11 @@ describe('OLD-63: special characters charge their book extras', () => {
     ['vampire-counts', 'vc-krell', 'mi-black-axe-of-krell', 280],
     ['vampire-counts', 'vc-krell', 'mi-armour-of-the-defender', 280],
     ['vampire-counts', 'vc-vlad-von-carstein', 'mi-carstein-ring', 680],
+    ['high-elves', 'he-eltharion', 'mi-talisman-of-hoeth', 467],
+    ['high-elves', 'he-teclis', 'mi-war-crown-of-saphery', 630],
+    ['high-elves', 'he-teclis', 'mi-sword-of-teclis', 630],
+    ['high-elves', 'he-imrik', 'mi-star-lance', 275],
+    ['lizardmen', 'lz-tenehuini', 'mi-dagger-of-sotek', 120],
   ])('%s %s cannot buy its fixed %s again (stays %d)', (armyId, unitId, itemId, expected) => {
     const a = getArmy(armyId)!
     const entry: RosterEntry = { id: 'e', unitId, size: 1, optionIds: [], magicItemIds: [itemId] }

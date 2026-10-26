@@ -20,6 +20,18 @@ const skink = (over: Partial<StatLine> = {}): StatLine => ({
   M: 6, WS: 2, BS: 3, S: 3, T: 3, W: 1, I: 4, A: 1, Ld: 6, ...over,
 })
 
+// OLD-63: the book prints each special character's item prices beside a headline and
+// never says whether the headline holds them. This flat option adds the page's items on
+// top; unticked, the total is the printed headline. User choice (owner ruling 2026-10-26).
+const itemsOnTop = (sum: number, page: string, headline: number, itemsEn: string, itemsEs: string): EquipmentOption => ({
+  id: 'items-on-top',
+  name: 'Items not included in the headline cost',
+  pointsPerModel: sum,
+  flat: true,
+  description: `Adds the items this page prices: ${itemsEn} (Lizardmen ${page}). The book does not say whether the printed ${headline} includes them, so the player decides: unticked, the cost stays ${headline}; ticked, the items are paid on top.`,
+  descEs: `Suma los objetos que valora esta página: ${itemsEs} (Lizardmen ${page}). El libro no dice si los ${headline} impresos los incluyen, así que decide el jugador: sin marcar, el coste sigue en ${headline}; marcado, los objetos se pagan aparte.`,
+})
+
 // --- Army-specific equipment options (per-model costs, from the Equipment List
 //     p.72). ---
 //   Hand weapon free / Additional hand weapon 1 / Double-handed weapon 2 /
@@ -511,6 +523,7 @@ const units: UnitProfile[] = [
     lores: ['battle', 'high'],
     canBeGeneral: false,
     max: 1,
+    options: [itemsOnTop(170, 'pp.79-80', 620, 'Standard of the Sacred Serpent 25, Gold Death Mask 50, Ceremonial Mace of Malachite 50, Amulet of Itza 25, Glyph of Potec 20 (170 pts)', 'Standard of the Sacred Serpent 25, Gold Death Mask 50, Ceremonial Mace of Malachite 50, Amulet of Itza 25, Glyph of Potec 20 (170 pts)')],
     specialRules: [
       'Special character — added in addition to the General; army must also include a living Slann Mage-Priest as General',
       'Cannot lead the army himself',
@@ -630,6 +643,7 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
+    options: [itemsOnTop(35, 'p.85', 105, 'Piranha Blade 35 (35 pts)', 'Piranha Blade 35 (35 pts)')],
     specialRules: [
       'Special character — Skink Hero (no magic items)',
       'Armed with the Piranha Blade (35 pts magic weapon — each wound inflicts D3 wounds), light armour and shield',
@@ -654,6 +668,8 @@ const units: UnitProfile[] = [
     lores: ['battle'],
     canBeGeneral: false,
     max: 1,
+    fixedMagicItems: [{ id: 'mi-dagger-of-sotek', included: true }],
+    options: [itemsOnTop(60, 'p.86', 120, 'Dagger of Sotek 50, Totem of Sotek 10 (60 pts)', 'Dagger of Sotek 50, Totem of Sotek 10 (60 pts)')],
     specialRules: [
       'Special character — Skink Shaman, level 1 (1 spell from Battle Magic)',
       'Armed with the Dagger of Sotek (50 pts magic weapon) and carries Totem of Sotek (10 pts magic standard)',
@@ -678,6 +694,7 @@ const units: UnitProfile[] = [
     canBeGeneral: true,
     max: 1,
     profiles: [STEGADON_PROFILE],
+    options: [itemsOnTop(225, 'p.89', 900, 'Cobra Mace of Mazdamundi 15, Plaque of Tepec 50, Plaque of Xoloc 50, Itxi Grubs 50, Egg of the Quango 10, Sunburst Standard of Hexoatl 50 (225 pts)', 'Cobra Mace of Mazdamundi 15, Plaque of Tepec 50, Plaque of Xoloc 50, Itxi Grubs 50, Egg of the Quango 10, Sunburst Standard of Hexoatl 50 (225 pts)')],
     specialRules: [
       'Special character — replaces the Slann General if taken',
       'Mage-Priest Lord with 4 unique Slann geomancy spells (Move the Mountains, Ruination of Cities, Earth Line, Part the Waters)',

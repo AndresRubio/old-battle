@@ -18,6 +18,18 @@ const elf = (over: Partial<StatLine> = {}): StatLine => ({
   M: 5, WS: 4, BS: 4, S: 3, T: 3, W: 1, I: 6, A: 1, Ld: 8, ...over,
 })
 
+// OLD-63: the book prints each special character's item prices beside a headline and
+// never says whether the headline holds them. This flat option adds the page's items on
+// top; unticked, the total is the printed headline. User choice (owner ruling 2026-10-26).
+const itemsOnTop = (sum: number, page: string, headline: number, itemsEn: string, itemsEs: string): EquipmentOption => ({
+  id: 'items-on-top',
+  name: 'Items not included in the headline cost',
+  pointsPerModel: sum,
+  flat: true,
+  description: `Adds the items this page prices: ${itemsEn} (Altos Elfos ${page}). The book does not say whether the printed ${headline} includes them, so the player decides: unticked, the cost stays ${headline}; ticked, the items are paid on top.`,
+  descEs: `Suma los objetos que valora esta página: ${itemsEs} (Altos Elfos ${page}). El libro no dice si los ${headline} impresos los incluyen, así que decide el jugador: sin marcar, el coste sigue en ${headline}; marcado, los objetos se pagan aparte.`,
+})
+
 // --- Army-specific equipment options (per-model costs, from the equipment list
 //     p.71 and the per-unit option lines pp.75-78). ---
 
@@ -366,6 +378,7 @@ const units: UnitProfile[] = [
     characterRank: 'lord',
     canBeGeneral: true,
     max: 1,
+    options: [itemsOnTop(115, 'p.82', 285, 'Stone of Midnight 50, Shadow Crown 15, Moonbow 50 (115 pts)', 'Piedra de Medianoche 50, Corona Sombría 15, Arco Lunar 50 (115 pts)')],
     specialRules: [
       'Special character',
       'Requires at least one regiment of Shadow Warriors (Guerreros Sombríos)',
@@ -387,6 +400,8 @@ const units: UnitProfile[] = [
     canBeGeneral: true,
     max: 1,
     profiles: [STORMWING_PROFILE],
+    fixedMagicItems: [{ id: 'mi-talisman-of-hoeth', included: true }],
+    options: [itemsOnTop(145, 'p.83', 467, 'Fangsword of Eltharion 50, Helm of Yvresse 10, Talisman of Hoeth 85 (145 pts)', 'Espada Colmillo de Eltharion 50, Yelmo de Yvresse 10, Talismán de Hoeth 85 (145 pts)')],
     specialRules: [
       'Special character',
       'Hatred of Goblins',
@@ -449,6 +464,7 @@ const units: UnitProfile[] = [
     lores: ['high', 'battle'],
     canBeGeneral: true,
     max: 1,
+    options: [itemsOnTop(205, 'p.89', 555, 'Cloak of Stars 45, Sword of Bel-Korhadris 60, Book of the Phoenix 75, Staff of Cyeos 25 (205 pts)', 'Capa de Estrellas 45, Espada de Bel-Korhadris 60, Libro del Fénix 75, Báculo de Cyeos 25 (205 pts)')],
     specialRules: [
       'Special character',
       'Requires a regiment of Sword Masters of Hoeth (Maestros de la Espada de Hoeth)',
@@ -468,6 +484,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     max: 1,
+    options: [itemsOnTop(75, 'p.91', 198, 'Chayal axe 65, Pelt of Charandis 10 (75 pts)', 'Hacha Chayal 65, Piel de Charandis 10 (75 pts)')],
     specialRules: [
       'Special character (Paladin of a White Lions regiment)',
       'Requires a regiment of White Lions (Leones Blancos)',
@@ -507,6 +524,7 @@ const units: UnitProfile[] = [
     canBeGeneral: true,
     max: 1,
     profiles: [MALHANDIR_PROFILE],
+    options: [itemsOnTop(250, 'p.92', 425, 'Sunfang 125, Dragon Armour of Aenarion 75, Heart of Avelorn 50 (250 pts)', 'Colmillo Solar 125, Armadura del Dragón de Aenarion 75, Corazón de Avelorn 50 (250 pts)')],
     specialRules: [
       'Special character',
       'Always strikes first',
@@ -527,6 +545,8 @@ const units: UnitProfile[] = [
     lores: ['high'],
     canBeGeneral: false,
     max: 1,
+    fixedMagicItems: [{ id: 'mi-war-crown-of-saphery', included: true }, { id: 'mi-sword-of-teclis', included: true }],
+    options: [itemsOnTop(300, 'p.93', 630, 'Lunar Staff of Lileath 20, War Crown of Saphery 125, Sword of Teclis 100, Scroll of Hoeth 55 (300 pts)', 'Báculo Lunar de Lileath 20, Corona de Guerra de Saphery 125, Espada de Teclis 100, Pergamino de Hoeth 55 (300 pts)')],
     specialRules: [
       'Special character (independent)',
       'Effective Wizard Level 5 via War Crown of Saphery (5 spells; chooses High Magic spells freely)',
@@ -547,6 +567,8 @@ const units: UnitProfile[] = [
     canBeGeneral: true,
     max: 1,
     mounts: IMRIK_MOUNTS,
+    fixedMagicItems: [{ id: 'mi-star-lance', included: true }],
+    options: [itemsOnTop(105, 'p.94', 275, 'Star Lance 60, Horn of the Dragon 15, Armour of Caledor 30 (105 pts)', 'Lanza Estelar 60, Cuerno del Dragón 15, Armadura de Caledor 30 (105 pts)')],
     specialRules: [
       'Special character',
       'Always strikes first',

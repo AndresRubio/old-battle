@@ -1640,6 +1640,48 @@ accepts a negative option price only on a flat option.
 | Mydas the Mean | p.64-65 | "between 5 and 20 bodyguards ... Each extra bodyguard after the first five costs 12 points": counted option, 12 each, up to 15. "a standard bearer and musician at double the points cost of a normal trooper": 2 × 12 = 24 each, flat | 210 to 210 (270 with 5 extra; +24 for each of standard and musician) |
 | Marco Colombo | p.67 | "Marco Colombo carries three magic items ... Gem of Lustria, Gourd of Lustrian Wine and Scroll of Araby"; the Navigator's Telescope is under Special Rules, so it moved out of the magic-items tag | 176 to 176 |
 
+#### High Elves: special characters' extra costs (OLD-63, 2026-10-26)
+**Altos Elfos (1997, ES) printed pp.81-94.** Each character's page prints the headline in its title
+and a price beside every item, and never says whether the headline holds the items. The owner
+ruled on 2026-10-26 that the player decides: each character below has a flat option
+`items-on-top` ("Items not included in the headline cost"), unticked by default. Unticked, the
+total is the printed headline, as before. Ticked, it adds the sum of the page's items.
+**User choice (owner ruling 2026-10-26)**, not a book value.
+
+| Character | Page | Items on the page | Sum | Default to ticked |
+|---|---|---|---|---|
+| Alith Anar | p.82 | Piedra de Medianoche 50, Corona Sombría 15, Arco Lunar 50 | 115 | 285 to 400 |
+| Eltharion | p.83 | Espada Colmillo 50, Yelmo de Yvresse 10, Talismán de Hoeth 85 | 145 | 467 to 612 |
+| Belannaer | p.89 | Capa de Estrellas 45, Espada de Bel-Korhadris 60, Libro del Fénix 75, Báculo de Cyeos 25 | 205 | 555 to 760 |
+| Korhil | p.91 | Hacha Chayal 65, Piel de Charandis 10 | 75 | 198 to 273 |
+| Tyrion | p.92 | Colmillo Solar 125, Armadura del Dragón de Aenarion 75, Corazón de Avelorn 50 | 250 | 425 to 675 |
+| Teclis | p.93 | Báculo Lunar 20, Corona de Guerra de Saphery 125, Espada de Teclis 100, Pergamino de Hoeth 55 | 300 | 630 to 930 |
+| Imrik | p.94 | Lanza Estelar 60, Cuerno del Dragón 15, Armadura de Caledor 30 | 105 | 275 to 380 (plus his dragon) |
+
+Four items the pool also sells are now `fixedMagicItems` with `included: true` (owner approval,
+2026-10-26): Talisman of Hoeth on Eltharion (card 85), War Crown of Saphery and Sword of Teclis on
+Teclis (cards 125 and 100) and Star Lance on Imrik (card 60). Each page price equals its card
+price. They are locked in the editor and add 0 on their own, because the option carries their
+price when ticked, so no reading charges them twice or lets a second pick buy them again. The
+other items on these pages are not in the pool and stay as text and option sum only. Alarielle
+(p.84) does not change: her page states that the headline includes her items.
+
+#### Lizardmen: special characters' extra costs (OLD-63, 2026-10-26)
+**Warhammer Armies: Lizardmen (1997, EN) printed pp.79-89.** Same case as the High Elves: each
+page prints a cost beside a headline and a price beside every item, and does not say whether the
+headline includes them. Each character below has the flat option `items-on-top`, unticked by
+default. **User choice (owner ruling 2026-10-26)**, not a book value.
+
+| Character | Page | Items on the page | Sum | Default to ticked |
+|---|---|---|---|---|
+| Venerable Lord Kroak | pp.79-80 | Standard of the Sacred Serpent 25, Gold Death Mask 50, Ceremonial Mace of Malachite 50, Amulet of Itza 25, Glyph of Potec 20 | 170 | 620 to 790 |
+| Itzi-Bitzi | p.85 | Piranha Blade 35 | 35 | 105 to 140 |
+| Tenehuini | p.86 | Dagger of Sotek 50, Totem of Sotek 10 | 60 | 120 to 180 |
+| Lord Mazdamundi | p.89 | Cobra Mace of Mazdamundi 15, Plaque of Tepec 50, Plaque of Xoloc 50, Itxi Grubs 50, Egg of the Quango 10, Sunburst Standard of Hexoatl 50 | 225 | 900 to 1125 |
+
+The Dagger of Sotek (card 50) is the one pool item among them: it is now a locked fixed item of
+Tenehuini with `included: true` (owner approval, 2026-10-26), so it cannot be bought a second time.
+
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
 (per-unit pages under https://5th.whfb.app/unit/...): **Giant** (M6 WS3 BS3 S7 T6 W6 I3 A* Ld6),

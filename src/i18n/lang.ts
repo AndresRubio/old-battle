@@ -295,6 +295,8 @@ const OPTION_ES: Record<string, string> = {
   'Hunting Hounds': 'Mastines de Caza',
   // OLD-63: Stürmjarl's card prices (Norsca PDF 32, 35); Mydas's bodyguard (Dogs of War p.65).
   'Item-card prices (Gift of Loki 50, Runes 75)': 'Precios de las cartas (Don de Loki 50, Runas 75)',
+  // OLD-63: High Elf and Lizardmen special characters' page items (Altos Elfos pp.82-94, Lizardmen pp.79-89), a player choice.
+  'Items not included in the headline cost': 'Objetos no incluidos en el coste de cabecera',
   'Extra bodyguards': 'Guardaespaldas adicionales',
   'Bodyguard standard bearer': 'Portaestandarte de la guardia',
   'Bodyguard musician': 'Músico de la guardia',
