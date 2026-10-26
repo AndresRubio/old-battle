@@ -6,7 +6,7 @@ import { EntryRow } from './EntryRow'
 import { getArmy } from '../data/armies'
 import { setLang } from '../i18n/lang'
 import { entryActions } from '../state/rosterOps'
-import type { RosterEntry } from '../data/types'
+import type { Roster, RosterEntry } from '../data/types'
 
 const army = getArmy('empire')!
 
@@ -357,5 +357,67 @@ describe('EntryRow Movement in centimetres in Spanish (OLD-46)', () => {
     expand()
     expect(movementFor('Jinete')).toBe('10')
     expect(movementFor('Caballo de Guerra con Barda')).toBe('20')
+  })
+})
+
+// OLD-65 — a character's chosen magic items are listed on their own, above the
+// full category list, and the search filter never hides them.
+describe('EntryRow selected magic items block (OLD-65)', () => {
+  const FORTUNE = 'mi-armour-of-fortune'
+  const JADE = 'mi-jade-amulet'
+  const withItems = (ids: string[]) => entry('emp-general', { magicItemIds: ids })
+  const selectedNames = () =>
+    Array.from(container.querySelectorAll('.mi-selected .mi-name')).map((el) => el.textContent)
+
+  function typeInto(input: HTMLInputElement, value: string) {
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!
+    act(() => {
+      setter.call(input, value)
+      input.dispatchEvent(new Event('input', { bubbles: true }))
+    })
+  }
+
+  it('lists the selected items in selection order', () => {
+    expect(army.magicItems.some((i) => i.id === FORTUNE)).toBe(true)
+    expect(army.magicItems.some((i) => i.id === JADE)).toBe(true)
+    render(<EntryRow entry={withItems([JADE, FORTUNE])} army={army} {...props} />)
+    expand()
+    expect(selectedNames()).toEqual(['Jade Amulet', 'Armour of Fortune'])
+    // Still checked in the full list as well.
+    const checked = container.querySelectorAll('.magic-items .mi-group input[type="checkbox"]:checked')
+    expect(checked.length).toBe(2)
+  })
+
+  it('keeps listing them when the search text matches neither', () => {
+    render(<EntryRow entry={withItems([JADE, FORTUNE])} army={army} {...props} />)
+    expand()
+    typeInto(container.querySelector('.mi-filter-search') as HTMLInputElement, 'zzz')
+    expect(container.textContent).toContain('No items match the filter.')
+    expect(selectedNames()).toEqual(['Jade Amulet', 'Armour of Fortune'])
+  })
+
+  it('renders no block when nothing is selected', () => {
+    render(<EntryRow entry={withItems([])} army={army} {...props} />)
+    expand()
+    expect(container.querySelector('.mi-selected')).toBeNull()
+  })
+
+  it('removes the item when its selected row is unchecked', () => {
+    let result = {
+      id: 'r1', name: 'R', armyId: 'empire', pointsLimit: 2000, entries: [withItems([JADE, FORTUNE])],
+    } as unknown as Roster
+    const actions = entryActions((fn) => { result = fn(result) }, army, 'e1')
+    render(<EntryRow entry={withItems([JADE, FORTUNE])} army={army} {...props} actions={actions} />)
+    expand()
+    const box = container.querySelector('.mi-selected input[type="checkbox"]') as HTMLInputElement
+    act(() => box.click())
+    expect(result.entries[0].magicItemIds).toEqual([FORTUNE])
+  })
+
+  it('titles the block "Seleccionados" in Spanish', () => {
+    setLang('es')
+    render(<EntryRow entry={withItems([FORTUNE])} army={army} {...props} />)
+    expand()
+    expect(container.querySelector('.mi-selected .mi-group-title')?.textContent).toBe('Seleccionados')
   })
 })

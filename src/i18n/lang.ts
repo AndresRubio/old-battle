@@ -239,6 +239,7 @@ const STRINGS = {
   rider: { en: 'Rider', es: 'Jinete' },
   onFoot: { en: 'On foot', es: 'A pie' },
   magicItems: { en: 'Magic Items', es: 'Objetos Mágicos' },
+  selectedItems: { en: 'Selected', es: 'Seleccionados' },
   magicStandard: { en: 'Magic Standard', es: 'Estandarte Mágico' },
   magicStandardNone: { en: 'No magic standard', es: 'Sin estandarte mágico' },
   magicStandardNeedsBearer: {
