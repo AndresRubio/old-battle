@@ -588,8 +588,8 @@ const units: UnitProfile[] = [
     nameEs: 'Oxayotl',
     role: 'character',
     pointsPerModel: 102,
-    // Profile p.83: M6 WS4 BS5 S4 T3 W3 I7 A3 Ld7.
-    statLine: skink({ WS: 4, BS: 5, S: 4, T: 3, W: 3, I: 7, A: 3, Ld: 7 }),
+    // Profile p.83: M6 WS4 BS5 S4 T4 W3 I7 A3 Ld7.
+    statLine: skink({ WS: 4, BS: 5, S: 4, T: 4, W: 3, I: 7, A: 3, Ld: 7 }),
     isCharacter: true,
     characterRank: 'hero',
     canBeGeneral: false,
