@@ -1566,6 +1566,13 @@ Magia card (p.36 and p.73) prints a dash in the restriction column, so no race r
 it moves from the Empire-only list to the common pool, so every army can take it. Owner decision
 (2026-10-26).
 
+**Item names that agree within one sheet (OLD-70, 2026-10-26).** No Muertos: Arkhan's chariot is
+"Carruaje de Arkhan" in the extra (p.91), the profile row (p.91) and the rule heading "El Carruaje
+de Arkhan" (p.92); the profile and the riding rule said "Carro" and "Chariot of Arkhan". Krell
+(p.92) and Settra (p.94) now read "Fixed magic items" with the printed Spanish names (Armadura del
+Defensor, Hacha Negra de Krell, Báculo de Osiris, Corona del Rey Funerario, Flagelo de Cráneos);
+Settra's English tag said "Skull Flail" next to his locked row "Flail of Skulls". No values moved.
+
 **Profiles corrected (OLD-67, 2026-10-26).** Undead (No Muertos): Vlad von Carstein (p.87) prints M15cm WS8 BS6 S7 T6 W4 I9 A4 Ld10, the data had a copy of Isabella's row for WS to I. The reference table (p.97) prints the same row for the Señor de Vampiros. Isabella von Carstein (p.88) prints A3, the data had A4. Dark Elves (Elfos Oscuros): Morathi (p.59) prints W4 A3, the data had W3 A2.
 
 #### Orcs & Goblins: special characters' extra costs (OLD-63, 2026-10-26)
@@ -1639,8 +1646,20 @@ allowance of four.
 **Stürmjarl's two prices.** The magic-item card sheet (PDF 35) prints Gift of Loki 50 and Runes 75,
 so the book disagrees with itself (130 on the character page, 125 on the cards). The data keeps
 the page prices by default and offers one checkbox, "Item-card prices (Gift of Loki 50, Runes
-75)", worth -5 (flat), which gives 441. **user choice (owner ruling 2026-10-26)**. Integrity now
-accepts a negative option price only on a flat option.
+75)", which gives 441. **user choice (owner ruling 2026-10-26)**. Since OLD-70 the two locked rows
+show the card prices (50 and 75) while the box is ticked and the option itself costs 0, so the
+sheet reads 316 + 50 + 75 and the total stays 441; unticked it is 446. Integrity still accepts a
+negative option price only on a flat option, and now checks that a fixed item's `pointsOptionId`
+names an option of the unit.
+
+**Item names that agree within one sheet (OLD-70, 2026-10-26).** Bretonnia (English, printed p.67):
+the book prints "The Armour of Brilliance" for Louen's armour, so the item's English name is now
+that (it was "Shining Armour", a name no book prints); the Spanish name stays Magia's "Armadura
+Brillante", and Louen's Spanish tag now reads "Corona de Bretonia, Armadura Brillante". Chaos
+(Paladines del Caos printed p.21): Mordrek's sword is "Espada de la Transformación", so his tags
+say Sword of Transformation (they said Sword of Change / Espada del Cambio), and the reward is
+"Condenación Eterna" in Spanish (the data had "Condena Eterna", in the tag and in the rule line).
+Item ids are unchanged, so saved rosters are unaffected.
 
 **Dogs of War (1998, EN) pp.64-67.**
 

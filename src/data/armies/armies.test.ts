@@ -1381,7 +1381,7 @@ describe('OLD-33 — chariot chassis profiles match the book', () => {
       // Was { T: 5, W: 4 } — wrong T and W, not merely short columns.
       // A: 1D6 is unrepresentable — see the block comment above.
       army: 'undead', unit: 'ud-arkhan-the-black',
-      profile: 'Chariot of Arkhan', profileEs: 'Carro de Arkhan',
+      profile: 'Chariot of Arkhan', profileEs: 'Carruaje de Arkhan',
       page: 'No Muertos printed p.91',
       statLine: { WS: 4, S: 6, T: 6, W: 3 },
     },
@@ -2087,7 +2087,7 @@ const CHASSIS_DICE_ATTACKS: Array<{
       // No Muertos, printed p.91 = PDF 93:
       // "Carruaje de Arkhan  -  4  -  6  6  3  -  1D6  -".
       army: 'undead', unit: 'ud-arkhan-the-black',
-      profile: 'Chariot of Arkhan', profileEs: 'Carro de Arkhan',
+      profile: 'Chariot of Arkhan', profileEs: 'Carruaje de Arkhan',
       page: 'No Muertos printed p.91', attacksToken: '1D6',
     },
     {
@@ -2947,8 +2947,8 @@ describe('OLD-63: special characters charge their book extras', () => {
     expect(keorl.fixedMagicItems).toEqual([{ id: 'mi-dragon-slayer' }, { id: 'mi-thorims-ring' }])
     expect(sturmjarl.pointsPerModel).toBe(316)
     expect(sturmjarl.fixedMagicItems).toEqual([
-      { id: 'mi-gift-of-loki', points: 100 },
-      { id: 'mi-norse-runes', points: 30 },
+      { id: 'mi-gift-of-loki', points: 100, pointsWithOption: 50, pointsOptionId: 'card-prices' },
+      { id: 'mi-norse-runes', points: 30, pointsWithOption: 75, pointsOptionId: 'card-prices' },
     ])
     // The cards (PDF 35) price them at 50 and 75.
     expect(norse.magicItems.find((i) => i.id === 'mi-gift-of-loki')!.points).toBe(50)
@@ -3097,5 +3097,63 @@ describe('special character profiles match the printed books (OLD-67)', () => {
     expect(rules('br-tristan')).toContain('Accompanied by Jules le Jongleur (WS3 BS3 S3 T3 W1 I4 A1 Ld7)')
     expect(RULE_PHRASE_ES['Accompanied by Suliman le Saracen (WS4 BS4 S4 T3 W1 I4 A2 Ld7)']).toBe('Acompañado por Suliman le Saracen (HA4 HP4 F4 R3 H1 I4 A2 L7)')
     expect(RULE_PHRASE_ES['Accompanied by Jules le Jongleur (WS3 BS3 S3 T3 W1 I4 A1 Ld7)']).toBe('Acompañado por Jules le Jongleur (HA3 HP3 F3 R3 H1 I4 A1 L7)')
+  })
+})
+
+// OLD-70: an item must carry one name everywhere on a character's sheet, in the
+// locked row, the special-rule tag and the Spanish tag.
+describe('item names agree within one character sheet (OLD-70)', () => {
+  const unitOf = (armyId: string, unitId: string) => getArmy(armyId)!.units.find((u) => u.id === unitId)!
+  const tagStarting = (u: { specialRules?: string[] }, prefix: string) => (u.specialRules ?? []).find((r) => r.startsWith(prefix))!
+
+  // Paladines del Caos p.21: the sword is "Espada de la Transformación", the reward "Condenación Eterna".
+  it("Mordrek's tag names the Sword of Transformation, as his locked row does", () => {
+    const tag = tagStarting(unitOf('chaos', 'ch-mordrek'), 'Fixed magic items')
+    expect(tag).toBe('Fixed magic items: Sword of Transformation (50), Chaos Runeshield (50), Eternal Damnation reward (15)')
+    expect(RULE_PHRASE_ES[tag]).toBe(
+      'Objetos mágicos fijos: Espada de la Transformación (50), Escudo Rúnico del Caos (50), recompensa Condenación Eterna (15)',
+    )
+    expect(getArmy('chaos')!.magicItems.find((i) => i.id === 'mi-sword-of-transformation')!.name).toBe('Sword of Transformation')
+  })
+
+  it('Mordrek\'s Eternal Damnation rule uses the printed "Condenación Eterna"', () => {
+    const tag = (unitOf('chaos', 'ch-mordrek').specialRules ?? []).find((r) => r.startsWith('Eternal Damnation'))!
+    expect(RULE_PHRASE_ES[tag]).toMatch(/^Condenación Eterna — /)
+  })
+
+  // Bretonnia p.67 prints "Armour of Brilliance"; Magia's card is "Armadura Brillante".
+  it("Louen's armour is the Armour of Brilliance in the row and in both tags", () => {
+    const louen = unitOf('bretonnia', 'br-louen-leoncoeur')
+    const armour = getArmy('bretonnia')!.magicItems.find((i) => i.id === 'mi-shining-armour')!
+    expect(armour.name).toBe('Armour of Brilliance')
+    expect(armour.nameEs).toBe('Armadura Brillante')
+    const tag = tagStarting(louen, 'Fixed magic items')
+    expect(tag).toContain(armour.name)
+    expect(RULE_PHRASE_ES[tag]).toBe(
+      'Objetos mágicos fijos: Corona de Bretonia, Armadura Brillante (salvación 3+, -2 para impactar), Lion Lance, Tabard of Kings',
+    )
+  })
+
+  // No Muertos p.91-92 prints "Carruaje de Arkhan" everywhere; "Carro" is never used for it.
+  it("Arkhan's chariot is the Carruaje de Arkhan in the extra, the profile and the riding rule", () => {
+    const arkhan = unitOf('undead', 'ud-arkhan-the-black')
+    expect(arkhan.fixedExtras![0].nameEs).toBe('Carruaje de Arkhan')
+    expect(arkhan.profiles!.find((p) => p.name === 'Chariot of Arkhan')!.nameEs).toBe('Carruaje de Arkhan')
+    expect(RULE_PHRASE_ES[tagStarting(arkhan, 'Rides the Chariot of Arkhan')]).toBe(
+      'Monta el Carruaje de Arkhan (vuela; construido sobre una Mantícora muerta)',
+    )
+  })
+
+  // No Muertos p.92 and p.94 print the Spanish names; the locked rows are Fixed items.
+  it('Krell and Settra tags say "Fixed magic items" and use the item names in both languages', () => {
+    const krell = tagStarting(unitOf('undead', 'ud-krell'), 'Fixed magic items')
+    expect(krell).toBe('Fixed magic items: Armour of the Defender +50, Black Axe of Krell +125')
+    expect(RULE_PHRASE_ES[krell]).toBe('Objetos mágicos fijos: Armadura del Defensor +50, Hacha Negra de Krell +125')
+    const settra = tagStarting(unitOf('undead', 'ud-settra'), 'Fixed magic items')
+    expect(settra).toBe('Fixed magic items: Staff of Osiris +50, Crown of the Tomb King +75, Flail of Skulls +30')
+    expect(RULE_PHRASE_ES[settra]).toBe(
+      'Objetos mágicos fijos: Báculo de Osiris +50, Corona del Rey Funerario +75, Flagelo de Cráneos +30',
+    )
+    expect(getArmy('undead')!.magicItems.find((i) => i.id === 'mi-flail-of-skulls')!.name).toBe('Flail of Skulls')
   })
 })
