@@ -1491,6 +1491,8 @@ Skaven: Lord Skrolk (p.70) may carry up to three items, two of them always the S
 
 **Unit and option costs (OLD-71, 2026-10-27).** Enanos p.83: "Si el General es el Alto Rey de los Enanos, podrá entrar en combate sobre el Trono del Poder y acompañado por cuatro porteadores. El valor en puntos total del Trono y sus porteadores es de 140 puntos." The Dwarf General (160) now has the same flat `throne-of-power` option as Thorgrim, 140 points, whose description says it is only for a General who is the High King: 160 to 300 with the Throne.
 
+**Shown profiles (OLD-71, 2026-10-27).** Enanos p.83 prints the Throne's bearers: "Porteador 8 5 4 4 4 1 3 2 9". Thorgrim and the Dwarf General now show a "4 Throne bearers" row (M 3", 8 cm in Spanish) while their Throne of Power option is bought. Display only: the 140 does not change.
+
 #### Wood Elves: special characters' extra costs (OLD-63, 2026-10-26)
 **Wood Elves, Elfos Silvanos (1996, ES) printed pp.70-80.** Each page prints its extras under the
 headline as `+N puntos: <objeto>`. Items in the pool are fixed at their card price, which matches
@@ -1523,6 +1525,8 @@ the High Elves (`restrictedTo: ['high-elves', 'wood-elves']`), so it costs 50 th
 decision (2026-10-26).
 
 **Rule texts and classification corrected (OLD-68, 2026-10-27).** Elfos Silvanos: Durthu (p.76) may be included "como personaje independiente" and p.61 says special characters are counted against the characters allowance, so his role is now character and his 360 points count toward Characters (50%), not Monsters (25%). The book gives him no magic items and no General's post, so he still has no item picker and no General toggle. His Swarm of Sprites (p.76) hits with Strength 3 (the data said 4) and also attacks his close-combat opponent; the Spanish book calls them Duendes. Naieth (p.74) is "la Vidente" in Spanish (the English name is unchanged), is an Elfa Silvana wizard who uses Battle Magic only, and carries the "Báculo de los Augurios".
+
+**Shown profiles (OLD-71, 2026-10-27).** Elfos Silvanos p.71 prints "Mastín de Caza 12 4 - 4 3 1 3 1 3". Orion now shows a Hunting Hound row (M 5", the book's "-" BS left blank) while he buys at least one hound. Display only: each hound still costs 5.
 
 #### Dark Elves and Undead: special characters' extra costs (OLD-63, 2026-10-26)
 **Dark Elves, Elfos Oscuros (1995, ES) printed pp.56-63.** Each page lists a table of items with
@@ -1618,6 +1622,8 @@ to his 245.
 
 **Rule text corrected (OLD-68, 2026-10-27).** Orcos y Goblins p.92: Gorfang Rotgut is equipped with light armour, a shield and "una enorme Espada"; the tag said magic sword, but his magic items are a free choice and are not named there.
 
+**Shown profiles (OLD-71, 2026-10-27).** Orcos y Goblins p.91 prints "Niblit 10 3 4 4 3 1 3 2 5". Grom now shows a Niblit row (M 4"). Display only: Niblit stays a 65-point fixed extra. The same table prints the chariot and a Giant Wolf at "22 4 0 3 4 1 3 1 3", Toughness 4 where p.88 gives the Goblin Wolf Chariot's wolves Toughness 3; those two rows are not shown until the owner decides which page wins.
+
 #### Bretonnia, Chaos, Norse, Vampire Counts and Dogs of War: special characters' extra costs (OLD-63, 2026-10-26)
 **Three books print the headline as a total that already holds the items.** Bretonnia (1997, EN)
 p.66: "Each character's points value is a total that includes equipment, mount, magic items".
@@ -1701,6 +1707,8 @@ Item ids are unchanged, so saved rosters are unaffected.
 
 The unused generic `BSB_UPGRADE` (+25, id `bsb`) left `src/data/unitOptions.ts`: no unit used it since the first commit, and each book prints its own Battle Standard price.
 
+**Page requirements and shown profiles (OLD-71, 2026-10-27).** Paladines del Caos p.16: "Si un ejército incluye a Archaon éste será su General". Archaon now carries `mustBeGeneral`, and an Archaon entry that is not the General raises the `must-be-general` error. Bretonnia p.71 prints "Hugo le Petit 4 3 4 5 4 1 3 1 7" and "Gui le Gros 4 3 4 3 3 1 3 1 7"; Bertrand now shows both as fixed rows, display only.
+
 #### High Elves: special characters' extra costs (OLD-63, 2026-10-26)
 **Altos Elfos (1997, ES) printed pp.81-94.** Each character's page prints the headline in its title
 and a price beside every item, and never says whether the headline holds the items. The owner
@@ -1730,6 +1738,8 @@ other items on these pages are not in the pool and stay as text and option sum o
 **Rule texts corrected (OLD-68, 2026-10-27).** Altos Elfos: Tyrion (p.92) has an armour save of 1+ with the Armadura del Dragón de Aenarion when mounted on Malhandir (Warhammer Magia p.47 adds 3+ on foot), cannot use a shield, and has a 4+ special save if the armour save fails. The save belongs to Tyrion's armour; Malhandir only wears the barding, so the old "barding, 2+ save" wording moved to Tyrion's tag and Malhandir's tag now says Tyrion saves on 1+ when mounted. The armour stays at 75 points as on his page (the Magia card prints 70). Alith Anar (p.82) fights on foot: he is a skirmisher leader (a High Elf infantry unit he leads may skirmish) with a special deployment after the enemy, which the unit he joins does not gain; the tag called him fast cavalry.
 
 **Magic item limits (OLD-69, 2026-10-27).** Altos Elfos p.82: Alith Anar always carries the Stone of Midnight, the Shadow Crown and the Moonbow, and "No puede poseer otros objetos mágicos". Alarielle (p.87, Objetos Mágicos) has the Star of Avelorn, the Jewel Shield of Isha and the Sceptre of Avelorn, and "no puede poseer ningún otro objeto mágico". None of their items is a pool card, so their allowance moves from 3 and 4 to 0 and they may buy nothing.
+
+**Required mount (OLD-71, 2026-10-27).** Altos Elfos p.94: "Imrik siempre monta un Dragón", at +450 (Dragón), +600 (Gran Dragón) or +750 (Dragón Emperador). Imrik now carries `mountRequired`: a new entry starts on the Dragon, the mount selector has no "on foot" choice, and a saved roster with Imrik on foot raises the `mount-required` warning. The data comment cited p.86; the page is p.94.
 
 #### Lizardmen: special characters' extra costs (OLD-63, 2026-10-26)
 **Warhammer Armies: Lizardmen (1997, EN) printed pp.79-89.** Same case as the High Elves: each
