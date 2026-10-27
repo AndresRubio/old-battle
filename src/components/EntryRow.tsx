@@ -620,6 +620,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
               <MountSelector
                 mounts={mounts}
                 selectedId={entry.mountId}
+                required={unit.mountRequired}
                 onSelect={actions.selectMount}
                 lang={lang}
                 name={entry.id}

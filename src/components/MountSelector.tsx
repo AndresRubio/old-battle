@@ -4,6 +4,8 @@ import { mountName, t, type Lang } from '../i18n/lang'
 interface Props {
   mounts: MountOption[]
   selectedId: string | undefined
+  /** The character always rides one of `mounts` (OLD-71): no "on foot" choice. */
+  required?: boolean
   onSelect: (mountId: string | null) => void
   lang: Lang
   name: string
@@ -11,18 +13,20 @@ interface Props {
   labelId: string
 }
 
-export function MountSelector({ mounts, selectedId, onSelect, lang, name, labelId }: Props) {
+export function MountSelector({ mounts, selectedId, required, onSelect, lang, name, labelId }: Props) {
   return (
     <div className="mount-chips" role="radiogroup" aria-labelledby={labelId}>
-      <label className={`mount-chip ${!selectedId ? 'mount-chip-on' : ''}`}>
-        <input
-          type="radio"
-          name={`${name}-mount`}
-          checked={!selectedId}
-          onChange={() => onSelect(null)}
-        />
-        <span>{t('onFoot', lang)}</span>
-      </label>
+      {!required && (
+        <label className={`mount-chip ${!selectedId ? 'mount-chip-on' : ''}`}>
+          <input
+            type="radio"
+            name={`${name}-mount`}
+            checked={!selectedId}
+            onChange={() => onSelect(null)}
+          />
+          <span>{t('onFoot', lang)}</span>
+        </label>
+      )}
       {mounts.map((m) => (
         <label key={m.id} className={`mount-chip ${selectedId === m.id ? 'mount-chip-on' : ''}`}>
           <input

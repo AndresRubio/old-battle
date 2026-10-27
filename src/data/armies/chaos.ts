@@ -428,7 +428,8 @@ const units: UnitProfile[] = [
   {
     // Paladines del Caos p.16: Archaon M10→4" on foot, rides W'Soraych the
     // Apocalypse Steed (Corcel del Apocalipsis) M30→12". Mounted M = 12.
-    // 630 pts incl. the steed and his three magic items. Must be the General.
+    // 630 pts incl. the steed and his three magic items. Must be the General:
+    // "Si un ejército incluye a Archaon éste será su General" (OLD-71).
     id: 'ch-archaon',
     name: 'Archaon, Lord of the End Times',
     nameEs: 'Archaon, Señor del Caos',
@@ -438,6 +439,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mustBeGeneral: true,
     max: 1,
     profiles: [WSORAYCH_PROFILE],
     specialRules: [

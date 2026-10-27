@@ -167,6 +167,13 @@ export function assertArmyIntegrity(army: Army): Army {
       // Only characters ride mounts.
       if (!u.isCharacter) fail(`${u.id}: has mounts but is not a character`)
     }
+    // OLD-71: a required mount needs mounts to choose from, or every entry
+    // would warn with no way to clear it.
+    if (u.mountRequired && !u.mounts?.length) fail(`${u.id}: mountRequired without mounts`)
+    // OLD-71: a character the page makes the General must be one who can be.
+    if (u.mustBeGeneral && (!u.isCharacter || u.canBeGeneral === false)) {
+      fail(`${u.id}: mustBeGeneral on a unit that cannot be the General`)
+    }
 
     // Fixed magic items and fixed extras (OLD-63): a character's own page
     // prices them on every entry, so a dangling id would silently price 0 and

@@ -249,7 +249,7 @@ const PRINCE_MOUNTS: MountOption[] = [
   TIRANOC_CHARIOT_MOUNT,
 ]
 
-/** Imrik must ride one of the three dragons (p.86). */
+/** Imrik must ride one of the three dragons: "Imrik siempre monta un Dragón" (p.94). */
 const IMRIK_MOUNTS: MountOption[] = [DRAGON_MOUNT, GREAT_DRAGON_MOUNT, EMPEROR_DRAGON_MOUNT]
 
 // --- Fixed (non-selectable) mounts parsed from the special-character rule text.
@@ -573,6 +573,7 @@ const units: UnitProfile[] = [
     canBeGeneral: true,
     max: 1,
     mounts: IMRIK_MOUNTS,
+    mountRequired: true,
     fixedMagicItems: [{ id: 'mi-star-lance', included: true }],
     options: [itemsOnTop(105, 'p.94', 275, 'Star Lance 60, Horn of the Dragon 15, Armour of Caledor 30 (105 pts)', 'Lanza Estelar 60, Cuerno del Dragón 15, Armadura de Caledor 30 (105 pts)')],
     specialRules: [

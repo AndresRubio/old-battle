@@ -49,6 +49,15 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
     }
   }
 
+  // A character his page makes the General whenever he is taken (Archaon,
+  // Paladines del Caos p.16). Raised on his entry, whatever else is wrong with
+  // the General, so a stale or half-built list still says who must lead it.
+  for (const e of roster.entries) {
+    if (e.isGeneral) continue
+    const unit = findUnit(army, e.unitId)
+    if (unit?.mustBeGeneral) raise('error', 'must-be-general', { unit }, e.id)
+  }
+
   // --- Battle Standard Bearer -------------------------------------------
   // An army has one BSB. Only checked once a character is TOGGLED into the
   // role (entry.isBSB): overlaps among dedicated BSB units alone are already
@@ -252,6 +261,13 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
           raise('warning', 'option-requires-mount', { unit, option }, e.id)
         }
       }
+    }
+
+    // A character who always rides one of his mounts (Imrik, Altos Elfos p.94).
+    // A roster saved before the flag may hold him on foot, or on a mount id
+    // the unit no longer offers: both count as no mount.
+    if (unit.mountRequired && unit.mounts?.length && !unit.mounts.some((m) => m.id === e.mountId)) {
+      raise('warning', 'mount-required', { unit, mounts: unit.mounts }, e.id)
     }
 
     // A mount that requires an option (e.g. a daemonic mount needs the matching

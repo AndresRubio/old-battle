@@ -481,3 +481,35 @@ describe('counted options', () => {
     expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/or\/m\/mh: counted options are not supported on mounts/)
   })
 })
+
+// OLD-71: the two page requirements a special character can carry.
+describe('assertArmyIntegrity — mountRequired and mustBeGeneral (OLD-71)', () => {
+  const lord = (over: Partial<UnitProfile>) =>
+    unit({ id: 'im', role: 'character', isCharacter: true, characterRank: 'lord', ...over })
+  const withUnit = (u: UnitProfile) => army({ units: [u] })
+
+  it('accepts a required mount with mounts to choose from', () => {
+    const ok = lord({ mountRequired: true, mounts: [{ id: 'm', name: 'Dragon', points: 450 }] })
+    expect(assertArmyIntegrity(withUnit(ok))).toBeTruthy()
+  })
+
+  it('throws when mountRequired has no mounts to ride', () => {
+    expect(() => assertArmyIntegrity(withUnit(lord({ mountRequired: true })))).toThrow(/im: mountRequired without mounts/)
+    expect(() => assertArmyIntegrity(withUnit(lord({ mountRequired: true, mounts: [] })))).toThrow(
+      /im: mountRequired without mounts/,
+    )
+  })
+
+  it('accepts mustBeGeneral on a character who may be the General', () => {
+    expect(assertArmyIntegrity(withUnit(lord({ mustBeGeneral: true, canBeGeneral: true })))).toBeTruthy()
+  })
+
+  it('throws when mustBeGeneral is on a unit that cannot be the General', () => {
+    expect(() => assertArmyIntegrity(withUnit(lord({ mustBeGeneral: true, canBeGeneral: false })))).toThrow(
+      /im: mustBeGeneral on a unit that cannot be the General/,
+    )
+    expect(() => assertArmyIntegrity(withUnit(unit({ id: 'im', mustBeGeneral: true })))).toThrow(
+      /im: mustBeGeneral on a unit that cannot be the General/,
+    )
+  })
+})

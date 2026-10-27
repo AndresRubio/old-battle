@@ -761,3 +761,31 @@ describe('EntryRow page item limits (OLD-69)', () => {
   })
 })
 
+
+// OLD-71: Altos Elfos p.94, "Imrik siempre monta un Dragón". The selector offers
+// only his three dragons, never "On foot".
+describe('EntryRow required mount (OLD-71)', () => {
+  const he = getArmy('high-elves')!
+  const heProps = { ...props, actions: entryActions(() => {}, he, 'e1') }
+  const chips = () => Array.from(container.querySelectorAll('.mount-chip')).map((el) => el.textContent ?? '')
+
+  it('offers Imrik his dragons and no on-foot choice', () => {
+    render(<EntryRow entry={entry('he-imrik', { size: 1, mountId: 'mount-dragon' })} army={he} {...heProps} />)
+    expand()
+    expect(chips()).toEqual(['Dragon +450', 'Great Dragon +600', 'Emperor Dragon +750'])
+    expect(labels()).toEqual(['Rider', 'Dragon'])
+  })
+
+  it('renders a stale on-foot Imrik with no chip ticked rather than crashing', () => {
+    render(<EntryRow entry={entry('he-imrik', { size: 1 })} army={he} {...heProps} />)
+    expand()
+    expect(chips()).toHaveLength(3)
+    expect(container.querySelectorAll('.mount-chip input:checked')).toHaveLength(0)
+  })
+
+  it('still offers "On foot" to a character whose mount is optional', () => {
+    render(<EntryRow entry={entry('he-general', { size: 1 })} army={he} {...heProps} />)
+    expand()
+    expect(chips()[0]).toBe('On foot')
+  })
+})

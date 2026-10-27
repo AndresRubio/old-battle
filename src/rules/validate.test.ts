@@ -7,6 +7,7 @@ import {
   type Army,
   type Roster,
   type RosterEntry,
+  type UnitProfile,
 } from '../data/types'
 import { getArmy } from '../data/armies'
 
@@ -1613,5 +1614,108 @@ describe('OLD-69 — master runes on rune groups are unique in the army', () => 
     const vs = unique([kazador, entry({ unitId: 'dw-kragg-the-grim' })])
     expect(vs).toHaveLength(1)
     expect(vs[0].message).toContain('Master Rune of Adamant')
+  })
+})
+
+// OLD-71: Paladines del Caos p.16, "Si un ejército incluye a Archaon éste será su General".
+describe('OLD-71 — a character who must be the General (must-be-general)', () => {
+  const warlord: UnitProfile = {
+    id: 'warlord', name: 'Warlord', nameEs: 'Caudillo', role: 'character', pointsPerModel: 200,
+    isCharacter: true, characterRank: 'lord', canBeGeneral: true, mustBeGeneral: true,
+  }
+  const withWarlord: Army = { ...army, units: [...army.units, warlord] }
+  const found = (entries: RosterEntry[], lang: 'en' | 'es' = 'en') =>
+    validateRoster(roster(0, entries), withWarlord, lang).filter((v) => v.rule === 'must-be-general')
+
+  it('is an error on his entry while another character is the General', () => {
+    const vs = found([entry({ unitId: 'lord', isGeneral: true }), entry({ id: 'w', unitId: 'warlord' })])
+    expect(vs).toHaveLength(1)
+    expect(vs[0].severity).toBe('error')
+    expect(vs[0].entryId).toBe('w')
+  })
+
+  it('is raised too when nobody is the General (beside no-general)', () => {
+    const vs = validateRoster(roster(0, [entry({ id: 'w', unitId: 'warlord' })]), withWarlord)
+    expect(rules(vs)).toEqual(expect.arrayContaining(['no-general', 'must-be-general']))
+  })
+
+  it('says nothing when he is the General, or not in the army', () => {
+    expect(found([entry({ unitId: 'warlord', isGeneral: true })])).toEqual([])
+    expect(found([entry({ unitId: 'lord', isGeneral: true })])).toEqual([])
+  })
+
+  it('reads in English and Spanish', () => {
+    const entries = [entry({ unitId: 'lord', isGeneral: true }), entry({ unitId: 'warlord' })]
+    expect(found(entries, 'en')[0].message).toBe('Warlord: must be the army General.')
+    expect(found(entries, 'es')[0].message).toBe('Caudillo: debe ser el General del ejército.')
+  })
+
+  it('Archaon must be the General; Mazdamundi stays optional (owner decision)', () => {
+    const chaos = getArmy('chaos')!
+    const chaosFound = (entries: RosterEntry[]) =>
+      validateRoster({ id: 'r', name: 't', armyId: 'chaos', pointsLimit: 0, entries }, chaos)
+        .filter((v) => v.rule === 'must-be-general')
+    expect(chaosFound([entry({ unitId: 'ch-lord', isGeneral: true }), entry({ id: 'a', unitId: 'ch-archaon' })])
+      .map((v) => v.entryId)).toEqual(['a'])
+    expect(chaosFound([entry({ unitId: 'ch-archaon', isGeneral: true })])).toEqual([])
+    const lz = getArmy('lizardmen')!
+    const lzVs = validateRoster(
+      { id: 'r', name: 't', armyId: 'lizardmen', pointsLimit: 0, entries: [
+        entry({ unitId: 'lz-slann', isGeneral: true }), entry({ unitId: 'lz-lord-mazdamundi' }),
+      ] },
+      lz,
+    )
+    expect(rules(lzVs)).not.toContain('must-be-general')
+  })
+})
+
+// OLD-71: Altos Elfos p.94, "Imrik siempre monta un Dragón".
+describe('OLD-71 — a character who must ride a mount (mount-required)', () => {
+  const rider: UnitProfile = {
+    id: 'rider', name: 'Dragon Rider', nameEs: 'Jinete de Dragón', role: 'character', pointsPerModel: 100,
+    isCharacter: true, characterRank: 'lord', mountRequired: true,
+    mounts: [
+      { id: 'drake', name: 'Drake', nameEs: 'Draco', points: 50 },
+      { id: 'wyvern', name: 'Wyvern', nameEs: 'Guiverno', points: 80 },
+    ],
+  }
+  const withRider: Army = { ...army, units: [...army.units, rider] }
+  const found = (e: RosterEntry, lang: 'en' | 'es' = 'en') =>
+    validateRoster(roster(0, [e]), withRider, lang).filter((v) => v.rule === 'mount-required')
+
+  it('warns on an entry with no mount (a roster saved before the rule)', () => {
+    const vs = found(entry({ id: 'x', unitId: 'rider' }))
+    expect(vs).toHaveLength(1)
+    expect(vs[0].severity).toBe('warning')
+    expect(vs[0].entryId).toBe('x')
+  })
+
+  it('warns on a mount id the unit does not offer, without throwing', () => {
+    expect(found(entry({ unitId: 'rider', mountId: 'gone' }))).toHaveLength(1)
+  })
+
+  it('says nothing once he rides one of his mounts', () => {
+    expect(found(entry({ unitId: 'rider', mountId: 'wyvern' }))).toEqual([])
+  })
+
+  it('names his mounts in English and Spanish', () => {
+    expect(found(entry({ unitId: 'rider' }), 'en')[0].message).toBe(
+      'Dragon Rider: must ride Drake / Wyvern; choose a mount.',
+    )
+    expect(found(entry({ unitId: 'rider' }), 'es')[0].message).toBe(
+      'Jinete de Dragón: debe montar Draco / Guiverno; elige una montura.',
+    )
+  })
+
+  it('Imrik on foot is flagged, on a dragon he is not', () => {
+    const he = getArmy('high-elves')!
+    const imrik = (mountId?: string) =>
+      validateRoster(
+        { id: 'r', name: 't', armyId: 'high-elves', pointsLimit: 0, entries: [entry({ unitId: 'he-imrik', isGeneral: true, mountId })] },
+        he,
+      ).filter((v) => v.rule === 'mount-required')
+    expect(imrik()).toHaveLength(1)
+    expect(imrik('mount-dragon')).toEqual([])
+    expect(imrik('mount-emperor-dragon')).toEqual([])
   })
 })

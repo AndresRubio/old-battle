@@ -3628,3 +3628,24 @@ describe('special characters charge their unit and option costs (OLD-71)', () =>
     })
   })
 })
+
+// OLD-71: the page requirements a special character carries. Archaon must be
+// the General (Paladines del Caos p.16); Imrik always rides a dragon (Altos
+// Elfos p.94). Owner decisions: Mazdamundi stays optional as General, and
+// Grom's chariot stays a fixed extra, so neither carries a flag.
+describe('special characters bound by their page (OLD-71)', () => {
+  const flagged = (flag: 'mustBeGeneral' | 'mountRequired') =>
+    ARMIES.flatMap((a) => a.units.filter((u) => u[flag]).map((u) => u.id))
+
+  it('only Archaon must be the General', () => {
+    expect(flagged('mustBeGeneral')).toEqual(['ch-archaon'])
+  })
+
+  it('only Imrik must ride a mount, and his mounts are the three dragons', () => {
+    expect(flagged('mountRequired')).toEqual(['he-imrik'])
+    const imrik = getArmy('high-elves')!.units.find((u) => u.id === 'he-imrik')!
+    expect(imrik.mounts!.map((m) => [m.id, m.points])).toEqual([
+      ['mount-dragon', 450], ['mount-great-dragon', 600], ['mount-emperor-dragon', 750],
+    ])
+  })
+})

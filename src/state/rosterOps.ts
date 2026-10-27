@@ -48,6 +48,10 @@ export function defaultSize(unit: UnitProfile): number {
   return unit.minSize ?? 1
 }
 
+/**
+ * Add a new entry for `unit` at its default size. A character who always rides
+ * a mount (`mountRequired`, OLD-71) starts on the first one his page lists.
+ */
 export function addEntry(roster: Roster, unit: UnitProfile, id?: string): Roster {
   const entry: RosterEntry = {
     id: id ?? genId('entry'),
@@ -55,6 +59,7 @@ export function addEntry(roster: Roster, unit: UnitProfile, id?: string): Roster
     size: defaultSize(unit),
     optionIds: [],
     magicItemIds: [],
+    ...(unit.mountRequired && unit.mounts?.length ? { mountId: unit.mounts[0].id } : {}),
   }
   return { ...roster, entries: [...roster.entries, entry] }
 }
@@ -176,12 +181,15 @@ export function toggleMagicItem(roster: Roster, entryId: string, itemId: string,
  * Select the character's mount, or clear it with `null`. Option ids that belong
  * to a DIFFERENT mount's nested options (e.g. a chariot's extra crew after
  * switching to a boar) are dropped — they would linger as stale selections.
- * Unit-own options are always kept.
+ * Unit-own options are always kept. A character who always rides a mount
+ * (`mountRequired`, OLD-71) may change it but not be put on foot: `null`
+ * leaves the roster unchanged.
  */
 export function selectMount(roster: Roster, entryId: string, army: Army, mountId: string | null): Roster {
   const entry = roster.entries.find((e) => e.id === entryId)
   if (!entry) return roster
   const unit = army.units.find((u) => u.id === entry.unitId)
+  if (mountId === null && unit?.mountRequired) return roster
   const otherMountOptionIds = new Set(
     (unit?.mounts ?? [])
       .filter((m) => m.id !== mountId)
