@@ -249,6 +249,8 @@ const STRINGS = {
   fixedItem: { en: 'fixed', es: 'fijo' },
   includedInCost: { en: 'included', es: 'incluido' },
   fixedEquipment: { en: 'Fixed equipment', es: 'Equipo fijo' },
+  // OLD-69: an item a special character's page does not let him take.
+  itemNotForCharacter: { en: 'Not available to this character', es: 'Este personaje no puede llevarlo' },
   magicStandard: { en: 'Magic Standard', es: 'Estandarte Mágico' },
   magicStandardNone: { en: 'No magic standard', es: 'Sin estandarte mágico' },
   magicStandardNeedsBearer: {
