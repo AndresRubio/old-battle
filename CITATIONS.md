@@ -1489,6 +1489,8 @@ his (p.70).
 
 Skaven: Lord Skrolk (p.70) may carry up to three items, two of them always the Staff of Corruption and the Liber Bubonicus, so his allowance moves from 2 to 3 (one free pick). Deathmaster Snikch (p.73) up to three, the first two the Brazaletes and the Capa (2 to 3). Warlord Queek (p.74) up to four, the first two the Degolladora and the Armadura (3 to 4). The Verminlord (p.62) has only the Doom Glaive, which has no item card, and no other item (4 to 0). Throt (p.72) stays at two; the rule that his first item must be the Warpstone Amulet is not enforced.
 
+**Unit and option costs (OLD-71, 2026-10-27).** Enanos p.83: "Si el General es el Alto Rey de los Enanos, podrá entrar en combate sobre el Trono del Poder y acompañado por cuatro porteadores. El valor en puntos total del Trono y sus porteadores es de 140 puntos." The Dwarf General (160) now has the same flat `throne-of-power` option as Thorgrim, 140 points, whose description says it is only for a General who is the High King: 160 to 300 with the Throne.
+
 #### Wood Elves: special characters' extra costs (OLD-63, 2026-10-26)
 **Wood Elves, Elfos Silvanos (1996, ES) printed pp.70-80.** Each page prints its extras under the
 headline as `+N puntos: <objeto>`. Items in the pool are fixed at their card price, which matches
@@ -1687,6 +1689,17 @@ Item ids are unchanged, so saved rosters are unaffected.
 **Rule texts corrected (OLD-68, 2026-10-27).** Norse (Norsca, printed p.20): Erik Redaxe's Invocation of Thor lasts the turn it is invoked and the next, strikes one chosen enemy unit (not two) with D6 S4 hits at the start of each of those turns, and only magic armour saves against it. Chaos (Paladines del Caos p.34): Scyla's Señor is any character named for the role, with no Khorne requirement, and Scyla follows the Chaos Spawn rules (same profile) if his Señor dies or leaves the battlefield. Dogs of War (p.64): Lucrezzia's Stunning Beauty only rallies friendly fleeing units within 6" of her at the start of her turn; the opponents' lost attack is not in the book.
 
 **Magic item limits (OLD-69, 2026-10-27).** Paladines del Caos p.21: Count Mordrek has three items, the Sword of Transformation, the Chaos Runeshield and the Reward Eternal Damnation, and "no puede poseer otros". The Reward is not an item card, so his allowance moves from 3 to 2 and he may buy nothing. Arbaal (p.29) has two Rewards and no other item (3 to 0). Egrimm van Horstmann (p.33) has the Rune Sword, the Chaos Familiar, the Skull of Katam and a Reward, all inside his 521, and no others (4 to 0). Khazrak (p.43) has one item, the Scourge, and no other (3 to 0). Dogs of War (Mercenarios p.65): Mydas the Mean has a single item, the Treasure Map, inside his 210, and may be given no more. The map is not an item card, so his allowance moves from 1 to 0, which also stops a Battle Standard Bearer Mydas from buying a banner.
+
+**Unit and option costs (OLD-71, 2026-10-27).** Each cost a page charges to a unit or to an option is now bought in the app, priced where the book says it is paid from.
+
+| Character | Page | Book | Data |
+|---|---|---|---|
+| Archaon | Paladines del Caos p.17 | One regiment of Chaos Warriors or Chaos Knights of his host may be the Swords of Chaos, "+2 puntos por miniatura si es un Guerrero del Caos, y +4 puntos por miniatura si es un Caballero del Caos"; they hate all enemies | Regiments `ch-swords-of-chaos-warriors` (24 + 2 = 26 a model) and `ch-swords-of-chaos-knights` (66 + 4 = 70), same kit and options as the plain regiments; at most one of the two (`unitGroupCaps`), only with Archaon (`dependencies`). 10 Warriors cost 260, 5 Knights 350, in Regiments |
+| Khazrak | Paladines del Caos p.42 | His host "ha de incluir como mínimo una unidad de Mastines del Caos, cuyo valor en puntos será de 10 puntos por miniatura" | Regiment `ch-khazrak-hounds`, 10 a model, 0-1, no command group; it needs Khazrak and Khazrak needs it (owner decision on the issue: one unit). The Beastman-host and Warrior-host hounds stay at 12 |
+| Bertrand | Bretonnia p.71 | 83 points "+1 extra point per Bowman in the regiment", paid "from the allowance for regiments"; the Bowmen of Bergerac never wear armour and take a standard bearer and musician in the normal way | Regiment `br-bowmen-of-bergerac`, 8 + 1 = 9 a model, no armour option, 0-1, command group at double a model (18); it needs Bertrand and Bertrand needs it. Bertrand stays 83 in Characters; 10 Bowmen cost 90 in Regiments |
+| Paymaster | Mercenarios p.28 | Money Lender "+25 points"; "between 5 and 20 bodyguards ... Each bodyguard costs 12 points"; shields "+1 point per model"; standard bearer and musician "each costing double the points of a normal trooper" | Options on `dow-paymaster`, all in Characters (owner decision on the issue, Mydas's pattern): Money Lender 25, Bodyguard (5 models) 60, extra bodyguards 12 each up to 15, bodyguard shields 1 each up to 20, standard bearer and musician 24 each. 125 to 458 with everything |
+
+The unused generic `BSB_UPGRADE` (+25, id `bsb`) left `src/data/unitOptions.ts`: no unit used it since the first commit, and each book prints its own Battle Standard price.
 
 #### High Elves: special characters' extra costs (OLD-63, 2026-10-26)
 **Altos Elfos (1997, ES) printed pp.81-94.** Each character's page prints the headline in its title
