@@ -197,6 +197,27 @@ export function assertArmyIntegrity(army: Army): Army {
       }
       const dupExtras = dupes(u.fixedExtras.map((x) => x.id))
       if (dupExtras.length) fail(`${u.id}: duplicate fixed extra ids: ${dupExtras.join(', ')}`)
+      // OLD-69: master runes on a rune group join army uniqueness, so each must
+      // be a real pool item, and only a runic item (a magic item) carries runes.
+      for (const x of u.fixedExtras) {
+        if (x.uniqueItemIds && !x.magicItem) {
+          fail(`${u.id}/${x.id}: uniqueItemIds on a fixed extra that is not a magic item`)
+        }
+        for (const id of x.uniqueItemIds ?? []) {
+          if (!itemIds.has(id)) fail(`${u.id}/${x.id}: unique item ${id} is not in the army's magic items`)
+        }
+      }
+    }
+    // OLD-69: the page's allow-list. A dangling id would grey out nothing and
+    // name a missing item in the warning; a fixed id is already carried.
+    if (u.allowedMagicItems) {
+      if (!u.isCharacter) fail(`${u.id}: has allowed magic items but is not a character`)
+      for (const id of u.allowedMagicItems) {
+        if (!itemIds.has(id)) fail(`${u.id}: allowed magic item ${id} is not in the army's magic items`)
+        if ((u.fixedMagicItems ?? []).some((f) => f.id === id)) {
+          fail(`${u.id}: allowed magic item ${id} is already a fixed item`)
+        }
+      }
     }
   }
 

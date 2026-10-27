@@ -369,6 +369,41 @@ describe('fixed magic items and fixed extras', () => {
     const u = hero({ fixedExtras: [{ id: 'x', name: '  ', points: 40 }] })
     expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/kf\/x: fixed extra has no name/)
   })
+
+  // OLD-69: the allow-list and the master runes inside a rune group.
+  it('accepts an allow-list and a rune group with master runes', () => {
+    const ok = hero({
+      allowedMagicItems: ['mi-b'],
+      fixedExtras: [{ id: 'x', name: 'X', points: 40, magicItem: true, uniqueItemIds: ['mi-a'] }],
+    })
+    expect(assertArmyIntegrity(withUnit(ok))).toBeTruthy()
+  })
+
+  it('throws when an allowed item is not in the army pool', () => {
+    expect(() => assertArmyIntegrity(withUnit(hero({ allowedMagicItems: ['mi-gone'] })))).toThrow(
+      /kf: allowed magic item mi-gone is not in the army's magic items/,
+    )
+  })
+
+  it('throws when an allowed item is also a fixed item', () => {
+    const u = hero({ fixedMagicItems: [{ id: 'mi-a' }], allowedMagicItems: ['mi-a'] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/kf: allowed magic item mi-a is already a fixed item/)
+  })
+
+  it('throws when an allow-list sits on a non-character', () => {
+    const regiment = unit({ id: 'r', allowedMagicItems: [] })
+    expect(() => assertArmyIntegrity(withUnit(regiment))).toThrow(/r: has allowed magic items but is not a character/)
+  })
+
+  it('throws when a fixed extra embodies an item missing from the pool', () => {
+    const u = hero({ fixedExtras: [{ id: 'x', name: 'X', points: 40, magicItem: true, uniqueItemIds: ['mi-gone'] }] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/kf\/x: unique item mi-gone is not in the army's magic items/)
+  })
+
+  it('throws when a fixed extra that is not a magic item carries unique items', () => {
+    const u = hero({ fixedExtras: [{ id: 'x', name: 'X', points: 40, uniqueItemIds: ['mi-a'] }] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/kf\/x: uniqueItemIds on a fixed extra that is not a magic item/)
+  })
 })
 
 // OLD-63 — counted options (an option bought N times, priced pointsPerModel × N
