@@ -132,8 +132,12 @@ const VAMPIRE_MOUNTS: MountOption[] = [
 ]
 
 /** Only a steed — for special characters limited to a single mount.
- *  Vampire characters take the Nightmare; others the plain Skeletal Steed. */
-const NIGHTMARE_ONLY_MOUNTS: MountOption[] = [NIGHTMARE_MOUNT]
+ *  Vlad, Isabella and Manfred ride a "Corcel Esquelético" (No Muertos pp.87-88;
+ *  OLD-68). They keep the Nightmare's id and profile so a saved roster still
+ *  prices the steed; only the labels follow the book. */
+const CARSTEIN_STEED_MOUNTS: MountOption[] = [
+  { ...NIGHTMARE_MOUNT, name: 'Skeletal Steed', nameEs: 'Corcel Esquelético' },
+]
 const SKELETAL_STEED_ONLY_MOUNTS: MountOption[] = [SKELETAL_STEED_MOUNT]
 
 // --- Fixed (non-selectable) mounts for special characters who always ride one.
@@ -738,14 +742,14 @@ const units: UnitProfile[] = [
     lores: ['necromantic'],
     canBeGeneral: true,
     max: 1,
-    mounts: NIGHTMARE_ONLY_MOUNTS,
+    mounts: CARSTEIN_STEED_MOUNTS,
     specialRules: [
       'Special character',
       'Up to 4 magic items',
       'Causes fear',
       'Immune to psychology',
-      'May ride a Nightmare (+2)',
-      'Magic items: Carstein Ring +50, Sword of Cursed Energy +75',
+      'May ride a Skeletal Steed (+2)',
+      'Magic items: Carstein Ring +50, Sword of Cursed Power +75',
     ],
   },
   {
@@ -760,13 +764,13 @@ const units: UnitProfile[] = [
     lores: ['necromantic'],
     canBeGeneral: false,
     max: 1,
-    mounts: NIGHTMARE_ONLY_MOUNTS,
+    mounts: CARSTEIN_STEED_MOUNTS,
     specialRules: [
       'Special character — may only be included if the army also includes Vlad',
       'Up to 2 magic items',
       'Causes fear',
       'Immune to psychology',
-      'May ride a Nightmare (+2)',
+      'May ride a Skeletal Steed (+2)',
     ],
   },
   {
@@ -781,14 +785,14 @@ const units: UnitProfile[] = [
     lores: ['necromantic'],
     canBeGeneral: true,
     max: 1,
-    mounts: NIGHTMARE_ONLY_MOUNTS,
+    mounts: CARSTEIN_STEED_MOUNTS,
     specialRules: [
       'Special character',
       'Great Necromancer (Wizard Level 4); auto-recovers spells',
       'Up to 4 magic items',
       'Causes fear',
       'Immune to psychology',
-      'May ride a Nightmare (+2)',
+      'May ride a Skeletal Steed (+2)',
     ],
   },
   {

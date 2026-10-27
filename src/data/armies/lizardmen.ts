@@ -645,7 +645,7 @@ const units: UnitProfile[] = [
     max: 1,
     options: [itemsOnTop(35, 'p.85', 105, 'Piranha Blade 35 (35 pts)', 'Piranha Blade 35 (35 pts)')],
     specialRules: [
-      'Special character — Skink Hero (no magic items)',
+      'Special character — Skink Hero; one magic item, always the Piranha Blade',
       'Armed with the Piranha Blade (35 pts magic weapon — each wound inflicts D3 wounds), light armour and shield',
       'Save 4+ (scaly skin; never worse than 6+)',
       'Skink — Aquatic',

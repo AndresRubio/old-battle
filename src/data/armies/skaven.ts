@@ -238,7 +238,7 @@ const units: UnitProfile[] = [
       'Special character',
       'Replaces the army Warlord as General if taken',
       'Level 4 Grey Seer wizard',
-      'Fights with claws & teeth (no armour or weapon)',
+      'No armour; fights with a sword (Boneripper uses his fangs & claws)',
       'Blessing of the Horned Rat (may pass a wound to a nearby model on 4+)',
       'May re-roll a failed Warpstone test',
       'Accompanied by his bodyguard Boneripper (+45 pts)',

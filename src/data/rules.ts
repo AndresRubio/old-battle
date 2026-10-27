@@ -715,7 +715,7 @@ export const TAG_RULE_OVERRIDES: Record<string, string | null> = {
   'Bow or javelin poison tips +1 pt (hits at +1 Strength)': 'poisoned-attacks',
   'Shoot on the Wing — may shoot crossbows while flying with no move penalty (cannot shoot on foot)': 'flying',
   // Named mounts whose barding is part of a special profile.
-  'Rides Malhandir (M12" WS4 S4 T3 W1 I5 A2 Ld7) with Dragon Armour barding (2+ save)': null,
+  'Rides barded Malhandir (M12" WS4 S4 T3 W1 I5 A2 Ld7); Dragon Armour of Aenarion: 1+ save mounted (3+ on foot), no shield, 4+ special save if the armour save fails': null,
   "Rides W'Soraych, the Apocalypse Steed (M30→12\", WS6, S5, T4, I6, A3) with barding": null,
 }
 

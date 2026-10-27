@@ -905,7 +905,7 @@ const units: UnitProfile[] = [
     mounts: ORC_SPECIAL_MOUNTS,
     specialRules: [
       'Special character (Orc Big Boss)',
-      'Light armour, shield & magic sword',
+      'Light armour, shield & a huge sword',
       'Hatred of Dwarfs',
       'May ride War Boar (+8 pts), a monster or a chariot',
       'Up to 2 magic items',

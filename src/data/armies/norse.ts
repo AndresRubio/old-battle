@@ -255,7 +255,7 @@ const units: UnitProfile[] = [
       'Special character — replaces the General of the Norse (0-1); cost includes his axe Battle-Troll (+75)',
       'Sword, light armour and shield; Counter-charge; may form a shield wall with Huscarls',
       'Ignore Pain — on 0 wounds he is laid down instead of removed; recovers on a D6 roll of 4+ each turn',
-      'Invocation of Thor — once per game: missile fire reduced to short range at -1 to hit; lightning strikes D6 S4 hits on two chosen enemy units; enemies within 12" fear Norse warriors',
+      'Invocation of Thor — once per game, lasting this turn and the next: missile fire reduced to short range at -1 to hit; at the start of each of those turns lightning strikes D6 S4 hits on one chosen enemy unit (only magic armour saves); enemies within 12" fear Norse warriors',
       'Fear — Erik Redaxe causes fear',
       'Up to 3 magic items, one of which is always Battle-Troll',
     ],

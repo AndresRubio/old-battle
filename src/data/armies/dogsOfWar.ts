@@ -205,7 +205,7 @@ const units: UnitProfile[] = [
     specialRules: [
       'Special character — Hireling Sorceress; replaces the Hireling Wizard (0-1)',
       'Sword; rides a warhorse; 3 Battle Magic spells',
-      'Stunning Beauty — friendly fleeing units within 6" rally automatically; hand-to-hand opponents lose their first attack each round',
+      'Stunning Beauty — any friendly fleeing unit within 6" of her at the start of her turn rallies immediately',
       'Fixed Poisonous Items: Phial of Poison, Poisoned Stiletto, Potion of Pavona',
     ],
   },
