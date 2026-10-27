@@ -1421,6 +1421,8 @@ Ludwig (p.69) and Magnus (p.68-69) do not change.
 
 **Profiles corrected (OLD-67, 2026-10-26).** Volkmar (Imperio p.69) prints W3 I5 A3, the data had W4 I3 A5. Aldebrand Ludenhof (p.72) and Marius Leitdorf (p.73) print BS5 like the other Elector Counts, the data had BS4.
 
+**Magic item limits (OLD-69, 2026-10-27).** Imperio p.72: Boris Todbringer "tiene dos objetos mágicos", the Runefang and the Talisman of Ulric, and Aldebrand Ludenhof "posee un sólo objeto mágico", a Runefang. p.73: Valmir von Raukov "tiene dos objetos mágicos", the Runefang and the Dragon Bow, and Marius Leitdorf "tiene un objeto mágico", a Runefang. Their allowance moves from a lord's 3 to 2, 1, 2 and 1, all filled by their fixed items, and they may buy no other item. Ludwig Schwartzhelm (p.69) may be armed with the Sword of Justice (+50) and "no puede tener ningún otro objeto mágico": his allowance moves from a hero's 2 to 1, the sword stays optional (OLD-63 ruling), and no other item may be bought, a magic banner as Battle Standard Bearer included.
+
 #### Dwarfs and Skaven: special characters' extra costs (OLD-63, 2026-10-26)
 **Dwarfs, Enanos (1995, ES) printed pp.90-96.** Each page prints a cost table of the form
 `<character> N puntos / +Runas de Arma / +Runas de Defensa / +Runas Talismánicas`. The runes are
@@ -1482,6 +1484,10 @@ his (p.70).
 **Profiles corrected (OLD-67, 2026-10-26).** Dwarfs (Enanos): Felix Jaeger (p.93) prints T4 I5 Ld8, the data had T5 I4 Ld10, which is Bugman's row. His BS stays 5 and M4 WS6 W2 A3 were right; the OLD-67 issue text read BS4 T3 from the same row, and a 300 dpi crop gives BS5 T4. Ungrim Ironfist (p.91) prints M8cm WS7 BS6 S4 T5 W3 I5 A4 Ld10, so the data row was shifted one column; T5 is the base value, the Crown of the Slayers' +1 Toughness stays in the rules text like Kragg's and Bugman's.
 
 **Rule texts corrected (OLD-68, 2026-10-27).** Skaven (p.69): Thanquol wears no armour and fights with a sword, and only Destripahuesos fights with fangs and claws; the tag said claws and teeth for Thanquol himself. Ikit Claw (pp.71-72): the book calls the Tormenta Demoníaca a halberd-type weapon, and Warhammer Magia (p.42) prints "Arma a Dos Manos" and "El personaje no podrá poseer ninguna otra arma mágica". The item moved from the arcane category to weapon, so the one-magic-weapon rule now blocks a second weapon on Ikit, and its Spanish name carries the accent (Tormenta Demoníaca). His 25 points are unchanged.
+
+**Magic item limits (OLD-69, 2026-10-27).** Enanos p.24 and p.80 count runic items as magic items under the max-items table, so each rune group of a special character now uses one slot (owner decision on the issue). Kazador (lord, three rune groups, p.90), Ungrim (lord, three, p.91), Burlok (hero, two, p.96) and Bugman (hero, his rune axe and the Tankard, p.95) have no free pick left. Kragg the Grim (p.92) prints no count; his statline is the Gran Herrero Rúnico row, and p.84 gives a Runesmith "de cualquier tipo" up to three items, so his allowance moves from a hero's 2 to 3, all filled by his three runic items. The same p.84 rule (and p.80) moves the Runesmith, Master Runesmith and Rune Lord from 2 to 3. Gotrek's axe is the only magic item he may have and Felix's sword the only one he may have (p.94, Maldición de Gotrek): Gotrek moves from 3 to 1 and Felix from 2 to 1, and neither may buy anything. Law 4 (p.24, Runas Celosas) forbids using a master rune more than once, so the master runes on the rune groups now count for army uniqueness: Kazador's Death, Adamant and Dread (p.90), Ungrim's Spite (p.91), Kragg's Adamant (p.92) and Burlok's Swiftness (p.96). Kazador and Kragg both bear the Master Rune of Adamant, so fielding both raises the duplicate-item error (owner decision). Kragg's own Master Rune of Kragg is not a buyable item.
+
+Skaven: Lord Skrolk (p.70) may carry up to three items, two of them always the Staff of Corruption and the Liber Bubonicus, so his allowance moves from 2 to 3 (one free pick). Deathmaster Snikch (p.73) up to three, the first two the Brazaletes and the Capa (2 to 3). Warlord Queek (p.74) up to four, the first two the Degolladora and the Armadura (3 to 4). The Verminlord (p.62) has only the Doom Glaive, which has no item card, and no other item (4 to 0). Throt (p.72) stays at two; the rule that his first item must be the Warpstone Amulet is not enforced.
 
 #### Wood Elves: special characters' extra costs (OLD-63, 2026-10-26)
 **Wood Elves, Elfos Silvanos (1996, ES) printed pp.70-80.** Each page prints its extras under the
@@ -1680,6 +1686,8 @@ Item ids are unchanged, so saved rosters are unaffected.
 
 **Rule texts corrected (OLD-68, 2026-10-27).** Norse (Norsca, printed p.20): Erik Redaxe's Invocation of Thor lasts the turn it is invoked and the next, strikes one chosen enemy unit (not two) with D6 S4 hits at the start of each of those turns, and only magic armour saves against it. Chaos (Paladines del Caos p.34): Scyla's Señor is any character named for the role, with no Khorne requirement, and Scyla follows the Chaos Spawn rules (same profile) if his Señor dies or leaves the battlefield. Dogs of War (p.64): Lucrezzia's Stunning Beauty only rallies friendly fleeing units within 6" of her at the start of her turn; the opponents' lost attack is not in the book.
 
+**Magic item limits (OLD-69, 2026-10-27).** Paladines del Caos p.21: Count Mordrek has three items, the Sword of Transformation, the Chaos Runeshield and the Reward Eternal Damnation, and "no puede poseer otros". The Reward is not an item card, so his allowance moves from 3 to 2 and he may buy nothing. Arbaal (p.29) has two Rewards and no other item (3 to 0). Egrimm van Horstmann (p.33) has the Rune Sword, the Chaos Familiar, the Skull of Katam and a Reward, all inside his 521, and no others (4 to 0). Khazrak (p.43) has one item, the Scourge, and no other (3 to 0). Dogs of War (Mercenarios p.65): Mydas the Mean has a single item, the Treasure Map, inside his 210, and may be given no more. The map is not an item card, so his allowance moves from 1 to 0, which also stops a Battle Standard Bearer Mydas from buying a banner.
+
 #### High Elves: special characters' extra costs (OLD-63, 2026-10-26)
 **Altos Elfos (1997, ES) printed pp.81-94.** Each character's page prints the headline in its title
 and a price beside every item, and never says whether the headline holds the items. The owner
@@ -1708,6 +1716,8 @@ other items on these pages are not in the pool and stay as text and option sum o
 
 **Rule texts corrected (OLD-68, 2026-10-27).** Altos Elfos: Tyrion (p.92) has an armour save of 1+ with the Armadura del Dragón de Aenarion when mounted on Malhandir (Warhammer Magia p.47 adds 3+ on foot), cannot use a shield, and has a 4+ special save if the armour save fails. The save belongs to Tyrion's armour; Malhandir only wears the barding, so the old "barding, 2+ save" wording moved to Tyrion's tag and Malhandir's tag now says Tyrion saves on 1+ when mounted. The armour stays at 75 points as on his page (the Magia card prints 70). Alith Anar (p.82) fights on foot: he is a skirmisher leader (a High Elf infantry unit he leads may skirmish) with a special deployment after the enemy, which the unit he joins does not gain; the tag called him fast cavalry.
 
+**Magic item limits (OLD-69, 2026-10-27).** Altos Elfos p.82: Alith Anar always carries the Stone of Midnight, the Shadow Crown and the Moonbow, and "No puede poseer otros objetos mágicos". Alarielle's page (p.84, her items on p.87) gives her the Star of Avelorn, the Jewel Shield of Isha and the Sceptre of Avelorn, and "no puede poseer ningún otro objeto mágico". None of their items is a pool card, so their allowance moves from 3 and 4 to 0 and they may buy nothing.
+
 #### Lizardmen: special characters' extra costs (OLD-63, 2026-10-26)
 **Warhammer Armies: Lizardmen (1997, EN) printed pp.79-89.** Same case as the High Elves: each
 page prints a cost beside a headline and a price beside every item, and does not say whether the
@@ -1727,6 +1737,8 @@ Tenehuini with `included: true` (owner approval, 2026-10-26), so it cannot be bo
 **Profile corrected (OLD-67, 2026-10-26).** Oxayotl (Hombres Lagarto p.83): the printed Toughness is 4, the data had 3. The rest of his row (M6 WS4 BS5 S4 W3 I7 A3 Ld7) was right.
 
 **Rule text corrected (OLD-68, 2026-10-27).** Hombres Lagarto (English, p.85): Itzi-Bitzi carries a single magic item, the Piranha Blade, so the tag no longer says "no magic items". The Spanish tag calls it Hoja Piraña; the Piranha Blade has no item card of its own.
+
+**Magic item limit (OLD-69, 2026-10-27).** Lizardmen (English, p.85): Itzi-Bitzi carries one magic item, always the Piranha Blade, which has no item card. His allowance moves from a hero's 2 to 0 and he may buy nothing.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary
