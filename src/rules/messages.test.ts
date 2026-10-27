@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { ruleMessage } from './messages'
-import type { UnitProfile } from '../data/types'
+import type { MagicItem, UnitProfile } from '../data/types'
 
 const unit: UnitProfile = {
   id: 'emp-general',
@@ -52,6 +52,26 @@ describe('ruleMessage', () => {
     )
     expect(ruleMessage('options-exclusive-group', { unit, group: 'other-grp', count: 2 }, 'en')).toContain(
       'other-grp',
+    )
+  })
+
+  // OLD-69: a character whose page names the only items he may carry.
+  it('magic-items-not-allowed names the item, and the allowed ones when there are any', () => {
+    const ludwig: UnitProfile = { ...unit, id: 'emp-ludwig', name: 'Ludwig Schwartzhelm', nameEs: 'Ludwig Schwartzhelm' }
+    const charm: MagicItem = { id: 'mi-charm', name: 'Lucky Charm', nameEs: 'Amuleto de la Suerte', category: 'talisman', points: 15 }
+    const sword: MagicItem = { id: 'mi-sword', name: 'Sword of Justice', nameEs: 'Espada de la Justicia', category: 'weapon', points: 50 }
+    const bow: MagicItem = { id: 'mi-bow', name: 'Dragon Bow', nameEs: 'Arco del Dragón', category: 'weapon', points: 40 }
+    expect(ruleMessage('magic-items-not-allowed', { unit, item: charm, allowed: [] }, 'en')).toBe(
+      'Empire General: may carry no magic items besides their own (Lucky Charm is not allowed).',
+    )
+    expect(ruleMessage('magic-items-not-allowed', { unit, item: charm, allowed: [] }, 'es')).toBe(
+      'General Imperial: no puede llevar más objetos mágicos que los suyos (Amuleto de la Suerte no está permitido).',
+    )
+    expect(ruleMessage('magic-items-not-allowed', { unit: ludwig, item: charm, allowed: [sword] }, 'en')).toBe(
+      'Ludwig Schwartzhelm: may only take Sword of Justice; Lucky Charm is not allowed.',
+    )
+    expect(ruleMessage('magic-items-not-allowed', { unit: ludwig, item: charm, allowed: [sword, bow] }, 'es')).toBe(
+      'Ludwig Schwartzhelm: sólo puede llevar Espada de la Justicia, Arco del Dragón; Amuleto de la Suerte no está permitido.',
     )
   })
 })

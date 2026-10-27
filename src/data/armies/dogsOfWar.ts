@@ -226,6 +226,10 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 5, BS: 5, S: 4, T: 4, W: 2, I: 5, A: 3, Ld: 8 },
     isCharacter: true,
     characterRank: 'champion',
+    // Mercenarios p.65 (OLD-69): the Treasure Map is his one item and no other may be given;
+    // the map is inside the 210 and is not a pool card.
+    magicItemSlots: 0,
+    allowedMagicItems: [],
     canBeBSB: true,
     max: 1,
     specialRules: [

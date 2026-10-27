@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine, StatNotes } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
 import { carriedMagicItems, countedOptionCount, effectiveStatLine, entryPoints, findUnit, mountOptionCost, unitOptionCost } from '../rules/points'
-import { magicItemAllowance } from '../rules/magicItems'
+import { isMagicItemAllowed, magicItemAllowance, usedMagicItemSlots } from '../rules/magicItems'
 import {
   companionMountProfile,
   eligibleMagicStandards,
@@ -117,6 +117,8 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
   // Fixed items (OLD-63) first, then the user's picks: what the entry carries.
   const carried = unit.isCharacter ? carriedMagicItems(entry, unit, army) : []
   const fixedItems = new Map(carried.filter((c) => c.fixed).map((c) => [c.item.id, c]))
+  // Slots in use: carried items plus runic items such as a Dwarf rune group (OLD-69).
+  const usedSlots = unit.isCharacter ? usedMagicItemSlots(entry, unit, army, carried) : 0
   const fixedExtras = unit.fixedExtras ?? []
   const mounts = unit.mounts ?? []
   const selectedMount = mounts.find((m) => m.id === entry.mountId)
@@ -187,6 +189,17 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
           className="mi-item mi-item-special"
           title={lang === 'es' ? 'Objeto de personaje especial — no seleccionable' : 'Special-character item — not selectable'}
         >
+          <span className="mi-checkbox-spacer" aria-hidden="true" />
+          {info}
+        </div>
+      )
+    }
+    // OLD-69: an item this character's page does not allow is greyed out like a
+    // special one. A saved roster that already picked it keeps it tickable so
+    // the user can drop it; the Muster Check explains why.
+    if (!isMagicItemAllowed(unit, item.id) && !entry.magicItemIds.includes(item.id)) {
+      return (
+        <div key={item.id} className="mi-item mi-item-not-allowed" title={t('itemNotForCharacter', lang)}>
           <span className="mi-checkbox-spacer" aria-hidden="true" />
           {info}
         </div>
@@ -668,7 +681,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
           {unit.isCharacter && (
             <div className="opt-group">
               <span className="opt-label">
-                {t('magicItems', lang)} <span className="muted small">({carried.length}/{allowance})</span>
+                {t('magicItems', lang)} <span className="muted small">({usedSlots}/{allowance})</span>
               </span>
               {selectedItems.length > 0 && (
                 <div className="mi-selected">

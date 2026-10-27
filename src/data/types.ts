@@ -232,6 +232,18 @@ export interface FixedExtra {
   /** Spanish name. Falls back to `name`. */
   nameEs?: string
   points: number
+  /**
+   * The extra is one magic item and takes one slot of the character's allowance
+   * (OLD-69): a Dwarf rune group is one runic item, and runic items are magic
+   * items under the max-items table (Enanos p.24 and p.80).
+   */
+  magicItem?: boolean
+  /**
+   * Pool items this extra embodies, for army-wide uniqueness only (OLD-69): the
+   * master runes on a rune group (Enanos p.24, Law 4). They are not carried
+   * items, so they cost nothing and raise no per-entry finding.
+   */
+  uniqueItemIds?: string[]
 }
 
 export interface UnitProfile {
@@ -340,6 +352,13 @@ export interface UnitProfile {
    * gives Zhatan, a Commander, four items where the chart gives a lord three.
    */
   magicItemSlots?: number
+  /**
+   * The only pool items the player may pick for this character, when his page
+   * forbids any other (OLD-69). `[]` means none beyond his `fixedMagicItems`.
+   * Undefined = the usual free choice. Picking anything else raises
+   * `magic-items-not-allowed`, and the editor greys the item out.
+   */
+  allowedMagicItems?: string[]
   /**
    * Extra display-only profiles shown beneath the main statLine: a chariot's
    * crew / chassis / draught beasts, or a special character's fixed mount.

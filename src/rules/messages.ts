@@ -56,6 +56,8 @@ export interface RuleParams {
   'magic-items-category': { unit: UnitProfile; category: MagicItemCategory; count: number }
   'magic-items-exclusive-group': { unit: UnitProfile; group: 'crown' | 'helm'; count: number }
   'magic-items-banner-bsb': { unit: UnitProfile }
+  /** OLD-69: `allowed` is the page's allow-list, empty when only his fixed items are permitted. */
+  'magic-items-not-allowed': { unit: UnitProfile; item: MagicItem; allowed: MagicItem[] }
   'magic-standard-not-allowed': { unit: UnitProfile }
   'magic-standard-no-bearer': { unit: UnitProfile }
   'magic-standard-invalid-item': { unit: UnitProfile; item?: MagicItem; itemId: string }
@@ -186,6 +188,18 @@ const MESSAGES: { [K in RuleId]: MessageBuilder<K> } = {
     lang === 'es'
       ? `${un(p, lang)}: sólo el Portaestandarte de Batalla puede portar un estandarte mágico.`
       : `${un(p, lang)}: only a Battle Standard Bearer may carry a magic standard.`,
+  'magic-items-not-allowed': (p, lang) => {
+    const item = magicItemName(p.item, lang)
+    if (p.allowed.length === 0) {
+      return lang === 'es'
+        ? `${un(p, lang)}: no puede llevar más objetos mágicos que los suyos (${item} no está permitido).`
+        : `${un(p, lang)}: may carry no magic items besides their own (${item} is not allowed).`
+    }
+    const list = p.allowed.map((i) => magicItemName(i, lang)).join(', ')
+    return lang === 'es'
+      ? `${un(p, lang)}: sólo puede llevar ${list}; ${item} no está permitido.`
+      : `${un(p, lang)}: may only take ${list}; ${item} is not allowed.`
+  },
   'magic-standard-not-allowed': (p, lang) =>
     lang === 'es'
       ? `${un(p, lang)}: esta unidad no puede llevar un estandarte mágico.`

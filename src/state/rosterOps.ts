@@ -1,6 +1,7 @@
 import type { Army, Roster, RosterEntry, UnitProfile } from '../data/types'
 import { STANDARD_BEARER_ID, isWizardLevelId } from '../data/unitOptions'
 import { clampOptionCount, findUnit, isFixedMagicItem } from '../rules/points'
+import { isMagicItemAllowed } from '../rules/magicItems'
 
 let counter = 0
 /**
@@ -150,12 +151,14 @@ export function selectMagicStandard(roster: Roster, entryId: string, itemId: str
 
 /**
  * Toggle a magic item on a character entry. An item the unit's own page fixes
- * (OLD-63) is locked: the roster comes back unchanged.
+ * (OLD-63) is locked: the roster comes back unchanged. An item the page forbids
+ * (OLD-69) is never added, though a saved roster that holds one can drop it.
  */
 export function toggleMagicItem(roster: Roster, entryId: string, itemId: string, army: Army): Roster {
   const entry = roster.entries.find((e) => e.id === entryId)
   const unit = entry ? findUnit(army, entry.unitId) : undefined
   if (unit && isFixedMagicItem(unit, itemId)) return roster
+  if (entry && unit && !entry.magicItemIds.includes(itemId) && !isMagicItemAllowed(unit, itemId)) return roster
   return {
     ...roster,
     entries: roster.entries.map((e) => {

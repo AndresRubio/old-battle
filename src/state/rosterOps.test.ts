@@ -84,6 +84,19 @@ describe('rosterOps', () => {
     ])
   })
 
+  // OLD-69: Imperio p.72, Boris carries his two page items and no other.
+  it('never adds an item the page forbids, but still removes a saved one', () => {
+    const boris = empire.units.find((u) => u.id === 'emp-boris-todbringer')!
+    const r = addEntry(createRoster('empire', 'A', 1000, 'r1'), boris, 'e1')
+    expect(toggleMagicItem(r, 'e1', 'mi-jade-amulet', empire)).toBe(r)
+    const saved = updateEntry(r, 'e1', { magicItemIds: ['mi-jade-amulet'] })
+    expect(toggleMagicItem(saved, 'e1', 'mi-jade-amulet', empire).entries[0].magicItemIds).toEqual([])
+    // Ludwig's allow-listed sword still toggles.
+    const ludwig = empire.units.find((u) => u.id === 'emp-ludwig')!
+    const l = addEntry(createRoster('empire', 'A', 1000, 'r1'), ludwig, 'e1')
+    expect(toggleMagicItem(l, 'e1', 'mi-sword-of-justice', empire).entries[0].magicItemIds).toEqual(['mi-sword-of-justice'])
+  })
+
   it('setGeneral marks exactly one entry as general', () => {
     let r = addEntry(createRoster('empire', 'A', 1000, 'r1'), general, 'e1')
     r = addEntry(r, halberdiers, 'e2')

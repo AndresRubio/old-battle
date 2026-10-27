@@ -687,3 +687,77 @@ describe('EntryRow Battle Standard Bearer toggle', () => {
     expect(bsbButton()).toBeUndefined()
   })
 })
+
+// OLD-69 — a character whose page names the only items he may carry: the
+// picker greys out everything else, and the counter counts runic items.
+describe('EntryRow page item limits (OLD-69)', () => {
+  const JADE = 'mi-jade-amulet'
+  const rowOf = (name: string) =>
+    Array.from(container.querySelectorAll('.magic-items .mi-group .mi-item')).find(
+      (row) => row.querySelector('.mi-name')?.textContent === name,
+    ) as HTMLElement | undefined
+  const header = () =>
+    Array.from(container.querySelectorAll('.opt-label')).find((el) => /^(Magic Items|Objetos)/.test(el.textContent ?? ''))
+      ?.textContent
+
+  it('greys out every item Boris may not take, with a title saying why', () => {
+    render(<EntryRow entry={entry('emp-boris-todbringer', { size: 1 })} army={army} {...props} />)
+    expand()
+    const jade = rowOf('Jade Amulet')!
+    expect(jade.classList.contains('mi-item-not-allowed')).toBe(true)
+    expect(jade.querySelector('input')).toBeNull()
+    expect(jade.getAttribute('title')).toBe('Not available to this character')
+    // His own Runefang stays a locked, checked fixed row.
+    expect(rowOf('Runefang')!.classList.contains('mi-item-fixed')).toBe(true)
+    expect(header()).toBe('Magic Items (2/2)')
+  })
+
+  it('titles the greyed rows in Spanish', () => {
+    setLang('es')
+    render(<EntryRow entry={entry('emp-boris-todbringer', { size: 1 })} army={army} {...props} />)
+    expand()
+    const row = container.querySelector('.magic-items .mi-item-not-allowed')!
+    expect(row.getAttribute('title')).toBe('Este personaje no puede llevarlo')
+  })
+
+  it('lets Ludwig tick the Sword of Justice and nothing else', () => {
+    render(<EntryRow entry={entry('emp-ludwig', { size: 1 })} army={army} {...props} />)
+    expand()
+    const sword = rowOf('Sword of Justice')!
+    expect(sword.classList.contains('mi-item-not-allowed')).toBe(false)
+    expect((sword.querySelector('input[type="checkbox"]') as HTMLInputElement).disabled).toBe(false)
+    expect(rowOf('Jade Amulet')!.classList.contains('mi-item-not-allowed')).toBe(true)
+    expect(header()).toBe('Magic Items (0/1)')
+  })
+
+  it('leaves a saved pick he may not take tickable, so it can be removed', () => {
+    const saved = entry('emp-boris-todbringer', { size: 1, magicItemIds: [JADE] })
+    let result = { id: 'r1', name: 'R', armyId: 'empire', pointsLimit: 2000, entries: [saved] } as unknown as Roster
+    const actions = entryActions((fn) => { result = fn(result) }, army, 'e1')
+    render(<EntryRow entry={saved} army={army} {...props} actions={actions} />)
+    expand()
+    const box = Array.from(container.querySelectorAll('.mi-selected .mi-item'))
+      .find((row) => row.querySelector('.mi-name')?.textContent === 'Jade Amulet')!
+      .querySelector('input[type="checkbox"]') as HTMLInputElement
+    expect(box.checked).toBe(true)
+    expect(box.disabled).toBe(false)
+    act(() => box.click())
+    expect(result.entries[0].magicItemIds).toEqual([])
+  })
+
+  it('keeps every item open to a character with no page limit', () => {
+    render(<EntryRow entry={entry('emp-general', { size: 1 })} army={army} {...props} />)
+    expand()
+    expect(container.querySelector('.mi-item-not-allowed')).toBeNull()
+    expect(rowOf('Sword of Justice')!.querySelector('input[type="checkbox"]')).not.toBeNull()
+  })
+
+  it.each(['dw-king-kazador', 'dw-kragg-the-grim'])('counts the %s rune groups in the header (3/3)', (id) => {
+    const dwarfs = getArmy('dwarfs')!
+    const dwProps = { ...props, actions: entryActions(() => {}, dwarfs, 'e1') }
+    render(<EntryRow entry={entry(id, { size: 1 })} army={dwarfs} {...dwProps} />)
+    expand()
+    expect(header()).toBe('Magic Items (3/3)')
+  })
+})
+

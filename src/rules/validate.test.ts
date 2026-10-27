@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { validateRoster } from './validate'
-import { magicItemAllowance, MAGIC_ITEM_ALLOWANCE } from './magicItems'
+import { isMagicItemAllowed, magicItemAllowance, MAGIC_ITEM_ALLOWANCE, usedMagicItemSlots } from './magicItems'
 import { carriedMagicItems } from './points'
 import {
   STANDARD_5E_COMPOSITION,
@@ -1444,5 +1444,174 @@ describe('fixed magic items (OLD-63)', () => {
       entry({ id: 'b', unitId: 'emp-general', magicItemIds: ['mi-hammer-of-sigmar'] }),
     ])
     expect(uniqueMessages(r).some((m) => m.includes('Hammer of Sigmar'))).toBe(true)
+  })
+})
+
+// ---- OLD-69: limits a character's own page sets -------------------------
+// Engine behaviour on a synthetic army; the per-character data is pinned in
+// the data block below.
+describe('OLD-69 — page limits on a character (engine)', () => {
+  const synth: Army = {
+    ...army,
+    units: [
+      ...army.units,
+      // "Has one magic item, the sword; no other" (an Elector Count).
+      {
+        id: 'only-fixed', name: 'Only Fixed', role: 'character', pointsPerModel: 90,
+        isCharacter: true, characterRank: 'lord', canBeGeneral: true,
+        magicItemSlots: 1, fixedMagicItems: [{ id: 'sword' }], allowedMagicItems: [],
+      },
+      // "May take the sword; no other magic item" (Ludwig).
+      {
+        id: 'sword-only', name: 'Sword Only', role: 'character', pointsPerModel: 70,
+        isCharacter: true, characterRank: 'hero', canBeBSB: true, bsbPoints: 50,
+        magicItemSlots: 1, allowedMagicItems: ['sword'],
+      },
+      // Two runic items that count as magic items, one extra that does not.
+      {
+        id: 'rune-hero', name: 'Rune Hero', role: 'character', pointsPerModel: 100,
+        isCharacter: true, characterRank: 'hero',
+        fixedExtras: [
+          { id: 'weapon-runes', name: 'Weapon Runes', points: 50, magicItem: true, uniqueItemIds: ['sword'] },
+          { id: 'defence-runes', name: 'Defence Runes', points: 30, magicItem: true },
+          { id: 'cart', name: 'Cart', points: 20 },
+        ],
+      },
+    ],
+  }
+  const itemRules = (entries: RosterEntry[]) =>
+    rules(validateRoster(roster(3000, [entry({ unitId: 'lord', isGeneral: true }), ...entries]), synth))
+      .filter((r) => r.startsWith('magic-items'))
+  const unitOf = (id: string) => synth.units.find((u) => u.id === id)!
+
+  it('raises nothing for a bare only-fixed character', () => {
+    expect(itemRules([entry({ unitId: 'only-fixed' })])).toEqual([])
+  })
+
+  it('raises magic-items-not-allowed (and the count) for any bought item', () => {
+    const vs = validateRoster(
+      roster(3000, [entry({ unitId: 'lord', isGeneral: true }), entry({ id: 'x', unitId: 'only-fixed', magicItemIds: ['talisman'] })]),
+      synth,
+    )
+    const notAllowed = vs.filter((v) => v.rule === 'magic-items-not-allowed')
+    expect(notAllowed).toHaveLength(1)
+    expect(notAllowed[0]).toMatchObject({ severity: 'warning', entryId: 'x' })
+    expect(notAllowed[0].message).toBe('Only Fixed: may carry no magic items besides their own (Lucky Charm is not allowed).')
+    expect(rules(vs)).toContain('magic-items-count')
+  })
+
+  it('lets an allow-listed item through and flags anything else, a banner on a BSB included', () => {
+    expect(itemRules([entry({ unitId: 'sword-only', magicItemIds: ['sword'] })])).toEqual([])
+    expect(itemRules([entry({ unitId: 'sword-only', magicItemIds: ['talisman'] })])).toEqual(['magic-items-not-allowed'])
+    expect(itemRules([entry({ unitId: 'sword-only', isBSB: true, magicItemIds: ['banner'] })])).toEqual([
+      'magic-items-not-allowed',
+    ])
+  })
+
+  it('isMagicItemAllowed follows the allow-list, keeps fixed items, and lets any unit without one pick freely', () => {
+    expect(isMagicItemAllowed(unitOf('sword-only'), 'sword')).toBe(true)
+    expect(isMagicItemAllowed(unitOf('sword-only'), 'talisman')).toBe(false)
+    expect(isMagicItemAllowed(unitOf('only-fixed'), 'sword')).toBe(true)
+    expect(isMagicItemAllowed(unitOf('only-fixed'), 'sword2')).toBe(false)
+    expect(isMagicItemAllowed(unitOf('lord'), 'talisman')).toBe(true)
+  })
+
+  it('counts each rune group flagged magicItem as one used slot', () => {
+    expect(usedMagicItemSlots(entry({ unitId: 'rune-hero' }), unitOf('rune-hero'), synth)).toBe(2)
+    expect(usedMagicItemSlots(entry({ unitId: 'rune-hero', magicItemIds: ['talisman'] }), unitOf('rune-hero'), synth)).toBe(3)
+    expect(itemRules([entry({ unitId: 'rune-hero' })])).toEqual([])
+    const vs = validateRoster(
+      roster(3000, [entry({ unitId: 'lord', isGeneral: true }), entry({ unitId: 'rune-hero', magicItemIds: ['talisman'] })]),
+      synth,
+    )
+    expect(vs.find((v) => v.rule === 'magic-items-count')?.message).toBe(
+      'Rune Hero: carries 3 magic items but may carry only 2.',
+    )
+  })
+
+  it('counts a rune group master rune toward army uniqueness', () => {
+    const unique = (entries: RosterEntry[]) =>
+      validateRoster(roster(3000, [entry({ unitId: 'lord', isGeneral: true }), ...entries]), synth)
+        .filter((v) => v.rule === 'magic-items-unique')
+    expect(unique([entry({ unitId: 'rune-hero' })])).toHaveLength(0)
+    expect(unique([entry({ unitId: 'rune-hero' }), entry({ unitId: 'hero', magicItemIds: ['sword'] })])).toHaveLength(1)
+    expect(unique([entry({ unitId: 'rune-hero' }), entry({ unitId: 'rune-hero' })])).toHaveLength(1)
+    // One character is one user, even when he also buys his own master rune.
+    expect(unique([entry({ unitId: 'rune-hero', magicItemIds: ['sword'] })])).toHaveLength(0)
+  })
+})
+
+describe('OLD-69 — page limits on the shipped special characters', () => {
+  const ros = (armyId: string, entries: RosterEntry[]): Roster => ({ id: 'r', name: 't', armyId, pointsLimit: 5000, entries })
+  const itemRules = (armyId: string, entries: RosterEntry[]) =>
+    rules(validateRoster(ros(armyId, entries), getArmy(armyId)!)).filter((r) => r.startsWith('magic-items'))
+  const empGen = entry({ id: 'g', unitId: 'emp-general', isGeneral: true })
+
+  // Imperio p.72: Boris "tiene dos objetos mágicos", the Runefang and the Talisman.
+  it('Boris may buy nothing beyond his two items', () => {
+    expect(itemRules('empire', [empGen, entry({ unitId: 'emp-boris-todbringer' })])).toEqual([])
+    expect(itemRules('empire', [empGen, entry({ unitId: 'emp-boris-todbringer', magicItemIds: ['mi-jade-amulet'] })]))
+      .toEqual(['magic-items-count', 'magic-items-not-allowed'])
+  })
+
+  // Imperio p.69: Ludwig may carry the Sword of Justice and no other magic item.
+  it('Ludwig takes the Sword of Justice and nothing else, a banner as BSB included', () => {
+    expect(itemRules('empire', [empGen, entry({ unitId: 'emp-ludwig', magicItemIds: ['mi-sword-of-justice'] })])).toEqual([])
+    expect(itemRules('empire', [empGen, entry({ unitId: 'emp-ludwig', magicItemIds: ['mi-jade-amulet'] })]))
+      .toEqual(['magic-items-not-allowed'])
+    const banner = getArmy('empire')!.magicItems.find((i) => i.category === 'banner' && !i.special)!.id
+    const vs = validateRoster(ros('empire', [empGen, entry({ unitId: 'emp-ludwig', isBSB: true, magicItemIds: [banner] })]), getArmy('empire')!)
+    expect(rules(vs).filter((r) => r.startsWith('magic-items'))).toEqual(['magic-items-not-allowed'])
+    expect(vs.find((v) => v.rule === 'magic-items-not-allowed')!.message).toMatch(
+      /^Ludwig Schwartzhelm: may only take Sword of Justice; .+ is not allowed\.$/,
+    )
+  })
+
+  // Lizardmen p.85: one magic item, always the Piranha Blade (not a pool card).
+  it('Itzi-Bitzi may buy no magic item', () => {
+    const lz = entry({ id: 'g', unitId: 'lz-slann', isGeneral: true })
+    expect(itemRules('lizardmen', [lz, entry({ unitId: 'lz-itzi-bitzi', magicItemIds: ['mi-dispel-scroll'] })]))
+      .toEqual(['magic-items-count', 'magic-items-not-allowed'])
+  })
+
+  // Skaven p.70: up to three items, two of them the Staff and the Liber.
+  it('Skrolk has one free pick, not two', () => {
+    const sk = (ids: string[]) => itemRules('skaven', [entry({ unitId: 'sk-skrolk', isGeneral: true, magicItemIds: ids })])
+    expect(sk(['mi-dispel-scroll'])).toEqual([])
+    expect(sk(['mi-dispel-scroll', 'mi-power-scroll'])).toEqual(['magic-items-count'])
+  })
+
+  // Enanos p.84 and p.92: Kragg's three runic items fill his three slots.
+  it('a bare Kragg is clean, one bought rune is over his three items', () => {
+    const dwGen = entry({ id: 'g', unitId: 'dw-general', isGeneral: true })
+    expect(itemRules('dwarfs', [dwGen, entry({ unitId: 'dw-kragg-the-grim' })])).toEqual([])
+    expect(itemRules('dwarfs', [dwGen, entry({ unitId: 'dw-kragg-the-grim', magicItemIds: ['mi-rune-of-luck'] })]))
+      .toEqual(['magic-items-count'])
+  })
+})
+
+// Enanos p.24, Law 4 (Runas Celosas): no master rune may be used more than once.
+describe('OLD-69 — master runes on rune groups are unique in the army', () => {
+  const dwarfs = getArmy('dwarfs')!
+  const unique = (entries: RosterEntry[]) =>
+    validateRoster({ id: 'r', name: 't', armyId: 'dwarfs', pointsLimit: 5000, entries }, dwarfs)
+      .filter((v) => v.rule === 'magic-items-unique')
+  const kazador = entry({ id: 'k', unitId: 'dw-king-kazador', isGeneral: true })
+
+  it('Kazador alone raises nothing', () => {
+    expect(unique([kazador])).toEqual([])
+  })
+
+  it('Kazador and a lord who buys the Master Rune of Death raise one finding', () => {
+    const vs = unique([kazador, entry({ unitId: 'dw-general', magicItemIds: ['mi-master-rune-of-death'] })])
+    expect(vs).toHaveLength(1)
+    expect(vs[0].severity).toBe('error')
+    expect(vs[0].message).toContain('Master Rune of Death')
+  })
+
+  it('Kazador and Kragg both bear the Master Rune of Adamant: one finding', () => {
+    const vs = unique([kazador, entry({ unitId: 'dw-kragg-the-grim' })])
+    expect(vs).toHaveLength(1)
+    expect(vs[0].message).toContain('Master Rune of Adamant')
   })
 })

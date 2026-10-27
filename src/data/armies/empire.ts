@@ -265,6 +265,9 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 5, BS: 4, S: 4, T: 4, W: 3, I: 5, A: 3, Ld: 9 }),
     isCharacter: true,
     characterRank: 'hero',
+    // Imperio p.69 (OLD-69): he may carry the Sword of Justice and no other magic item.
+    magicItemSlots: 1,
+    allowedMagicItems: ['mi-sword-of-justice'],
     canBeBSB: true,
     bsbPoints: 50, // his own rule below: "+50 pts to act as Battle Standard Bearer"
     max: 1,
@@ -364,6 +367,9 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 5, BS: 5, S: 4, T: 4, W: 3, I: 4, A: 3, Ld: 9 }),
     isCharacter: true,
     characterRank: 'lord',
+    // Imperio p.72 (OLD-69): "tiene dos objetos mágicos", no others.
+    magicItemSlots: 2,
+    allowedMagicItems: [],
     canBeGeneral: true,
     max: 1,
     // Imperio p.72: "+30 Colmillo Rúnico / +25 Talismán de Ulric".
@@ -385,6 +391,9 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 5, BS: 5, S: 4, T: 4, W: 3, I: 4, A: 3, Ld: 9 }),
     isCharacter: true,
     characterRank: 'lord',
+    // Imperio p.72 (OLD-69): "posee un sólo objeto mágico".
+    magicItemSlots: 1,
+    allowedMagicItems: [],
     canBeGeneral: true,
     max: 1,
     // Imperio p.72: "+30 Colmillo Rúnico".
@@ -406,6 +415,9 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 5, BS: 5, S: 4, T: 4, W: 3, I: 4, A: 3, Ld: 9 }),
     isCharacter: true,
     characterRank: 'lord',
+    // Imperio p.73 (OLD-69): "tiene dos objetos mágicos", no others.
+    magicItemSlots: 2,
+    allowedMagicItems: [],
     canBeGeneral: true,
     max: 1,
     // Imperio p.72-73: "+30 Colmillo Rúnico / +40 Arco del Dragón".
@@ -427,6 +439,9 @@ const units: UnitProfile[] = [
     statLine: human({ WS: 5, BS: 5, S: 4, T: 4, W: 3, I: 4, A: 3, Ld: 9 }),
     isCharacter: true,
     characterRank: 'lord',
+    // Imperio p.73 (OLD-69): "tiene un objeto mágico".
+    magicItemSlots: 1,
+    allowedMagicItems: [],
     canBeGeneral: true,
     max: 1,
     // Imperio p.73: "+30 Colmillo Rúnico".

@@ -1114,7 +1114,9 @@ h1, h2, h3 {
   width: 0.95rem;
   flex-shrink: 0;
 }
-.mi-item-special {
+/* OLD-69: items a special character's page does not let him take, greyed alike. */
+.mi-item-special,
+.mi-item-not-allowed {
   cursor: default;
   opacity: 0.85;
 }

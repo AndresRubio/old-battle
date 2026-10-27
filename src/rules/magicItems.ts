@@ -5,7 +5,7 @@ import type {
   RosterEntry,
   UnitProfile,
 } from '../data/types'
-import { carriedMagicItems, findMagicItem, findUnit, type CarriedMagicItem } from './points'
+import { carriedMagicItems, findMagicItem, findUnit, isFixedMagicItem, type CarriedMagicItem } from './points'
 import type { Finding } from './messages'
 
 /**
@@ -71,6 +71,34 @@ export function magicItemAllowance(entry: RosterEntry, unit: UnitProfile): numbe
   return base + delta
 }
 
+/** The unit's fixed extras that are one magic item each: a Dwarf rune group (OLD-69). */
+const magicFixedExtraCount = (unit: UnitProfile): number =>
+  (unit.fixedExtras ?? []).filter((x) => x.magicItem).length
+
+/**
+ * How many of the allowance the entry uses (OLD-69): every carried item (fixed
+ * and picked) plus each fixed extra that is a magic item, such as a Dwarf rune
+ * group. The Muster Check and the editor's counter both read this number; a
+ * caller that already holds the carried list passes it to avoid recomputing.
+ */
+export function usedMagicItemSlots(
+  entry: RosterEntry,
+  unit: UnitProfile,
+  army: Army,
+  carried: CarriedMagicItem[] = carriedMagicItems(entry, unit, army),
+): number {
+  return carried.length + magicFixedExtraCount(unit)
+}
+
+/**
+ * Whether the character's own page lets him carry this item (OLD-69). False
+ * only for a unit with `allowedMagicItems` when the item is neither on that
+ * list nor one of his fixed items. Every other unit chooses freely.
+ */
+export function isMagicItemAllowed(unit: UnitProfile, itemId: string): boolean {
+  return !unit.allowedMagicItems || unit.allowedMagicItems.includes(itemId) || isFixedMagicItem(unit, itemId)
+}
+
 /**
  * All per-entry magic-item findings for one roster entry: non-characters may
  * carry none; characters are limited by count (rank + option deltas), to one
@@ -86,7 +114,8 @@ export function magicItemAllowance(entry: RosterEntry, unit: UnitProfile): numbe
  */
 export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, army: Army): Finding[] {
   const carried = carriedMagicItems(entry, unit, army)
-  if (carried.length === 0) return []
+  const used = usedMagicItemSlots(entry, unit, army, carried)
+  if (used === 0) return []
   if (!unit.isCharacter) {
     return [
       {
@@ -101,13 +130,30 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
   const findings: Finding[] = []
 
   const allowance = magicItemAllowance(entry, unit)
-  if (carried.length > allowance) {
+  if (used > allowance) {
     findings.push({
       severity: 'warning',
       rule: 'magic-items-count',
-      params: { unit, carried: carried.length, allowance },
+      params: { unit, carried: used, allowance },
       entryId: entry.id,
     })
+  }
+
+  // OLD-69: a page that names the only items he may carry. A saved roster can
+  // still hold another pick, so each one is reported.
+  if (unit.allowedMagicItems) {
+    const allowed = unit.allowedMagicItems
+      .map((id) => findMagicItem(army, id))
+      .filter((i): i is NonNullable<typeof i> => i !== undefined)
+    for (const c of carried) {
+      if (c.fixed || isMagicItemAllowed(unit, c.item.id)) continue
+      findings.push({
+        severity: 'warning',
+        rule: 'magic-items-not-allowed',
+        params: { unit, item: c.item, allowed },
+        entryId: entry.id,
+      })
+    }
   }
 
   /** Count per key, and whether any item behind the count is user-picked. */
@@ -165,13 +211,19 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
  * item may not be included in an army more than once. Exceptions are flagged
  * `duplicable` on the item (Dispel Scrolls, Chaos Armour, Familiars). A unit's
  * magic standard shares the uniqueness pool with characters' items, and a
- * character's fixed items (OLD-63) count like picked ones.
+ * character's fixed items (OLD-63) count like picked ones. So do the master
+ * runes on a special character's rune groups (OLD-69, Enanos p.24 Law 4: no
+ * master rune may be used more than once). The count is of characters: one
+ * entry that both has a rune on his page and buys it again counts once.
  */
 export function armyItemUniquenessFindings(entries: RosterEntry[], army: Army): Finding[] {
   const itemUsers = new Map<string, number>()
   for (const e of entries) {
     const unit = findUnit(army, e.unitId)
-    const ids = unit ? carriedMagicItems(e, unit, army).map((c) => c.item.id) : e.magicItemIds
+    const ids = new Set(unit ? carriedMagicItems(e, unit, army).map((c) => c.item.id) : e.magicItemIds)
+    for (const x of unit?.fixedExtras ?? []) {
+      for (const id of x.uniqueItemIds ?? []) ids.add(id)
+    }
     for (const id of ids) {
       itemUsers.set(id, (itemUsers.get(id) ?? 0) + 1)
     }
