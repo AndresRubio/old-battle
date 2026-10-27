@@ -121,6 +121,14 @@ export interface EquipmentOption {
   counted?: boolean
   /** Highest count a `counted` option allows. Undefined = no cap. */
   maxCount?: number
+  /**
+   * Display-only profiles of the models this option brings (OLD-71): Orion's
+   * Hunting Hound (Elfos Silvanos p.71), the Throne of Power's bearers (Enanos
+   * p.83). Shown beneath the unit's statLine, like `UnitProfile.profiles`, only
+   * while the option is bought: ticked, or a `counted` option with a count of
+   * one or more. Read through `shownProfiles`. Unit options only.
+   */
+  profiles?: ProfileBlock[]
 }
 
 /**

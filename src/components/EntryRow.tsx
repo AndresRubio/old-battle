@@ -11,6 +11,7 @@ import {
   magicStandardNeedsBearer,
   partitionOptions,
   resolveStatNotes,
+  shownProfiles,
   signedPoints,
   statCell,
 } from '../rules/entryView'
@@ -322,8 +323,9 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
             </div>
           )}
 
-          {/* Extra profiles: chariot crew/chassis/draught, or a fixed mount. */}
-          {unit.profiles?.map((p, i) => (
+          {/* Extra profiles: chariot crew/chassis/draught, a fixed mount or a
+              companion, then those of the options bought (Orion's hounds). */}
+          {shownProfiles(unit, entry).map((p, i) => (
             <div key={i} className="profile-block">
               <StatLineRow statLine={p.statLine} lang={lang} label={profileName(p, lang)} notes={resolveStatNotes(p, lang)} />
               {p.specialRules && p.specialRules.length > 0 && <RuleTags rules={p.specialRules} lang={lang} />}

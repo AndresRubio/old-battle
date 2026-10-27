@@ -8,11 +8,12 @@ import {
   filterMagicItems,
   magicStandardNeedsBearer,
   resolveStatNotes,
+  shownProfiles,
   signedPoints,
   statCell,
 } from './entryView'
 import { mountOptionCost } from './points'
-import type { Army, MagicItem, MountOption, UnitProfile } from '../data/types'
+import type { Army, MagicItem, MountOption, RosterEntry, UnitProfile } from '../data/types'
 
 const banner = (id: string, special = false): MagicItem => ({
   id,
@@ -280,5 +281,38 @@ describe('signedPoints', () => {
     expect(signedPoints(-5)).toBe('-5')
     expect(signedPoints(0.5)).toBe('+0.5')
     expect(signedPoints(0)).toBe('+0')
+  })
+})
+
+// OLD-71: the extra profiles an entry shows. The unit's own rows always; an
+// option's rows (Orion's hounds, the Throne bearers) only while it is bought.
+describe('shownProfiles', () => {
+  const hound = { name: 'Hound', statLine: { M: 5 } }
+  const bearers = { name: 'Bearers', statLine: { M: 3 } }
+  const henchman = { name: 'Henchman', statLine: { M: 4 } }
+  const lord: UnitProfile = {
+    id: 'l', name: 'Lord', role: 'character', pointsPerModel: 100, isCharacter: true,
+    profiles: [henchman],
+    options: [
+      { id: 'hounds', name: 'Hounds', pointsPerModel: 5, counted: true, profiles: [hound] },
+      { id: 'throne', name: 'Throne', pointsPerModel: 140, flat: true, profiles: [bearers] },
+      { id: 'shield', name: 'Shield', pointsPerModel: 1 },
+    ],
+  }
+  const e = (over: Partial<RosterEntry> = {}): RosterEntry => ({ id: 'e', unitId: 'l', size: 1, optionIds: [], magicItemIds: [], ...over })
+
+  it("is the unit's own profiles when no option with profiles is bought", () => {
+    expect(shownProfiles(lord, e({ optionIds: ['shield'] }))).toEqual([henchman])
+  })
+
+  it('adds a ticked option\'s profiles, and a counted option\'s from a count of one', () => {
+    expect(shownProfiles(lord, e({ optionIds: ['throne'] }))).toEqual([henchman, bearers])
+    expect(shownProfiles(lord, e({ optionCounts: { hounds: 1 } }))).toEqual([henchman, hound])
+    expect(shownProfiles(lord, e({ optionCounts: { hounds: 0 } }))).toEqual([henchman])
+  })
+
+  it('ignores a stale option id the unit does not offer, and a unit with no profiles at all', () => {
+    expect(shownProfiles(lord, e({ optionIds: ['gone'] }))).toEqual([henchman])
+    expect(shownProfiles(baseUnit, e())).toEqual([])
   })
 })

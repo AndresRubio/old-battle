@@ -789,3 +789,72 @@ describe('EntryRow required mount (OLD-71)', () => {
     expect(chips()[0]).toBe('On foot')
   })
 })
+
+// OLD-71: profiles the special characters' pages print and the editor did not show.
+describe('EntryRow special character companion profiles (OLD-71)', () => {
+  const show = (armyId: string, e: RosterEntry) => {
+    const a = getArmy(armyId)!
+    render(<EntryRow entry={e} army={a} {...props} actions={entryActions(() => {}, a, 'e1')} />)
+    expand()
+  }
+  /** The cells of the stat strip labelled `label`, M first. */
+  const cellsFor = (label: string) => {
+    const wrap = Array.from(container.querySelectorAll('.statline-wrap')).find(
+      (el) => el.querySelector('.stat-profile-label')?.textContent === label,
+    )
+    return wrap ? Array.from(wrap.querySelectorAll('.stat-v')).map((el) => el.textContent) : undefined
+  }
+
+  // Elfos Silvanos p.71: "Mastín de Caza 12 4 - 4 3 1 3 1 3".
+  it("shows Orion's Hunting Hound only once hounds are bought", () => {
+    setLang('en')
+    show('wood-elves', entry('we-orion', { size: 1 }))
+    expect(labels()).toEqual([])
+    act(() => root.unmount())
+    container.remove()
+    show('wood-elves', entry('we-orion', { size: 1, optionCounts: { 'hunting-hounds': 3 } }))
+    expect(labels()).toEqual(['Hunting Hound'])
+    expect(cellsFor('Hunting Hound')).toEqual(['5', '4', '–', '4', '3', '1', '3', '1', '3'])
+  })
+
+  it('prints the hound as the Spanish book does, M in centimetres', () => {
+    setLang('es')
+    show('wood-elves', entry('we-orion', { size: 1, optionCounts: { 'hunting-hounds': 1 } }))
+    expect(cellsFor('Mastín de Caza')).toEqual(['12', '4', '–', '4', '3', '1', '3', '1', '3'])
+  })
+
+  // Bretonnia p.71: Hugo le Petit 4 3 4 5 4 1 3 1 7, Gui le Gros 4 3 4 3 3 1 3 1 7.
+  it("shows Bertrand's two henchmen", () => {
+    setLang('en')
+    show('bretonnia', entry('br-bertrand', { size: 1 }))
+    expect(labels()).toEqual(['Hugo le Petit', 'Gui le Gros'])
+    expect(cellsFor('Hugo le Petit')).toEqual(['4', '3', '4', '5', '4', '1', '3', '1', '7'])
+    expect(cellsFor('Gui le Gros')).toEqual(['4', '3', '4', '3', '3', '1', '3', '1', '7'])
+  })
+
+  // Orcos y Goblins p.91: Niblit 10 3 4 4 3 1 3 2 5 (cm).
+  it("shows Grom's companion Niblit", () => {
+    setLang('es')
+    show('orcs-and-goblins', entry('og-grom', { size: 1 }))
+    expect(labels()).toEqual(['Niblit'])
+    expect(cellsFor('Niblit')).toEqual(['10', '3', '4', '4', '3', '1', '3', '2', '5'])
+  })
+
+  // Enanos p.83: Porteador 8 5 4 4 4 1 3 2 9 (cm); Thorgrim's page uses the same Throne.
+  it.each(['dw-general', 'dw-thorgrim'])('shows the four Throne bearers on %s only with the Throne', (id) => {
+    setLang('en')
+    show('dwarfs', entry(id, { size: 1 }))
+    expect(labels()).toEqual([])
+    act(() => root.unmount())
+    container.remove()
+    show('dwarfs', entry(id, { size: 1, optionIds: ['throne-of-power'] }))
+    expect(labels()).toEqual(['4 Throne bearers'])
+    expect(cellsFor('4 Throne bearers')).toEqual(['3', '5', '4', '4', '4', '1', '3', '2', '9'])
+  })
+
+  it('names the bearers in Spanish, M in centimetres', () => {
+    setLang('es')
+    show('dwarfs', entry('dw-thorgrim', { size: 1, optionIds: ['throne-of-power'] }))
+    expect(cellsFor('4 Porteadores')).toEqual(['8', '5', '4', '4', '4', '1', '3', '2', '9'])
+  })
+})

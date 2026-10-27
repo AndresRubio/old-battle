@@ -482,8 +482,9 @@ describe('counted options', () => {
   })
 })
 
-// OLD-71: the two page requirements a special character can carry.
-describe('assertArmyIntegrity — mountRequired and mustBeGeneral (OLD-71)', () => {
+// OLD-71: the two page requirements a special character can carry, and the
+// profiles an option brings.
+describe('assertArmyIntegrity — page requirements and option profiles (OLD-71)', () => {
   const lord = (over: Partial<UnitProfile>) =>
     unit({ id: 'im', role: 'character', isCharacter: true, characterRank: 'lord', ...over })
   const withUnit = (u: UnitProfile) => army({ units: [u] })
@@ -511,5 +512,19 @@ describe('assertArmyIntegrity — mountRequired and mustBeGeneral (OLD-71)', () 
     expect(() => assertArmyIntegrity(withUnit(unit({ id: 'im', mustBeGeneral: true })))).toThrow(
       /im: mustBeGeneral on a unit that cannot be the General/,
     )
+  })
+
+  it("checks the Movement of an option's display profiles", () => {
+    const u = lord({
+      options: [{ id: 'hounds', name: 'Hounds', pointsPerModel: 5, counted: true, profiles: [{ name: 'Hound', statLine: { M: 11 } }] }],
+    })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/im\/hounds\/Hound: Movement 11" has no centimetre equivalent/)
+  })
+
+  it('throws on profiles on a mount option, which the editor never shows', () => {
+    const u = lord({
+      mounts: [{ id: 'm', name: 'Chariot', points: 60, options: [{ id: 'crew', name: 'Crew', pointsPerModel: 3, flat: true, profiles: [{ name: 'Crewman', statLine: { M: 4 } }] }] }],
+    })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/im\/m\/crew: option profiles are not supported on mounts/)
   })
 })

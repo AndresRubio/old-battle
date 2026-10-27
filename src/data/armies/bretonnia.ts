@@ -609,6 +609,11 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     max: 1,
+    // Bretonnia p.71 (OLD-71): "Hugo le Petit 4 3 4 5 4 1 3 1 7", "Gui le Gros 4 3 4 3 3 1 3 1 7".
+    profiles: [
+      { name: 'Hugo le Petit', statLine: { M: 4, WS: 3, BS: 4, S: 5, T: 4, W: 1, I: 3, A: 1, Ld: 7 } },
+      { name: 'Gui le Gros', statLine: { M: 4, WS: 3, BS: 4, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 7 } },
+    ],
     specialRules: [
       'Special character (+1 point per Bowman, charged on the Bowmen of Bergerac regiment)',
       'Commoner Champion of a unit of Bowmen',
