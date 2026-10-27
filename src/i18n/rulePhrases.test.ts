@@ -81,6 +81,6 @@ describe('OLD-44 — the Spanish rule phrases cover every tag, and only real tag
     expect(RULE_PHRASE_ES['Move 5D6cm (random each turn); S5 ball & chain; D6 wounds per model hit']).toContain(
       'Movimiento 5D6cm',
     )
-    expect(RULE_PHRASE_ES['Dragon Armour barding (2+ save)']).not.toContain('save')
+    expect(RULE_PHRASE_ES['Barding (Tyrion saves on 1+ when mounted)']).not.toContain('save')
   })
 })

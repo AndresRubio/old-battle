@@ -1481,6 +1481,8 @@ his (p.70).
 
 **Profiles corrected (OLD-67, 2026-10-26).** Dwarfs (Enanos): Felix Jaeger (p.93) prints T4 I5 Ld8, the data had T5 I4 Ld10, which is Bugman's row. His BS stays 5 and M4 WS6 W2 A3 were right; the OLD-67 issue text read BS4 T3 from the same row, and a 300 dpi crop gives BS5 T4. Ungrim Ironfist (p.91) prints M8cm WS7 BS6 S4 T5 W3 I5 A4 Ld10, so the data row was shifted one column; T5 is the base value, the Crown of the Slayers' +1 Toughness stays in the rules text like Kragg's and Bugman's.
 
+**Rule texts corrected (OLD-68, 2026-10-27).** Skaven (p.69): Thanquol wears no armour and fights with a sword, and only Destripahuesos fights with fangs and claws; the tag said claws and teeth for Thanquol himself. Ikit Claw (pp.71-72): the book calls the Tormenta Demoníaca a halberd-type weapon, and Warhammer Magia (p.42) prints "Arma a Dos Manos" and "El personaje no podrá poseer ninguna otra arma mágica". The item moved from the arcane category to weapon, so the one-magic-weapon rule now blocks a second weapon on Ikit, and its Spanish name carries the accent (Tormenta Demoníaca). His 25 points are unchanged.
+
 #### Wood Elves: special characters' extra costs (OLD-63, 2026-10-26)
 **Wood Elves, Elfos Silvanos (1996, ES) printed pp.70-80.** Each page prints its extras under the
 headline as `+N puntos: <objeto>`. Items in the pool are fixed at their card price, which matches
@@ -1511,6 +1513,8 @@ English text renders it, with the Bolas' 30 cm range as 12 inches.
 and the Magia card list prints 50 (Magia p.72); only Magia p.34 prints 60. The item is shared with
 the High Elves (`restrictedTo: ['high-elves', 'wood-elves']`), so it costs 50 there too. Owner
 decision (2026-10-26).
+
+**Rule texts and classification corrected (OLD-68, 2026-10-27).** Elfos Silvanos: Durthu (p.76) may be included "como personaje independiente" and p.61 says special characters are counted against the characters allowance, so his role is now character and his 360 points count toward Characters (50%), not Monsters (25%). The book gives him no magic items and no General's post, so he still has no item picker and no General toggle. His Swarm of Sprites (p.76) hits with Strength 3 (the data said 4) and also attacks his close-combat opponent; the Spanish book calls them Duendes. Naieth (p.74) is "la Vidente" in Spanish (the English name is unchanged), is an Elfa Silvana wizard who uses Battle Magic only, and carries the "Báculo de los Augurios".
 
 #### Dark Elves and Undead: special characters' extra costs (OLD-63, 2026-10-26)
 **Dark Elves, Elfos Oscuros (1995, ES) printed pp.56-63.** Each page lists a table of items with
@@ -1575,6 +1579,8 @@ Settra's English tag said "Skull Flail" next to his locked row "Flail of Skulls"
 
 **Profiles corrected (OLD-67, 2026-10-26).** Undead (No Muertos): Vlad von Carstein (p.87) prints M15cm WS8 BS6 S7 T6 W4 I9 A4 Ld10, the data had a copy of Isabella's row for WS to I. The reference table (p.97) prints the same row for the Señor de Vampiros. Isabella von Carstein (p.88) prints A3, the data had A4. Dark Elves (Elfos Oscuros): Morathi (p.59) prints W4 A3, the data had W3 A2.
 
+**Rule texts corrected (OLD-68, 2026-10-27).** No Muertos: Vlad (p.87) "normalmente lleva" the Anillo de los Carstein (+50) and the Espada de Energía Maldita (+75); the tag now uses the item cards' English names and the book's Spanish ones. Vlad, Isabella and Manfred (pp.87-88) may ride a "Corcel Esquelético (+2 puntos)"; the 1995 book never says Pesadilla. Their mount is labelled Skeletal Steed / Corcel Esquelético and keeps its internal id, so saved rosters keep the 2 points. The generic Undead vampires were not checked and still offer the Nightmare.
+
 #### Orcs & Goblins: special characters' extra costs (OLD-63, 2026-10-26)
 **Orcs & Goblins, Orcos y Goblins (1997, ES) printed pp.90-93; chariot prices p.88.** Each page
 lists its extras as `+N puntos` under a headline that excludes them. Items in the pool are fixed
@@ -1601,6 +1607,8 @@ fixed extras because p.91 prices both and Grom always arrives with them.
 
 **Gorbad's War Boar.** p.91 prints no cost for it, so it stays a display profile and adds nothing
 to his 245.
+
+**Rule text corrected (OLD-68, 2026-10-27).** Orcos y Goblins p.92: Gorfang Rotgut is equipped with light armour, a shield and "una enorme Espada"; the tag said magic sword, but his magic items are a free choice and are not named there.
 
 #### Bretonnia, Chaos, Norse, Vampire Counts and Dogs of War: special characters' extra costs (OLD-63, 2026-10-26)
 **Three books print the headline as a total that already holds the items.** Bretonnia (1997, EN)
@@ -1670,6 +1678,8 @@ Item ids are unchanged, so saved rosters are unaffected.
 
 **Profiles corrected (OLD-67, 2026-10-26).** Bretonnia (Bretonia, English, inches): Armand d'Aquitaine (p.73) prints T3 W1, the data had T4 W3. Suliman le Saracen, Odo's retainer (p.69), prints T3, and Jules le Jongleur, Tristan's retainer (p.72), prints WS3; both live only in the "Accompanied by" rule text, so the English line and its Spanish key in `RULE_PHRASE_ES` changed together. Vampire Counts (Condes Vampiro): Krell (p.72) prints I5, the data had I3. Isabela von Carstein (p.78) prints BS4, the data had BS5. Chaos (Paladines del Caos): Gorthor's two Tuskgors (p.44) print W2 I2 Ld3, the data had W1 I3 Ld7, and the Reino del Caos bestiary (p.78) prints the same row. Mordrek's Corcel del Caos (p.20) prints WS4 I4, the data had WS3 I3. Gorthor's own row and his Tuskgors' M7 are unchanged.
 
+**Rule texts corrected (OLD-68, 2026-10-27).** Norse (Norsca, printed p.20): Erik Redaxe's Invocation of Thor lasts the turn it is invoked and the next, strikes one chosen enemy unit (not two) with D6 S4 hits at the start of each of those turns, and only magic armour saves against it. Chaos (Paladines del Caos p.34): Scyla's Señor is any character named for the role, with no Khorne requirement, and Scyla follows the Chaos Spawn rules (same profile) if his Señor dies or leaves the battlefield. Dogs of War (p.64): Lucrezzia's Stunning Beauty only rallies friendly fleeing units within 6" of her at the start of her turn; the opponents' lost attack is not in the book.
+
 #### High Elves: special characters' extra costs (OLD-63, 2026-10-26)
 **Altos Elfos (1997, ES) printed pp.81-94.** Each character's page prints the headline in its title
 and a price beside every item, and never says whether the headline holds the items. The owner
@@ -1696,6 +1706,8 @@ price when ticked, so no reading charges them twice or lets a second pick buy th
 other items on these pages are not in the pool and stay as text and option sum only. Alarielle
 (p.84) does not change: her page states that the headline includes her items.
 
+**Rule texts corrected (OLD-68, 2026-10-27).** Altos Elfos: Tyrion (p.92) has an armour save of 1+ with the Armadura del Dragón de Aenarion when mounted on Malhandir (Warhammer Magia p.47 adds 3+ on foot), cannot use a shield, and has a 4+ special save if the armour save fails. The save belongs to Tyrion's armour; Malhandir only wears the barding, so the old "barding, 2+ save" wording moved to Tyrion's tag and Malhandir's tag now says Tyrion saves on 1+ when mounted. The armour stays at 75 points as on his page (the Magia card prints 70). Alith Anar (p.82) fights on foot: he is a skirmisher leader (a High Elf infantry unit he leads may skirmish) with a special deployment after the enemy, which the unit he joins does not gain; the tag called him fast cavalry.
+
 #### Lizardmen: special characters' extra costs (OLD-63, 2026-10-26)
 **Warhammer Armies: Lizardmen (1997, EN) printed pp.79-89.** Same case as the High Elves: each
 page prints a cost beside a headline and a price beside every item, and does not say whether the
@@ -1713,6 +1725,8 @@ The Dagger of Sotek (card 50) is the one pool item among them: it is now a locke
 Tenehuini with `included: true` (owner approval, 2026-10-26), so it cannot be bought a second time.
 
 **Profile corrected (OLD-67, 2026-10-26).** Oxayotl (Hombres Lagarto p.83): the printed Toughness is 4, the data had 3. The rest of his row (M6 WS4 BS5 S4 W3 I7 A3 Ld7) was right.
+
+**Rule text corrected (OLD-68, 2026-10-27).** Hombres Lagarto (English, p.85): Itzi-Bitzi carries a single magic item, the Piranha Blade, so the tag no longer says "no magic items". The Spanish tag calls it Hoja Piraña; the Piranha Blade has no item card of its own.
 
 ### Statlines verified against the 5th-edition bestiary
 The following monster statlines were corrected to match the authoritative 5th-edition bestiary

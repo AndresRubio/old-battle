@@ -293,13 +293,13 @@ const units: UnitProfile[] = [
   {
     id: 'we-naieth',
     name: 'Naieth the Prophetess',
-    nameEs: 'Naieth la Profetisa',
+    nameEs: 'Naieth la Vidente',
     role: 'character',
     pointsPerModel: 59,
     statLine: elf({ WS: 4, BS: 4, S: 3, T: 4, W: 1, I: 7, A: 1, Ld: 8 }),
     isCharacter: true,
     characterRank: 'wizard1',
-    lores: ['battle', 'high'],
+    lores: ['battle'],
     max: 1,
     // Elfos Silvanos p.74 (OLD-63).
     fixedMagicItems: [{ id: 'mi-staff-of-the-auguries' }],
@@ -359,7 +359,10 @@ const units: UnitProfile[] = [
     id: 'we-durthu',
     name: 'Durthu the Treeman',
     nameEs: 'Durthu el Hombre Árbol',
-    role: 'monster',
+    // Elfos Silvanos p.76 and p.61 (OLD-68): "personaje independiente", paid from the
+    // Characters allowance. The book gives him no magic items and no General's post,
+    // so `isCharacter` stays off (no item picker, no General toggle).
+    role: 'character',
     pointsPerModel: 360,
     statLine: { M: 6, WS: 8, BS: 3, S: 7, T: 7, W: 6, I: 3, A: 5, Ld: 9 },
     isCharacter: false,
@@ -367,7 +370,7 @@ const units: UnitProfile[] = [
     specialRules: [
       'Special character (Treeman)',
       'Causes fear',
-      'Swarm of Sprites (auto-hitting 1D6 S4 missile attacks, 30cm)',
+      'Swarm of Sprites (auto-hitting 1D6 S3 missile attacks, 30cm; also strikes his close-combat foe)',
       'Woody Skin (4+ unmodifiable save)',
       'Double damage from magical fire',
       'Hatred of Orcs, Goblins & Dwarfs',

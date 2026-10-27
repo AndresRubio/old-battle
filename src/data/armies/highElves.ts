@@ -262,7 +262,7 @@ const STORMWING_PROFILE: ProfileBlock = {
 const MALHANDIR_PROFILE: ProfileBlock = {
   name: 'Malhandir (Elven Steed)', nameEs: 'Malhandir (Corcel Élfico)',
   statLine: { M: 12, WS: 4, BS: 0, S: 4, T: 3, W: 1, I: 5, A: 2, Ld: 7 },
-  specialRules: ['Dragon Armour barding (2+ save)'],
+  specialRules: ['Barding (Tyrion saves on 1+ when mounted)'],
 }
 
 const units: UnitProfile[] = [
@@ -383,7 +383,7 @@ const units: UnitProfile[] = [
       'Special character',
       'Requires at least one regiment of Shadow Warriors (Guerreros Sombríos)',
       'Hatred of Dark Elves and Chaos',
-      'Fast cavalry (skirmish); special deployment after enemy deploys',
+      'Skirmishers — a High Elf infantry unit he leads may skirmish; special deployment after the enemy has deployed (not for the unit he joins)',
       'Fights on foot; light armour, shield, sword & Moonbow (Arco Lunar)',
       'Fixed magic items: Stone of Midnight (Piedra de Medianoche), Shadow Crown (Corona Sombría), Moonbow (Arco Lunar)',
     ],
@@ -528,7 +528,7 @@ const units: UnitProfile[] = [
     specialRules: [
       'Special character',
       'Always strikes first',
-      'Rides Malhandir (M12" WS4 S4 T3 W1 I5 A2 Ld7) with Dragon Armour barding (2+ save)',
+      'Rides barded Malhandir (M12" WS4 S4 T3 W1 I5 A2 Ld7); Dragon Armour of Aenarion: 1+ save mounted (3+ on foot), no shield, 4+ special save if the armour save fails',
       'Immune to all fire attacks',
       'Fixed magic items: Sunfang / Colmillo Solar (runic sword), Dragon Armour of Aenarion (Armadura del Dragón de Aenarion), Heart of Avelorn (Corazón de Avelorn)',
     ],

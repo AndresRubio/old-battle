@@ -3157,3 +3157,200 @@ describe('item names agree within one character sheet (OLD-70)', () => {
     expect(getArmy('undead')!.magicItems.find((i) => i.id === 'mi-flail-of-skulls')!.name).toBe('Flail of Skulls')
   })
 })
+
+// OLD-68: the rule texts and classifications of special characters say what
+// the printed army book says. Each case cites the page it was checked against.
+describe('special-character rule texts match the book (OLD-68)', () => {
+  const unitOf = (armyId: string, unitId: string) => getArmy(armyId)!.units.find((u) => u.id === unitId)!
+  const tagStarting = (u: { specialRules?: string[] }, prefix: string) => (u.specialRules ?? []).find((r) => r.startsWith(prefix))!
+  const rulesOf = (armyId: string, unitId: string) => unitOf(armyId, unitId).specialRules ?? []
+  /** Pins the English tag and its Spanish phrase in one go. */
+  const expectTag = (armyId: string, unitId: string, en: string, es: string) => {
+    expect(rulesOf(armyId, unitId)).toContain(en)
+    expect(RULE_PHRASE_ES[en]).toBe(es)
+  }
+
+  // Norsca p.20 (PDF 32): once per game, this turn and the next, one chosen unit per turn.
+  it('Erik Redaxe: Invocation of Thor lasts two turns and strikes one unit each turn', () => {
+    expectTag(
+      'norse',
+      'no-erik-redaxe',
+      'Invocation of Thor — once per game, lasting this turn and the next: missile fire reduced to short range at -1 to hit; at the start of each of those turns lightning strikes D6 S4 hits on one chosen enemy unit (only magic armour saves); enemies within 12" fear Norse warriors',
+      'Invocación de Thor — una vez por partida, dura este turno y el siguiente: los disparos quedan reducidos a corto alcance con -1 para impactar; al inicio de cada uno de esos turnos los rayos causan D6 impactos de F4 en una unidad enemiga elegida (sólo salva la armadura mágica); los enemigos a 12" tienen miedo de los guerreros nórdicos',
+    )
+  })
+
+  // Elfos Silvanos p.76 (PDF 78) and p.61 (PDF 63): a character, and the sprites hit with S3.
+  it('Durthu is a character: his points count against Characters, not Monsters', () => {
+    const durthu = unitOf('wood-elves', 'we-durthu')
+    expect(durthu.role).toBe('character')
+    const army = getArmy('wood-elves')!
+    const entries: RosterEntry[] = [{ id: 'd', unitId: 'we-durthu', size: 1, optionIds: [], magicItemIds: [] }]
+    const byRole = pointsByRole(entries, army)
+    expect(byRole.character).toBe(360)
+    expect(byRole.monster).toBe(0)
+    const caps = summarize({ id: 'r', name: 'durthu', armyId: 'wood-elves', pointsLimit: 1000, entries }, army).caps
+    expect(caps.characters.points).toBe(360)
+    expect(caps.monsters.points).toBe(0)
+    // The book gives him neither magic items nor the General's post, so the
+    // item picker and the General toggle stay off (isCharacter is not set).
+    expect(durthu.isCharacter).toBeFalsy()
+  })
+
+  it('Durthu: the Swarm of Sprites hits with S3 and also strikes his close-combat foe', () => {
+    expectTag(
+      'wood-elves',
+      'we-durthu',
+      'Swarm of Sprites (auto-hitting 1D6 S3 missile attacks, 30cm; also strikes his close-combat foe)',
+      'Enjambre de Duendes (1D6 impactos automáticos de F3 como proyectiles, 30cm; también ataca al enemigo con el que luche cuerpo a cuerpo)',
+    )
+  })
+
+  // Elfos Silvanos p.74 (PDF 76): "Naieth la Vidente", a Battle Magic wizard, "Báculo de los Augurios".
+  it('Naieth is la Vidente, casts Battle Magic only and carries the Báculo de los Augurios', () => {
+    const naieth = unitOf('wood-elves', 'we-naieth')
+    expect(naieth.name).toBe('Naieth the Prophetess')
+    expect(naieth.nameEs).toBe('Naieth la Vidente')
+    expect(naieth.lores).toEqual(['battle'])
+    expectTag(
+      'wood-elves',
+      'we-naieth',
+      'Staff of the Augurs (+30) — one extra magic card per turn',
+      'Báculo de los Augurios (+30) — una carta de magia adicional por turno',
+    )
+  })
+
+  // Altos Elfos p.92 (PDF 94): Tyrion's Dragon Armour saves on 1+ (3+ on foot), Malhandir only wears the barding.
+  it("Tyrion's Dragon Armour of Aenarion saves on 1+, and Malhandir's barding says so", () => {
+    expectTag(
+      'high-elves',
+      'he-tyrion',
+      'Rides barded Malhandir (M12" WS4 S4 T3 W1 I5 A2 Ld7); Dragon Armour of Aenarion: 1+ save mounted (3+ on foot), no shield, 4+ special save if the armour save fails',
+      'Monta a Malhandir con barda (M12" HA4 F4 R3 H1 I5 A2 L7); Armadura del Dragón de Aenarion: salvación de 1+ montado (3+ a pie), sin escudo, salvación especial de 4+ si falla la de armadura',
+    )
+    const malhandir = unitOf('high-elves', 'he-tyrion').profiles!.find((p) => p.name.startsWith('Malhandir'))!
+    expect(malhandir.specialRules).toEqual(['Barding (Tyrion saves on 1+ when mounted)'])
+    expect(RULE_PHRASE_ES['Barding (Tyrion saves on 1+ when mounted)']).toBe('Barda (Tyrion salva a 1+ montado)')
+    // The long tag is a statline, not a glossary term, so no article attaches to it.
+    expect(findRule(tagStarting(unitOf('high-elves', 'he-tyrion'), 'Rides barded Malhandir'))).toBeUndefined()
+    // The character page's 75 stays (the Magia card's 70 is left alone).
+    expect(entryPoints({ id: 'e', unitId: 'he-tyrion', size: 1, optionIds: ['items-on-top'], magicItemIds: [] }, getArmy('high-elves')!)).toBe(675)
+  })
+
+  // Altos Elfos p.82 (PDF 84): Alith Anar fights on foot and leads skirmishing infantry.
+  it('Alith Anar is a skirmisher leader on foot, not fast cavalry', () => {
+    expectTag(
+      'high-elves',
+      'he-alith-anar',
+      'Skirmishers — a High Elf infantry unit he leads may skirmish; special deployment after the enemy has deployed (not for the unit he joins)',
+      'Hostigadores — la unidad de infantería Alto Elfa que dirija puede hostigar; despliegue especial después de que el enemigo haya desplegado (no para el regimiento al que se une)',
+    )
+    expect(rulesOf('high-elves', 'he-alith-anar').join('|')).not.toMatch(/cavalry/i)
+  })
+
+  // Perros de Guerra p.64 (PDF 66): the only effect is rallying friendly fleeing units.
+  it("Lucrezzia's Stunning Beauty only rallies friendly fleeing units within 6\"", () => {
+    expectTag(
+      'dogs-of-war',
+      'dow-lucrezzia',
+      'Stunning Beauty — any friendly fleeing unit within 6" of her at the start of her turn rallies immediately',
+      'Belleza Deslumbrante — cualquier unidad amiga que huya a 6" o menos de ella al inicio de su turno se reagrupa inmediatamente',
+    )
+  })
+
+  // Paladines del Caos p.34 (PDF 36): any character may be named his Señor; he follows the Chaos Spawn rules.
+  it("Scyla's master is any character who has been named, and he leaves the field too", () => {
+    expectTag(
+      'chaos',
+      'ch-scyla',
+      'Lord of Scyla — one character is named his master; deploy within 15cm of him; if the master dies or leaves the field he follows the Chaos Spawn rules (same profile)',
+      'Señor de Scyla — debe designarse a un personaje como su Señor; se despliega a 15 cm o menos de él; si su Señor muere o abandona el campo de batalla sigue las reglas de Engendros del Caos (con los mismos atributos)',
+    )
+  })
+
+  // Skaven p.69 (PDF 71): Thanquol wears no armour and fights with a sword; Boneripper uses fangs and claws.
+  it('Thanquol fights with a sword, and only Boneripper uses fangs and claws', () => {
+    expectTag(
+      'skaven',
+      'sk-thanquol',
+      'No armour; fights with a sword (Boneripper uses his fangs & claws)',
+      'Sin armadura; lucha con una espada (Destripahuesos, con sus colmillos y garras)',
+    )
+  })
+
+  // Orcos y Goblins p.92 (PDF 94): "una enorme Espada", not a magic one.
+  it("Gorfang Rotgut's sword is a huge sword, not a magic one", () => {
+    expectTag(
+      'orcs-and-goblins',
+      'og-gorfang',
+      'Light armour, shield & a huge sword',
+      'Armadura ligera, escudo y una enorme espada',
+    )
+  })
+
+  // Lizardmen p.85 (PDF 87): Itzi-Bitzi carries exactly one magic item, the Piranha Blade.
+  it('Itzi-Bitzi carries one magic item, the Piranha Blade', () => {
+    expectTag(
+      'lizardmen',
+      'lz-itzi-bitzi',
+      'Special character — Skink Hero; one magic item, always the Piranha Blade',
+      'Personaje especial — Héroe Skink; un objeto mágico, siempre la Hoja Piraña',
+    )
+    expect(rulesOf('lizardmen', 'lz-itzi-bitzi').join('|')).not.toMatch(/no magic items/i)
+  })
+
+  // No Muertos p.87 (PDF 89): Vlad "normalmente lleva" the Anillo de los Carstein and the Espada de Energía Maldita.
+  it("Vlad's item tag uses the pool's English names and the book's Spanish ones", () => {
+    expectTag(
+      'undead',
+      'ud-vlad-von-carstein',
+      'Magic items: Carstein Ring +50, Sword of Cursed Power +75',
+      'Objetos mágicos: Anillo de los Carstein +50, Espada de Energía Maldita +75',
+    )
+    const pool = getArmy('undead')!.magicItems
+    expect(pool.find((i) => i.id === 'mi-carstein-ring')!.name).toBe('Carstein Ring')
+    expect(pool.find((i) => i.id === 'mi-sword-of-cursed-power')!.name).toBe('Sword of Cursed Power')
+  })
+
+  // No Muertos pp.87-88 (PDF 89-90): the three Carstein characters ride a Corcel Esquelético; "Pesadilla" is a later term.
+  it('Vlad, Isabella and Manfred ride a Skeletal Steed, with the saved-roster id kept', () => {
+    for (const id of ['ud-vlad-von-carstein', 'ud-isabella-von-carstein', 'ud-manfred-von-carstein']) {
+      const u = unitOf('undead', id)
+      expect(u.mounts, id).toHaveLength(1)
+      const mount = u.mounts![0]
+      expect(mount.id, `${id} mount id`).toBe('mount-nightmare')
+      expect(mount.name).toBe('Skeletal Steed')
+      expect(mount.nameEs).toBe('Corcel Esquelético')
+      expect(mount.points).toBe(2)
+      expect(u.specialRules, id).toContain('May ride a Skeletal Steed (+2)')
+      expect(u.specialRules, id).not.toContain('May ride a Nightmare (+2)')
+    }
+    expect(RULE_PHRASE_ES['May ride a Skeletal Steed (+2)']).toBe('Puede montar un Corcel Esquelético (+2)')
+    expect(RULE_PHRASE_ES['May ride a Nightmare (+2)']).toBeUndefined()
+    // A roster saved with the old id keeps its price.
+    const entry: RosterEntry = { id: 'e', unitId: 'ud-vlad-von-carstein', size: 1, optionIds: [], mountId: 'mount-nightmare', magicItemIds: [] }
+    expect(entryPoints(entry, getArmy('undead')!)).toBe(377)
+  })
+
+  it('the generic Undead vampires keep the Nightmare (not part of this fix)', () => {
+    const mounts = unitOf('undead', 'ud-vampire').mounts!
+    expect(mounts[0].name).toBe('Nightmare')
+  })
+
+  // Skaven pp.71-72 (PDF 73-74): the Storm Daemon is a two-handed magic weapon, so Ikit may carry no other.
+  it('the Storm Daemon is a magic weapon named Tormenta Demoníaca, and it blocks a second weapon', () => {
+    const army = getArmy('skaven')!
+    const storm = army.magicItems.find((i) => i.id === 'mi-daemonic-storm')!
+    expect(storm.category).toBe('weapon')
+    expect(storm.nameEs).toBe('Tormenta Demoníaca')
+    const base: RosterEntry = { id: 'e', unitId: 'sk-ikit-claw', size: 1, optionIds: [], magicItemIds: [], isGeneral: true }
+    const rosterOf = (magicItemIds: string[]): Roster => ({
+      id: 'r', name: 'ikit', armyId: 'skaven', pointsLimit: 1000, entries: [{ ...base, magicItemIds }],
+    })
+    const clash = (ids: string[]) => validateRoster(rosterOf(ids), army, 'en').filter((v) => v.rule === 'magic-items-category')
+    expect(clash([])).toHaveLength(0)
+    expect(clash(['mi-cruel-sword'])).toHaveLength(1)
+    // His fixed Storm Daemon alone keeps the price (340).
+    expect(entryPoints(base, army)).toBe(340)
+  })
+})

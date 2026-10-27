@@ -573,7 +573,7 @@ const units: UnitProfile[] = [
       'Iron-Hard Skin — unmodifiable 4+ armour save (no Strength modifier)',
       'Causes fear',
       'Collar of Khorne — destroys magic weapons and dispels spells that strike him (4+)',
-      'Lord of Scyla — deploy within 15cm of a Khorne champion; if the master dies he becomes a normal Chaos Spawn',
+      'Lord of Scyla — one character is named his master; deploy within 15cm of him; if the master dies or leaves the field he follows the Chaos Spawn rules (same profile)',
     ],
   },
   {
