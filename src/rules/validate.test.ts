@@ -1540,3 +1540,78 @@ describe('OLD-69 — page limits on a character (engine)', () => {
     expect(unique([entry({ unitId: 'rune-hero', magicItemIds: ['sword'] })])).toHaveLength(0)
   })
 })
+
+describe('OLD-69 — page limits on the shipped special characters', () => {
+  const ros = (armyId: string, entries: RosterEntry[]): Roster => ({ id: 'r', name: 't', armyId, pointsLimit: 5000, entries })
+  const itemRules = (armyId: string, entries: RosterEntry[]) =>
+    rules(validateRoster(ros(armyId, entries), getArmy(armyId)!)).filter((r) => r.startsWith('magic-items'))
+  const empGen = entry({ id: 'g', unitId: 'emp-general', isGeneral: true })
+
+  // Imperio p.72: Boris "tiene dos objetos mágicos", the Runefang and the Talisman.
+  it('Boris may buy nothing beyond his two items', () => {
+    expect(itemRules('empire', [empGen, entry({ unitId: 'emp-boris-todbringer' })])).toEqual([])
+    expect(itemRules('empire', [empGen, entry({ unitId: 'emp-boris-todbringer', magicItemIds: ['mi-jade-amulet'] })]))
+      .toEqual(['magic-items-count', 'magic-items-not-allowed'])
+  })
+
+  // Imperio p.69: Ludwig may carry the Sword of Justice and no other magic item.
+  it('Ludwig takes the Sword of Justice and nothing else, a banner as BSB included', () => {
+    expect(itemRules('empire', [empGen, entry({ unitId: 'emp-ludwig', magicItemIds: ['mi-sword-of-justice'] })])).toEqual([])
+    expect(itemRules('empire', [empGen, entry({ unitId: 'emp-ludwig', magicItemIds: ['mi-jade-amulet'] })]))
+      .toEqual(['magic-items-not-allowed'])
+    const banner = getArmy('empire')!.magicItems.find((i) => i.category === 'banner' && !i.special)!.id
+    const vs = validateRoster(ros('empire', [empGen, entry({ unitId: 'emp-ludwig', isBSB: true, magicItemIds: [banner] })]), getArmy('empire')!)
+    expect(rules(vs).filter((r) => r.startsWith('magic-items'))).toEqual(['magic-items-not-allowed'])
+    expect(vs.find((v) => v.rule === 'magic-items-not-allowed')!.message).toMatch(
+      /^Ludwig Schwartzhelm: may only take Sword of Justice; .+ is not allowed\.$/,
+    )
+  })
+
+  // Lizardmen p.85: one magic item, always the Piranha Blade (not a pool card).
+  it('Itzi-Bitzi may buy no magic item', () => {
+    const lz = entry({ id: 'g', unitId: 'lz-slann', isGeneral: true })
+    expect(itemRules('lizardmen', [lz, entry({ unitId: 'lz-itzi-bitzi', magicItemIds: ['mi-dispel-scroll'] })]))
+      .toEqual(['magic-items-count', 'magic-items-not-allowed'])
+  })
+
+  // Skaven p.70: up to three items, two of them the Staff and the Liber.
+  it('Skrolk has one free pick, not two', () => {
+    const sk = (ids: string[]) => itemRules('skaven', [entry({ unitId: 'sk-skrolk', isGeneral: true, magicItemIds: ids })])
+    expect(sk(['mi-dispel-scroll'])).toEqual([])
+    expect(sk(['mi-dispel-scroll', 'mi-power-scroll'])).toEqual(['magic-items-count'])
+  })
+
+  // Enanos p.84 and p.92: Kragg's three runic items fill his three slots.
+  it('a bare Kragg is clean, one bought rune is over his three items', () => {
+    const dwGen = entry({ id: 'g', unitId: 'dw-general', isGeneral: true })
+    expect(itemRules('dwarfs', [dwGen, entry({ unitId: 'dw-kragg-the-grim' })])).toEqual([])
+    expect(itemRules('dwarfs', [dwGen, entry({ unitId: 'dw-kragg-the-grim', magicItemIds: ['mi-rune-of-luck'] })]))
+      .toEqual(['magic-items-count'])
+  })
+})
+
+// Enanos p.24, Law 4 (Runas Celosas): no master rune may be used more than once.
+describe('OLD-69 — master runes on rune groups are unique in the army', () => {
+  const dwarfs = getArmy('dwarfs')!
+  const unique = (entries: RosterEntry[]) =>
+    validateRoster({ id: 'r', name: 't', armyId: 'dwarfs', pointsLimit: 5000, entries }, dwarfs)
+      .filter((v) => v.rule === 'magic-items-unique')
+  const kazador = entry({ id: 'k', unitId: 'dw-king-kazador', isGeneral: true })
+
+  it('Kazador alone raises nothing', () => {
+    expect(unique([kazador])).toEqual([])
+  })
+
+  it('Kazador and a lord who buys the Master Rune of Death raise one finding', () => {
+    const vs = unique([kazador, entry({ unitId: 'dw-general', magicItemIds: ['mi-master-rune-of-death'] })])
+    expect(vs).toHaveLength(1)
+    expect(vs[0].severity).toBe('error')
+    expect(vs[0].message).toContain('Master Rune of Death')
+  })
+
+  it('Kazador and Kragg both bear the Master Rune of Adamant: one finding', () => {
+    const vs = unique([kazador, entry({ unitId: 'dw-kragg-the-grim' })])
+    expect(vs).toHaveLength(1)
+    expect(vs[0].message).toContain('Master Rune of Adamant')
+  })
+})

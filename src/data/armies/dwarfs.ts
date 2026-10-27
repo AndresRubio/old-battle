@@ -111,6 +111,8 @@ const units: UnitProfile[] = [
     statLine: dwarf({ WS: 6, BS: 4, S: 4, T: 5, W: 2, I: 3, A: 2, Ld: 9 }),
     isCharacter: true,
     characterRank: 'hero',
+    // Enanos p.84 and p.80 (OLD-69): a Runesmith of any type may carry up to three items.
+    magicItemSlots: 3,
     canBeGeneral: false,
     max: 1,
     specialRules: [
@@ -128,6 +130,8 @@ const units: UnitProfile[] = [
     statLine: dwarf({ WS: 7, BS: 5, S: 4, T: 6, W: 3, I: 4, A: 3, Ld: 10 }),
     isCharacter: true,
     characterRank: 'hero',
+    // Enanos p.84 and p.80 (OLD-69): a Runesmith of any type may carry up to three items.
+    magicItemSlots: 3,
     canBeGeneral: false,
     max: 1,
     specialRules: [
@@ -145,6 +149,8 @@ const units: UnitProfile[] = [
     statLine: dwarf({ WS: 8, BS: 6, S: 5, T: 6, W: 4, I: 5, A: 4, Ld: 10 }),
     isCharacter: true,
     characterRank: 'hero',
+    // Enanos p.84 and p.80 (OLD-69): a Runesmith of any type may carry up to three items.
+    magicItemSlots: 3,
     canBeGeneral: false,
     max: 1,
     specialRules: [
@@ -209,6 +215,9 @@ const units: UnitProfile[] = [
   },
 
   // ===== Special characters (0-1 each; fixed equipment & magic runes) =====
+  // OLD-69: each rune group is one runic item, a magic item that uses a slot of the
+  // allowance (Enanos p.24 and p.80). Its master runes join army-wide uniqueness
+  // (p.24, Law 4: no master rune may be used more than once).
   {
     id: 'dw-king-kazador',
     name: 'King Kazador of Karak Azul',
@@ -223,9 +232,9 @@ const units: UnitProfile[] = [
     // Enanos p.90: the book prices the runes per group, "+Runas de Arma +170 / +Runas de
     // Defensa +100 / +Runas Talismánicas +50", all carried by his fixed kit (OLD-63).
     fixedExtras: [
-      { id: 'weapon-runes', name: 'Weapon Runes (Hammer of Karak Azul)', nameEs: 'Runas de Arma (Martillo de Karak Azul)', points: 170 },
-      { id: 'defence-runes', name: 'Defence Runes (Armour of the King of Karak Azul)', nameEs: 'Runas de Defensa (Armadura del Rey de Karak Azul)', points: 100 },
-      { id: 'talismanic-runes', name: 'Talismanic Runes (Horn of Storms)', nameEs: 'Runas Talismánicas (Cuerno de las Tormentas)', points: 50 },
+      { id: 'weapon-runes', name: 'Weapon Runes (Hammer of Karak Azul)', nameEs: 'Runas de Arma (Martillo de Karak Azul)', points: 170, magicItem: true, uniqueItemIds: ['mi-master-rune-of-death'] },
+      { id: 'defence-runes', name: 'Defence Runes (Armour of the King of Karak Azul)', nameEs: 'Runas de Defensa (Armadura del Rey de Karak Azul)', points: 100, magicItem: true, uniqueItemIds: ['mi-master-rune-of-adamant'] },
+      { id: 'talismanic-runes', name: 'Talismanic Runes (Horn of Storms)', nameEs: 'Runas Talismánicas (Cuerno de las Tormentas)', points: 50, magicItem: true, uniqueItemIds: ['mi-master-rune-of-dread'] },
     ],
     specialRules: [
       'Special character (+1 rune modifier)',
@@ -247,9 +256,9 @@ const units: UnitProfile[] = [
     max: 1,
     // Enanos p.91: runes priced per group, +90 / +55 / +70 (OLD-63).
     fixedExtras: [
-      { id: 'weapon-runes', name: 'Weapon Runes (Axe of Dargo)', nameEs: 'Runas de Arma (Hacha de Dargo)', points: 90 },
-      { id: 'defence-runes', name: 'Defence Runes (Crown of the Slayers)', nameEs: 'Runas de Defensa (Corona de los Matadores)', points: 55 },
-      { id: 'talismanic-runes', name: 'Talismanic Runes (Dragon Cloak)', nameEs: 'Runas Talismánicas (Capa de Dragón)', points: 70 },
+      { id: 'weapon-runes', name: 'Weapon Runes (Axe of Dargo)', nameEs: 'Runas de Arma (Hacha de Dargo)', points: 90, magicItem: true },
+      { id: 'defence-runes', name: 'Defence Runes (Crown of the Slayers)', nameEs: 'Runas de Defensa (Corona de los Matadores)', points: 55, magicItem: true },
+      { id: 'talismanic-runes', name: 'Talismanic Runes (Dragon Cloak)', nameEs: 'Runas Talismánicas (Capa de Dragón)', points: 70, magicItem: true, uniqueItemIds: ['mi-master-rune-of-spite'] },
     ],
     specialRules: [
       'Special character (+1 rune modifier)',
@@ -267,13 +276,16 @@ const units: UnitProfile[] = [
     statLine: dwarf({ WS: 8, BS: 6, S: 5, T: 6, W: 4, I: 5, A: 4, Ld: 10 }),
     isCharacter: true,
     characterRank: 'hero',
+    // Enanos p.84 (OLD-69): a Runesmith of any type carries up to three items; his three
+    // runic items (p.92) fill them.
+    magicItemSlots: 3,
     canBeGeneral: false,
     max: 1,
     // Enanos p.92: runes priced per group, +165 / +150 / +45 (OLD-63).
     fixedExtras: [
-      { id: 'weapon-runes', name: 'Weapon Runes (Hammer of Kragg)', nameEs: 'Runas de Arma (Martillo de Kragg)', points: 165 },
-      { id: 'defence-runes', name: 'Defence Runes (Armour of Kragg)', nameEs: 'Runas de Defensa (Armadura de Kragg)', points: 150 },
-      { id: 'talismanic-runes', name: 'Talismanic Runes (Runic Staff)', nameEs: 'Runas Talismánicas (Bastón Rúnico)', points: 45 },
+      { id: 'weapon-runes', name: 'Weapon Runes (Hammer of Kragg)', nameEs: 'Runas de Arma (Martillo de Kragg)', points: 165, magicItem: true },
+      { id: 'defence-runes', name: 'Defence Runes (Armour of Kragg)', nameEs: 'Runas de Defensa (Armadura de Kragg)', points: 150, magicItem: true, uniqueItemIds: ['mi-master-rune-of-adamant'] },
+      { id: 'talismanic-runes', name: 'Talismanic Runes (Runic Staff)', nameEs: 'Runas Talismánicas (Bastón Rúnico)', points: 45, magicItem: true },
     ],
     specialRules: [
       'Special character (runesmith; +1 rune modifier, profile S modifier +10)',
@@ -291,6 +303,9 @@ const units: UnitProfile[] = [
     statLine: dwarf({ WS: 8, BS: 6, S: 4, T: 5, W: 3, I: 5, A: 4, Ld: 10 }),
     isCharacter: true,
     characterRank: 'lord',
+    // Enanos p.94 (OLD-69): his axe is the only magic item he may have.
+    magicItemSlots: 1,
+    allowedMagicItems: [],
     canBeGeneral: false,
     max: 1,
     // Enanos p.93: "+Hacha de Gotrek +125", always carried (OLD-63).
@@ -310,6 +325,9 @@ const units: UnitProfile[] = [
     statLine: dwarf({ M: 4, WS: 6, BS: 5, S: 4, T: 4, W: 2, I: 5, A: 3, Ld: 8 }),
     isCharacter: true,
     characterRank: 'hero',
+    // Enanos p.94 (OLD-69): his sword is the only magic item he may have.
+    magicItemSlots: 1,
+    allowedMagicItems: [],
     canBeGeneral: false,
     max: 1,
     // Enanos p.93: "empuña una Espada de Bronce Fulgurante" (+50), always carried (OLD-63).
@@ -367,7 +385,7 @@ const units: UnitProfile[] = [
     // Enanos p.95: "+Runas de Armas +40 / +Jarra de Cerveza Rúnica +25". The tankard is a
     // fixed item at his page price; the magic-item card stays at 50 (Magia p.38, p.74).
     fixedExtras: [
-      { id: 'weapon-runes', name: "Weapon Runes (Bugman's rune axe)", nameEs: 'Runas de Arma (hacha rúnica de Bugman)', points: 40 },
+      { id: 'weapon-runes', name: "Weapon Runes (Bugman's rune axe)", nameEs: 'Runas de Arma (hacha rúnica de Bugman)', points: 40, magicItem: true },
     ],
     fixedMagicItems: [{ id: 'mi-bugmans-tankard', points: 25 }],
     specialRules: [
@@ -389,8 +407,8 @@ const units: UnitProfile[] = [
     max: 1,
     // Enanos p.96: runes priced per group, +25 / +55 (OLD-63).
     fixedExtras: [
-      { id: 'weapon-runes', name: "Weapon Runes (Burlok's Hammer)", nameEs: 'Runas de Arma (Martillo de Burlok)', points: 25 },
-      { id: 'defence-runes', name: "Defence Runes (Burlok's Armour)", nameEs: 'Runas de Defensa (Armadura de Burlok)', points: 55 },
+      { id: 'weapon-runes', name: "Weapon Runes (Burlok's Hammer)", nameEs: 'Runas de Arma (Martillo de Burlok)', points: 25, magicItem: true, uniqueItemIds: ['mi-master-rune-of-swiftness'] },
+      { id: 'defence-runes', name: "Defence Runes (Burlok's Armour)", nameEs: 'Runas de Defensa (Armadura de Burlok)', points: 55, magicItem: true },
     ],
     specialRules: [
       'Special character (Master Engineer; +1 rune modifier)',

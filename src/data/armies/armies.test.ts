@@ -4,7 +4,7 @@ import { validateRoster } from '../../rules/validate'
 import { entryPoints, pointsByRole, effectiveStatLine, carriedMagicItems } from '../../rules/points'
 import { findRule } from '../rules'
 import { summarize } from '../../rules/summary'
-import { MAGIC_ITEM_ALLOWANCE } from '../../rules/magicItems'
+import { MAGIC_ITEM_ALLOWANCE, magicItemAllowance, usedMagicItemSlots } from '../../rules/magicItems'
 import type { Roster, RosterEntry, StatLine } from '../types'
 import { COMMON_MAGIC_ITEMS, ARMY_MAGIC_ITEMS } from '../magicItems'
 import { isWizardLevelId } from '../unitOptions'
@@ -3041,12 +3041,14 @@ describe('OLD-63: special characters charge their book extras', () => {
   // character's allowance (Imperio p.67-68, p.70-71, p.71, p.74; No Muertos
   // p.95; Norsca PDF 34). A page that fixes more than the rank allows sets
   // `magicItemSlots` to the page's own number.
-  it("every unit's fixed magic items fit its allowance", () => {
-    const withFixed = ARMIES.flatMap((a) => a.units.filter((u) => (u.fixedMagicItems?.length ?? 0) > 0))
+  // OLD-69: a rune group flagged magicItem fills a slot like a fixed item.
+  it("every unit's fixed magic items and runic items fit its allowance", () => {
+    const runic = (u: (typeof ARMIES)[number]['units'][number]) => (u.fixedExtras ?? []).filter((x) => x.magicItem).length
+    const withFixed = ARMIES.flatMap((a) => a.units.filter((u) => (u.fixedMagicItems?.length ?? 0) + runic(u) > 0))
     expect(withFixed.length).toBeGreaterThan(0)
     for (const u of withFixed) {
       const allowance = u.magicItemSlots ?? (u.characterRank ? MAGIC_ITEM_ALLOWANCE[u.characterRank] : 0)
-      expect(u.fixedMagicItems!.length, u.id).toBeLessThanOrEqual(allowance)
+      expect((u.fixedMagicItems?.length ?? 0) + runic(u), u.id).toBeLessThanOrEqual(allowance)
     }
   })
 })
@@ -3352,5 +3354,98 @@ describe('special-character rule texts match the book (OLD-68)', () => {
     expect(clash(['mi-cruel-sword'])).toHaveLength(1)
     // His fixed Storm Daemon alone keeps the price (340).
     expect(entryPoints(base, army)).toBe(340)
+  })
+})
+
+// OLD-69 — the magic-item limits a character's own page sets. Each row is the
+// allowance the page prints and the free picks left once his fixed items and
+// runic items are counted; `allowed` is the page's allow-list ([] = nothing but
+// his own items, undefined = a free choice). Pages in CITATIONS.md.
+describe('special characters carry what their page allows (OLD-69)', () => {
+  type Row = { army: string; id: string; page: string; slots: number; free: number; allowed?: string[] }
+  const rows: Row[] = [
+    { army: 'skaven', id: 'sk-skrolk', page: 'Skaven p.70', slots: 3, free: 1 },
+    { army: 'skaven', id: 'sk-snitch', page: 'Skaven p.73', slots: 3, free: 1 },
+    { army: 'skaven', id: 'sk-queek', page: 'Skaven p.74', slots: 4, free: 2 },
+    { army: 'skaven', id: 'sk-throt', page: 'Skaven p.72', slots: 2, free: 2 },
+    { army: 'skaven', id: 'sk-verminlord', page: 'Skaven p.62', slots: 0, free: 0, allowed: [] },
+    { army: 'dwarfs', id: 'dw-kragg-the-grim', page: 'Enanos p.84, p.92', slots: 3, free: 0 },
+    { army: 'dwarfs', id: 'dw-king-kazador', page: 'Enanos p.90', slots: 3, free: 0 },
+    { army: 'dwarfs', id: 'dw-ungrim-ironfist', page: 'Enanos p.91', slots: 3, free: 0 },
+    { army: 'dwarfs', id: 'dw-josef-bugman', page: 'Enanos p.95', slots: 2, free: 0 },
+    { army: 'dwarfs', id: 'dw-burlok-damminson', page: 'Enanos p.96', slots: 2, free: 0 },
+    { army: 'dwarfs', id: 'dw-gotrek', page: 'Enanos p.94', slots: 1, free: 0, allowed: [] },
+    { army: 'dwarfs', id: 'dw-felix', page: 'Enanos p.94', slots: 1, free: 0, allowed: [] },
+    { army: 'dwarfs', id: 'dw-runesmith', page: 'Enanos p.84', slots: 3, free: 3 },
+    { army: 'dwarfs', id: 'dw-master-runesmith', page: 'Enanos p.84', slots: 3, free: 3 },
+    { army: 'dwarfs', id: 'dw-rune-lord', page: 'Enanos p.84', slots: 3, free: 3 },
+    { army: 'empire', id: 'emp-boris-todbringer', page: 'Imperio p.72', slots: 2, free: 0, allowed: [] },
+    { army: 'empire', id: 'emp-aldebrand-ludenhof', page: 'Imperio p.72', slots: 1, free: 0, allowed: [] },
+    { army: 'empire', id: 'emp-valmir-von-raukov', page: 'Imperio p.73', slots: 2, free: 0, allowed: [] },
+    { army: 'empire', id: 'emp-marius-leitdorf', page: 'Imperio p.73', slots: 1, free: 0, allowed: [] },
+    { army: 'empire', id: 'emp-ludwig', page: 'Imperio p.69', slots: 1, free: 1, allowed: ['mi-sword-of-justice'] },
+    { army: 'dogs-of-war', id: 'dow-mydas', page: 'Mercenarios p.65', slots: 0, free: 0, allowed: [] },
+    { army: 'chaos', id: 'ch-mordrek', page: 'Paladines del Caos p.21', slots: 2, free: 0, allowed: [] },
+    { army: 'chaos', id: 'ch-arbaal', page: 'Paladines del Caos p.29', slots: 0, free: 0, allowed: [] },
+    { army: 'chaos', id: 'ch-egrimm', page: 'Paladines del Caos p.33', slots: 0, free: 0, allowed: [] },
+    { army: 'chaos', id: 'ch-khazrak', page: 'Paladines del Caos p.43', slots: 0, free: 0, allowed: [] },
+    { army: 'high-elves', id: 'he-alith-anar', page: 'Altos Elfos p.82', slots: 0, free: 0, allowed: [] },
+    { army: 'high-elves', id: 'he-alarielle', page: 'Altos Elfos p.87', slots: 0, free: 0, allowed: [] },
+    { army: 'lizardmen', id: 'lz-itzi-bitzi', page: 'Lizardmen p.85', slots: 0, free: 0, allowed: [] },
+  ]
+  it.each(rows)('$id: $slots items, $free free ($page)', ({ army: armyId, id, slots, free, allowed }) => {
+    const army = getArmy(armyId)!
+    const unit = army.units.find((u) => u.id === id)!
+    const bare: RosterEntry = { id: 'e', unitId: id, size: 1, optionIds: [], magicItemIds: [] }
+    expect(magicItemAllowance(bare, unit)).toBe(slots)
+    expect(slots - usedMagicItemSlots(bare, unit, army)).toBe(free)
+    expect(unit.allowedMagicItems).toEqual(allowed)
+  })
+
+  it('a BSB Ludwig still has one slot (the BSB adds no item)', () => {
+    const empire = getArmy('empire')!
+    const ludwig = empire.units.find((u) => u.id === 'emp-ludwig')!
+    expect(magicItemAllowance({ id: 'e', unitId: 'emp-ludwig', size: 1, optionIds: [], magicItemIds: [], isBSB: true }, ludwig)).toBe(1)
+  })
+
+  // Enanos p.24 and p.80: a rune group is one runic item, a magic item.
+  it('every Dwarf special character rune group is a magic item', () => {
+    const dwarfs = getArmy('dwarfs')!
+    const groups = dwarfs.units.flatMap((u) => (u.fixedExtras ?? []).map((x) => [u.id, x] as const))
+    expect(groups.length).toBe(12)
+    for (const [uid, x] of groups) expect(x.magicItem, `${uid}/${x.id}`).toBe(true)
+    // Nothing outside the Dwarfs is a runic item.
+    for (const a of ARMIES.filter((a) => a.id !== 'dwarfs')) {
+      for (const u of a.units) {
+        for (const x of u.fixedExtras ?? []) expect(x.magicItem, `${u.id}/${x.id}`).toBeUndefined()
+      }
+    }
+  })
+
+  // Enanos p.90-92 and p.96: the master runes each rune group bears.
+  it('the master runes on the special characters join army uniqueness, and are master runes', () => {
+    const dwarfs = getArmy('dwarfs')!
+    const runes = (uid: string) =>
+      Object.fromEntries(
+        (dwarfs.units.find((u) => u.id === uid)!.fixedExtras ?? [])
+          .filter((x) => x.uniqueItemIds)
+          .map((x) => [x.id, x.uniqueItemIds]),
+      )
+    expect(runes('dw-king-kazador')).toEqual({
+      'weapon-runes': ['mi-master-rune-of-death'],
+      'defence-runes': ['mi-master-rune-of-adamant'],
+      'talismanic-runes': ['mi-master-rune-of-dread'],
+    })
+    expect(runes('dw-ungrim-ironfist')).toEqual({ 'talismanic-runes': ['mi-master-rune-of-spite'] })
+    expect(runes('dw-kragg-the-grim')).toEqual({ 'defence-runes': ['mi-master-rune-of-adamant'] })
+    expect(runes('dw-burlok-damminson')).toEqual({ 'weapon-runes': ['mi-master-rune-of-swiftness'] })
+    expect(runes('dw-josef-bugman')).toEqual({})
+    for (const a of ARMIES) {
+      for (const u of a.units) {
+        for (const x of u.fixedExtras ?? []) {
+          for (const id of x.uniqueItemIds ?? []) expect(id, `${u.id}/${x.id}`).toMatch(/^mi-master-rune-of-/)
+        }
+      }
+    }
   })
 })

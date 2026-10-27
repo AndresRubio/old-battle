@@ -376,6 +376,9 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 7, BS: 7, S: 4, T: 4, W: 3, I: 9, A: 4, Ld: 10 }),
     isCharacter: true,
     characterRank: 'lord',
+    // Altos Elfos p.82 (OLD-69): "No puede poseer otros objetos mágicos".
+    magicItemSlots: 0,
+    allowedMagicItems: [],
     canBeGeneral: true,
     max: 1,
     options: [itemsOnTop(115, 'p.82', 285, 'Stone of Midnight 50, Shadow Crown 15, Moonbow 50 (115 pts)', 'Piedra de Medianoche 50, Corona Sombría 15, Arco Lunar 50 (115 pts)')],
@@ -419,6 +422,9 @@ const units: UnitProfile[] = [
     statLine: elf({ WS: 10, BS: 10, S: 3, T: 4, W: 4, I: 10, A: 1, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    // Altos Elfos p.87 (OLD-69): "no puede poseer ningún otro objeto mágico".
+    magicItemSlots: 0,
+    allowedMagicItems: [],
     lores: ['high', 'battle'],
     canBeGeneral: false,
     max: 1,

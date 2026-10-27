@@ -387,6 +387,9 @@ const units: UnitProfile[] = [
     statLine: statline({ M: 8, WS: 9, BS: 8, S: 6, T: 5, W: 3, I: 8, A: 2, Ld: 10 }),
     isCharacter: true,
     characterRank: 'lord',
+    // Paladines del Caos p.29 (OLD-69): two Rewards and no other magic item.
+    magicItemSlots: 0,
+    allowedMagicItems: [],
     canBeGeneral: false,
     max: 1,
     profiles: [HOUND_OF_KHORNE_PROFILE],
@@ -486,6 +489,10 @@ const units: UnitProfile[] = [
     statLine: statline({ M: 8, WS: 7, BS: 9, S: 5, T: 5, W: 3, I: 9, A: 4, Ld: 10 }),
     isCharacter: true,
     characterRank: 'lord',
+    // Paladines del Caos p.21 (OLD-69): the Sword, the Runeshield and the Reward Eternal
+    // Damnation, "no puede poseer otros". The Reward is not a pool item.
+    magicItemSlots: 2,
+    allowedMagicItems: [],
     canBeGeneral: false,
     max: 1,
     profiles: [MORDREK_STEED_PROFILE],
@@ -532,6 +539,10 @@ const units: UnitProfile[] = [
     statLine: statline({ M: 4, WS: 6, BS: 6, S: 5, T: 5, W: 4, I: 9, A: 4, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    // Paladines del Caos p.33 (OLD-69): Rune Sword, Familiar, Skull of Katam and a Reward,
+    // all in the 521; no other magic item.
+    magicItemSlots: 0,
+    allowedMagicItems: [],
     lores: ['tzeentch', 'battle', 'dark'],
     canBeGeneral: true,
     max: 1,
@@ -634,6 +645,9 @@ const units: UnitProfile[] = [
     statLine: statline({ M: 4, WS: 6, BS: 5, S: 5, T: 5, W: 3, I: 5, A: 3, Ld: 8 }),
     isCharacter: true,
     characterRank: 'lord',
+    // Paladines del Caos p.43 (OLD-69): one item, the Scourge, and no other.
+    magicItemSlots: 0,
+    allowedMagicItems: [],
     canBeGeneral: true,
     max: 1,
     profiles: [BLOODGREED_PROFILE],

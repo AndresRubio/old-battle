@@ -641,6 +641,9 @@ const units: UnitProfile[] = [
     statLine: skink({ WS: 4, BS: 5, S: 4, W: 2, I: 6, A: 3, Ld: 7 }),
     isCharacter: true,
     characterRank: 'hero',
+    // Lizardmen p.85 (OLD-69): one magic item, always the Piranha Blade, which has no card.
+    magicItemSlots: 0,
+    allowedMagicItems: [],
     canBeGeneral: false,
     max: 1,
     options: [itemsOnTop(35, 'p.85', 105, 'Piranha Blade 35 (35 pts)', 'Piranha Blade 35 (35 pts)')],

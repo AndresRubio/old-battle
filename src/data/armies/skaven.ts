@@ -161,6 +161,9 @@ const units: UnitProfile[] = [
     statLine: skaven({ WS: 8, BS: 8, S: 8, T: 7, W: 7, I: 10, A: 8, Ld: 10 }),
     isCharacter: true,
     characterRank: 'wizard4',
+    // Skaven p.62 (OLD-69): the Doom Glaive is his only magic item, and it is not a pool card.
+    magicItemSlots: 0,
+    allowedMagicItems: [],
     lores: ['skaven', 'dark'],
     canBeGeneral: false,
     specialRules: [
@@ -254,6 +257,8 @@ const units: UnitProfile[] = [
     statLine: skaven({ WS: 6, BS: 4, S: 5, T: 4, W: 3, I: 7, A: 4, Ld: 7 }),
     isCharacter: true,
     characterRank: 'wizard2',
+    // Skaven p.70 (OLD-69): up to three items, two of them always the Staff and the Liber.
+    magicItemSlots: 3,
     lores: ['skaven'],
     canBeGeneral: true,
     max: 1,
@@ -326,6 +331,8 @@ const units: UnitProfile[] = [
     statLine: skaven({ WS: 8, BS: 6, S: 4, T: 4, W: 3, I: 10, A: 5, Ld: 9 }),
     isCharacter: true,
     characterRank: 'hero',
+    // Skaven p.73 (OLD-69): up to three items, the first two the Brazaletes and the Capa.
+    magicItemSlots: 3,
     canBeGeneral: false,
     max: 1,
     // Skaven p.73: the first two of his three items are the Brazaletes (+40) and the Capa (+75).
@@ -350,6 +357,8 @@ const units: UnitProfile[] = [
     statLine: skaven({ WS: 7, BS: 6, S: 4, T: 4, W: 3, I: 7, A: 4, Ld: 8 }),
     isCharacter: true,
     characterRank: 'lord',
+    // Skaven p.74 (OLD-69): up to four items, the first two the Degolladora and the Armadura.
+    magicItemSlots: 4,
     canBeGeneral: true,
     max: 1,
     // Skaven p.74: the first two of his four items are the Degolladora (+50) and the Armadura (+50).
