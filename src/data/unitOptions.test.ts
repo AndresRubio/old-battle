@@ -38,3 +38,12 @@ describe('option-identity conventions', () => {
     }
   })
 })
+
+// OLD-71: the generic +25 BSB option was never wired to a unit since the first
+// commit. Each book prints its own BSB price (Ludwig's +50 is `bsbPoints`).
+describe('no dead generic options', () => {
+  it('exports no BSB_UPGRADE', async () => {
+    const mod: Record<string, unknown> = await import('./unitOptions')
+    expect(mod.BSB_UPGRADE).toBeUndefined()
+  })
+})
