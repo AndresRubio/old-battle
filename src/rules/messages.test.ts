@@ -62,7 +62,7 @@ describe('ruleMessage', () => {
     const sword: MagicItem = { id: 'mi-sword', name: 'Sword of Justice', nameEs: 'Espada de la Justicia', category: 'weapon', points: 50 }
     const bow: MagicItem = { id: 'mi-bow', name: 'Dragon Bow', nameEs: 'Arco del Dragón', category: 'weapon', points: 40 }
     expect(ruleMessage('magic-items-not-allowed', { unit, item: charm, allowed: [] }, 'en')).toBe(
-      'Empire General: may carry no magic items besides his own (Lucky Charm is not allowed).',
+      'Empire General: may carry no magic items besides their own (Lucky Charm is not allowed).',
     )
     expect(ruleMessage('magic-items-not-allowed', { unit, item: charm, allowed: [] }, 'es')).toBe(
       'General Imperial: no puede llevar más objetos mágicos que los suyos (Amuleto de la Suerte no está permitido).',

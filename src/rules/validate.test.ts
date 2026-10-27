@@ -1496,7 +1496,7 @@ describe('OLD-69 — page limits on a character (engine)', () => {
     const notAllowed = vs.filter((v) => v.rule === 'magic-items-not-allowed')
     expect(notAllowed).toHaveLength(1)
     expect(notAllowed[0]).toMatchObject({ severity: 'warning', entryId: 'x' })
-    expect(notAllowed[0].message).toBe('Only Fixed: may carry no magic items besides his own (Lucky Charm is not allowed).')
+    expect(notAllowed[0].message).toBe('Only Fixed: may carry no magic items besides their own (Lucky Charm is not allowed).')
     expect(rules(vs)).toContain('magic-items-count')
   })
 

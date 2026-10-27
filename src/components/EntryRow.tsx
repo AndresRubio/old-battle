@@ -118,7 +118,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
   const carried = unit.isCharacter ? carriedMagicItems(entry, unit, army) : []
   const fixedItems = new Map(carried.filter((c) => c.fixed).map((c) => [c.item.id, c]))
   // Slots in use: carried items plus runic items such as a Dwarf rune group (OLD-69).
-  const usedSlots = unit.isCharacter ? usedMagicItemSlots(entry, unit, army) : 0
+  const usedSlots = unit.isCharacter ? usedMagicItemSlots(entry, unit, army, carried) : 0
   const fixedExtras = unit.fixedExtras ?? []
   const mounts = unit.mounts ?? []
   const selectedMount = mounts.find((m) => m.id === entry.mountId)

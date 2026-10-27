@@ -78,10 +78,16 @@ const magicFixedExtraCount = (unit: UnitProfile): number =>
 /**
  * How many of the allowance the entry uses (OLD-69): every carried item (fixed
  * and picked) plus each fixed extra that is a magic item, such as a Dwarf rune
- * group. The Muster Check and the editor's counter both read this number.
+ * group. The Muster Check and the editor's counter both read this number; a
+ * caller that already holds the carried list passes it to avoid recomputing.
  */
-export function usedMagicItemSlots(entry: RosterEntry, unit: UnitProfile, army: Army): number {
-  return carriedMagicItems(entry, unit, army).length + magicFixedExtraCount(unit)
+export function usedMagicItemSlots(
+  entry: RosterEntry,
+  unit: UnitProfile,
+  army: Army,
+  carried: CarriedMagicItem[] = carriedMagicItems(entry, unit, army),
+): number {
+  return carried.length + magicFixedExtraCount(unit)
 }
 
 /**
@@ -108,7 +114,7 @@ export function isMagicItemAllowed(unit: UnitProfile, itemId: string): boolean {
  */
 export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, army: Army): Finding[] {
   const carried = carriedMagicItems(entry, unit, army)
-  const used = carried.length + magicFixedExtraCount(unit)
+  const used = usedMagicItemSlots(entry, unit, army, carried)
   if (used === 0) return []
   if (!unit.isCharacter) {
     return [

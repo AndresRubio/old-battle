@@ -193,7 +193,7 @@ const MESSAGES: { [K in RuleId]: MessageBuilder<K> } = {
     if (p.allowed.length === 0) {
       return lang === 'es'
         ? `${un(p, lang)}: no puede llevar más objetos mágicos que los suyos (${item} no está permitido).`
-        : `${un(p, lang)}: may carry no magic items besides his own (${item} is not allowed).`
+        : `${un(p, lang)}: may carry no magic items besides their own (${item} is not allowed).`
     }
     const list = p.allowed.map((i) => magicItemName(i, lang)).join(', ')
     return lang === 'es'
