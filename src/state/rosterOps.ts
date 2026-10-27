@@ -1,6 +1,6 @@
 import type { Army, Roster, RosterEntry, UnitProfile } from '../data/types'
 import { STANDARD_BEARER_ID, isWizardLevelId } from '../data/unitOptions'
-import { clampOptionCount, defaultMount, findUnit, isFixedMagicItem } from '../rules/points'
+import { clampOptionCount, defaultMount, findMagicItem, findUnit, isFixedMagicItem } from '../rules/points'
 import { isMagicItemAllowed } from '../rules/magicItems'
 
 let counter = 0
@@ -85,6 +85,7 @@ export function duplicateEntry(roster: Roster, entryId: string, id?: string): Ro
     id: id ?? genId('entry'),
     optionIds: [...src.optionIds],
     magicItemIds: [...src.magicItemIds],
+    ...(src.companionMagicItemIds ? { companionMagicItemIds: [...src.companionMagicItemIds] } : {}),
     ...(src.optionCounts ? { optionCounts: { ...src.optionCounts } } : {}),
     isGeneral: false,
     isBSB: false,
@@ -180,6 +181,30 @@ export function toggleMagicItem(roster: Roster, entryId: string, itemId: string,
 }
 
 /**
+ * Toggle a magic item on the unit's fixed companion (OLD-72, Niblit). Mirrors
+ * `toggleMagicItem`: a slot that is full still takes another pick (the Muster
+ * Check warns). An id outside the army's pool or a special-character item is
+ * never added, though a stale one can be dropped. A unit with no companion comes
+ * back unchanged, and an emptied list is removed so the entry is back to its
+ * saved shape.
+ */
+export function toggleCompanionMagicItem(roster: Roster, entryId: string, itemId: string, army: Army): Roster {
+  const entry = roster.entries.find((e) => e.id === entryId)
+  const unit = entry ? findUnit(army, entry.unitId) : undefined
+  if (!entry || !unit?.companionMagicItems) return roster
+  const ids = entry.companionMagicItemIds ?? []
+  const has = ids.includes(itemId)
+  if (!has) {
+    const item = findMagicItem(army, itemId)
+    if (!item || item.special) return roster
+  }
+  const next = has ? ids.filter((m) => m !== itemId) : [...ids, itemId]
+  const updated: RosterEntry = { ...entry, companionMagicItemIds: next }
+  if (next.length === 0) delete updated.companionMagicItemIds
+  return { ...roster, entries: roster.entries.map((e) => (e.id === entryId ? updated : e)) }
+}
+
+/**
  * Select the character's mount, or clear it with `null`. Option ids that belong
  * to a DIFFERENT mount's nested options (e.g. a chariot's extra crew after
  * switching to a boar) are dropped — they would linger as stale selections.
@@ -250,6 +275,7 @@ export interface EntryActions {
   selectWizardLevel(optionId: string | null): void
   selectLore(loreId: string | null): void
   toggleMagicItem(itemId: string): void
+  toggleCompanionMagicItem(itemId: string): void
   selectMagicStandard(itemId: string | null): void
   setGeneral(): void
   toggleBSB(): void
@@ -277,6 +303,7 @@ export function entryActions(
     selectWizardLevel: (optionId) => commit((prev) => selectWizardLevel(prev, entryId, army, optionId)),
     selectLore: (loreId) => commit((prev) => selectLore(prev, entryId, loreId)),
     toggleMagicItem: (itemId) => commit((prev) => toggleMagicItem(prev, entryId, itemId, army)),
+    toggleCompanionMagicItem: (itemId) => commit((prev) => toggleCompanionMagicItem(prev, entryId, itemId, army)),
     selectMagicStandard: (itemId) => commit((prev) => selectMagicStandard(prev, entryId, itemId)),
     setGeneral: () => commit((prev) => setGeneral(prev, entryId)),
     toggleBSB: () => commit((prev) => toggleBSB(prev, entryId)),

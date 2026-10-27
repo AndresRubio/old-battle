@@ -1,5 +1,5 @@
 import type { Army, EquipmentOption, Roster, RosterEntry, StatLine, StatNotes, UnitProfile } from '../data/types'
-import { type CarriedMagicItem, bsbPoints, carriedMagicItems, countedOptionCount, effectiveStatLine, entryPoints, findMagicItem, findUnit, unitOptionCost } from './points'
+import { type CarriedMagicItem, bsbPoints, carriedMagicItems, companionCarriedItems, countedOptionCount, effectiveStatLine, entryPoints, findMagicItem, findUnit, unitOptionCost } from './points'
 import { summarize } from './summary'
 import { validateRoster } from './validate'
 import {
@@ -16,6 +16,7 @@ import {
   magicItemName,
   magicItemDesc,
   fixedExtraName,
+  companionName,
   ruleText,
   wizardLevelLabel,
   t,
@@ -179,6 +180,17 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
     }
   }
 
+  // The fixed companion's own items (Niblit, OLD-72).
+  const holder = unit.companionMagicItems
+  const companionItems = companionCarriedItems(entry, unit, army)
+  if (holder && companionItems.length > 0) {
+    lines.push(`  ${companionName(holder, lang)} (${t('magicItems', lang)}):`)
+    for (const item of companionItems) {
+      const desc = magicItemDesc(item, lang)
+      lines.push(`    * ${magicItemName(item, lang)} (${item.points} ${t('pts', lang)})${desc ? ` — ${desc}` : ''}`)
+    }
+  }
+
   // The unit's magic standard (carried by its standard bearer).
   const standard = entry.magicStandardId ? findMagicItem(army, entry.magicStandardId) : undefined
   if (standard) {
@@ -233,6 +245,9 @@ export function exportRosterText(roster: Roster, army: Army, lang: Lang = 'en'):
       }
       for (const x of fixedExtraLabels(unit, lang)) lines.push(`    ${x}`)
       for (const c of carriedMagicItems(e, unit, army)) lines.push(`    * ${carriedItemLabel(c, lang)}`)
+      for (const item of companionCarriedItems(e, unit, army)) {
+        lines.push(`    * ${companionName(unit.companionMagicItems!, lang)}: ${magicItemName(item, lang)} (${item.points} ${t('pts', lang)})`)
+      }
       const std = e.magicStandardId ? findMagicItem(army, e.magicStandardId) : undefined
       if (std) lines.push(`    * ${magicItemName(std, lang)} (${std.points} ${t('pts', lang)})`)
     }

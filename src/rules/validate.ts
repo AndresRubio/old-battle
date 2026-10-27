@@ -1,7 +1,7 @@
 import type { Army, Roster, RuleViolation } from '../data/types'
 import { findMagicItem, findUnit, rosterTotalPoints } from './points'
 import { summarize } from './summary'
-import { entryMagicItemFindings, armyItemUniquenessFindings } from './magicItems'
+import { companionMagicItemFindings, entryMagicItemFindings, armyItemUniquenessFindings } from './magicItems'
 import { STANDARD_BEARER_ID } from '../data/unitOptions'
 import { isValidMagicStandard, magicStandardNeedsBearer } from './entryView'
 import { toViolation, type Finding, type RuleId, type RuleParams } from './messages'
@@ -199,6 +199,11 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
 
     // Magic items: count, restricted categories, crown/helm, banner-BSB.
     for (const finding of entryMagicItemFindings(e, unit, army)) {
+      violations.push(toViolation(finding, lang))
+    }
+
+    // The fixed companion's own slot (Niblit, OLD-72).
+    for (const finding of companionMagicItemFindings(e, unit, army)) {
       violations.push(toViolation(finding, lang))
     }
 

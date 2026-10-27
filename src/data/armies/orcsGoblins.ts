@@ -861,6 +861,9 @@ const units: UnitProfile[] = [
     ],
     // Orcos y Goblins p.91 (OLD-71): "Niblit 10 3 4 4 3 1 3 2 5", M10cm = 4".
     profiles: [{ name: 'Niblit', statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 } }],
+    // Orcos y Goblins p.91 (OLD-72): "Niblit puede llevar un único objeto mágico". He carries the
+    // army battle standard, so a magic banner is legal for him.
+    companionMagicItems: { name: 'Niblit', slots: 1, isBSB: true },
     specialRules: [
       'Special character (Goblin Warboss)',
       'Light armour & Hacha de Grom (great axe, +50 pts, mandatory)',

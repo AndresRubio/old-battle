@@ -13,6 +13,7 @@ import {
   setGeneral,
   setOptionCount,
   toggleBSB,
+  toggleCompanionMagicItem,
   toggleMagicItem,
   toggleOption,
   updateEntry,
@@ -399,5 +400,60 @@ describe('a required mount (OLD-71)', () => {
     r = selectMount(r, 'e1', he, 'mount-great-dragon')
     expect(r.entries[0].mountId).toBe('mount-great-dragon')
     expect(selectMount(r, 'e1', he, null)).toBe(r)
+  })
+})
+
+// OLD-72: Orcos y Goblins p.91, "Niblit puede llevar un único objeto mágico".
+describe("Grom's companion Niblit carries an item of his own (OLD-72)", () => {
+  const og = getArmy('orcs-and-goblins')!
+  const grom = og.units.find((u) => u.id === 'og-grom')!
+  const SWORD = 'mi-sword-of-strength'
+  const start = () => addEntry(createRoster('orcs-and-goblins', 'A', 3000, 'r1'), grom, 'e1')
+
+  it('adds the item to the companion list and not to his own', () => {
+    const r = toggleCompanionMagicItem(start(), 'e1', SWORD, og)
+    expect(r.entries[0].companionMagicItemIds).toEqual([SWORD])
+    expect(r.entries[0].magicItemIds).toEqual([])
+  })
+
+  it('toggles it off again and drops the key, back to the saved shape', () => {
+    let r = toggleCompanionMagicItem(start(), 'e1', SWORD, og)
+    r = toggleCompanionMagicItem(r, 'e1', SWORD, og)
+    expect(r.entries[0]).not.toHaveProperty('companionMagicItemIds')
+  })
+
+  it('lets a second item in when the slot is full, as the character picker does (the Muster Check warns)', () => {
+    let r = toggleCompanionMagicItem(start(), 'e1', SWORD, og)
+    r = toggleCompanionMagicItem(r, 'e1', 'mi-jade-amulet', og)
+    expect(r.entries[0].companionMagicItemIds).toEqual([SWORD, 'mi-jade-amulet'])
+  })
+
+  it('refuses an id outside the pool and a special-character item, but lets a stale one be dropped', () => {
+    const r = start()
+    expect(toggleCompanionMagicItem(r, 'e1', 'mi-nope', og)).toBe(r)
+    const withSpecial = { ...og, magicItems: [...og.magicItems, { id: 'mi-special', name: 'Special', category: 'weapon' as const, points: 10, special: true }] }
+    expect(toggleCompanionMagicItem(r, 'e1', 'mi-special', withSpecial)).toBe(r)
+    const stale = updateEntry(r, 'e1', { companionMagicItemIds: ['mi-nope'] })
+    expect(toggleCompanionMagicItem(stale, 'e1', 'mi-nope', og).entries[0]).not.toHaveProperty('companionMagicItemIds')
+  })
+
+  it('leaves a unit with no companion unchanged', () => {
+    const gorbad = og.units.find((u) => u.id === 'og-gorbad')!
+    const r = addEntry(createRoster('orcs-and-goblins', 'A', 3000, 'r1'), gorbad, 'e1')
+    expect(toggleCompanionMagicItem(r, 'e1', SWORD, og)).toBe(r)
+  })
+
+  it('is bound by entryActions', () => {
+    let r = start()
+    const actions = entryActions((fn) => { r = fn(r) }, og, 'e1')
+    actions.toggleCompanionMagicItem(SWORD)
+    expect(r.entries[0].companionMagicItemIds).toEqual([SWORD])
+  })
+
+  it('duplicateEntry copies the list, not the reference', () => {
+    let r = toggleCompanionMagicItem(start(), 'e1', SWORD, og)
+    r = duplicateEntry(r, 'e1', 'e2')
+    expect(r.entries[1].companionMagicItemIds).toEqual([SWORD])
+    expect(r.entries[1].companionMagicItemIds).not.toBe(r.entries[0].companionMagicItemIds)
   })
 })

@@ -464,3 +464,30 @@ describe('exportRosterText option-linked profiles (OLD-71)', () => {
       .toContain('  · 4 Porteadores')
   })
 })
+
+// OLD-72: Niblit's own item is listed under Grom, labelled with his name.
+describe("exportRosterText Niblit's item (OLD-72)", () => {
+  const og = getArmy('orcs-and-goblins')!
+  const grom = (companionMagicItemIds?: string[]): Roster => ({
+    id: 'r', name: 'R', armyId: og.id, pointsLimit: 3000,
+    entries: [{ id: 'g', unitId: 'og-grom', size: 1, optionIds: [], magicItemIds: [], isGeneral: true, companionMagicItemIds }],
+  })
+
+  it("lists it under Grom's line with Niblit's name and its price, in both languages", () => {
+    expect(exportRosterText(grom(['mi-sword-of-strength']), og)).toContain('    * Niblit: Sword of Strength (20 pts)')
+    expect(exportRosterText(grom(['mi-sword-of-strength']), og, 'es')).toContain('    * Niblit: Espada de la Fuerza (20 ptos)')
+  })
+
+  it('adds the price to the entry total in the list', () => {
+    expect(exportRosterText(grom(['mi-sword-of-strength']), og)).toContain('............ 277 pts')
+  })
+
+  it('prints nothing for Niblit when he carries nothing', () => {
+    expect(exportRosterText(grom(), og)).not.toContain('Niblit:')
+  })
+
+  it("repeats it in the unit's detail block under his name", () => {
+    const text = exportRosterText(grom(['mi-sword-of-strength']), og)
+    expect(text).toContain('  Niblit (Magic Items):')
+  })
+})

@@ -5,7 +5,7 @@ import type {
   RosterEntry,
   UnitProfile,
 } from '../data/types'
-import { carriedMagicItems, findMagicItem, findUnit, isFixedMagicItem, type CarriedMagicItem } from './points'
+import { carriedMagicItems, companionCarriedItems, findMagicItem, findUnit, isFixedMagicItem, type CarriedMagicItem } from './points'
 import type { Finding } from './messages'
 
 /**
@@ -207,6 +207,69 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
 }
 
 /**
+ * The magic-item findings for the unit's fixed companion (OLD-72, Niblit,
+ * Orcos y Goblins p.91), which are the same four checks as a character's but on
+ * his own items: count over his `slots`, one item per restricted category, one
+ * crown and one helm, and a magic banner only if he is the BSB. His items are
+ * counted apart from the unit's, so none of these see Grom's. Each finding
+ * names the companion. Ids missing from the army's pool are ignored, exactly
+ * as a character's are (`carriedMagicItems`).
+ */
+export function companionMagicItemFindings(entry: RosterEntry, unit: UnitProfile, army: Army): Finding[] {
+  const holder = unit.companionMagicItems
+  const items = companionCarriedItems(entry, unit, army)
+  if (!holder || items.length === 0) return []
+
+  const findings: Finding[] = []
+
+  if (items.length > holder.slots) {
+    findings.push({
+      severity: 'warning',
+      rule: 'magic-items-count',
+      params: { unit, carried: items.length, allowance: holder.slots, holder },
+      entryId: entry.id,
+    })
+  }
+
+  const countBy = <K>(keyOf: (i: (typeof items)[number]) => K | undefined) => {
+    const out = new Map<K, number>()
+    for (const i of items) {
+      const key = keyOf(i)
+      if (key !== undefined) out.set(key, (out.get(key) ?? 0) + 1)
+    }
+    return out
+  }
+
+  for (const [category, count] of countBy((i) => i.category)) {
+    if (count > 1 && RESTRICTED_CATEGORIES.has(category)) {
+      findings.push({
+        severity: 'warning',
+        rule: 'magic-items-category',
+        params: { unit, category, count, holder },
+        entryId: entry.id,
+      })
+    }
+  }
+
+  for (const [group, count] of countBy((i) => i.exclusiveGroup)) {
+    if (count > 1) {
+      findings.push({
+        severity: 'warning',
+        rule: 'magic-items-exclusive-group',
+        params: { unit, group, count, holder },
+        entryId: entry.id,
+      })
+    }
+  }
+
+  if (!holder.isBSB && items.some((i) => i.category === 'banner')) {
+    findings.push({ severity: 'warning', rule: 'magic-items-banner-bsb', params: { unit, holder }, entryId: entry.id })
+  }
+
+  return findings
+}
+
+/**
  * Army-wide item uniqueness — 5th ed (Magic supplement p.33): the same magic
  * item may not be included in an army more than once. Exceptions are flagged
  * `duplicable` on the item (Dispel Scrolls, Chaos Armour, Familiars). A unit's
@@ -214,7 +277,9 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
  * character's fixed items (OLD-63) count like picked ones. So do the master
  * runes on a special character's rune groups (OLD-69, Enanos p.24 Law 4: no
  * master rune may be used more than once). The count is of characters: one
- * entry that both has a rune on his page and buys it again counts once.
+ * entry that both has a rune on his page and buys it again counts once. A
+ * unit's fixed companion (OLD-72, Niblit) is one more user: he shares the
+ * army's pool but not the unit's own picks.
  */
 export function armyItemUniquenessFindings(entries: RosterEntry[], army: Army): Finding[] {
   const itemUsers = new Map<string, number>()
@@ -226,6 +291,9 @@ export function armyItemUniquenessFindings(entries: RosterEntry[], army: Army): 
     }
     for (const id of ids) {
       itemUsers.set(id, (itemUsers.get(id) ?? 0) + 1)
+    }
+    for (const item of unit ? companionCarriedItems(e, unit, army) : []) {
+      itemUsers.set(item.id, (itemUsers.get(item.id) ?? 0) + 1)
     }
     if (e.magicStandardId) {
       itemUsers.set(e.magicStandardId, (itemUsers.get(e.magicStandardId) ?? 0) + 1)

@@ -238,6 +238,22 @@ export function carriedMagicItems(entry: RosterEntry, unit: UnitProfile, army: A
 }
 
 /**
+ * The magic items the unit's fixed companion carries (OLD-72, Niblit): the
+ * entry's `companionMagicItemIds` that are in the army's pool, each once. Empty
+ * for a unit with no companion, so a stale id on any other entry costs nothing
+ * and is not counted anywhere.
+ */
+export function companionCarriedItems(entry: RosterEntry, unit: UnitProfile, army: Army): MagicItem[] {
+  if (!unit.companionMagicItems) return []
+  const out: MagicItem[] = []
+  for (const id of entry.companionMagicItemIds ?? []) {
+    const item = findMagicItem(army, id)
+    if (item && !out.includes(item)) out.push(item)
+  }
+  return out
+}
+
+/**
  * The mount a new entry of this unit starts on (OLD-71): the first of its
  * mounts when the page says he always rides one (`mountRequired`, Imrik's
  * Dragon), otherwise none. `addEntry` seats it and `listedUnitPoints` prices
@@ -261,7 +277,7 @@ export function listedUnitPoints(unit: UnitProfile, army: Army): number {
   return unit.pointsPerModel + fixedItems + fixedExtrasPoints(unit) + (defaultMount(unit)?.points ?? 0)
 }
 
-/** Total points for a single roster entry: models * (base + per-model options) + flat options + counted options + BSB surcharge + mount (+ its options) + magic items (fixed and picked) + fixed extras. */
+/** Total points for a single roster entry: models * (base + per-model options) + flat options + counted options + BSB surcharge + mount (+ its options) + magic items (fixed and picked) + fixed extras + the companion's items. */
 export function entryPoints(entry: RosterEntry, army: Army): number {
   const unit = findUnit(army, entry.unitId)
   if (!unit) return 0
@@ -277,6 +293,7 @@ export function entryPoints(entry: RosterEntry, army: Army): number {
   // A unit's magic standard (carried by its standard bearer) adds its own points.
   const standard = entry.magicStandardId ? findMagicItem(army, entry.magicStandardId) : undefined
   const standardPoints = standard ? standard.points : 0
+  const companionPoints = companionCarriedItems(entry, unit, army).reduce((sum, i) => sum + i.points, 0)
   return (
     modelPoints +
     flatPoints +
@@ -286,7 +303,8 @@ export function entryPoints(entry: RosterEntry, army: Army): number {
     mountOptionPoints(unit, entry.mountId, entry.optionIds) +
     magicPoints +
     fixedExtrasPoints(unit) +
-    standardPoints
+    standardPoints +
+    companionPoints
   )
 }
 

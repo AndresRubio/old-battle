@@ -1027,7 +1027,8 @@ h1, h2, h3 {
   border-left: 2px solid var(--border);
 }
 
-.magic-items {
+.magic-items,
+.companion-mi-list {
   max-height: 320px;
   overflow-y: auto;
   border: 1px solid var(--border);
@@ -1225,7 +1226,8 @@ h1, h2, h3 {
 
   /* Roomier tap targets in the editor detail */
   .opt-checks label, .opt-radios label { padding: 0.2rem 0; }
-  .magic-items { max-height: 50vh; }
+  .magic-items,
+  .companion-mi-list { max-height: 50vh; }
 
   /* Tighten the stat strip so all 9 columns fit at phone width */
   .stat { padding: 0.15rem 0; }
