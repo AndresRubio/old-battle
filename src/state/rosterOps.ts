@@ -1,6 +1,6 @@
 import type { Army, Roster, RosterEntry, UnitProfile } from '../data/types'
 import { STANDARD_BEARER_ID, isWizardLevelId } from '../data/unitOptions'
-import { clampOptionCount, findUnit, isFixedMagicItem } from '../rules/points'
+import { clampOptionCount, defaultMount, findUnit, isFixedMagicItem } from '../rules/points'
 import { isMagicItemAllowed } from '../rules/magicItems'
 
 let counter = 0
@@ -50,16 +50,18 @@ export function defaultSize(unit: UnitProfile): number {
 
 /**
  * Add a new entry for `unit` at its default size. A character who always rides
- * a mount (`mountRequired`, OLD-71) starts on the first one his page lists.
+ * a mount (`mountRequired`, OLD-71) starts on the first one his page lists
+ * (`defaultMount`, which also prices him in the unit picker).
  */
 export function addEntry(roster: Roster, unit: UnitProfile, id?: string): Roster {
+  const mount = defaultMount(unit)
   const entry: RosterEntry = {
     id: id ?? genId('entry'),
     unitId: unit.id,
     size: defaultSize(unit),
     optionIds: [],
     magicItemIds: [],
-    ...(unit.mountRequired && unit.mounts?.length ? { mountId: unit.mounts[0].id } : {}),
+    ...(mount ? { mountId: mount.id } : {}),
   }
   return { ...roster, entries: [...roster.entries, entry] }
 }

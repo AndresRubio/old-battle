@@ -238,16 +238,27 @@ export function carriedMagicItems(entry: RosterEntry, unit: UnitProfile, army: A
 }
 
 /**
+ * The mount a new entry of this unit starts on (OLD-71): the first of its
+ * mounts when the page says he always rides one (`mountRequired`, Imrik's
+ * Dragon), otherwise none. `addEntry` seats it and `listedUnitPoints` prices
+ * it, both through here, so the picker's price and the added entry agree.
+ */
+export function defaultMount(unit: UnitProfile): MountOption | undefined {
+  return unit.mountRequired ? unit.mounts?.[0] : undefined
+}
+
+/**
  * The price the unit picker shows: the headline plus everything the page
- * always charges on top (non-included fixed items, fixed extras), so a
- * character lists at what he costs once added.
+ * always charges on top (non-included fixed items, fixed extras, the mount a
+ * required-mount character starts on), so a character lists at what he costs
+ * once added.
  */
 export function listedUnitPoints(unit: UnitProfile, army: Army): number {
   const fixedItems = (unit.fixedMagicItems ?? []).reduce((sum, f) => {
     const item = findMagicItem(army, f.id)
     return sum + (item ? fixedItemPoints(f, item) : 0)
   }, 0)
-  return unit.pointsPerModel + fixedItems + fixedExtrasPoints(unit)
+  return unit.pointsPerModel + fixedItems + fixedExtrasPoints(unit) + (defaultMount(unit)?.points ?? 0)
 }
 
 /** Total points for a single roster entry: models * (base + per-model options) + flat options + counted options + BSB surcharge + mount (+ its options) + magic items (fixed and picked) + fixed extras. */
