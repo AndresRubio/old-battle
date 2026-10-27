@@ -45,6 +45,7 @@ longbow	longbow	Longbows
 longbow	longbow	Longbows (upgrade from bows)
 poisoned-attacks	poison-tips	Poisoned arrows / javelin tips (S4)
 poisoned-attacks	poison-tips	Poisoned arrows / javelins (S4)
+shield	bodyguard-shields	Bodyguard shields
 shield	crew-shields	Shields for the crew
 shield	mount-boar-chariot-shields	Shields for crew
 shield	mount-wolf-chariot-shields	Shields for crew

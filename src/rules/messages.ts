@@ -32,6 +32,8 @@ export interface RuleParams {
   'no-general': Record<string, never>
   'multiple-generals': { count: number }
   'invalid-general': { unit: UnitProfile }
+  /** OLD-71: a character his page makes the General (Archaon) who is not. */
+  'must-be-general': { unit: UnitProfile }
   'multiple-bsbs': { count: number }
   'characters-over': { cap: CapStatus }
   'regiments-min': { cap: CapStatus }
@@ -64,6 +66,8 @@ export interface RuleParams {
   'options-exclusive-group': { unit: UnitProfile; group: string; count: number }
   'mount-options-stale': { unit: UnitProfile; mount: MountOption; options: EquipmentOption[] }
   'option-requires-mount': { unit: UnitProfile; option: EquipmentOption }
+  /** OLD-71: a character who always rides one of `mounts` (Imrik) has none. */
+  'mount-required': { unit: UnitProfile; mounts: MountOption[] }
   'mount-requires-option': {
     unit: UnitProfile
     mount: MountOption
@@ -115,6 +119,10 @@ const MESSAGES: { [K in RuleId]: MessageBuilder<K> } = {
     lang === 'es'
       ? `${un(p, lang)} no puede ser el General del ejército.`
       : `${un(p, lang)} cannot be the army General.`,
+  'must-be-general': (p, lang) =>
+    lang === 'es'
+      ? `${un(p, lang)}: debe ser el General del ejército.`
+      : `${un(p, lang)}: must be the army General.`,
   'multiple-bsbs': (p, lang) =>
     lang === 'es'
       ? `Sólo se permite un Portaestandarte de Batalla (hay ${p.count}).`
@@ -240,6 +248,12 @@ const MESSAGES: { [K in RuleId]: MessageBuilder<K> } = {
     lang === 'es'
       ? `${un(p, lang)}: ${optionText(p.option.name, lang)} sólo sirve a una miniatura montada — elige una montura o quita la opción.`
       : `${un(p, lang)}: ${optionText(p.option.name, lang)} is only for a mounted model — choose a mount or drop it.`,
+  'mount-required': (p, lang) => {
+    const list = p.mounts.map((m) => mountName(m, lang)).join(' / ')
+    return lang === 'es'
+      ? `${un(p, lang)}: debe montar ${list}; elige una montura.`
+      : `${un(p, lang)}: must ride ${list}; choose a mount.`
+  },
   'mount-requires-option': (p, lang) => {
     const reqName = p.requiredOption ? optionText(p.requiredOption.name, lang) : p.requiredOptionId
     return lang === 'es'

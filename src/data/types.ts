@@ -121,6 +121,14 @@ export interface EquipmentOption {
   counted?: boolean
   /** Highest count a `counted` option allows. Undefined = no cap. */
   maxCount?: number
+  /**
+   * Display-only profiles of the models this option brings (OLD-71): Orion's
+   * Hunting Hound (Elfos Silvanos p.71), the Throne of Power's bearers (Enanos
+   * p.83). Shown beneath the unit's statLine, like `UnitProfile.profiles`, only
+   * while the option is bought: ticked, or a `counted` option with a count of
+   * one or more. Read through `shownProfiles`. Unit options only.
+   */
+  profiles?: ProfileBlock[]
 }
 
 /**
@@ -294,6 +302,13 @@ export interface UnitProfile {
   isCharacter?: boolean
   characterRank?: CharacterRank
   canBeGeneral?: boolean
+  /**
+   * The page makes him the army General whenever he is taken (OLD-71): "Si un
+   * ejército incluye a Archaon éste será su General" (Paladines del Caos p.16).
+   * An entry of this unit that is not the General raises `must-be-general`
+   * (error). Needs a character who may be the General (integrity.ts).
+   */
+  mustBeGeneral?: boolean
   canBeBSB?: boolean
   /** True for units that ARE the army Battle Standard Bearer inherently (the
    *  dedicated battle-standard character units). Such an entry may carry a magic
@@ -327,6 +342,13 @@ export interface UnitProfile {
   options?: EquipmentOption[]
   /** Rideable mounts the character may take (mutually exclusive — one at most). */
   mounts?: MountOption[]
+  /**
+   * The character always rides one of his `mounts` (OLD-71): "Imrik siempre
+   * monta un Dragón" (Altos Elfos p.94). A new entry starts on `mounts[0]`, the
+   * selector offers no "on foot" choice, and an entry without one of them (a
+   * roster saved before the flag) raises `mount-required` (warning).
+   */
+  mountRequired?: boolean
   /**
    * Cavalry: the steed every model in this regiment rides. When set, the unit's
    * own `statLine` is the RIDER and this is the mount's profile — the UI renders

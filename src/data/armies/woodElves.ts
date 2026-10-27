@@ -83,6 +83,12 @@ const GIANT_EAGLE_MOUNT: MountOption = {
   points: 75, statLine: { M: 2, WS: 7, BS: 0, S: 5, T: 4, W: 3, I: 5, A: 2, Ld: 8 },
   specialRules: ['Flying'],
 }
+// Elfos Silvanos p.71 (OLD-71): "Mastín de Caza 12 4 - 4 3 1 3 1 3". The book's
+// "-" BS is left blank, as on a chariot chassis. Shown while Orion buys hounds.
+const HUNTING_HOUND_PROFILE: ProfileBlock = {
+  name: 'Hunting Hound', nameEs: 'Mastín de Caza',
+  statLine: { M: 5, WS: 4, S: 4, T: 3, W: 1, I: 3, A: 1, Ld: 3 },
+}
 const UNICORN_MOUNT: MountOption = {
   id: 'mount-unicorn', name: 'Unicorn', nameEs: 'Unicornio',
   points: 90, statLine: { M: 9, WS: 4, BS: 0, S: 4, T: 4, W: 3, I: 4, A: 4, Ld: 9 },
@@ -253,7 +259,7 @@ const units: UnitProfile[] = [
     // Elfos Silvanos p.70-71: the three items are mandatory; the hounds are
     // "+5 puntos por cada Mastín, tantos como se desee" (OLD-63).
     fixedMagicItems: [{ id: 'mi-spear-of-kurnous' }, { id: 'mi-horn-of-the-wild-hunt' }, { id: 'mi-cloak-of-isha' }],
-    options: [{ id: 'hunting-hounds', name: 'Hunting Hounds', pointsPerModel: 5, counted: true }],
+    options: [{ id: 'hunting-hounds', name: 'Hunting Hounds', pointsPerModel: 5, counted: true, profiles: [HUNTING_HOUND_PROFILE] }],
     specialRules: [
       'Special character',
       'Incarnation of Kurnous — causes fear, immune to psychology',

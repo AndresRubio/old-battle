@@ -15,6 +15,8 @@ import {
   unitOptionCost,
 } from './points'
 import { getArmy } from '../data/armies'
+import { addEntry, createRoster } from '../state/rosterOps'
+import { exportRosterText } from './exportText'
 import { STANDARD_5E_COMPOSITION, type Army, type RosterEntry, type UnitProfile } from '../data/types'
 
 const empire = getArmy('empire')!
@@ -702,5 +704,28 @@ describe('Sturmjarl card prices (OLD-70)', () => {
 
   it('lists him at the page price in the unit picker', () => {
     expect(listedUnitPoints(sturmjarl, norse)).toBe(446)
+  })
+})
+
+// OLD-71: Altos Elfos p.94, "Imrik siempre monta un Dragón". addEntry seats him
+// on the Dragon (+450), so the picker must list what adding him costs.
+describe('a required mount in the listed price (OLD-71)', () => {
+  const he = getArmy('high-elves')!
+  const imrik = he.units.find((u) => u.id === 'he-imrik')!
+
+  it('lists Imrik at 275 + the Dragon 450 = 725', () => {
+    expect(listedUnitPoints(imrik, he)).toBe(725)
+  })
+
+  it('prices an Imrik added through addEntry at the listed 725, and the export names his dragon', () => {
+    const r = addEntry(createRoster('high-elves', 'R', 3000, 'r1'), imrik, 'e1')
+    expect(entryPoints(r.entries[0], he)).toBe(725)
+    expect(entryPoints(r.entries[0], he)).toBe(listedUnitPoints(imrik, he))
+    expect(exportRosterText(r, he)).toContain('+ Dragon (+450 pts)')
+  })
+
+  it('leaves a character with an optional mount listed on foot', () => {
+    const prince = he.units.find((u) => u.id === 'he-general')!
+    expect(listedUnitPoints(prince, he)).toBe(prince.pointsPerModel)
   })
 })

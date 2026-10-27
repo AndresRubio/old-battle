@@ -1,4 +1,4 @@
-import type { Army, EquipmentOption, StatLine, UnitProfile } from '../types'
+import type { Army, EquipmentOption, ProfileBlock, StatLine, UnitProfile } from '../types'
 import { STANDARD_5E_COMPOSITION } from '../types'
 import { COMMON_MAGIC_ITEMS } from '../magicItems'
 
@@ -40,6 +40,12 @@ const CREW_LIGHT_ARMOUR: EquipmentOption = {
   description: 'Light armour for the machine\'s three Dwarf crew (book pp.88-89: +2 pts per crew model).',
   descEs: 'Armaduras ligeras para los tres artilleros Enanos de la dotación (libro pp.88-89: +2 ptos por miniatura de la dotación).',
 }
+// Enanos p.83 (OLD-71): "Porteador 8 5 4 4 4 1 3 2 9", M8cm = 3". The four bearers
+// come with the Throne of Power, so they show while the Throne is bought.
+const THRONE_BEARERS_PROFILE: ProfileBlock = {
+  name: '4 Throne bearers', nameEs: '4 Porteadores',
+  statLine: { M: 3, WS: 5, BS: 4, S: 4, T: 4, W: 1, I: 3, A: 2, Ld: 9 },
+}
 const RUNE_OF_STONE: EquipmentOption = { id: 'rune-of-stone', name: 'Rune of Stone (Paladin)', pointsPerModel: 5, flat: true }
 
 const units: UnitProfile[] = [
@@ -54,6 +60,16 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    // Enanos printed p.83 (OLD-71): "Si el General es el Alto Rey de los Enanos, podrá entrar
+    // en combate sobre el Trono del Poder y acompañado por cuatro porteadores. El valor en
+    // puntos total del Trono y sus porteadores es de 140 puntos." Same flat option as Thorgrim.
+    options: [
+      {
+        id: 'throne-of-power', name: 'Throne of Power', pointsPerModel: 140, flat: true, profiles: [THRONE_BEARERS_PROFILE],
+        description: 'Only if the General is the High King of the Dwarfs: he enters battle on the Throne of Power with four bearers, 140 points for the Throne and bearers together (Enanos p.83).',
+        descEs: 'Sólo si el General es el Alto Rey de los Enanos: entra en combate sobre el Trono del Poder acompañado por cuatro porteadores, 140 puntos por el Trono y sus porteadores (Enanos p.83).',
+      },
+    ],
     specialRules: [
       'Commander — up to 3 magic items',
       'Equipped with a hand weapon; may take any weapon/armour from the equipment list',
@@ -360,7 +376,7 @@ const units: UnitProfile[] = [
     ],
     options: [
       {
-        id: 'throne-of-power', name: 'Throne of Power', pointsPerModel: 140, flat: true,
+        id: 'throne-of-power', name: 'Throne of Power', pointsPerModel: 140, flat: true, profiles: [THRONE_BEARERS_PROFILE],
         description: 'Thorgrim may enter battle seated on the Throne of Power, carried by four bearers (Enanos p.94). The page reads both "is carried on the Throne" and "may enter combat seated on the Throne", so the player decides.',
         descEs: 'Thorgrim puede entrar en combate sentado en el Trono del Poder, acompañado por sus cuatro porteadores (Enanos p.94). La página dice a la vez "Es transportado sobre el Trono" y "puede entrar en combate sentado en el Trono", así que decide el jugador.',
       },

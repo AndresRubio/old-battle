@@ -95,7 +95,10 @@ export function assertArmyIntegrity(army: Army): Army {
     // profile that can carry an M — own, option replacement, cavalry steed,
     // character mount and display profiles.
     checkMovement(u.id, u.statLine)
-    for (const o of u.options ?? []) checkMovement(`${u.id}/${o.id}`, o.statLine)
+    for (const o of u.options ?? []) {
+      checkMovement(`${u.id}/${o.id}`, o.statLine)
+      for (const p of o.profiles ?? []) checkMovement(`${u.id}/${o.id}/${p.name}`, p.statLine)
+    }
     for (const p of u.profiles ?? []) checkMovement(`${u.id}/${p.name}`, p.statLine)
     if (u.mount) checkMovement(`${u.id}/${u.mount.name}`, u.mount.statLine)
     for (const m of u.mounts ?? []) {
@@ -151,6 +154,8 @@ export function assertArmyIntegrity(army: Army): Army {
         if (o.counted || o.maxCount !== undefined) {
           fail(`${u.id}/${m.id}/${o.id}: counted options are not supported on mounts`)
         }
+        // OLD-71: option profiles are shown for unit options only.
+        if (o.profiles) fail(`${u.id}/${m.id}/${o.id}: option profiles are not supported on mounts`)
       }
       const mCrewOpts = (m.options ?? []).filter((o) => o.perCrewman || o.addsCrewman)
       if (mCrewOpts.length && m.baseCrew === undefined) {
@@ -166,6 +171,13 @@ export function assertArmyIntegrity(army: Army): Army {
       }
       // Only characters ride mounts.
       if (!u.isCharacter) fail(`${u.id}: has mounts but is not a character`)
+    }
+    // OLD-71: a required mount needs mounts to choose from, or every entry
+    // would warn with no way to clear it.
+    if (u.mountRequired && !u.mounts?.length) fail(`${u.id}: mountRequired without mounts`)
+    // OLD-71: a character the page makes the General must be one who can be.
+    if (u.mustBeGeneral && (!u.isCharacter || u.canBeGeneral === false)) {
+      fail(`${u.id}: mustBeGeneral on a unit that cannot be the General`)
     }
 
     // Fixed magic items and fixed extras (OLD-63): a character's own page

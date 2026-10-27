@@ -21,7 +21,7 @@ import {
   t,
 } from '../i18n/lang'
 import { isWizardLevelId } from '../data/unitOptions'
-import { companionMountProfile, partitionOptions, resolveStatNotes, signedPoints, statCell } from './entryView'
+import { companionMountProfile, partitionOptions, resolveStatNotes, shownProfiles, signedPoints, statCell } from './entryView'
 
 /**
  * An option's label with its price, formatted exactly as the editor shows it:
@@ -133,8 +133,9 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
     const label = companion === unit.mount ? profileName(companion, lang) : mountLabel
     lines.push(...statTableLines(companion.statLine, lang, label, resolveStatNotes(companion, lang)))
   }
-  // Extra display-only profiles: chariot crew / chassis / draught beasts, etc.
-  for (const p of unit.profiles ?? []) {
+  // Extra display-only profiles: chariot crew / chassis / draught beasts, a
+  // companion, and those of the options bought (OLD-71), as the editor shows them.
+  for (const p of shownProfiles(unit, entry)) {
     lines.push(...statTableLines(p.statLine, lang, profileName(p, lang), resolveStatNotes(p, lang)))
   }
   // A chariot mount has no single statline: it contributes its crew /

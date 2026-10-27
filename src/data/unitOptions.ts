@@ -27,14 +27,6 @@ export const WIZARD_LEVELS: EquipmentOption[] = [
   { id: 'wizard-l4', name: 'Wizard Level 4', pointsPerModel: 105, magicItemSlotsDelta: 3 },
 ]
 
-/** Battle Standard Bearer upgrade for a hero/lord (flat cost). */
-export const BSB_UPGRADE: EquipmentOption = {
-  id: 'bsb',
-  name: 'Battle Standard Bearer',
-  pointsPerModel: 25,
-  flat: true,
-}
-
 /** Per-model equipment upgrades (cost multiplied by unit size). */
 export const SHIELD: EquipmentOption = { id: 'shield', name: 'Shields', pointsPerModel: 1 }
 export const LIGHT_ARMOUR: EquipmentOption = { id: 'light-armour', name: 'Light armour', pointsPerModel: 1 }

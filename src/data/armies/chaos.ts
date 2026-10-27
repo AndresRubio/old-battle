@@ -428,7 +428,8 @@ const units: UnitProfile[] = [
   {
     // Paladines del Caos p.16: Archaon M10→4" on foot, rides W'Soraych the
     // Apocalypse Steed (Corcel del Apocalipsis) M30→12". Mounted M = 12.
-    // 630 pts incl. the steed and his three magic items. Must be the General.
+    // 630 pts incl. the steed and his three magic items. Must be the General:
+    // "Si un ejército incluye a Archaon éste será su General" (OLD-71).
     id: 'ch-archaon',
     name: 'Archaon, Lord of the End Times',
     nameEs: 'Archaon, Señor del Caos',
@@ -438,6 +439,7 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    mustBeGeneral: true,
     max: 1,
     profiles: [WSORAYCH_PROFILE],
     specialRules: [
@@ -724,6 +726,46 @@ const units: UnitProfile[] = [
       'May take a Mark of Chaos',
     ],
   },
+  // Paladines del Caos printed p.17 (OLD-71): with Archaon, one regiment of Chaos
+  // Warriors or Chaos Knights of his host may be the Swords of Chaos, "+2 puntos por
+  // miniatura si es un Guerrero del Caos, y +4 puntos por miniatura si es un Caballero
+  // del Caos". A variant of each regiment at the higher price, so the surcharge lands in
+  // Regiments and the command group doubles it; one of the two (unitGroupCaps), only
+  // with Archaon (dependencies).
+  {
+    id: 'ch-swords-of-chaos-warriors',
+    name: 'Swords of Chaos (Chaos Warriors)',
+    nameEs: 'Espadas del Caos (Guerreros del Caos)',
+    role: 'regiment',
+    pointsPerModel: 26,
+    statLine: statline(),
+    minSize: 5,
+    options: [CHAOS_ARMOUR_7, TWO_HAND_2, HALBERD_2, ADD_HAND_WEAPON_1, SHIELD_1],
+    specialRules: [
+      'Heavy armour & hand weapon (5+ save)',
+      'May carry a magic standard',
+      'May take a Mark of Chaos',
+      "Swords of Chaos: Archaon's own regiment (+2 pts per Warrior); hate all enemies",
+    ],
+  },
+  {
+    id: 'ch-swords-of-chaos-knights',
+    name: 'Swords of Chaos (Chaos Knights)',
+    nameEs: 'Espadas del Caos (Caballeros del Caos)',
+    role: 'regiment',
+    pointsPerModel: 70,
+    statLine: statline({ M: 4, A: 2 }),
+    mount: { name: 'Barded Chaos Steed', nameEs: 'Corcel del Caos con Barda', statLine: CHAOS_STEED_STATS },
+    minSize: 5,
+    options: [CHAOS_ARMOUR_14],
+    specialRules: [
+      'Heavy armour, shield, cavalry lance & sword (2+ save)',
+      'Barded Chaos Steed (Corcel del Caos, M8)',
+      'May carry a magic standard',
+      'May take a Mark of Chaos',
+      "Swords of Chaos: Archaon's own regiment (+4 pts per Knight); hate all enemies",
+    ],
+  },
   {
     id: 'ch-marauders',
     name: 'Chaos Marauders',
@@ -842,6 +884,25 @@ const units: UnitProfile[] = [
     minSize: 5,
     noCommand: true,
     specialRules: ['Run in packs', 'No champion, standard or musician (may have a Beastman keeper)'],
+  },
+  {
+    // Paladines del Caos printed p.42 (OLD-71): Khazrak's host "ha de incluir como mínimo
+    // una unidad de Mastines del Caos, cuyo valor en puntos será de 10 puntos por
+    // miniatura". Owner decision: that one unit, only with Khazrak; other hounds stay 12.
+    id: 'ch-khazrak-hounds',
+    name: "Chaos Hounds (Khazrak's host)",
+    nameEs: 'Mastines del Caos (hueste de Khazrak)',
+    role: 'regiment',
+    pointsPerModel: 10,
+    statLine: statline({ M: 6, WS: 4, BS: 0, S: 4, T: 4, W: 1, I: 4, A: 2, Ld: 6 }),
+    minSize: 5,
+    max: 1,
+    noCommand: true,
+    specialRules: [
+      'Run in packs',
+      'No champion, standard or musician (may have a Beastman keeper)',
+      "0-1, only with Khazrak the One-Eye: his host's compulsory hound unit at 10 pts per model",
+    ],
   },
 
   // ===================================================================
@@ -1470,14 +1531,25 @@ export const CHAOS: Army = {
   units,
   magicItems: COMMON_MAGIC_ITEMS,
   selectionRules: {
-    dependencies: DAEMON_DEPS.map((d) => ({
-      unitId: d.unitId,
-      requiresAnyOf: d.g.gods,
-      requiresOption: d.g.mark,
-      labelEn: d.labelEn,
-      labelEs: d.labelEs,
-      requiresLabelEn: d.g.reqEn,
-      requiresLabelEs: d.g.reqEs,
-    })),
+    // Paladines del Caos p.17: ONE regiment of his host may be the Swords of Chaos.
+    unitGroupCaps: [
+      { ids: ['ch-swords-of-chaos-warriors', 'ch-swords-of-chaos-knights'], max: 1, labelEn: 'Swords of Chaos', labelEs: 'Espadas del Caos' },
+    ],
+    dependencies: [
+      ...DAEMON_DEPS.map((d) => ({
+        unitId: d.unitId,
+        requiresAnyOf: d.g.gods,
+        requiresOption: d.g.mark,
+        labelEn: d.labelEn,
+        labelEs: d.labelEs,
+        requiresLabelEn: d.g.reqEn,
+        requiresLabelEs: d.g.reqEs,
+      })),
+      // OLD-71, Paladines del Caos p.17 and p.42.
+      { unitId: 'ch-swords-of-chaos-warriors', requiresAnyOf: ['ch-archaon'], labelEn: 'Swords of Chaos (Chaos Warriors)', labelEs: 'Espadas del Caos (Guerreros del Caos)' },
+      { unitId: 'ch-swords-of-chaos-knights', requiresAnyOf: ['ch-archaon'], labelEn: 'Swords of Chaos (Chaos Knights)', labelEs: 'Espadas del Caos (Caballeros del Caos)' },
+      { unitId: 'ch-khazrak-hounds', requiresAnyOf: ['ch-khazrak'], labelEn: "Chaos Hounds (Khazrak's host)", labelEs: 'Mastines del Caos (hueste de Khazrak)' },
+      { unitId: 'ch-khazrak', requiresAnyOf: ['ch-khazrak-hounds'], labelEn: 'Khazrak the One-Eye', labelEs: 'Khazrak el Tuerto' },
+    ],
   },
 }

@@ -1,7 +1,8 @@
-import type { Army, EquipmentOption, MagicItem, MountOption, ProfileBlock, StatLine, StatNotes, UnitProfile } from '../data/types'
+import type { Army, EquipmentOption, MagicItem, MountOption, ProfileBlock, RosterEntry, StatLine, StatNotes, UnitProfile } from '../data/types'
 import { isWizardLevelId, STANDARD_BEARER_ID } from '../data/unitOptions'
 import { MOVEMENT_CM } from '../data/movement'
 import { matchesQuery, type Lang } from '../i18n/lang'
+import { countedOptionCount } from './points'
 
 /**
  * Pure per-entry derivations the editor renders. Anything the UI needs to
@@ -161,4 +162,19 @@ export function companionMountProfile(
         }
       : undefined)
   )
+}
+
+/**
+ * The extra profile rows an entry shows beneath its own statLine (OLD-71): the
+ * unit's fixed `profiles` (a chariot's crew, a companion such as Niblit), then
+ * the `profiles` of each unit option the entry has bought: ticked, or counted
+ * once or more (Orion's hounds, the Throne bearers). Shared by the editor and
+ * the plaintext export, so the two show the same rows. The chosen mount's own
+ * rows are not included: they follow the mount, not the unit.
+ */
+export function shownProfiles(unit: UnitProfile, entry: RosterEntry): ProfileBlock[] {
+  const bought = (unit.options ?? []).filter((o) =>
+    o.counted ? countedOptionCount(o, entry) > 0 : entry.optionIds.includes(o.id),
+  )
+  return [...(unit.profiles ?? []), ...bought.flatMap((o) => o.profiles ?? [])]
 }

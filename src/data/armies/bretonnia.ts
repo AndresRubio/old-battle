@@ -391,6 +391,26 @@ const units: UnitProfile[] = [
     options: [BOW_LIGHT_ARMOUR],
     specialRules: ['Sword and longbow', 'Arrowhead formation'],
   },
+  {
+    // Bretonnia printed p.71 (OLD-71): Bertrand's regiment is chosen from the Bowmen,
+    // "an extra 1 point per Bowman", and "the cost of the extra Bowmen is paid for from the
+    // allowance for regiments". They "never wear armour and so ignore this option", and
+    // have a standard bearer and musician "in the normal way". 0-1, only with Bertrand.
+    id: 'br-bowmen-of-bergerac',
+    name: 'Bowmen of Bergerac',
+    nameEs: 'Arqueros de Bergerac',
+    role: 'regiment',
+    pointsPerModel: 9,
+    statLine: human(),
+    minSize: 5,
+    max: 1,
+    specialRules: [
+      'Sword and longbow',
+      'Arrowhead formation',
+      'Bowmen of Bergerac may skirmish',
+      "0-1, only with Bertrand the Brigand as their Champion (+1 pt per Bowman); never wear armour",
+    ],
+  },
 
   // ===== Monsters (0-25%; also character mounts) =====
   {
@@ -589,8 +609,13 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'champion',
     max: 1,
+    // Bretonnia p.71 (OLD-71): "Hugo le Petit 4 3 4 5 4 1 3 1 7", "Gui le Gros 4 3 4 3 3 1 3 1 7".
+    profiles: [
+      { name: 'Hugo le Petit', statLine: { M: 4, WS: 3, BS: 4, S: 5, T: 4, W: 1, I: 3, A: 1, Ld: 7 } },
+      { name: 'Gui le Gros', statLine: { M: 4, WS: 3, BS: 4, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 7 } },
+    ],
     specialRules: [
-      'Special character (+1 point per Bowman in the regiment)',
+      'Special character (+1 point per Bowman, charged on the Bowmen of Bergerac regiment)',
       'Commoner Champion of a unit of Bowmen',
       'Sword and longbow; re-roll to hit once per turn shooting',
       'Accompanied by Hugo le Petit (longbow hits at S5) and Gui le Gros',
@@ -767,4 +792,12 @@ export const BRETONNIA: Army = {
   composition: { maxCharactersPct: 75, minRegimentsPct: 25, maxWarMachinesPct: 0, maxMonstersPct: 25, requiresGeneral: true },
   units,
   magicItems: COMMON_MAGIC_ITEMS,
+  selectionRules: {
+    // OLD-71, Bretonnia p.71: "Bertrand may only be chosen as a Champion of a unit of
+    // Bowmen, and the regiment he leads becomes the 'Bowmen of Bergerac'".
+    dependencies: [
+      { unitId: 'br-bertrand', requiresAnyOf: ['br-bowmen-of-bergerac'], labelEn: 'Bertrand the Brigand', labelEs: 'Bertrand el Bandido' },
+      { unitId: 'br-bowmen-of-bergerac', requiresAnyOf: ['br-bertrand'], labelEn: 'Bowmen of Bergerac', labelEs: 'Arqueros de Bergerac' },
+    ],
+  },
 }

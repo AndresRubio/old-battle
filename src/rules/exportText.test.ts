@@ -441,3 +441,26 @@ describe('exportRosterText Sturmjarl card prices (OLD-63, OLD-70)', () => {
     )
   })
 })
+
+// OLD-71: an option's companion profile is exported while it is bought, as the
+// editor shows it (Orion's hounds, Elfos Silvanos p.71; the Throne bearers, Enanos p.83).
+describe('exportRosterText option-linked profiles (OLD-71)', () => {
+  const one = (armyId: string, e: Partial<RosterEntry> & { unitId: string }): Roster => ({
+    id: 'r', name: 'R', armyId, pointsLimit: 3000,
+    entries: [{ id: 'x', size: 1, optionIds: [], magicItemIds: [], isGeneral: true, ...e }],
+  })
+
+  it("prints Orion's Hunting Hound only with hounds bought", () => {
+    const we = getArmy('wood-elves')!
+    expect(exportRosterText(one('wood-elves', { unitId: 'we-orion' }), we)).not.toContain('· Hunting Hound')
+    expect(exportRosterText(one('wood-elves', { unitId: 'we-orion', optionCounts: { 'hunting-hounds': 2 } }), we))
+      .toContain('  · Hunting Hound')
+  })
+
+  it('prints the Throne bearers in Spanish only with the Throne', () => {
+    const dw = getArmy('dwarfs')!
+    expect(exportRosterText(one('dwarfs', { unitId: 'dw-general' }), dw, 'es')).not.toContain('Porteadores')
+    expect(exportRosterText(one('dwarfs', { unitId: 'dw-general', optionIds: ['throne-of-power'] }), dw, 'es'))
+      .toContain('  · 4 Porteadores')
+  })
+})

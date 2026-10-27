@@ -377,3 +377,27 @@ describe('toggleBSB (OLD-64)', () => {
     expect(r.entries[1].isBSB).toBe(false)
   })
 })
+
+// OLD-71: Altos Elfos p.94, "Imrik siempre monta un Dragón". A required mount
+// is chosen on add and can be changed but never dropped.
+describe('a required mount (OLD-71)', () => {
+  const he = getArmy('high-elves')!
+  const imrik = he.units.find((u) => u.id === 'he-imrik')!
+
+  it('addEntry seats Imrik on his first dragon', () => {
+    const r = addEntry(createRoster('high-elves', 'A', 3000, 'r1'), imrik, 'e1')
+    expect(r.entries[0].mountId).toBe('mount-dragon')
+  })
+
+  it('addEntry leaves an ordinary character on foot', () => {
+    const r = addEntry(createRoster('empire', 'A', 1000, 'r1'), general, 'e1')
+    expect(r.entries[0].mountId).toBeUndefined()
+  })
+
+  it('selectMount changes the dragon but will not put him on foot', () => {
+    let r = addEntry(createRoster('high-elves', 'A', 3000, 'r1'), imrik, 'e1')
+    r = selectMount(r, 'e1', he, 'mount-great-dragon')
+    expect(r.entries[0].mountId).toBe('mount-great-dragon')
+    expect(selectMount(r, 'e1', he, null)).toBe(r)
+  })
+})
