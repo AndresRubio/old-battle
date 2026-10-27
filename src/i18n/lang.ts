@@ -301,6 +301,10 @@ const OPTION_ES: Record<string, string> = {
   // OLD-63: High Elf and Lizardmen special characters' page items (Altos Elfos pp.82-94, Lizardmen pp.79-89), a player choice.
   'Items not included in the headline cost': 'Objetos no incluidos en el coste de cabecera',
   'Extra bodyguards': 'Guardaespaldas adicionales',
+  // OLD-71: the Paymaster's retinue (Mercenarios p.28).
+  'Money Lender': 'Prestamista',
+  'Bodyguard (5 models)': 'Guardia (5 miniaturas)',
+  'Bodyguard shields': 'Escudos de la guardia',
   'Bodyguard standard bearer': 'Portaestandarte de la guardia',
   'Bodyguard musician': 'Músico de la guardia',
   Shields: 'Escudos',

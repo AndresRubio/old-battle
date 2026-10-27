@@ -102,7 +102,18 @@ const units: UnitProfile[] = [
     characterRank: 'champion',
     canBeBSB: true,
     max: 1,
-    options: [],
+    // Mercenarios printed p.28 (OLD-71): Money Lender "+25 points"; "between 5 and 20
+    // bodyguards ... Each bodyguard costs 12 points"; shields "+1 point per model"; a standard
+    // bearer and/or musician "each costing double the points of a normal trooper" (2 x 12).
+    // Owner decision: they count toward Characters, on Mydas's pattern (p.64-65).
+    options: [
+      { id: 'money-lender', name: 'Money Lender', pointsPerModel: 25, flat: true },
+      { id: 'bodyguard', name: 'Bodyguard (5 models)', pointsPerModel: 60, flat: true },
+      { id: 'extra-bodyguards', name: 'Extra bodyguards', pointsPerModel: 12, counted: true, maxCount: 15 },
+      { id: 'bodyguard-shields', name: 'Bodyguard shields', pointsPerModel: 1, counted: true, maxCount: 20 },
+      { id: 'bodyguard-standard', name: 'Bodyguard standard bearer', pointsPerModel: 24, flat: true },
+      { id: 'bodyguard-musician', name: 'Bodyguard musician', pointsPerModel: 24, flat: true },
+    ],
     specialRules: [
       '0-1 — carries the army pay chest (functions as the army battle standard)',
       'Re-roll failed Break tests within 12" of the pay chest; +1 combat resolution while in h-t-h',

@@ -54,6 +54,16 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    // Enanos printed p.83 (OLD-71): "Si el General es el Alto Rey de los Enanos, podrá entrar
+    // en combate sobre el Trono del Poder y acompañado por cuatro porteadores. El valor en
+    // puntos total del Trono y sus porteadores es de 140 puntos." Same flat option as Thorgrim.
+    options: [
+      {
+        id: 'throne-of-power', name: 'Throne of Power', pointsPerModel: 140, flat: true,
+        description: 'Only if the General is the High King of the Dwarfs: he enters battle on the Throne of Power with four bearers, 140 points for the Throne and bearers together (Enanos p.83).',
+        descEs: 'Sólo si el General es el Alto Rey de los Enanos: entra en combate sobre el Trono del Poder acompañado por cuatro porteadores, 140 puntos por el Trono y sus porteadores (Enanos p.83).',
+      },
+    ],
     specialRules: [
       'Commander — up to 3 magic items',
       'Equipped with a hand weapon; may take any weapon/armour from the equipment list',

@@ -356,7 +356,7 @@ describe('mounts & profiles', () => {
   // mount beneath). Keep this list in step with the army data.
   const CAVALRY_REGIMENTS = [
     'br-grail-knights', 'br-questing-knights', 'br-knights-of-the-realm', 'br-knights-errant', 'br-mounted-squires',
-    'ch-knights', 'ch-marauder-horsemen', 'ch-bloodletters-juggernaut',
+    'ch-knights', 'ch-swords-of-chaos-knights', 'ch-marauder-horsemen', 'ch-bloodletters-juggernaut',
     'cd-wolf-riders',
     'de-cold-one-knights', 'de-dark-riders',
     'dow-voland',
@@ -3447,5 +3447,184 @@ describe('special characters carry what their page allows (OLD-69)', () => {
         }
       }
     }
+  })
+})
+
+// OLD-71: costs the special characters' pages charge to a unit or to an option,
+// modelled as variant regiments (with a dependency or a cap) or as flat options.
+describe('special characters charge their unit and option costs (OLD-71)', () => {
+  const entry = (unitId: string, extra: Partial<RosterEntry> = {}): RosterEntry => ({
+    id: `e-${unitId}-${extra.size ?? 1}`, unitId, size: 1, optionIds: [], magicItemIds: [], ...extra,
+  })
+  const selectionFindings = (armyId: string, entries: RosterEntry[]) => {
+    const roster: Roster = { id: 'r', name: 'r', armyId, pointsLimit: 0, entries }
+    return validateRoster(roster, getArmy(armyId)!, 'en')
+      .filter((v) => ['unit-requires', 'unit-group-max', 'unit-max'].includes(v.rule))
+  }
+  const unitOf = (armyId: string, id: string) => getArmy(armyId)!.units.find((u) => u.id === id)!
+
+  // Paladines del Caos printed p.42: Khazrak's host "ha de incluir como mínimo una unidad de
+  // Mastines del Caos, cuyo valor en puntos será de 10 puntos por miniatura". Owner decision: one
+  // such unit, only with Khazrak; ordinary Beastman-host hounds stay at 12.
+  describe("Khazrak's Chaos Hounds", () => {
+    it('are a 0-1 regiment at 10 points a model, without a command group', () => {
+      const u = unitOf('chaos', 'ch-khazrak-hounds')
+      expect(u.role).toBe('regiment')
+      expect(u.pointsPerModel).toBe(10)
+      expect(u.minSize).toBe(5)
+      expect(u.max).toBe(1)
+      expect(u.noCommand).toBe(true)
+      expect(u.statLine).toEqual(unitOf('chaos', 'ch-beast-hounds').statLine)
+      expect(entryPoints(entry('ch-khazrak-hounds', { size: 5 }), getArmy('chaos')!)).toBe(50)
+    })
+
+    it('leave the ordinary hound units at 12', () => {
+      expect(unitOf('chaos', 'ch-beast-hounds').pointsPerModel).toBe(12)
+      expect(unitOf('chaos', 'ch-hounds').pointsPerModel).toBe(12)
+    })
+
+    it('count toward Regiments, Khazrak toward Characters', () => {
+      const byRole = pointsByRole([entry('ch-khazrak'), entry('ch-khazrak-hounds', { size: 8 })], getArmy('chaos')!)
+      expect(byRole.regiment).toBe(80)
+      expect(byRole.character).toBe(240)
+    })
+
+    it('need Khazrak, and Khazrak needs them', () => {
+      expect(selectionFindings('chaos', [entry('ch-khazrak-hounds', { size: 5 })]).map((v) => v.rule)).toEqual(['unit-requires'])
+      expect(selectionFindings('chaos', [entry('ch-khazrak')]).map((v) => v.rule)).toEqual(['unit-requires'])
+      expect(selectionFindings('chaos', [entry('ch-khazrak'), entry('ch-khazrak-hounds', { size: 5 })])).toEqual([])
+    })
+
+    it('are capped at one unit', () => {
+      const two = [entry('ch-khazrak'), entry('ch-khazrak-hounds', { size: 5 }), { ...entry('ch-khazrak-hounds', { size: 6 }) }]
+      expect(selectionFindings('chaos', two).map((v) => v.rule)).toEqual(['unit-max'])
+    })
+  })
+
+  // Paladines del Caos printed p.17: with Archaon, one regiment of Chaos Warriors or Chaos
+  // Knights of his host may be the Swords of Chaos, "+2 puntos por miniatura si es un Guerrero
+  // del Caos, y +4 puntos por miniatura si es un Caballero del Caos".
+  describe("Archaon's Swords of Chaos", () => {
+    it.each([
+      ['ch-swords-of-chaos-warriors', 'ch-warriors', 26],
+      ['ch-swords-of-chaos-knights', 'ch-knights', 70],
+    ])('%s costs %s + the page surcharge (%d a model), with the same kit', (id, base, ppm) => {
+      const u = unitOf('chaos', id)
+      const b = unitOf('chaos', base)
+      expect(u.role).toBe('regiment')
+      expect(u.pointsPerModel).toBe(ppm)
+      expect(u.minSize).toBe(b.minSize)
+      expect(u.statLine).toEqual(b.statLine)
+      expect(u.mount).toEqual(b.mount)
+      expect((u.options ?? []).map((o) => [o.id, o.pointsPerModel])).toEqual((b.options ?? []).map((o) => [o.id, o.pointsPerModel]))
+      expect(u.magicStandard).toBe(true)
+    })
+
+    it('price per model, equipment and command group included, in Regiments', () => {
+      const chaos = getArmy('chaos')!
+      expect(entryPoints(entry('ch-swords-of-chaos-warriors', { size: 10 }), chaos)).toBe(260)
+      // (26 + Chaos armour 7) x 10 + a standard at double an equipped model (2 x 33).
+      expect(entryPoints(entry('ch-swords-of-chaos-warriors', { size: 10, optionIds: ['chaos-armour', 'standard'] }), chaos)).toBe(396)
+      expect(entryPoints(entry('ch-swords-of-chaos-knights', { size: 5 }), chaos)).toBe(350)
+      const byRole = pointsByRole([entry('ch-archaon'), entry('ch-swords-of-chaos-knights', { size: 5 })], chaos)
+      expect(byRole.regiment).toBe(350)
+      expect(byRole.character).toBe(630)
+    })
+
+    it('need Archaon', () => {
+      expect(selectionFindings('chaos', [entry('ch-swords-of-chaos-warriors', { size: 10 })]).map((v) => v.rule)).toEqual(['unit-requires'])
+      expect(selectionFindings('chaos', [entry('ch-swords-of-chaos-knights', { size: 5 })]).map((v) => v.rule)).toEqual(['unit-requires'])
+      expect(selectionFindings('chaos', [entry('ch-archaon'), entry('ch-swords-of-chaos-knights', { size: 5 })])).toEqual([])
+    })
+
+    it('are one regiment, Warriors or Knights', () => {
+      const both = [entry('ch-archaon'), entry('ch-swords-of-chaos-warriors', { size: 10 }), entry('ch-swords-of-chaos-knights', { size: 5 })]
+      expect(selectionFindings('chaos', both).map((v) => v.rule)).toEqual(['unit-group-max'])
+    })
+
+    it('leave the ordinary Warriors and Knights at 24 and 66', () => {
+      expect(unitOf('chaos', 'ch-warriors').pointsPerModel).toBe(24)
+      expect(unitOf('chaos', 'ch-knights').pointsPerModel).toBe(66)
+    })
+  })
+
+  // Bretonnia printed p.71: Bertrand, 83 points, "+1 extra point per Bowman in the regiment";
+  // "the cost of the extra Bowmen is paid for from the allowance for regiments". The Bowmen of
+  // Bergerac "never wear armour" and have a standard bearer and musician "in the normal way".
+  describe('the Bowmen of Bergerac', () => {
+    it('are a 0-1 Bowmen regiment at 8 + 1 points a model, with no armour option', () => {
+      const u = unitOf('bretonnia', 'br-bowmen-of-bergerac')
+      const b = unitOf('bretonnia', 'br-bowmen')
+      expect(b.pointsPerModel).toBe(8)
+      expect(u.role).toBe('regiment')
+      expect(u.pointsPerModel).toBe(9)
+      expect(u.max).toBe(1)
+      expect(u.minSize).toBe(b.minSize)
+      expect(u.statLine).toEqual(b.statLine)
+      expect((u.options ?? []).map((o) => o.id)).toEqual(['standard', 'musician'])
+    })
+
+    it('pay the +1 from Regiments, Bertrand stays 83 in Characters', () => {
+      const bret = getArmy('bretonnia')!
+      expect(entryPoints(entry('br-bowmen-of-bergerac', { size: 10 }), bret)).toBe(90)
+      expect(entryPoints(entry('br-bowmen-of-bergerac', { size: 10, optionIds: ['standard'] }), bret)).toBe(108)
+      const byRole = pointsByRole([entry('br-bertrand'), entry('br-bowmen-of-bergerac', { size: 10 })], bret)
+      expect(byRole.regiment).toBe(90)
+      expect(byRole.character).toBe(83)
+    })
+
+    it('need Bertrand, and Bertrand needs them', () => {
+      expect(selectionFindings('bretonnia', [entry('br-bowmen-of-bergerac', { size: 10 })]).map((v) => v.rule)).toEqual(['unit-requires'])
+      expect(selectionFindings('bretonnia', [entry('br-bertrand')]).map((v) => v.rule)).toEqual(['unit-requires'])
+      expect(selectionFindings('bretonnia', [entry('br-bertrand'), entry('br-bowmen-of-bergerac', { size: 10 })])).toEqual([])
+    })
+  })
+
+  // Enanos printed p.83: if the General is the High King he may ride the Throne of Power with
+  // four bearers, "El valor en puntos total del Trono y sus porteadores es de 140 puntos".
+  it('the Dwarf General may buy the Throne of Power for 140, as Thorgrim does', () => {
+    const dwarfs = getArmy('dwarfs')!
+    const throne = (unitOf('dwarfs', 'dw-general').options ?? []).find((o) => o.id === 'throne-of-power')!
+    expect(throne).toMatchObject({ name: 'Throne of Power', pointsPerModel: 140, flat: true })
+    expect(throne.description).toMatch(/High King/)
+    expect(throne.descEs).toMatch(/Alto Rey/)
+    expect(entryPoints(entry('dw-general'), dwarfs)).toBe(160)
+    expect(entryPoints(entry('dw-general', { optionIds: ['throne-of-power'] }), dwarfs)).toBe(300)
+  })
+
+  // Mercenarios printed p.28: Money Lender "+25 points"; "between 5 and 20 bodyguards ... Each
+  // bodyguard costs 12 points ... shields at an additional cost of +1 point per model ... a
+  // regimental standard bearer and/or musician, each costing double the points of a normal
+  // trooper". Owner decision: they count toward Characters, on Mydas's pattern.
+  describe("the Paymaster's Money Lender and bodyguards", () => {
+    const dow = () => getArmy('dogs-of-war')!
+    const opt = (id: string) => (unitOf('dogs-of-war', 'dow-paymaster').options ?? []).find((o) => o.id === id)
+
+    it('are priced options of the Paymaster', () => {
+      expect(opt('money-lender')).toMatchObject({ pointsPerModel: 25, flat: true })
+      expect(opt('bodyguard')).toMatchObject({ pointsPerModel: 60, flat: true })
+      expect(opt('extra-bodyguards')).toMatchObject({ pointsPerModel: 12, counted: true, maxCount: 15 })
+      expect(opt('bodyguard-shields')).toMatchObject({ pointsPerModel: 1, counted: true, maxCount: 20 })
+      expect(opt('bodyguard-standard')).toMatchObject({ pointsPerModel: 24, flat: true })
+      expect(opt('bodyguard-musician')).toMatchObject({ pointsPerModel: 24, flat: true })
+    })
+
+    it.each<[string[], number, Record<string, number>?]>([
+      [[], 125],
+      [['money-lender'], 150],
+      [['bodyguard'], 185],
+      [['bodyguard'], 365, { 'extra-bodyguards': 15 }],
+      [['bodyguard'], 190, { 'bodyguard-shields': 5 }],
+      [['bodyguard', 'bodyguard-standard', 'bodyguard-musician'], 233],
+      [['money-lender', 'bodyguard', 'bodyguard-standard', 'bodyguard-musician'], 458, { 'extra-bodyguards': 15, 'bodyguard-shields': 20 }],
+    ])('with %j costs %d (counts %j)', (optionIds, expected, optionCounts) => {
+      expect(entryPoints(entry('dow-paymaster', { optionIds, optionCounts }), dow())).toBe(expected)
+    })
+
+    it('count toward Characters', () => {
+      const byRole = pointsByRole([entry('dow-paymaster', { optionIds: ['money-lender', 'bodyguard'] })], dow())
+      expect(byRole.character).toBe(210)
+      expect(byRole.regiment).toBe(0)
+    })
   })
 })
