@@ -347,6 +347,11 @@ export interface UnitProfile {
    *  dedicated battle-standard character units). Such an entry may carry a magic
    *  banner without the per-entry isBSB toggle. See FAQ v2.20 §23.2. */
   isBSB?: boolean
+  /** The army Battle Standard Bearer while this entry is the General, at no extra
+   *  cost: Lord Mazdamundi's Sunburst Standard of Hexoatl "will be the army's
+   *  battle standard" when he leads the army (Hombres Lagarto p.87, OLD-74).
+   *  Counts toward `multiple-bsbs` only while `RosterEntry.isGeneral` is set. */
+  bsbAsGeneral?: boolean
   /** Flat points a `canBeBSB` character pays to act as the army Battle Standard
    *  Bearer (charged by `entryPoints` while `RosterEntry.isBSB` is set). Only
    *  set where the unit's own book entry prints the surcharge — e.g. Ludwig
