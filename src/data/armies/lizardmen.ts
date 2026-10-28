@@ -702,6 +702,9 @@ const units: UnitProfile[] = [
     canBeGeneral: true,
     // p.87 (OLD-74): as General, his Sunburst Standard of Hexoatl is the army battle standard.
     bsbAsGeneral: true,
+    // p.79 (OLD-75): a special character may add no magic items; his own are the p.89 option.
+    magicItemSlots: 0,
+    allowedMagicItems: [],
     max: 1,
     profiles: [STEGADON_PROFILE],
     options: [itemsOnTop(225, 'p.89', 900, 'Cobra Mace of Mazdamundi 15, Plaque of Tepec 50, Plaque of Xoloc 50, Itxi Grubs 50, Egg of the Quango 10, Sunburst Standard of Hexoatl 50 (225 pts)', 'Cobra Mace of Mazdamundi 15, Plaque of Tepec 50, Plaque of Xoloc 50, Itxi Grubs 50, Egg of the Quango 10, Sunburst Standard of Hexoatl 50 (225 pts)')],

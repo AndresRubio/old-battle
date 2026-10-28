@@ -3402,6 +3402,7 @@ describe('special characters carry what their page allows (OLD-69)', () => {
     { army: 'high-elves', id: 'he-alith-anar', page: 'Altos Elfos p.82', slots: 0, free: 0, allowed: [] },
     { army: 'high-elves', id: 'he-alarielle', page: 'Altos Elfos p.87', slots: 0, free: 0, allowed: [] },
     { army: 'lizardmen', id: 'lz-itzi-bitzi', page: 'Lizardmen p.85', slots: 0, free: 0, allowed: [] },
+    { army: 'lizardmen', id: 'lz-lord-mazdamundi', page: 'Lizardmen p.79', slots: 0, free: 0, allowed: [] },
   ]
   it.each(rows)('$id: $slots items, $free free ($page)', ({ army: armyId, id, slots, free, allowed }) => {
     const army = getArmy(armyId)!
