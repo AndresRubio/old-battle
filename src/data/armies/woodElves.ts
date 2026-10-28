@@ -649,7 +649,7 @@ const units: UnitProfile[] = [
     ],
   },
 
-  // ===== Monsters (0-25%) =====
+  // ===== Treemen (Regiments, OLD-73) =====
   {
     id: 'we-treeman',
     name: 'Treeman',
@@ -670,6 +670,8 @@ const units: UnitProfile[] = [
       '0-1 per 1,000 pts',
     ],
   },
+
+  // ===== Monsters (0-25%) =====
   {
     id: 'we-giant-eagle',
     name: 'Giant Eagle',
