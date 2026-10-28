@@ -858,3 +858,91 @@ describe('EntryRow special character companion profiles (OLD-71)', () => {
     expect(cellsFor('4 Porteadores')).toEqual(['8', '5', '4', '4', '4', '1', '3', '2', '9'])
   })
 })
+
+// OLD-72: Orcos y Goblins p.91, "Niblit puede llevar un único objeto mágico".
+describe("EntryRow Niblit's magic item (OLD-72)", () => {
+  const og = getArmy('orcs-and-goblins')!
+  const SWORD = 'mi-sword-of-strength'
+  const grom = (over: Partial<RosterEntry> = {}) => entry('og-grom', { size: 1, ...over })
+  const section = () => container.querySelector('.companion-items') as HTMLElement | null
+  const start = (e: RosterEntry): Roster =>
+    ({ id: 'r1', name: 'R', armyId: og.id, pointsLimit: 3000, entries: [e] }) as unknown as Roster
+  const rowOf = (name: string) =>
+    Array.from(section()!.querySelectorAll('.mi-item')).find((r) => r.querySelector('.mi-name')?.textContent === name) as HTMLElement
+  const mainRow = (name: string) =>
+    Array.from(container.querySelectorAll('.magic-items .mi-group .mi-item')).find(
+      (r) => r.querySelector('.mi-name')?.textContent === name,
+    ) as HTMLElement
+
+  it('renders a Niblit section for Grom, headed with his name and slot count', () => {
+    setLang('en')
+    render(<EntryRow entry={grom()} army={og} {...props} />)
+    expand()
+    expect(section()!.querySelector('.opt-label')!.textContent).toBe('Niblit: Magic Items (0/1)')
+  })
+
+  it('heads it in Spanish', () => {
+    setLang('es')
+    render(<EntryRow entry={grom({ companionMagicItemIds: [SWORD] })} army={og} {...props} />)
+    expand()
+    expect(section()!.querySelector('.opt-label')!.textContent).toBe('Niblit: Objetos Mágicos (1/1)')
+  })
+
+  it('does not render it for a character with no companion', () => {
+    render(<EntryRow entry={entry('og-gorbad', { size: 1 })} army={og} {...props} />)
+    expand()
+    expect(section()).toBeNull()
+  })
+
+  it('shows his pick as checked and leaves the unit picker alone', () => {
+    render(<EntryRow entry={grom({ companionMagicItemIds: [SWORD] })} army={og} {...props} />)
+    expand()
+    expect((rowOf('Sword of Strength').querySelector('input') as HTMLInputElement).checked).toBe(true)
+    expect((mainRow('Sword of Strength').querySelector('input') as HTMLInputElement).checked).toBe(false)
+    // The main header counts Grom's own items only: his fixed Axe.
+    const header = Array.from(container.querySelectorAll('.opt-label')).find((el) => el.textContent?.startsWith('Magic Items'))
+    expect(header!.textContent).toBe('Magic Items (1/3)')
+  })
+
+  it('shows a special-character item as not selectable', () => {
+    const withSpecial = { ...og, magicItems: [...og.magicItems, { id: 'mi-special', name: 'Special Thing', category: 'weapon' as const, points: 10, special: true }] }
+    render(<EntryRow entry={grom()} army={withSpecial} {...props} />)
+    expand()
+    expect(rowOf('Special Thing').classList.contains('mi-item-special')).toBe(true)
+  })
+
+  it("lists Grom's fixed Axe in Niblit's picker as an ordinary, unticked, tickable row", () => {
+    render(<EntryRow entry={grom()} army={og} {...props} />)
+    expand()
+    const row = rowOf('Elf-Biter, the Axe of Grom')
+    const box = row.querySelector('input') as HTMLInputElement
+    expect(box.checked).toBe(false)
+    expect(box.disabled).toBe(false)
+    expect(row.querySelector('.mi-fixed-tag')).toBeNull()
+    expect(row.classList.contains('mi-item-fixed')).toBe(false)
+    // In the unit's own list the same Axe stays checked, locked and tagged.
+    const own = mainRow('Elf-Biter, the Axe of Grom')
+    expect((own.querySelector('input') as HTMLInputElement).disabled).toBe(true)
+    expect(own.querySelector('.mi-fixed-tag')).not.toBeNull()
+  })
+
+  it("picking toggles the entry's companion list, not his own items", () => {
+    let result = start(grom())
+    const actions = entryActions((fn) => { result = fn(result) }, og, 'e1')
+    render(<EntryRow entry={grom()} army={og} {...props} actions={actions} />)
+    expand()
+    act(() => (rowOf('Sword of Strength').querySelector('input') as HTMLInputElement).click())
+    expect(result.entries[0].companionMagicItemIds).toEqual([SWORD])
+    expect(result.entries[0].magicItemIds).toEqual([])
+  })
+
+  it("picking in the unit's own list leaves Niblit's alone", () => {
+    let result = start(grom())
+    const actions = entryActions((fn) => { result = fn(result) }, og, 'e1')
+    render(<EntryRow entry={grom()} army={og} {...props} actions={actions} />)
+    expand()
+    act(() => (mainRow('Sword of Strength').querySelector('input') as HTMLInputElement).click())
+    expect(result.entries[0].magicItemIds).toEqual([SWORD])
+    expect(result.entries[0].companionMagicItemIds).toBeUndefined()
+  })
+})

@@ -1,11 +1,12 @@
 import type {
   Army,
+  CompanionMagicItems,
   CharacterRank,
   MagicItemCategory,
   RosterEntry,
   UnitProfile,
 } from '../data/types'
-import { carriedMagicItems, findMagicItem, findUnit, isFixedMagicItem, type CarriedMagicItem } from './points'
+import { carriedMagicItems, companionCarriedItems, findMagicItem, findUnit, isFixedMagicItem, type CarriedMagicItem } from './points'
 import type { Finding } from './messages'
 
 /**
@@ -127,27 +128,16 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
     ]
   }
 
-  const findings: Finding[] = []
-
-  const allowance = magicItemAllowance(entry, unit)
-  if (used > allowance) {
-    findings.push({
-      severity: 'warning',
-      rule: 'magic-items-count',
-      params: { unit, carried: used, allowance },
-      entryId: entry.id,
-    })
-  }
-
   // OLD-69: a page that names the only items he may carry. A saved roster can
   // still hold another pick, so each one is reported.
+  const notAllowed: Finding[] = []
   if (unit.allowedMagicItems) {
     const allowed = unit.allowedMagicItems
       .map((id) => findMagicItem(army, id))
       .filter((i): i is NonNullable<typeof i> => i !== undefined)
     for (const c of carried) {
       if (c.fixed || isMagicItemAllowed(unit, c.item.id)) continue
-      findings.push({
+      notAllowed.push({
         severity: 'warning',
         rule: 'magic-items-not-allowed',
         params: { unit, item: c.item, allowed },
@@ -155,6 +145,52 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
       })
     }
   }
+
+  return carriedItemFindings({
+    carried,
+    used,
+    allowance: magicItemAllowance(entry, unit),
+    isBSB: Boolean(entry.isBSB || unit.isBSB),
+    unit,
+    entryId: entry.id,
+    afterCount: notAllowed,
+  })
+}
+
+/**
+ * The four checks every item-carrying holder shares, on the list it carries:
+ * count over its allowance, one item per restricted category, one crown and one
+ * helm (FAQ v2.20 §19.5), and a magic banner only for a Battle Standard Bearer
+ * (FAQ v2.20 §23.2). A character and a unit's fixed companion (OLD-72) both go
+ * through here, so the two cannot diverge. `holder` makes the messages name the
+ * companion instead of the unit; `afterCount` are findings that belong right
+ * after the count one, keeping the report order. A category clash, a crown/helm
+ * clash or a banner is raised only when at least one item involved is
+ * user-picked (OLD-63: the page sets the fixed loadout).
+ */
+function carriedItemFindings(o: {
+  carried: CarriedMagicItem[]
+  used: number
+  allowance: number
+  isBSB: boolean
+  unit: UnitProfile
+  entryId: string
+  holder?: CompanionMagicItems
+  afterCount?: Finding[]
+}): Finding[] {
+  const { carried, unit, entryId, holder } = o
+  const who = holder ? { unit, holder } : { unit }
+  const findings: Finding[] = []
+
+  if (o.used > o.allowance) {
+    findings.push({
+      severity: 'warning',
+      rule: 'magic-items-count',
+      params: { ...who, carried: o.used, allowance: o.allowance },
+      entryId,
+    })
+  }
+  findings.push(...(o.afterCount ?? []))
 
   /** Count per key, and whether any item behind the count is user-picked. */
   const tally = <K>(keyOf: (c: CarriedMagicItem) => K | undefined) => {
@@ -171,39 +207,47 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
   // One per restricted category
   for (const [category, { count, picked }] of tally((c) => c.item.category)) {
     if (count > 1 && picked && RESTRICTED_CATEGORIES.has(category)) {
-      findings.push({
-        severity: 'warning',
-        rule: 'magic-items-category',
-        params: { unit, category, count },
-        entryId: entry.id,
-      })
+      findings.push({ severity: 'warning', rule: 'magic-items-category', params: { ...who, category, count }, entryId })
     }
   }
 
-  // FAQ v2.20 §19.5: a character may wear at most one crown and one helm.
+  // FAQ v2.20 §19.5: at most one crown and one helm.
   for (const [group, { count, picked }] of tally((c) => c.item.exclusiveGroup)) {
     if (count > 1 && picked) {
-      findings.push({
-        severity: 'warning',
-        rule: 'magic-items-exclusive-group',
-        params: { unit, group, count },
-        entryId: entry.id,
-      })
+      findings.push({ severity: 'warning', rule: 'magic-items-exclusive-group', params: { ...who, group, count }, entryId })
     }
   }
 
   // FAQ v2.20 §23.2: only a Battle Standard Bearer may carry a magic banner.
-  const picksBanner = carried.some((c) => !c.fixed && c.item.category === 'banner')
-  if (picksBanner && !(entry.isBSB || unit.isBSB)) {
-    findings.push({
-      severity: 'warning',
-      rule: 'magic-items-banner-bsb',
-      params: { unit },
-      entryId: entry.id,
-    })
+  if (!o.isBSB && carried.some((c) => !c.fixed && c.item.category === 'banner')) {
+    findings.push({ severity: 'warning', rule: 'magic-items-banner-bsb', params: who, entryId })
   }
 
   return findings
+}
+
+/**
+ * The magic-item findings for the unit's fixed companion (OLD-72, Niblit,
+ * Orcos y Goblins p.91), which are the same four checks as a character's but on
+ * his own items: count over his `slots`, one item per restricted category, one
+ * crown and one helm, and a magic banner only if he is the BSB. His items are
+ * counted apart from the unit's, so none of these see Grom's. Each finding
+ * names the companion. Ids missing from the army's pool are ignored, exactly
+ * as a character's are (`carriedMagicItems`).
+ */
+export function companionMagicItemFindings(entry: RosterEntry, unit: UnitProfile, army: Army): Finding[] {
+  const holder = unit.companionMagicItems
+  const items = companionCarriedItems(entry, unit, army)
+  if (!holder || items.length === 0) return []
+  return carriedItemFindings({
+    carried: items.map((item) => ({ item, fixed: false, included: false, points: item.points })),
+    used: items.length,
+    allowance: holder.slots,
+    isBSB: Boolean(holder.isBSB),
+    unit,
+    entryId: entry.id,
+    holder,
+  })
 }
 
 /**
@@ -214,7 +258,9 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
  * character's fixed items (OLD-63) count like picked ones. So do the master
  * runes on a special character's rune groups (OLD-69, Enanos p.24 Law 4: no
  * master rune may be used more than once). The count is of characters: one
- * entry that both has a rune on his page and buys it again counts once.
+ * entry that both has a rune on his page and buys it again counts once. A
+ * unit's fixed companion (OLD-72, Niblit) is one more user: he shares the
+ * army's pool but not the unit's own picks.
  */
 export function armyItemUniquenessFindings(entries: RosterEntry[], army: Army): Finding[] {
   const itemUsers = new Map<string, number>()
@@ -226,6 +272,9 @@ export function armyItemUniquenessFindings(entries: RosterEntry[], army: Army): 
     }
     for (const id of ids) {
       itemUsers.set(id, (itemUsers.get(id) ?? 0) + 1)
+    }
+    for (const item of unit ? companionCarriedItems(e, unit, army) : []) {
+      itemUsers.set(item.id, (itemUsers.get(item.id) ?? 0) + 1)
     }
     if (e.magicStandardId) {
       itemUsers.set(e.magicStandardId, (itemUsers.get(e.magicStandardId) ?? 0) + 1)

@@ -396,6 +396,27 @@ export interface UnitProfile {
    * a monster always ridden, a companion, a rune group (OLD-63). Characters only.
    */
   fixedExtras?: FixedExtra[]
+  /**
+   * A fixed companion of this character who carries magic items of his own
+   * (OLD-72): Niblit, Grom's goblin (Orcos y Goblins p.91: "Niblit puede llevar
+   * un único objeto mágico"). He is not a roster entry; his picks live in
+   * `RosterEntry.companionMagicItemIds`. He has his own `slots`, his own
+   * restricted-category and crown/helm counts, and shares only the army-wide
+   * uniqueness pool. `isBSB` lets him carry a magic banner (FAQ v2.20 §23.2).
+   * One companion per unit.
+   */
+  companionMagicItems?: CompanionMagicItems
+}
+
+/** The magic-item slot of a character's fixed companion (OLD-72). */
+export interface CompanionMagicItems {
+  name: string
+  /** Spanish name. Falls back to `name`. */
+  nameEs?: string
+  /** How many magic items he may carry. */
+  slots: number
+  /** He is the army's Battle Standard Bearer, so a magic banner is legal for him. */
+  isBSB?: boolean
 }
 
 export interface CompositionRules {
@@ -536,6 +557,12 @@ export interface RosterEntry {
   size: number
   optionIds: string[]
   magicItemIds: string[]
+  /**
+   * The magic items of the unit's fixed companion (OLD-72, Niblit), a slot of
+   * his own beside `magicItemIds`. Absent on rosters saved before it existed and
+   * when the companion carries nothing; read it through `companionCarriedItems`.
+   */
+  companionMagicItemIds?: string[]
   /** The chosen mount id (from the unit's `mounts`), if any. */
   mountId?: string
   /**

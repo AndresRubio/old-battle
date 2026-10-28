@@ -186,3 +186,30 @@ describe('loadRosters optionCounts (OLD-63)', () => {
     expect(loadRosters().map((r) => r.id)).toEqual(['intact'])
   })
 })
+
+// OLD-72 — Niblit's items persist in companionMagicItemIds; it is optional, so
+// rosters saved before it existed load unchanged.
+describe('loadRosters companionMagicItemIds (OLD-72)', () => {
+  it('round-trips the companion list', () => {
+    stubStorage()
+    const rosters = [roster('a', { entries: [entry('e1', { unitId: 'og-grom', companionMagicItemIds: ['mi-sword-of-strength'] })] })]
+    expect(saveRosters(rosters)).toBe(true)
+    expect(loadRosters()).toEqual(rosters)
+  })
+
+  it('loads an entry saved without the field', () => {
+    stubStorage({ [KEY]: JSON.stringify([roster('old', { entries: [entry('e1')] })]) })
+    const [r] = loadRosters()
+    expect(r.entries[0].companionMagicItemIds).toBeUndefined()
+  })
+
+  it('drops a roster whose companionMagicItemIds is not an array', () => {
+    stubStorage({
+      [KEY]: JSON.stringify([
+        roster('bad', { entries: [entry('e1', { companionMagicItemIds: 'sword' as unknown as string[] })] }),
+        roster('intact', { entries: [entry('e1', { companionMagicItemIds: [] })] }),
+      ]),
+    })
+    expect(loadRosters().map((r) => r.id)).toEqual(['intact'])
+  })
+})

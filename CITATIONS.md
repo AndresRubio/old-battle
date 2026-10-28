@@ -1624,6 +1624,8 @@ to his 245.
 
 **Shown profiles (OLD-71, 2026-10-27).** Orcos y Goblins p.91 prints "Niblit 10 3 4 4 3 1 3 2 5". Grom now shows a Niblit row (M 4"). Display only: Niblit stays a 65-point fixed extra. The same table prints the chariot and a Giant Wolf at "22 4 0 3 4 1 3 1 3", Toughness 4 where p.88 gives the Goblin Wolf Chariot's wolves Toughness 3; those two rows are not shown until the owner decides which page wins.
 
+**Niblit's magic item (OLD-72, 2026-10-27).** Orcos y Goblins p.91 (Grom el Panzudo): "Niblit puede llevar un único objeto mágico, elegido de entre los presentados en Warhammer Magia." Niblit now has one item slot of his own beside Grom's three, picked from the same pool as any Orc character and priced at the card. Owner decisions: his restricted categories (one weapon, one armour, one ward and so on) and the one crown and one helm rule are counted apart from Grom's; the army-wide uniqueness rule is shared, so Grom and Niblit cannot carry the same item; and Niblit may carry a magic banner because he carries the army battle standard (FAQ v2.20 §23.2). No game value was added: the only figures are the one item and the standard-bearer role.
+
 #### Bretonnia, Chaos, Norse, Vampire Counts and Dogs of War: special characters' extra costs (OLD-63, 2026-10-26)
 **Three books print the headline as a total that already holds the items.** Bretonnia (1997, EN)
 p.66: "Each character's points value is a total that includes equipment, mount, magic items".

@@ -1,4 +1,5 @@
 import type {
+  CompanionMagicItems,
   EquipmentOption,
   MagicItem,
   MagicItemCategory,
@@ -11,6 +12,7 @@ import type { CapStatus } from './summary'
 import {
   type Lang,
   unitName,
+  companionName,
   mountName,
   optionText,
   magicItemName,
@@ -54,10 +56,11 @@ export interface RuleParams {
   'min-size': { unit: UnitProfile; size: number; minSize: number }
   'max-size': { unit: UnitProfile; size: number; maxSize: number }
   'magic-items-noncharacter': { unit: UnitProfile }
-  'magic-items-count': { unit: UnitProfile; carried: number; allowance: number }
-  'magic-items-category': { unit: UnitProfile; category: MagicItemCategory; count: number }
-  'magic-items-exclusive-group': { unit: UnitProfile; group: 'crown' | 'helm'; count: number }
-  'magic-items-banner-bsb': { unit: UnitProfile }
+  /** OLD-72: `holder` is the unit's fixed companion (Niblit) when the finding is about his items, not the unit's. */
+  'magic-items-count': { unit: UnitProfile; carried: number; allowance: number; holder?: CompanionMagicItems }
+  'magic-items-category': { unit: UnitProfile; category: MagicItemCategory; count: number; holder?: CompanionMagicItems }
+  'magic-items-exclusive-group': { unit: UnitProfile; group: 'crown' | 'helm'; count: number; holder?: CompanionMagicItems }
+  'magic-items-banner-bsb': { unit: UnitProfile; holder?: CompanionMagicItems }
   /** OLD-69: `allowed` is the page's allow-list, empty when only his fixed items are permitted. */
   'magic-items-not-allowed': { unit: UnitProfile; item: MagicItem; allowed: MagicItem[] }
   'magic-standard-not-allowed': { unit: UnitProfile }
@@ -87,6 +90,10 @@ export type Finding = {
 type MessageBuilder<K extends RuleId> = (p: RuleParams[K], lang: Lang) => string
 
 const un = (p: { unit: UnitProfile }, lang: Lang) => unitName(p.unit, lang)
+
+/** Who the magic-item finding is about: the unit's fixed companion when it has a `holder` (OLD-72), else the unit. */
+const holderName = (p: { unit: UnitProfile; holder?: CompanionMagicItems }, lang: Lang) =>
+  p.holder ? companionName(p.holder, lang) : un(p, lang)
 
 /**
  * Bilingual labels for `EquipmentOption.exclusiveGroup` ids, plus whether the
@@ -182,20 +189,20 @@ const MESSAGES: { [K in RuleId]: MessageBuilder<K> } = {
       : `${un(p, lang)}: only characters may carry magic items.`,
   'magic-items-count': (p, lang) =>
     lang === 'es'
-      ? `${un(p, lang)}: porta ${p.carried} objetos mágicos pero sólo puede llevar ${p.allowance}.`
-      : `${un(p, lang)}: carries ${p.carried} magic items but may carry only ${p.allowance}.`,
+      ? `${holderName(p, lang)}: porta ${p.carried} objetos mágicos pero sólo puede llevar ${p.allowance}.`
+      : `${holderName(p, lang)}: carries ${p.carried} magic items but may carry only ${p.allowance}.`,
   'magic-items-category': (p, lang) =>
     lang === 'es'
-      ? `${un(p, lang)}: tiene ${p.count} objetos de tipo "${CATEGORY_LABEL.es[p.category]}" pero sólo puede llevar uno.`
-      : `${un(p, lang)}: has ${p.count} "${CATEGORY_LABEL.en[p.category]}" items but may have only one.`,
+      ? `${holderName(p, lang)}: tiene ${p.count} objetos de tipo "${CATEGORY_LABEL.es[p.category]}" pero sólo puede llevar uno.`
+      : `${holderName(p, lang)}: has ${p.count} "${CATEGORY_LABEL.en[p.category]}" items but may have only one.`,
   'magic-items-exclusive-group': (p, lang) =>
     lang === 'es'
-      ? `${un(p, lang)}: un personaje sólo puede llevar ${p.group === 'crown' ? 'una corona' : 'un yelmo'}.`
-      : `${un(p, lang)}: a character may carry only one ${p.group}.`,
+      ? `${holderName(p, lang)}: un personaje sólo puede llevar ${p.group === 'crown' ? 'una corona' : 'un yelmo'}.`
+      : `${holderName(p, lang)}: a character may carry only one ${p.group}.`,
   'magic-items-banner-bsb': (p, lang) =>
     lang === 'es'
-      ? `${un(p, lang)}: sólo el Portaestandarte de Batalla puede portar un estandarte mágico.`
-      : `${un(p, lang)}: only a Battle Standard Bearer may carry a magic standard.`,
+      ? `${holderName(p, lang)}: sólo el Portaestandarte de Batalla puede portar un estandarte mágico.`
+      : `${holderName(p, lang)}: only a Battle Standard Bearer may carry a magic standard.`,
   'magic-items-not-allowed': (p, lang) => {
     const item = magicItemName(p.item, lang)
     if (p.allowed.length === 0) {

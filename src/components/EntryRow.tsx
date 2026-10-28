@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine, StatNotes } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
-import { carriedMagicItems, countedOptionCount, effectiveStatLine, entryPoints, findUnit, mountOptionCost, unitOptionCost } from '../rules/points'
+import { carriedMagicItems, companionCarriedItems, countedOptionCount, effectiveStatLine, entryPoints, findUnit, mountOptionCost, unitOptionCost } from '../rules/points'
 import { isMagicItemAllowed, magicItemAllowance, usedMagicItemSlots } from '../rules/magicItems'
 import {
   companionMountProfile,
@@ -16,7 +16,7 @@ import {
   statCell,
 } from '../rules/entryView'
 import type { EntryActions } from '../state/rosterOps'
-import { useLang, t, type Lang, unitName, profileName, fixedExtraName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionInfo, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel } from '../i18n/lang'
+import { useLang, t, type Lang, unitName, profileName, fixedExtraName, companionName, CATEGORY_LABEL, CATEGORY_ORDER, STAT_LABEL, ruleText, optionText, optionInfo, magicItemName, magicItemDesc, loreName, spellName, spellDesc, wizardLevelLabel } from '../i18n/lang'
 import { STANDARD_BEARER_ID } from '../data/unitOptions'
 import { findRule, type RuleDef } from '../data/rules'
 import { RuleDialog } from './RuleDialog'
@@ -85,6 +85,9 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
   const [activeSpell, setActiveSpell] = useState<{ spell: Spell; loreName: string } | null>(null)
   const [itemQuery, setItemQuery] = useState('')
   const [maxPts, setMaxPts] = useState('')
+  // Niblit's picker (OLD-72) narrows on its own, apart from the unit's.
+  const [companionQuery, setCompanionQuery] = useState('')
+  const [companionMaxPts, setCompanionMaxPts] = useState('')
 
   // The entry references a unit that no longer exists in the army data (e.g. a
   // saved roster after a data update). Render an explicit, removable row rather
@@ -121,6 +124,10 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
   // Slots in use: carried items plus runic items such as a Dwarf rune group (OLD-69).
   const usedSlots = unit.isCharacter ? usedMagicItemSlots(entry, unit, army, carried) : 0
   const fixedExtras = unit.fixedExtras ?? []
+  // The fixed companion's own item slot (Niblit, OLD-72).
+  const companion = unit.isCharacter ? unit.companionMagicItems : undefined
+  const companionIds = entry.companionMagicItemIds ?? []
+  const companionUsed = companionCarriedItems(entry, unit, army).length
   const mounts = unit.mounts ?? []
   const selectedMount = mounts.find((m) => m.id === entry.mountId)
   // Cavalry: pair the rider's own statLine with a mount profile shown as a
@@ -138,11 +145,11 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
   const hasOptions = hasAnyOptions(unit)
 
   /** One magic-item row: shared by the selected block and the category list. */
-  const renderMagicItem = (item: MagicItem) => {
+  const renderMagicItem = (item: MagicItem, forCompanion = false) => {
     // A fixed item (OLD-63) is carried on every entry: checked, locked, tagged,
     // and priced at this character's page price ("included" when the headline
-    // already contains it).
-    const fixed = fixedItems.get(item.id)
+    // already contains it). The companion's slot (OLD-72) has none.
+    const fixed = forCompanion ? undefined : fixedItems.get(item.id)
     const info = (
       <span className="mi-body">
         <span className="mi-head">
@@ -198,7 +205,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
     // OLD-69: an item this character's page does not allow is greyed out like a
     // special one. A saved roster that already picked it keeps it tickable so
     // the user can drop it; the Muster Check explains why.
-    if (!isMagicItemAllowed(unit, item.id) && !entry.magicItemIds.includes(item.id)) {
+    if (!forCompanion && !isMagicItemAllowed(unit, item.id) && !entry.magicItemIds.includes(item.id)) {
       return (
         <div key={item.id} className="mi-item mi-item-not-allowed" title={t('itemNotForCharacter', lang)}>
           <span className="mi-checkbox-spacer" aria-hidden="true" />
@@ -210,8 +217,8 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
       <label key={item.id} className="mi-item">
         <input
           type="checkbox"
-          checked={entry.magicItemIds.includes(item.id)}
-          onChange={() => actions.toggleMagicItem(item.id)}
+          checked={(forCompanion ? companionIds : entry.magicItemIds).includes(item.id)}
+          onChange={() => (forCompanion ? actions.toggleCompanionMagicItem(item.id) : actions.toggleMagicItem(item.id))}
         />
         {info}
       </label>
@@ -222,14 +229,19 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
 
   // Search + max-points filter, shared by a character's magic items and a
   // regiment's magic standard so both pickers narrow the same way.
-  const itemFilter = (
+  const renderItemFilter = (
+    query: string,
+    setQuery: (v: string) => void,
+    max: string,
+    setMax: (v: string) => void,
+  ) => (
     <div className="mi-filter">
       <input
         type="search"
         className="mi-filter-search"
         placeholder={t('searchItems', lang)}
-        value={itemQuery}
-        onChange={(e) => setItemQuery(e.target.value)}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
         aria-label={t('searchItems', lang)}
       />
       <input
@@ -238,12 +250,13 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
         step={5}
         className="mi-filter-pts"
         placeholder={t('maxPts', lang)}
-        value={maxPts}
-        onChange={(e) => setMaxPts(e.target.value)}
+        value={max}
+        onChange={(e) => setMax(e.target.value)}
         aria-label={t('maxPts', lang)}
       />
     </div>
   )
+  const itemFilter = renderItemFilter(itemQuery, setItemQuery, maxPts, setMaxPts)
 
   return (
     <li className={`entry ${entry.isGeneral ? 'entry-general' : ''}`}>
@@ -689,7 +702,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
               {selectedItems.length > 0 && (
                 <div className="mi-selected">
                   <div className="mi-group-title">{t('selectedItems', lang)}</div>
-                  {selectedItems.map(renderMagicItem)}
+                  {selectedItems.map((item) => renderMagicItem(item))}
                 </div>
               )}
               {itemFilter}
@@ -705,13 +718,42 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                   return (
                     <div key={cat} className="mi-group">
                       <div className="mi-group-title">{CATEGORY_LABEL[lang][cat]}</div>
-                      {items.map(renderMagicItem)}
+                      {items.map((item) => renderMagicItem(item))}
                     </div>
                   )
                   })
                   return groups.some(Boolean)
                     ? groups
                     : <p className="muted small">{t('noItemsMatch', lang)}</p>
+                })()}
+              </div>
+            </div>
+          )}
+
+          {companion && (
+            <div className="opt-group companion-items">
+              <span className="opt-label">
+                {companionName(companion, lang)}: {t('magicItems', lang)}{' '}
+                <span className="muted small">({companionUsed}/{companion.slots})</span>
+              </span>
+              {renderItemFilter(companionQuery, setCompanionQuery, companionMaxPts, setCompanionMaxPts)}
+              <div className="companion-mi-list">
+                {(() => {
+                  const groups = CATEGORY_ORDER.map((cat) => {
+                    const items = filterMagicItems(
+                      army.magicItems.filter((i) => i.category === cat),
+                      companionQuery,
+                      companionMaxPts,
+                    )
+                    if (items.length === 0) return null
+                    return (
+                      <div key={cat} className="mi-group">
+                        <div className="mi-group-title">{CATEGORY_LABEL[lang][cat]}</div>
+                        {items.map((item) => renderMagicItem(item, true))}
+                      </div>
+                    )
+                  })
+                  return groups.some(Boolean) ? groups : <p className="muted small">{t('noItemsMatch', lang)}</p>
                 })()}
               </div>
             </div>

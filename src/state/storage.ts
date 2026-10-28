@@ -30,6 +30,7 @@ function isEntry(x: unknown): x is RosterEntry {
     typeof e.size === 'number' &&
     Array.isArray(e.optionIds) &&
     Array.isArray(e.magicItemIds) &&
+    (e.companionMagicItemIds === undefined || Array.isArray(e.companionMagicItemIds)) &&
     isOptionCounts(e.optionCounts)
   )
 }

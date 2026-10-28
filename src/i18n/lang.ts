@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import type { Army, EquipmentOption, FixedExtra, MagicItem, MagicItemCategory, MountOption, ProfileBlock, StatLine, UnitProfile, UnitRole } from '../data/types'
+import type { Army, CompanionMagicItems, EquipmentOption, FixedExtra, MagicItem, MagicItemCategory, MountOption, ProfileBlock, StatLine, UnitProfile, UnitRole } from '../data/types'
 import type { MagicLore, Spell } from '../data/lores'
 import { RULE_PHRASE_ES } from './rulePhrases'
 import { wizardLevelOf } from '../data/unitOptions'
@@ -50,6 +50,8 @@ export const mountName = (m: MountOption, lang: Lang): string =>
   lang === 'es' ? m.nameEs ?? m.name : m.name
 export const profileName = (p: ProfileBlock, lang: Lang): string =>
   lang === 'es' ? p.nameEs ?? p.name : p.name
+export const companionName = (c: CompanionMagicItems, lang: Lang): string =>
+  lang === 'es' ? c.nameEs ?? c.name : c.name
 export const fixedExtraName = (x: FixedExtra, lang: Lang): string =>
   lang === 'es' ? x.nameEs ?? x.name : x.name
 
