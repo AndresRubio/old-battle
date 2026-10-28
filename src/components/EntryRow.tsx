@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Army, EquipmentOption, MagicItem, RosterEntry, StatLine, StatNotes } from '../data/types'
 import { MAGIC_LORES, getLore, type Spell } from '../data/lores'
-import { carriedMagicItems, companionCarriedItems, countedOptionCount, effectiveStatLine, entryPoints, findUnit, mountOptionCost, unitOptionCost } from '../rules/points'
+import { carriedMagicItems, companionCarriedItems, countedOptionCount, effectiveStatLine, entryPoints, findUnit, mountOptionCost, unitOptionCost, unmetRequirement } from '../rules/points'
 import { isMagicItemAllowed, magicItemAllowance, usedMagicItemSlots } from '../rules/magicItems'
 import {
   companionMountProfile,
@@ -500,10 +500,15 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                       <input
                         type="checkbox"
                         checked={entry.optionIds.includes(o.id)}
+                        disabled={!entry.optionIds.includes(o.id) && Boolean(unmetRequirement(unit, o, entry.optionIds, entry.optionCounts))}
                         onChange={() => actions.toggleOption(o.id)}
                       />
-                      {optionText(o.name, lang)} ({signedPoints(unitOptionCost(unit, o, entry.optionIds))}
-                      {isRegiment && !o.flat && !o.perCrewman ? t('perModel', lang) : ''})
+                      {optionText(o.name, lang)}
+                      {/* A free option shows no price (OLD-73): "(+0)" says nothing. */}
+                      {(() => {
+                        const cost = unitOptionCost(unit, o, entry.optionIds, entry.optionCounts)
+                        return cost === 0 ? '' : ` (${signedPoints(cost)}${isRegiment && !o.flat && !o.perCrewman ? t('perModel', lang) : ''})`
+                      })()}
                       {optionInfo(o, lang) && (
                         <button
                           type="button"
@@ -539,6 +544,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                           max={o.maxCount}
                           step={1}
                           value={n}
+                          disabled={n === 0 && Boolean(unmetRequirement(unit, o, entry.optionIds, entry.optionCounts))}
                           onChange={(e) => actions.setOptionCount(o.id, e.target.valueAsNumber)}
                         />
                         <span className="counted-subtotal">{o.pointsPerModel * n} {t('pts', lang)}</span>
@@ -657,7 +663,7 @@ export function EntryRow({ entry, army, actions, canMoveUp, canMoveDown }: Props
                           checked={entry.optionIds.includes(o.id)}
                           onChange={() => actions.toggleOption(o.id)}
                         />
-                        {optionText(o.name, lang)} ({signedPoints(cost)})
+                        {optionText(o.name, lang)}{cost === 0 ? '' : ` (${signedPoints(cost)})`}
                         {optionInfo(o, lang) && (
                           <button
                             type="button"

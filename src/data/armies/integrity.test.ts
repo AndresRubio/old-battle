@@ -543,4 +543,32 @@ describe('assertArmyIntegrity — page requirements and option profiles (OLD-71)
     })
     expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/im\/m\/crew: option profiles are not supported on mounts/)
   })
+
+  // OLD-73: an option that needs another must name one the same unit offers.
+  it('throws when requiresOptionId names an option the unit does not have', () => {
+    const u = lord({ options: [{ id: 'guard-standard', name: 'Standard', pointsPerModel: 5, flat: true, requiresOptionId: 'guard' }] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/im\/guard-standard: requiresOptionId guard is not an option of the unit/)
+  })
+
+  it('throws when an option requires itself', () => {
+    const u = lord({ options: [{ id: 'guard', name: 'Guard', pointsPerModel: 5, flat: true, requiresOptionId: 'guard' }] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/im\/guard: requiresOptionId guard is not an option of the unit/)
+  })
+
+  it('throws when timesTrooperCost names an option the unit does not have', () => {
+    const u = lord({
+      options: [{ id: 'std', name: 'Standard', pointsPerModel: 0, flat: true, timesTrooperCost: { multiplier: 2, points: 12, withOptionId: 'shields' } }],
+    })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/im\/std: timesTrooperCost.withOptionId shields is not an option of the unit/)
+  })
+
+  it('accepts a requirement on a sibling option', () => {
+    const u = lord({
+      options: [
+        { id: 'guard', name: 'Guard', pointsPerModel: 5, flat: true },
+        { id: 'std', name: 'Standard', pointsPerModel: 0, flat: true, requiresOptionId: 'guard', timesTrooperCost: { multiplier: 2, points: 12, withOptionId: 'guard' } },
+      ],
+    })
+    expect(assertArmyIntegrity(withUnit(u))).toBeTruthy()
+  })
 })

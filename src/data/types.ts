@@ -102,6 +102,25 @@ export interface EquipmentOption {
    */
   onlyAsGeneral?: boolean
   /**
+   * The option needs another option of the same unit (OLD-73): the Paymaster's
+   * bodyguard standard bearer, musician, shields and extra bodyguards all need
+   * the bodyguard retinue they belong to (Mercenarios p.28). The picker keeps
+   * the option disabled until the other is bought (a toggle ticked, or a counted
+   * option with a count above zero); a saved roster that holds it without the
+   * other raises `option-requires-option` (warning).
+   */
+  requiresOptionId?: string
+  /**
+   * The option costs `multiplier` times one trooper of a retinue that is not the
+   * entry itself (OLD-73): "each costing double the points of a normal trooper"
+   * (Mercenarios p.28, the Paymaster's bodyguard at 12 points, +1 for a
+   * shield). The trooper costs `points`, plus the price of `withOptionId` when
+   * that option is bought at all (a toggle ticked, or a counted option with a
+   * count above zero), so the cost follows the shield choice. Like
+   * `timesModelCost`, read it only through `unitOptionCost`.
+   */
+  timesTrooperCost?: { multiplier: number; points: number; withOptionId: string }
+  /**
    * On any crewed host — a chariot `MountOption` or a chariot / war-machine
    * `UnitProfile` — the cost is `pointsPerModel` × the host's CURRENT crew count
    * (its `baseCrew` + one per selected `addsCrewman` option), e.g. chariot crew

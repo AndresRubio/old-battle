@@ -73,6 +73,8 @@ export interface RuleParams {
   'option-one-per-army': { option: EquipmentOption; count: number }
   /** OLD-73: an option only the army General may take, on an entry that is not the General. */
   'option-general-only': { unit: UnitProfile; option: EquipmentOption }
+  /** OLD-73: an option bought without the option of the same unit it needs (a bodyguard standard bearer without the bodyguard). */
+  'option-requires-option': { unit: UnitProfile; option: EquipmentOption; required: EquipmentOption }
   /** OLD-71: a character who always rides one of `mounts` (Imrik) has none. */
   'mount-required': { unit: UnitProfile; mounts: MountOption[] }
   'mount-requires-option': {
@@ -267,6 +269,10 @@ const MESSAGES: { [K in RuleId]: MessageBuilder<K> } = {
     lang === 'es'
       ? `${un(p, lang)}: ${optionText(p.option.name, lang)} es sólo para el General del ejército, y este personaje no es el General.`
       : `${un(p, lang)}: ${optionText(p.option.name, lang)} is only for the army General, and this character is not the General.`,
+  'option-requires-option': (p, lang) =>
+    lang === 'es'
+      ? `${un(p, lang)}: ${optionText(p.option.name, lang)} necesita ${optionText(p.required.name, lang)} — elígelo o quita la opción.`
+      : `${un(p, lang)}: ${optionText(p.option.name, lang)} needs ${optionText(p.required.name, lang)} — choose it or drop the option.`,
   'mount-required': (p, lang) => {
     const list = p.mounts.map((m) => mountName(m, lang)).join(' / ')
     return lang === 'es'

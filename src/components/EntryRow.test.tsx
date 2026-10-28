@@ -564,7 +564,9 @@ describe('EntryRow included fixed items and signed option prices (OLD-63)', () =
     const label = Array.from(container.querySelectorAll('.opt-checks label')).find((el) =>
       el.textContent?.startsWith('Item-card prices'),
     )
-    expect(label?.textContent).toContain('Item-card prices (Gift of Loki 50, Runes 75) (+0)')
+    // A free option shows no price at all (OLD-73): no "(+0)".
+    expect(label?.textContent).toContain('Item-card prices (Gift of Loki 50, Runes 75)')
+    expect(label?.textContent).not.toContain('(+0)')
     expect(container.textContent).not.toContain('(-5)')
   })
 })
@@ -962,5 +964,75 @@ describe("EntryRow Niblit's magic item (OLD-72)", () => {
     act(() => (mainRow('Sword of Strength').querySelector('input') as HTMLInputElement).click())
     expect(result.entries[0].magicItemIds).toEqual([SWORD])
     expect(result.entries[0].companionMagicItemIds).toBeUndefined()
+  })
+})
+
+// OLD-73 — the Paymaster's bodyguard options need the bodyguard retinue, and a free
+// option shows no "(+0)".
+describe('EntryRow bodyguard dependency and free options (OLD-73)', () => {
+  const dow = getArmy('dogs-of-war')!
+  const paymaster = (over: Partial<RosterEntry> = {}) => entry('dow-paymaster', { size: 1, ...over })
+  const dowProps = { ...props, actions: entryActions(() => {}, dow, 'e1') }
+  const box = (name: string) => {
+    const label = Array.from(container.querySelectorAll('.opt-checks label')).find((l) => l.textContent?.startsWith(name))
+    return label?.querySelector('input') as HTMLInputElement
+  }
+  const counted = (name: string) => {
+    const label = Array.from(container.querySelectorAll('.counted-option')).find((l) => l.textContent?.startsWith(name))
+    return label?.querySelector('input') as HTMLInputElement
+  }
+
+  it('disables the standard bearer, the musician, the shields and the extra bodyguards until the retinue is ticked', () => {
+    render(<EntryRow entry={paymaster()} army={dow} {...dowProps} />)
+    expand()
+    expect(box('Bodyguard (5 models)').disabled).toBe(false)
+    expect(box('Money Lender').disabled).toBe(false)
+    expect(box('Bodyguard standard bearer').disabled).toBe(true)
+    expect(box('Bodyguard musician').disabled).toBe(true)
+    expect(counted('Extra bodyguards').disabled).toBe(true)
+    expect(counted('Bodyguard shields').disabled).toBe(true)
+  })
+
+  it('enables them once the retinue is ticked', () => {
+    render(<EntryRow entry={paymaster({ optionIds: ['bodyguard'] })} army={dow} {...dowProps} />)
+    expand()
+    expect(box('Bodyguard standard bearer').disabled).toBe(false)
+    expect(box('Bodyguard musician').disabled).toBe(false)
+    expect(counted('Extra bodyguards').disabled).toBe(false)
+    expect(counted('Bodyguard shields').disabled).toBe(false)
+  })
+
+  it('leaves a ticked or counted dependent enabled so a saved roster can drop it', () => {
+    render(<EntryRow entry={paymaster({ optionIds: ['bodyguard-standard'], optionCounts: { 'bodyguard-shields': 2 } })} army={dow} {...dowProps} />)
+    expand()
+    expect(box('Bodyguard standard bearer').disabled).toBe(false)
+    expect(counted('Bodyguard shields').disabled).toBe(false)
+    expect(box('Bodyguard musician').disabled).toBe(true)
+  })
+
+  it('shows the shielded command group price in the label', () => {
+    render(<EntryRow entry={paymaster({ optionIds: ['bodyguard'], optionCounts: { 'bodyguard-shields': 5 } })} army={dow} {...dowProps} />)
+    expand()
+    expect(box('Bodyguard standard bearer').closest('label')?.textContent).toContain('Bodyguard standard bearer (+26)')
+  })
+
+  it('leaves Mydas options enabled: his 210 already includes the bodyguards', () => {
+    render(<EntryRow entry={entry('dow-mydas', { size: 1 })} army={dow} {...dowProps} />)
+    expand()
+    expect(box('Bodyguard standard bearer').disabled).toBe(false)
+    expect(counted('Extra bodyguards').disabled).toBe(false)
+  })
+
+  it('prints no "(+0)" on a free option, for a regiment-style per-model label too', () => {
+    const free: UnitProfile = {
+      id: 'synth-free', name: 'Synth Free', role: 'regiment', pointsPerModel: 5, minSize: 5,
+      options: [{ id: 'free-thing', name: 'Free Thing', pointsPerModel: 0 }, { id: 'paid', name: 'Paid Thing', pointsPerModel: 1 }],
+    }
+    const a = { ...army, units: [...army.units, free] }
+    render(<EntryRow entry={entry('synth-free')} army={a} {...props} actions={entryActions(() => {}, a, 'e1')} />)
+    expand()
+    const texts = Array.from(container.querySelectorAll('.opt-checks label')).map((l) => l.textContent?.trim())
+    expect(texts).toContain('Free Thing')
+    expect(texts).toContain('Paid Thing (+1/model)')
   })
 })

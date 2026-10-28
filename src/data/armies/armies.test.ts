@@ -3615,8 +3615,10 @@ describe('special characters charge their unit and option costs (OLD-71)', () =>
       expect(opt('bodyguard')).toMatchObject({ pointsPerModel: 60, flat: true })
       expect(opt('extra-bodyguards')).toMatchObject({ pointsPerModel: 12, counted: true, maxCount: 15 })
       expect(opt('bodyguard-shields')).toMatchObject({ pointsPerModel: 1, counted: true, maxCount: 20 })
-      expect(opt('bodyguard-standard')).toMatchObject({ pointsPerModel: 24, flat: true })
-      expect(opt('bodyguard-musician')).toMatchObject({ pointsPerModel: 24, flat: true })
+      // OLD-73: "each costing double the points of a normal trooper" (12, or 13 shielded).
+      for (const id of ['bodyguard-standard', 'bodyguard-musician']) {
+        expect(opt(id)).toMatchObject({ flat: true, requiresOptionId: 'bodyguard', timesTrooperCost: { multiplier: 2, points: 12, withOptionId: 'bodyguard-shields' } })
+      }
     })
 
     it.each<[string[], number, Record<string, number>?]>([
@@ -3626,7 +3628,8 @@ describe('special characters charge their unit and option costs (OLD-71)', () =>
       [['bodyguard'], 365, { 'extra-bodyguards': 15 }],
       [['bodyguard'], 190, { 'bodyguard-shields': 5 }],
       [['bodyguard', 'bodyguard-standard', 'bodyguard-musician'], 233],
-      [['money-lender', 'bodyguard', 'bodyguard-standard', 'bodyguard-musician'], 458, { 'extra-bodyguards': 15, 'bodyguard-shields': 20 }],
+      [['bodyguard', 'bodyguard-standard', 'bodyguard-musician'], 242, { 'bodyguard-shields': 5 }],
+      [['money-lender', 'bodyguard', 'bodyguard-standard', 'bodyguard-musician'], 462, { 'extra-bodyguards': 15, 'bodyguard-shields': 20 }],
     ])('with %j costs %d (counts %j)', (optionIds, expected, optionCounts) => {
       expect(entryPoints(entry('dow-paymaster', { optionIds, optionCounts }), dow())).toBe(expected)
     })

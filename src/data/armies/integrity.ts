@@ -151,6 +151,19 @@ export function assertArmyIntegrity(army: Army): Army {
       }
     }
 
+    // OLD-73: an option that needs another, or prices itself off another, must name a
+    // different option of the same unit, or the rule would never be met.
+    const ownOptionIds = new Set((u.options ?? []).map((o) => o.id))
+    for (const o of u.options ?? []) {
+      if (o.requiresOptionId && (o.requiresOptionId === o.id || !ownOptionIds.has(o.requiresOptionId))) {
+        fail(`${u.id}/${o.id}: requiresOptionId ${o.requiresOptionId} is not an option of the unit`)
+      }
+      const w = o.timesTrooperCost?.withOptionId
+      if (w !== undefined && !ownOptionIds.has(w)) {
+        fail(`${u.id}/${o.id}: timesTrooperCost.withOptionId ${w} is not an option of the unit`)
+      }
+    }
+
     for (const m of u.mounts ?? []) {
       // Mount options are toggles priced by mountOptionPoints, which has no counts.
       for (const o of m.options ?? []) {

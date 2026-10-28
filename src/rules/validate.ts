@@ -1,5 +1,5 @@
 import type { Army, EquipmentOption, Roster, RuleViolation } from '../data/types'
-import { findMagicItem, findUnit, rosterTotalPoints } from './points'
+import { findMagicItem, findUnit, isOptionBought, rosterTotalPoints, unmetRequirement } from './points'
 import { summarize } from './summary'
 import { companionMagicItemFindings, entryMagicItemFindings, armyItemUniquenessFindings } from './magicItems'
 import { STANDARD_BEARER_ID } from '../data/unitOptions'
@@ -276,6 +276,17 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
     for (const option of unit.options ?? []) {
       if (option.onlyAsGeneral && e.optionIds.includes(option.id) && !e.isGeneral) {
         raise('warning', 'option-general-only', { unit, option }, e.id)
+      }
+    }
+
+    // An option bought without the option it belongs to (the Paymaster's bodyguard
+    // standard bearer without the bodyguard, Mercenarios p.28). See requiresOptionId.
+    for (const option of unit.options ?? []) {
+      const required = isOptionBought(option, e.optionIds, e.optionCounts)
+        ? unmetRequirement(unit, option, e.optionIds, e.optionCounts)
+        : undefined
+      if (required) {
+        raise('warning', 'option-requires-option', { unit, option, required }, e.id)
       }
     }
 
