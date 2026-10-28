@@ -1,5 +1,6 @@
 import type {
   Army,
+  CompanionMagicItems,
   CharacterRank,
   MagicItemCategory,
   RosterEntry,
@@ -127,27 +128,16 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
     ]
   }
 
-  const findings: Finding[] = []
-
-  const allowance = magicItemAllowance(entry, unit)
-  if (used > allowance) {
-    findings.push({
-      severity: 'warning',
-      rule: 'magic-items-count',
-      params: { unit, carried: used, allowance },
-      entryId: entry.id,
-    })
-  }
-
   // OLD-69: a page that names the only items he may carry. A saved roster can
   // still hold another pick, so each one is reported.
+  const notAllowed: Finding[] = []
   if (unit.allowedMagicItems) {
     const allowed = unit.allowedMagicItems
       .map((id) => findMagicItem(army, id))
       .filter((i): i is NonNullable<typeof i> => i !== undefined)
     for (const c of carried) {
       if (c.fixed || isMagicItemAllowed(unit, c.item.id)) continue
-      findings.push({
+      notAllowed.push({
         severity: 'warning',
         rule: 'magic-items-not-allowed',
         params: { unit, item: c.item, allowed },
@@ -155,6 +145,52 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
       })
     }
   }
+
+  return carriedItemFindings({
+    carried,
+    used,
+    allowance: magicItemAllowance(entry, unit),
+    isBSB: Boolean(entry.isBSB || unit.isBSB),
+    unit,
+    entryId: entry.id,
+    afterCount: notAllowed,
+  })
+}
+
+/**
+ * The four checks every item-carrying holder shares, on the list it carries:
+ * count over its allowance, one item per restricted category, one crown and one
+ * helm (FAQ v2.20 §19.5), and a magic banner only for a Battle Standard Bearer
+ * (FAQ v2.20 §23.2). A character and a unit's fixed companion (OLD-72) both go
+ * through here, so the two cannot diverge. `holder` makes the messages name the
+ * companion instead of the unit; `afterCount` are findings that belong right
+ * after the count one, keeping the report order. A category clash, a crown/helm
+ * clash or a banner is raised only when at least one item involved is
+ * user-picked (OLD-63: the page sets the fixed loadout).
+ */
+function carriedItemFindings(o: {
+  carried: CarriedMagicItem[]
+  used: number
+  allowance: number
+  isBSB: boolean
+  unit: UnitProfile
+  entryId: string
+  holder?: CompanionMagicItems
+  afterCount?: Finding[]
+}): Finding[] {
+  const { carried, unit, entryId, holder } = o
+  const who = holder ? { unit, holder } : { unit }
+  const findings: Finding[] = []
+
+  if (o.used > o.allowance) {
+    findings.push({
+      severity: 'warning',
+      rule: 'magic-items-count',
+      params: { ...who, carried: o.used, allowance: o.allowance },
+      entryId,
+    })
+  }
+  findings.push(...(o.afterCount ?? []))
 
   /** Count per key, and whether any item behind the count is user-picked. */
   const tally = <K>(keyOf: (c: CarriedMagicItem) => K | undefined) => {
@@ -171,36 +207,20 @@ export function entryMagicItemFindings(entry: RosterEntry, unit: UnitProfile, ar
   // One per restricted category
   for (const [category, { count, picked }] of tally((c) => c.item.category)) {
     if (count > 1 && picked && RESTRICTED_CATEGORIES.has(category)) {
-      findings.push({
-        severity: 'warning',
-        rule: 'magic-items-category',
-        params: { unit, category, count },
-        entryId: entry.id,
-      })
+      findings.push({ severity: 'warning', rule: 'magic-items-category', params: { ...who, category, count }, entryId })
     }
   }
 
-  // FAQ v2.20 §19.5: a character may wear at most one crown and one helm.
+  // FAQ v2.20 §19.5: at most one crown and one helm.
   for (const [group, { count, picked }] of tally((c) => c.item.exclusiveGroup)) {
     if (count > 1 && picked) {
-      findings.push({
-        severity: 'warning',
-        rule: 'magic-items-exclusive-group',
-        params: { unit, group, count },
-        entryId: entry.id,
-      })
+      findings.push({ severity: 'warning', rule: 'magic-items-exclusive-group', params: { ...who, group, count }, entryId })
     }
   }
 
   // FAQ v2.20 §23.2: only a Battle Standard Bearer may carry a magic banner.
-  const picksBanner = carried.some((c) => !c.fixed && c.item.category === 'banner')
-  if (picksBanner && !(entry.isBSB || unit.isBSB)) {
-    findings.push({
-      severity: 'warning',
-      rule: 'magic-items-banner-bsb',
-      params: { unit },
-      entryId: entry.id,
-    })
+  if (!o.isBSB && carried.some((c) => !c.fixed && c.item.category === 'banner')) {
+    findings.push({ severity: 'warning', rule: 'magic-items-banner-bsb', params: who, entryId })
   }
 
   return findings
@@ -219,54 +239,15 @@ export function companionMagicItemFindings(entry: RosterEntry, unit: UnitProfile
   const holder = unit.companionMagicItems
   const items = companionCarriedItems(entry, unit, army)
   if (!holder || items.length === 0) return []
-
-  const findings: Finding[] = []
-
-  if (items.length > holder.slots) {
-    findings.push({
-      severity: 'warning',
-      rule: 'magic-items-count',
-      params: { unit, carried: items.length, allowance: holder.slots, holder },
-      entryId: entry.id,
-    })
-  }
-
-  const countBy = <K>(keyOf: (i: (typeof items)[number]) => K | undefined) => {
-    const out = new Map<K, number>()
-    for (const i of items) {
-      const key = keyOf(i)
-      if (key !== undefined) out.set(key, (out.get(key) ?? 0) + 1)
-    }
-    return out
-  }
-
-  for (const [category, count] of countBy((i) => i.category)) {
-    if (count > 1 && RESTRICTED_CATEGORIES.has(category)) {
-      findings.push({
-        severity: 'warning',
-        rule: 'magic-items-category',
-        params: { unit, category, count, holder },
-        entryId: entry.id,
-      })
-    }
-  }
-
-  for (const [group, count] of countBy((i) => i.exclusiveGroup)) {
-    if (count > 1) {
-      findings.push({
-        severity: 'warning',
-        rule: 'magic-items-exclusive-group',
-        params: { unit, group, count, holder },
-        entryId: entry.id,
-      })
-    }
-  }
-
-  if (!holder.isBSB && items.some((i) => i.category === 'banner')) {
-    findings.push({ severity: 'warning', rule: 'magic-items-banner-bsb', params: { unit, holder }, entryId: entry.id })
-  }
-
-  return findings
+  return carriedItemFindings({
+    carried: items.map((item) => ({ item, fixed: false, included: false, points: item.points })),
+    used: items.length,
+    allowance: holder.slots,
+    isBSB: Boolean(holder.isBSB),
+    unit,
+    entryId: entry.id,
+    holder,
+  })
 }
 
 /**

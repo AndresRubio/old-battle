@@ -153,3 +153,23 @@ describe("Niblit's item: fractional points", () => {
     expect(entryPoints(gromEntry({ companionMagicItemIds: ['mi-half'] }), half)).toBe(257.5)
   })
 })
+
+describe('a companion who is not the battle standard bearer', () => {
+  const plain = {
+    ...og,
+    units: og.units.map((u) => (u.id === 'og-grom' ? { ...u, companionMagicItems: { name: 'Niblit', slots: 1 } } : u)),
+  }
+  const msgs = (ids: string[]) =>
+    validateRoster(roster(gromEntry({ companionMagicItemIds: ids })), plain, 'en').filter((v) => v.rule === 'magic-items-banner-bsb')
+
+  it('may not carry a magic banner, and the finding names him', () => {
+    const v = msgs([BANNER])
+    expect(v).toHaveLength(1)
+    expect(v[0].message).toContain('Niblit')
+    expect(v[0].message).not.toContain('Grom')
+  })
+
+  it('may carry any other item', () => {
+    expect(msgs([SWORD])).toEqual([])
+  })
+})

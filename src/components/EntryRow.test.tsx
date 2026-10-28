@@ -911,6 +911,21 @@ describe("EntryRow Niblit's magic item (OLD-72)", () => {
     expect(rowOf('Special Thing').classList.contains('mi-item-special')).toBe(true)
   })
 
+  it("lists Grom's fixed Axe in Niblit's picker as an ordinary, unticked, tickable row", () => {
+    render(<EntryRow entry={grom()} army={og} {...props} />)
+    expand()
+    const row = rowOf('Elf-Biter, the Axe of Grom')
+    const box = row.querySelector('input') as HTMLInputElement
+    expect(box.checked).toBe(false)
+    expect(box.disabled).toBe(false)
+    expect(row.querySelector('.mi-fixed-tag')).toBeNull()
+    expect(row.classList.contains('mi-item-fixed')).toBe(false)
+    // In the unit's own list the same Axe stays checked, locked and tagged.
+    const own = mainRow('Elf-Biter, the Axe of Grom')
+    expect((own.querySelector('input') as HTMLInputElement).disabled).toBe(true)
+    expect(own.querySelector('.mi-fixed-tag')).not.toBeNull()
+  })
+
   it("picking toggles the entry's companion list, not his own items", () => {
     let result = start(grom())
     const actions = entryActions((fn) => { result = fn(result) }, og, 'e1')

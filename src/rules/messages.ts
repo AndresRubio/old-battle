@@ -12,6 +12,7 @@ import type { CapStatus } from './summary'
 import {
   type Lang,
   unitName,
+  companionName,
   mountName,
   optionText,
   magicItemName,
@@ -92,7 +93,7 @@ const un = (p: { unit: UnitProfile }, lang: Lang) => unitName(p.unit, lang)
 
 /** Who the magic-item finding is about: the unit's fixed companion when it has a `holder` (OLD-72), else the unit. */
 const holderName = (p: { unit: UnitProfile; holder?: CompanionMagicItems }, lang: Lang) =>
-  p.holder ? (lang === 'es' ? p.holder.nameEs ?? p.holder.name : p.holder.name) : un(p, lang)
+  p.holder ? companionName(p.holder, lang) : un(p, lang)
 
 /**
  * Bilingual labels for `EquipmentOption.exclusiveGroup` ids, plus whether the
