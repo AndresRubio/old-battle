@@ -14,14 +14,16 @@ interface Props {
 }
 
 export function MountSelector({ mounts, selectedId, required, onSelect, lang, name, labelId }: Props) {
+  // A saved id the unit no longer offers (the Hellsteed, OLD-74) prices as on foot, so show it so.
+  const onFoot = !mounts.some((m) => m.id === selectedId)
   return (
     <div className="mount-chips" role="radiogroup" aria-labelledby={labelId}>
       {!required && (
-        <label className={`mount-chip ${!selectedId ? 'mount-chip-on' : ''}`}>
+        <label className={`mount-chip ${onFoot ? 'mount-chip-on' : ''}`}>
           <input
             type="radio"
             name={`${name}-mount`}
-            checked={!selectedId}
+            checked={onFoot}
             onChange={() => onSelect(null)}
           />
           <span>{t('onFoot', lang)}</span>

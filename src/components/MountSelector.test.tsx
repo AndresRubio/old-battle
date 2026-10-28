@@ -37,6 +37,14 @@ describe('MountSelector', () => {
     expect(checked.closest('label')?.textContent).toBe('Cold One +10')
   })
 
+  // A roster saved with a mount the unit no longer offers (the Hellsteed, OLD-74)
+  // prices as on foot, so On foot is the checked chip.
+  it('checks On foot when the saved mount id is no longer offered', () => {
+    render(<MountSelector mounts={MOUNTS} selectedId="mount-hellsteed" onSelect={() => {}} lang="en" name="e1" labelId="e1-mount-label" />)
+    const checked = container.querySelector('input[type="radio"]:checked') as HTMLInputElement
+    expect(checked.closest('label')?.textContent).toBe('On foot')
+  })
+
   it('calls onSelect with the mount id when a mount chip is chosen', () => {
     let picked: string | null | undefined = '__unset__'
     render(<MountSelector mounts={MOUNTS} selectedId={undefined} onSelect={(id) => { picked = id }} lang="en" name="e1" labelId="e1-mount-label" />)
