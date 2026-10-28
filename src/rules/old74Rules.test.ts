@@ -41,6 +41,8 @@ describe('OLD-74 — the Hellsteed is gone (Condes Vampiro: "Pesadilla (+2 punto
     expect(exportRosterText(rosterOf('vampire-counts', [stale]), vc, 'en')).toBe(
       exportRosterText(rosterOf('vampire-counts', [onFoot]), vc, 'en'),
     )
+    const rules = (e: RosterEntry) => validateRoster(rosterOf('vampire-counts', [e]), vc, 'en').map((v) => v.rule)
+    expect(rules(stale)).toEqual(rules(onFoot))
   })
 })
 

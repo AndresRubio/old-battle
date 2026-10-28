@@ -58,7 +58,7 @@ const GREAT_SPECTRAL_WOLF: EquipmentOption = {
 // characters (army list pp.62–66). The Nightmare costs +2 pts; characters who
 // could also pay for barding (+2) keep that as an EquipmentOption since it is a
 // wargear upgrade, not a separate mount. Vampires (and Necrarchs) may instead
-// ride a Winged Nightmare or a Zombie Dragon from the monster list ("Pesadilla
+// ride a Winged Nightmare or a Zombie Dragon from the monster list (p.62: "Pesadilla
 // (+2 puntos) o un Monstruo"); Necromancers ride only a Nightmare on foot.
 // OLD-74: the Hellsteed (Corcel Infernal) is gone. No book we have prints it; a
 // saved roster that still holds `mount-hellsteed` prices and shows as on foot.
