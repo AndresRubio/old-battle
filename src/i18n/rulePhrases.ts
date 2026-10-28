@@ -212,7 +212,7 @@ export const RULE_PHRASE_ES: Record<string, string> = {
   'May ride a Cold One (+10), Dark Steed (+3) or a monster': 'Puede montar un Lagarto Frío (+10), Corcel Oscuro (+3) o un monstruo',
   'May ride a Nightmare': 'Puede montar un Corcel Pesadillesco',
   'May ride a Nightmare when leading Wight Cavalry': 'Puede montar un Corcel Pesadillesco cuando lidera Caballería Tumularia',
-  'May ride a Nightmare, Hellsteed, Winged Nightmare or Zombie Dragon': 'Puede montar un Corcel Pesadillesco, un Corcel Infernal, un Corcel Pesadillesco Alado o un Dragón Zombi',
+  'May ride a Nightmare, Winged Nightmare or Zombie Dragon': 'Puede montar un Corcel Pesadillesco, un Corcel Pesadillesco Alado o un Dragón Zombi',
   'Move 5D6cm (random each turn); S5 ball & chain; D6 wounds per model hit': 'Movimiento 5D6cm (aleatorio cada turno); bola con cadena de F5; D6 heridas por miniatura impactada',
   'No champion, standard or musician (may have a Beastman keeper)': 'Sin campeón, estandarte ni músico (puede tener un guardián Hombre Bestia)',
   'No champion, standard or musician (may have a Chaos Warrior keeper, +24)': 'Sin campeón, estandarte ni músico (puede tener un guardián Guerrero del Caos, +24)',

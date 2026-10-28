@@ -58,20 +58,16 @@ const GREAT_SPECTRAL_WOLF: EquipmentOption = {
 // characters (army list pp.62–66). The Nightmare costs +2 pts; characters who
 // could also pay for barding (+2) keep that as an EquipmentOption since it is a
 // wargear upgrade, not a separate mount. Vampires (and Necrarchs) may instead
-// ride a Hellsteed (Corcel Infernal — a winged Nightmare, Flying), a Winged
-// Nightmare, or a Zombie Dragon; Necromancers ride only a Nightmare on foot.
+// ride a Winged Nightmare or a Zombie Dragon from the monster list ("Pesadilla
+// (+2 puntos) o un Monstruo"); Necromancers ride only a Nightmare on foot.
+// OLD-74: the Hellsteed (Corcel Infernal) is gone. No book we have prints it; a
+// saved roster that still holds `mount-hellsteed` prices and shows as on foot.
 // Condes Vampiro printed p.58 and p.62 (OLD-73): "Pesadilla 20 2 0 3 3 1 2 1 5" (M20→8").
-// The book prints no row for the Hellsteed, which is built on this one. Manfred's p.73 prints
-// Ld 4; the owner chose Ld 5 for every Nightmare.
+// Manfred's p.73 prints Ld 4; the owner chose Ld 5 for every Nightmare.
 const NIGHTMARE_STATS = { M: 8, WS: 2, BS: 0, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 } as const
 const NIGHTMARE_MOUNT: MountOption = {
   id: 'mount-nightmare', name: 'Nightmare', nameEs: 'Pesadilla',
   points: 2, statLine: { ...NIGHTMARE_STATS },
-}
-const HELLSTEED_MOUNT: MountOption = {
-  id: 'mount-hellsteed', name: 'Hellsteed', nameEs: 'Corcel Infernal',
-  points: 12, statLine: { ...NIGHTMARE_STATS },
-  specialRules: ['Flying'],
 }
 const WINGED_NIGHTMARE_MOUNT: MountOption = {
   id: 'mount-winged-nightmare', name: 'Winged Nightmare', nameEs: 'Pesadilla Alada',
@@ -97,9 +93,9 @@ const ZOMBIE_DRAGON_MOUNT: MountOption = {
   ],
 }
 
-/** Vampires & Necrarchs: a Nightmare, a Hellsteed, a Winged Nightmare or a Zombie Dragon. */
+/** Vampires & Necrarchs: a Nightmare, a Winged Nightmare or a Zombie Dragon. */
 const VAMPIRE_MOUNTS: MountOption[] = [
-  NIGHTMARE_MOUNT, HELLSTEED_MOUNT, WINGED_NIGHTMARE_MOUNT, ZOMBIE_DRAGON_MOUNT,
+  NIGHTMARE_MOUNT, WINGED_NIGHTMARE_MOUNT, ZOMBIE_DRAGON_MOUNT,
 ]
 /** Necromancers (living): a Nightmare only. */
 const NECROMANCER_MOUNTS: MountOption[] = [NIGHTMARE_MOUNT]
@@ -152,7 +148,7 @@ const units: UnitProfile[] = [
       'May march and react to charges',
       'Level 3 wizard (Necromancy, Battle Magic or Dark Magic)',
       'Chooses vampiric powers from its Clan',
-      'May ride a Nightmare, Hellsteed, Winged Nightmare or Zombie Dragon',
+      'May ride a Nightmare, Winged Nightmare or Zombie Dragon',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },
@@ -185,7 +181,7 @@ const units: UnitProfile[] = [
       'May march and react to charges',
       'Level 2 wizard (Necromancy, Battle Magic or Dark Magic)',
       'Chooses two vampiric powers from its Clan',
-      'May ride a Nightmare, Hellsteed, Winged Nightmare or Zombie Dragon',
+      'May ride a Nightmare, Winged Nightmare or Zombie Dragon',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },
@@ -217,7 +213,7 @@ const units: UnitProfile[] = [
       'Immune to poison',
       'May march and react to charges',
       'Chooses one vampiric power from its Clan',
-      'May ride a Nightmare, Hellsteed, Winged Nightmare or Zombie Dragon',
+      'May ride a Nightmare, Winged Nightmare or Zombie Dragon',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },
@@ -351,7 +347,7 @@ const units: UnitProfile[] = [
       'May march and react to charges',
       'Carries the Army Battle Standard; may carry one magic standard',
       'Chooses one vampiric power from its Clan',
-      'May ride a Nightmare, Hellsteed, Winged Nightmare or Zombie Dragon',
+      'May ride a Nightmare, Winged Nightmare or Zombie Dragon',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },

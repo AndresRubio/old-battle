@@ -99,12 +99,7 @@ describe('OLD-73 corrected profiles', () => {
         expect(m.nameEs).toBe('Pesadilla')
       }
     })
-    // The Hellsteed prints no row of its own in the book, so it follows the Nightmare it is built on.
-    it('the Hellsteed follows the Nightmare', () => {
-      const found = mountsWithId('vampire-counts', 'mount-hellsteed')
-      expect(found.length).toBeGreaterThan(0)
-      for (const m of found) expect(m.statLine).toEqual(nightmare)
-    })
+    // The Hellsteed was removed in OLD-74 (no book prints it); see old74Rules.test.ts.
     it("Manfred's Nightmare uses Ld 5 too", () => {
       const p = unitOf('vampire-counts', 'vc-manfred-von-carstein').profiles!.find((x) => x.name === 'Nightmare')!
       expect(p.statLine).toEqual(nightmare)

@@ -64,8 +64,12 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
   // governed by each army's 0-1 / unitGroupCaps data.
   // A unit whose fixed companion is the army's Battle Standard Bearer (Grom's
   // Niblit, OLD-72) counts as one too, and like a toggled entry it makes the
-  // clash worth reporting (OLD-73).
-  const carriesBSB = (e: Roster['entries'][number]) => Boolean(findUnit(army, e.unitId)?.companionMagicItems?.isBSB)
+  // clash worth reporting (OLD-73). So does a General whose page makes him the
+  // bearer (Mazdamundi, OLD-74).
+  const carriesBSB = (e: Roster['entries'][number]) => {
+    const unit = findUnit(army, e.unitId)
+    return Boolean(unit?.companionMagicItems?.isBSB || (unit?.bsbAsGeneral && e.isGeneral))
+  }
   const bsbs = roster.entries.filter((e) => e.isBSB || findUnit(army, e.unitId)?.isBSB || carriesBSB(e))
   if (bsbs.length > 1 && roster.entries.some((e) => e.isBSB || carriesBSB(e))) {
     raise('warning', 'multiple-bsbs', { count: bsbs.length })
