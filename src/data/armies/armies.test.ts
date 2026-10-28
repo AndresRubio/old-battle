@@ -230,7 +230,9 @@ describe('selectionRules survive army assembly', () => {
 
   it('Wood Elves: Treeman ratio cap is present', () => {
     const caps = getArmy('wood-elves')!.selectionRules?.ratioCaps
-    expect(caps?.find((c) => c.unitId === 'we-treeman')?.absoluteMax).toBe(3)
+    // Elfos Silvanos p.68 (OLD-73): one per 1,000 points, no ceiling ("hasta cinco" at 5,000).
+    expect(caps?.find((c) => c.unitId === 'we-treeman')?.perPoints).toBe(1000)
+    expect(caps?.find((c) => c.unitId === 'we-treeman')?.absoluteMax).toBeUndefined()
   })
 
   it('Lizardmen: Temple Guard per-Slann cap present and static max removed', () => {
@@ -508,7 +510,13 @@ describe('mounts & profiles', () => {
     expect(wolves.length, 'Giant Wolf profiles found').toBeGreaterThan(0)
 
     for (const b of boars) expect(b.statLine, `${b.name} @ ${b.where}`).toEqual(WAR_BOAR)
-    for (const w of wolves) expect(w.statLine, `${w.name} @ ${w.where}`).toEqual(GIANT_WOLF)
+    // Grom's own page (p.91) prints his wolves with T 4 (OLD-73); every other page prints T 3.
+    const GROM_WOLF = { ...GIANT_WOLF, T: 4 }
+    for (const w of wolves) {
+      const expected = w.where === 'og-grom.profiles' ? GROM_WOLF : GIANT_WOLF
+      expect(w.statLine, `${w.name} @ ${w.where}`).toEqual(expected)
+    }
+    expect(wolves.some((w) => w.where === 'og-grom.profiles'), "Grom's wolf found").toBe(true)
   })
 
   // OLD-19 — book printed p.78 "LISTA DE EQUIPO" (PDF page 80), the table of
@@ -3334,9 +3342,11 @@ describe('special-character rule texts match the book (OLD-68)', () => {
     expect(entryPoints(entry, getArmy('undead')!)).toBe(377)
   })
 
-  it('the generic Undead vampires keep the Nightmare (not part of this fix)', () => {
+  // OLD-73: pp.79-80 give the generic vampires the same Corcel Esquelético.
+  it('the generic Undead vampires ride the Skeletal Steed too, under the same saved-roster id', () => {
     const mounts = unitOf('undead', 'ud-vampire').mounts!
-    expect(mounts[0].name).toBe('Nightmare')
+    expect(mounts[0].id).toBe('mount-nightmare')
+    expect(mounts[0].name).toBe('Skeletal Steed')
   })
 
   // Skaven pp.71-72 (PDF 73-74): the Storm Daemon is a two-handed magic weapon, so Ikit may carry no other.

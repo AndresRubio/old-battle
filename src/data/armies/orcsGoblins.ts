@@ -860,7 +860,13 @@ const units: UnitProfile[] = [
       { id: 'wolf-chariot', name: 'Wolf Chariot', nameEs: 'Carruaje de lobos', points: 62 },
     ],
     // Orcos y Goblins p.91 (OLD-71): "Niblit 10 3 4 4 3 1 3 2 5", M10cm = 4".
-    profiles: [{ name: 'Niblit', statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 } }],
+    // Orcos y Goblins p.91 (OLD-73): "Carruaje - - - 7 7 3 1 - -" and, for the three wolves that draw
+    // it, "Lobo Gigante 22 4 0 3 4 1 3 1 3" (T 4 here; T 3 on the generic chariot, p.88).
+    profiles: [
+      { name: 'Niblit', statLine: { M: 4, WS: 3, BS: 4, S: 4, T: 3, W: 1, I: 3, A: 2, Ld: 5 } },
+      { name: 'Wolf Chariot', nameEs: 'Carruaje', statLine: CHARIOT_CHASSIS_STATS },
+      { name: 'Giant Wolf', nameEs: 'Lobo Gigante', statLine: { M: 9, WS: 4, BS: 0, S: 3, T: 4, W: 1, I: 3, A: 1, Ld: 3 } },
+    ],
     // Orcos y Goblins p.91 (OLD-72): "Niblit puede llevar un único objeto mágico". He carries the
     // army battle standard, so a magic banner is legal for him.
     companionMagicItems: { name: 'Niblit', slots: 1, isBSB: true },
@@ -905,7 +911,9 @@ const units: UnitProfile[] = [
     statLine: { M: 4, WS: 5, BS: 5, S: 5, T: 5, W: 3, I: 4, A: 3, Ld: 8 },
     isCharacter: true,
     characterRank: 'hero',
-    canBeGeneral: false,
+    // Orcos y Goblins p.92 (OLD-73): "como un Gran Jefe o Señor de la Guerra Orco"; he keeps the
+    // two magic items the page prints, whatever the rank.
+    canBeGeneral: true,
     max: 1,
     mounts: ORC_SPECIAL_MOUNTS,
     specialRules: [

@@ -836,8 +836,26 @@ describe('EntryRow special character companion profiles (OLD-71)', () => {
   it("shows Grom's companion Niblit", () => {
     setLang('es')
     show('orcs-and-goblins', entry('og-grom', { size: 1 }))
-    expect(labels()).toEqual(['Niblit'])
+    expect(labels()[0]).toBe('Niblit')
     expect(cellsFor('Niblit')).toEqual(['10', '3', '4', '4', '3', '1', '3', '2', '5'])
+  })
+
+  // Orcos y Goblins p.91 (OLD-73): "Carruaje - - - 7 7 3 1 - -" and, for the three wolves
+  // that draw it, "Lobo Gigante 22 4 0 3 4 1 3 1 3" (T 4 on Grom's page, T 3 on p.88).
+  it("shows Grom's chariot and its Giant Wolf as his page prints them", () => {
+    setLang('en')
+    show('orcs-and-goblins', entry('og-grom', { size: 1 }))
+    expect(labels()).toEqual(['Niblit', 'Wolf Chariot', 'Giant Wolf'])
+    expect(cellsFor('Wolf Chariot')).toEqual(['–', '–', '–', '7', '7', '3', '1', '–', '–'])
+    expect(cellsFor('Giant Wolf')).toEqual(['9', '4', '0', '3', '4', '1', '3', '1', '3'])
+  })
+
+  it("prints Grom's chariot and wolf in Spanish, M in centimetres", () => {
+    setLang('es')
+    show('orcs-and-goblins', entry('og-grom', { size: 1 }))
+    expect(labels()).toEqual(['Niblit', 'Carruaje', 'Lobo Gigante'])
+    expect(cellsFor('Carruaje')).toEqual(['–', '–', '–', '7', '7', '3', '1', '–', '–'])
+    expect(cellsFor('Lobo Gigante')).toEqual(['22', '4', '0', '3', '4', '1', '3', '1', '3'])
   })
 
   // Enanos p.83: Porteador 8 5 4 4 4 1 3 2 9 (cm); Thorgrim's page uses the same Throne.

@@ -212,9 +212,9 @@ be confirmed. They are suitable for a faithful list-building experience and for 
 - **Grom's Giant Wolves** (printed p.91) — the book really does print `22 4 0 3 **4** 1 3 1 3` for
   the wolves pulling Grom's chariot, i.e. **T4** where every other Giant Wolf row in the book has
   T3. Confirmed by re-reading the scan at 400 DPI, so it is a special-character variant, not an OCR
-  slip. Not modelled: `og-grom` carries no wolf profile (he takes the Wolf Chariot as a special
-  rule), and the generic `GIANT_WOLF_STATS` must stay at the book's T3. Recorded here so a future
-  pass does not "fix" the transcription. Linear OLD-20.
+  slip. The generic `GIANT_WOLF_STATS` must stay at the book's T3. Recorded here so a future
+  pass does not "fix" the transcription. Linear OLD-20. Grom now shows his own T4 wolf row (OLD-73,
+  see the Orcs & Goblins subsection below).
 - **Orc Shaman mounts** (`og-shaman-orc`) — wrongly offered a Giant Wolf mount; the book's
   "Shamanes" section (printed p.81, "Monturas" paragraph, via
   `source/transcribed/orcs-goblins-lista-ejercito.md`) gives Orc/Savage Orc shamans War Boar (+8)
@@ -1528,6 +1528,8 @@ decision (2026-10-26).
 
 **Shown profiles (OLD-71, 2026-10-27).** Elfos Silvanos p.71 prints "Mastín de Caza 12 4 - 4 3 1 3 1 3". Orion now shows a Hunting Hound row (M 5", the book's "-" BS left blank) while he buys at least one hound. Display only: each hound still costs 5.
 
+**Treemen are a regiment (OLD-73, 2026-10-28).** Elfos Silvanos p.66: the points spent on Treemen "también debe proceder de la proporción de esta sección de la lista de ejército, no de la sección de Monstruos". Elfos Silvanos p.68: "Un ejército puede incluir hasta un Hombre Árbol por cada 1.000 puntos del valor total en puntos del ejército. Por tanto, un ejército de 3.000 puntos podrá incluir hasta un máximo de tres Hombres Árbol, y uno de 5.000 puntos hasta cinco." The Treeman moves from Monsters to Regiments, the ceiling of 3 goes (the 3,000-point figure is only the book's example) and the tag reads "0-1 per 1,000 pts". The page adds "No es necesario organizar a los Hombres Árbol en unidades; pueden luchar como miniaturas independientes", so the entry has no minimum size and no command group, and the cap counts models, so a unit of three counts as three. The Treeman's 280 points and statline are unchanged.
+
 #### Dark Elves and Undead: special characters' extra costs (OLD-63, 2026-10-26)
 **Dark Elves, Elfos Oscuros (1995, ES) printed pp.56-63.** Each page lists a table of items with
 `+N puntos` (the Manticore as `Mantícora 200 puntos`) under a headline that does not contain them.
@@ -1593,6 +1595,8 @@ Settra's English tag said "Skull Flail" next to his locked row "Flail of Skulls"
 
 **Rule texts corrected (OLD-68, 2026-10-27).** No Muertos: Vlad (p.87) "normalmente lleva" the Anillo de los Carstein (+50) and the Espada de Energía Maldita (+75); the tag now uses the item cards' English names and the book's Spanish ones. Vlad, Isabella and Manfred (pp.87-88) may ride a "Corcel Esquelético (+2 puntos)"; the 1995 book never says Pesadilla. Their mount is labelled Skeletal Steed / Corcel Esquelético and keeps its internal id, so saved rosters keep the 2 points. The generic Undead vampires were not checked and still offer the Nightmare.
 
+**Skeletal Steed corrected (OLD-73, 2026-10-28).** No Muertos pp.59, 79 and 80 print "Corcel Esquelético 20 2 0 3 3 1 2 1 5" (20 cm = 8"): the Skeletal Steed goes from WS3 Ld4 to WS2 Ld5, which also reaches Skeletal Cavalry and the Undead Chariot team. The generic Vampire Lord and Vampire (pp.79 and 80, "Corcel Esquelético (+2 puntos)") ride that same steed, so the mount that kept the id `mount-nightmare` is now labelled Skeletal Steed and the two tags say "May ride a Skeletal Steed (+2)". "Pesadilla" is the 1999 Vampire Counts name and does not appear in this book. The bestiary (p.59) gives the steed no fear, so 'Causes fear' is removed. Saved rosters keep their price: the id and the +2 are unchanged.
+
 #### Orcs & Goblins: special characters' extra costs (OLD-63, 2026-10-26)
 **Orcs & Goblins, Orcos y Goblins (1997, ES) printed pp.90-93; chariot prices p.88.** Each page
 lists its extras as `+N puntos` under a headline that excludes them. Items in the pool are fixed
@@ -1625,6 +1629,8 @@ to his 245.
 **Shown profiles (OLD-71, 2026-10-27).** Orcos y Goblins p.91 prints "Niblit 10 3 4 4 3 1 3 2 5". Grom now shows a Niblit row (M 4"). Display only: Niblit stays a 65-point fixed extra. The same table prints the chariot and a Giant Wolf at "22 4 0 3 4 1 3 1 3", Toughness 4 where p.88 gives the Goblin Wolf Chariot's wolves Toughness 3; those two rows are not shown until the owner decides which page wins.
 
 **Niblit's magic item (OLD-72, 2026-10-27).** Orcos y Goblins p.91 (Grom el Panzudo): "Niblit puede llevar un único objeto mágico, elegido de entre los presentados en Warhammer Magia." Niblit now has one item slot of his own beside Grom's three, picked from the same pool as any Orc character and priced at the card. Owner decisions: his restricted categories (one weapon, one armour, one ward and so on) and the one crown and one helm rule are counted apart from Grom's; the army-wide uniqueness rule is shared, so Grom and Niblit cannot carry the same item; and Niblit may carry a magic banner because he carries the army battle standard (FAQ v2.20 §23.2). No game value was added: the only figures are the one item and the standard-bearer role.
+
+**Gorfang as General and Grom's chariot (OLD-73, 2026-10-28).** Orcos y Goblins p.92: "Puedes incluir a Gorfang Rotgut en tu ejército como un Gran Jefe o Señor de la Guerra Orco si lo deseas". He can now be the General; his page still prints "hasta dos objetos mágicos", so his allowance stays 2. The page also asks for at least one Orc unit, which the app does not check. Orcos y Goblins p.91 prints "Carruaje - - - 7 7 3 1 - -" and "Lobo Gigante 22 4 0 3 4 1 3 1 3" for Grom, who enters battle "en un carruaje tirado por tres Lobos Gigantes". Owner decision: Grom shows both rows with the wolf at Toughness 4 as his page prints it (M 22 cm = 9"), and the generic Giant Wolf stays at T3 (p.88). Display only: the chariot stays a 62-point fixed extra.
 
 #### Bretonnia, Chaos, Norse, Vampire Counts and Dogs of War: special characters' extra costs (OLD-63, 2026-10-26)
 **Three books print the headline as a total that already holds the items.** Bretonnia (1997, EN)
@@ -1710,6 +1716,8 @@ Item ids are unchanged, so saved rosters are unaffected.
 The unused generic `BSB_UPGRADE` (+25, id `bsb`) left `src/data/unitOptions.ts`: no unit used it since the first commit, and each book prints its own Battle Standard price.
 
 **Page requirements and shown profiles (OLD-71, 2026-10-27).** Paladines del Caos p.16: "Si un ejército incluye a Archaon éste será su General". Archaon now carries `mustBeGeneral`, and an Archaon entry that is not the General raises the `must-be-general` error. Bretonnia p.71 prints "Hugo le Petit 4 3 4 5 4 1 3 1 7" and "Gui le Gros 4 3 4 3 3 1 3 1 7"; Bertrand now shows both as fixed rows, display only.
+
+**Profiles corrected (OLD-73, 2026-10-28).** Reino del Caos p.78 and p.109 print "Tuskgor 18 3 0 4 4 2 2 1 3" (18 cm = 7"): the Beastman Chariot's Tuskgors go from W1 I3 Ld7 to W2 I2 Ld3, the row Gorthor's own Tuskgors already carried. Reino del Caos p.76 and p.103 print "Corcel del Caos 20 4 0 4 4 1 4 1 5": the Chaos Steed goes from WS3 I3 to WS4 I4, which reaches every Chaos character mount, both Chaos Knight regiments and the Chaos Chariot team, and agrees with Mordrek's steed. Condes Vampiro p.58 and p.62 print "Pesadilla 20 2 0 3 3 1 2 1 5": the Nightmare goes from WS3 Ld4 to WS2 Ld5. Manfred's own page (p.73) prints Ld4 for his Nightmare; the owner chose Ld5 for every Nightmare, so his steed follows. The Hellsteed prints no row of its own, so it follows the Nightmare it is built on. No points changed.
 
 #### High Elves: special characters' extra costs (OLD-63, 2026-10-26)
 **Altos Elfos (1997, ES) printed pp.81-94.** Each character's page prints the headline in its title

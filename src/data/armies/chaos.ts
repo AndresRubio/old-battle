@@ -64,7 +64,8 @@ const SCYTHED_WHEELS: EquipmentOption = { id: 'scythed-wheels', name: 'Scythed w
 //     also ride a Grey Infernal monster, but the book treats that monster as an
 //     ALLY against the 25% allowance, not a folded mount, so it is NOT offered
 //     here — field the standalone monster entry instead.) ---
-const CHAOS_STEED_STATS: StatLine = { M: 8, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 3, A: 1, Ld: 5 }
+// Reino del Caos printed p.76 and p.103: "Corcel del Caos 20 4 0 4 4 1 4 1 5" (OLD-73).
+const CHAOS_STEED_STATS: StatLine = { M: 8, WS: 4, BS: 0, S: 4, T: 4, W: 1, I: 4, A: 1, Ld: 5 }
 const JUGGERNAUT_STATS: StatLine = { M: 7, WS: 5, BS: 0, S: 5, T: 5, W: 3, I: 1, A: 3, Ld: 5 }
 const DISC_STATS: StatLine = { M: 9, WS: 0, BS: 0, S: 3, T: 3, W: 1, I: 3, A: 1, Ld: 5 }
 // Corcel de Slaanesh (p.117): M30→12", WS3 S4 T5 W1 I6 A1 Ld10.
@@ -959,7 +960,8 @@ const units: UnitProfile[] = [
       // OLD-33 — Reino del Caos printed p.109 = PDF 111: "Carruaje - - - 7 7 3 1 - -"
       { name: 'Chariot', nameEs: 'Carro', statLine: { S: 7, T: 7, W: 3, I: 1 } },
       { name: '2 Gor Beastmen (crew)', nameEs: '2 Gors Hombres Bestia (tripulación)', statLine: statline({ M: 4, WS: 4, BS: 3, S: 3, T: 4, W: 2, I: 3, A: 1, Ld: 7 }) },
-      { name: '2 Tuskgors', nameEs: '2 Tuskgors', statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 1, I: 3, A: 1, Ld: 7 }, specialRules: ['4+ armour save'] },
+      // OLD-73 - printed p.78 and p.109: "Tuskgor 18 3 0 4 4 2 2 1 3".
+      { name: '2 Tuskgors', nameEs: '2 Tuskgors', statLine: { M: 7, WS: 3, BS: 0, S: 4, T: 4, W: 2, I: 2, A: 1, Ld: 3 }, specialRules: ['4+ armour save'] },
     ],
     options: [SCYTHED_WHEELS, TWO_HAND_2, HALBERD_2, LIGHT_ARMOUR_2, SHIELD_1],
     specialRules: [
