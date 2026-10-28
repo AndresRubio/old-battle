@@ -16,6 +16,7 @@ Unofficial fan project; not affiliated with Games Workshop.
 
 ```bash
 npm run dev          # Vite dev server (http://localhost:5173)
+npm run check        # the gate: typecheck + full suite; CI and every deploy run it too
 npm test             # vitest run — full suite (rules engine + data integrity + state)
 npm run test:watch   # vitest watch mode
 npm run build        # tsc -b && vite build (type-check THEN bundle → dist/)
@@ -30,9 +31,8 @@ npm run android      # build + cap sync android + cap open android
 ```
 
 There is **no linter** configured — don't assume ESLint commands work. This IS a git repo
-(GitHub remote `old-battle`; work in feature branches, merge to `main`). If worktrees exist under
-`.claude/worktrees/`, run the full suite with
-`npx vitest run --exclude '**/.claude/**' --exclude '**/node_modules/**'` — root vitest scans them.
+(GitHub remote `old-battle`; work in feature branches, merge to `main`). Vitest skips
+`.claude/**`, so the suite at the root ignores agent worktrees.
 
 ## Architecture
 
@@ -129,7 +129,8 @@ the heart of the app and is fully unit-tested; keep it pure (no React, no DOM, n
 
 ## Reference docs
 
-`README.md`, `SPEC.md`, `PROGRESS.md` (build log — **one short line per change**; the full
+`CODING_STANDARDS.md` (review rules: give it to every reviewer of a diff, and read it before
+reviewing one yourself), `README.md`, `SPEC.md`, `PROGRESS.md` (build log — **one short line per change**; the full
 story belongs in the commit body and the Linear issue, don't restate it here),
 `CITATIONS.md` (sources + data-accuracy note — every corrected game value gets an entry with
 its book page; this is the provenance index, keep it thorough),

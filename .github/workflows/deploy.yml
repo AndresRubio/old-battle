@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 # Builds the app and publishes it to GitHub Pages on every push to main.
 # One-time setup: repo Settings → Pages → "Build and deployment" →
 # Source: "GitHub Actions". After that, every push auto-updates the live site.
+# The build job runs the same gate as CI (`npm run check`) first, so a push
+# with a failing test or type error never reaches the live site.
 
 on:
   push:
@@ -29,6 +31,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: npm run check # type check + full test suite
       - run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
