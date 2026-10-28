@@ -1,5 +1,5 @@
-import type { Army, Roster, RuleViolation } from '../data/types'
-import { findMagicItem, findUnit, rosterTotalPoints } from './points'
+import type { Army, EquipmentOption, Roster, RuleViolation } from '../data/types'
+import { findMagicItem, findUnit, isOptionBought, rosterTotalPoints, unmetRequirement } from './points'
 import { summarize } from './summary'
 import { companionMagicItemFindings, entryMagicItemFindings, armyItemUniquenessFindings } from './magicItems'
 import { STANDARD_BEARER_ID } from '../data/unitOptions'
@@ -62,8 +62,12 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
   // An army has one BSB. Only checked once a character is TOGGLED into the
   // role (entry.isBSB): overlaps among dedicated BSB units alone are already
   // governed by each army's 0-1 / unitGroupCaps data.
-  const bsbs = roster.entries.filter((e) => e.isBSB || findUnit(army, e.unitId)?.isBSB)
-  if (bsbs.length > 1 && roster.entries.some((e) => e.isBSB)) {
+  // A unit whose fixed companion is the army's Battle Standard Bearer (Grom's
+  // Niblit, OLD-72) counts as one too, and like a toggled entry it makes the
+  // clash worth reporting (OLD-73).
+  const carriesBSB = (e: Roster['entries'][number]) => Boolean(findUnit(army, e.unitId)?.companionMagicItems?.isBSB)
+  const bsbs = roster.entries.filter((e) => e.isBSB || findUnit(army, e.unitId)?.isBSB || carriesBSB(e))
+  if (bsbs.length > 1 && roster.entries.some((e) => e.isBSB || carriesBSB(e))) {
     raise('warning', 'multiple-bsbs', { count: bsbs.length })
   }
 
@@ -268,6 +272,24 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
       }
     }
 
+    // The Dwarf Throne of Power belongs to the army General (Enanos p.83).
+    for (const option of unit.options ?? []) {
+      if (option.onlyAsGeneral && e.optionIds.includes(option.id) && !e.isGeneral) {
+        raise('warning', 'option-general-only', { unit, option }, e.id)
+      }
+    }
+
+    // An option bought without the option it belongs to (the Paymaster's bodyguard
+    // standard bearer without the bodyguard, Mercenarios p.28). See requiresOptionId.
+    for (const option of unit.options ?? []) {
+      const required = isOptionBought(option, e.optionIds, e.optionCounts)
+        ? unmetRequirement(unit, option, e.optionIds, e.optionCounts)
+        : undefined
+      if (required) {
+        raise('warning', 'option-requires-option', { unit, option, required }, e.id)
+      }
+    }
+
     // A character who always rides one of his mounts (Imrik, Altos Elfos p.94).
     // A roster saved before the flag may hold him on foot, or on a mount id
     // the unit no longer offers: both count as no mount.
@@ -293,6 +315,20 @@ export function validateRoster(roster: Roster, army: Army, lang: Lang = 'en'): R
         )
       }
     }
+  }
+
+  // An option the army has only one of (the Throne of Power, which Thorgrim and
+  // the generic General both offer): report it once, whoever carries it.
+  const onePerArmy = new Map<string, { option: EquipmentOption; count: number }>()
+  for (const e of roster.entries) {
+    for (const option of findUnit(army, e.unitId)?.options ?? []) {
+      if (!option.onePerArmy || !e.optionIds.includes(option.id)) continue
+      const seen = onePerArmy.get(option.id)
+      onePerArmy.set(option.id, { option: seen?.option ?? option, count: (seen?.count ?? 0) + 1 })
+    }
+  }
+  for (const { option, count } of onePerArmy.values()) {
+    if (count > 1) raise('warning', 'option-one-per-army', { option, count })
   }
 
   // --- Magic-item uniqueness across the whole army ------------------------

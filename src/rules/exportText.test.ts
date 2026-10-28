@@ -420,9 +420,10 @@ describe('exportRosterText Sturmjarl card prices (OLD-63, OLD-70)', () => {
   }
   const lines = (text: string) => text.split('\n').map((l) => l.trim())
 
-  it('prints the rows at the card prices and the option at +0, ticked', () => {
+  it('prints the rows at the card prices and the free option without a price, ticked', () => {
     const text = exportRosterText(r, norse)
-    expect(lines(text)).toContain('+ Item-card prices (Gift of Loki 50, Runes 75) (+0 pts)')
+    expect(lines(text)).toContain('+ Item-card prices (Gift of Loki 50, Runes 75)')
+    expect(text).not.toContain('(+0 pts)')
     expect(text).toContain('Gift of Loki (50 pts) [fixed]')
     expect(text).toContain('Runes (Rune-Bones) (75 pts) [fixed]')
     expect(text).toContain('Stürmjarl, Shaman Lord of Ejsgard — 441 pts')
@@ -437,7 +438,7 @@ describe('exportRosterText Sturmjarl card prices (OLD-63, OLD-70)', () => {
 
   it('prints it in Spanish', () => {
     expect(lines(exportRosterText(r, norse, 'es'))).toContain(
-      '+ Precios de las cartas (Don de Loki 50, Runas 75) (+0 ptos)',
+      '+ Precios de las cartas (Don de Loki 50, Runas 75)',
     )
   })
 })

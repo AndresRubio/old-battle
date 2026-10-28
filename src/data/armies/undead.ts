@@ -66,16 +66,19 @@ const UD_WIZARD_LEVELS: EquipmentOption[] = [
 // --- Character mounts (army list pp.76-84: a character "may ride a Skeletal
 //     Steed, a monster or a Skeleton Chariot"). Monster mounts reuse the bestiary
 //     statlines defined in the units list below; costs from the monster points.
-//     The Skeletal Steed (a.k.a. Nightmare for Vampires) is the generic mount. ---
+//     The Skeletal Steed is the generic mount, vampires' included. ---
+// No Muertos printed pp.59, 79 and 80: "Corcel Esquelético 20 2 0 3 3 1 2 1 5" (OLD-73).
+const SKELETAL_STEED_STATS: StatLine = { M: 8, WS: 2, BS: 0, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 }
 const SKELETAL_STEED_MOUNT: MountOption = {
   id: 'mount-skeletal-steed', name: 'Skeletal Steed', nameEs: 'Corcel Esquelético',
-  points: 2, statLine: { M: 8, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 4 },
+  points: 2, statLine: SKELETAL_STEED_STATS,
 }
-// Vampires ride a Nightmare — same profile as the Skeletal Steed but causes fear.
+// Vampires ride the same Corcel Esquelético (pp.79-80); "Pesadilla" is the 1999 Vampire Counts
+// name and the book gives the steed no fear. The id stays `mount-nightmare` so a saved roster
+// keeps its mount (OLD-73).
 const NIGHTMARE_MOUNT: MountOption = {
-  id: 'mount-nightmare', name: 'Nightmare', nameEs: 'Pesadilla',
-  points: 2, statLine: { M: 8, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 4 },
-  specialRules: ['Causes fear'],
+  id: 'mount-nightmare', name: 'Skeletal Steed', nameEs: 'Corcel Esquelético',
+  points: 2, statLine: SKELETAL_STEED_STATS,
 }
 const ZOMBIE_DRAGON_MOUNT: MountOption = {
   id: 'mount-zombie-dragon', name: 'Zombie Dragon', nameEs: 'Dragón Zombi',
@@ -119,13 +122,13 @@ const WINGED_SERPENT_MOUNT: MountOption = {
 }
 
 /** Full mount list for the Undead lords/heroes ("a Skeletal Steed or a monster").
- *  Vampires use the Nightmare variant via VAMPIRE_MOUNTS below. */
+ *  Vampires use the `mount-nightmare` entry via VAMPIRE_MOUNTS below. */
 const UNDEAD_MOUNTS: MountOption[] = [
   SKELETAL_STEED_MOUNT, ZOMBIE_DRAGON_MOUNT, DRAGON_MOUNT, GREAT_DRAGON_MOUNT,
   EMPEROR_DRAGON_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT, WINGED_SERPENT_MOUNT,
 ]
 
-/** Vampire characters ride a Nightmare instead of a plain Skeletal Steed. */
+/** Vampire characters ride the same Skeletal Steed, kept under its older `mount-nightmare` id. */
 const VAMPIRE_MOUNTS: MountOption[] = [
   NIGHTMARE_MOUNT, ZOMBIE_DRAGON_MOUNT, DRAGON_MOUNT, GREAT_DRAGON_MOUNT,
   EMPEROR_DRAGON_MOUNT, GRIFFON_MOUNT, HIPPOGRIFF_MOUNT, MANTICORE_MOUNT, WINGED_SERPENT_MOUNT,
@@ -133,10 +136,10 @@ const VAMPIRE_MOUNTS: MountOption[] = [
 
 /** Only a steed — for special characters limited to a single mount.
  *  Vlad, Isabella and Manfred ride a "Corcel Esquelético" (No Muertos pp.87-88;
- *  OLD-68). They keep the Nightmare's id and profile so a saved roster still
- *  prices the steed; only the labels follow the book. */
+ *  OLD-68). The steed keeps the `mount-nightmare` id so a saved roster still
+ *  prices it; the same entry now serves the generic vampires (OLD-73). */
 const CARSTEIN_STEED_MOUNTS: MountOption[] = [
-  { ...NIGHTMARE_MOUNT, name: 'Skeletal Steed', nameEs: 'Corcel Esquelético' },
+  NIGHTMARE_MOUNT,
 ]
 const SKELETAL_STEED_ONLY_MOUNTS: MountOption[] = [SKELETAL_STEED_MOUNT]
 
@@ -195,7 +198,7 @@ const units: UnitProfile[] = [
       'Causes fear',
       'Immune to psychology',
       'Army crumbles to dust if the General is slain',
-      'May ride a Nightmare (+2), a monster or a Skeleton Chariot (+60 scythed / +40 plain)',
+      'May ride a Skeletal Steed (+2), a monster or a Skeleton Chariot (+60 scythed / +40 plain)',
     ],
   },
   {
@@ -263,7 +266,7 @@ const units: UnitProfile[] = [
       'Up to 2 magic items',
       'Causes fear',
       'Immune to psychology',
-      'May ride a Nightmare (+2), a monster or a Skeleton Chariot (+60 scythed / +40 plain)',
+      'May ride a Skeletal Steed (+2), a monster or a Skeleton Chariot (+60 scythed / +40 plain)',
     ],
   },
   {

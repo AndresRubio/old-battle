@@ -88,6 +88,39 @@ export interface EquipmentOption {
    */
   requiresMount?: boolean
   /**
+   * The army has only one of these (OLD-73): the Dwarf Throne of Power, which
+   * Thorgrim's page and the generic General's page both offer (Enanos pp.83,
+   * 94). Two entries carrying it raise `option-one-per-army` (warning). Options
+   * are matched by id, so every unit's copy of the option must set it.
+   */
+  onePerArmy?: boolean
+  /**
+   * Only the army General may take this option (OLD-73): "Si el General es el
+   * Alto Rey de los Enanos, podrá entrar en combate sobre el Trono del Poder"
+   * (Enanos p.83). On an entry that is not the General it raises
+   * `option-general-only` (warning).
+   */
+  onlyAsGeneral?: boolean
+  /**
+   * The option needs another option of the same unit (OLD-73): the Paymaster's
+   * bodyguard standard bearer, musician, shields and extra bodyguards all need
+   * the bodyguard retinue they belong to (Mercenarios p.28). The picker keeps
+   * the option disabled until the other is bought (a toggle ticked, or a counted
+   * option with a count above zero); a saved roster that holds it without the
+   * other raises `option-requires-option` (warning).
+   */
+  requiresOptionId?: string
+  /**
+   * The option costs `multiplier` times one trooper of a retinue that is not the
+   * entry itself (OLD-73): "each costing double the points of a normal trooper"
+   * (Mercenarios p.28, the Paymaster's bodyguard at 12 points, +1 for a
+   * shield). The trooper costs `points`, plus the price of `withOptionId` when
+   * that option is bought at all (a toggle ticked, or a counted option with a
+   * count above zero), so the cost follows the shield choice. Like
+   * `timesModelCost`, read it only through `unitOptionCost`.
+   */
+  timesTrooperCost?: { multiplier: number; points: number; withOptionId: string }
+  /**
    * On any crewed host — a chariot `MountOption` or a chariot / war-machine
    * `UnitProfile` — the cost is `pointsPerModel` × the host's CURRENT crew count
    * (its `baseCrew` + one per selected `addsCrewman` option), e.g. chariot crew
@@ -320,6 +353,15 @@ export interface UnitProfile {
    *  Schwartzhelm's "+50 pts". Its presence is also what offers the per-entry
    *  BSB toggle in the editor; a `canBeBSB` unit without it gets no toggle. */
   bsbPoints?: number
+  /**
+   * A magic banner this character carries as the army Battle Standard Bearer
+   * does not use one of his magic-item slots (OLD-73): the Slann General's
+   * "it will not count as one of the General's magic items" (Hombres Lagarto
+   * p.73). Read by `usedMagicItemSlots` while the entry is both the General and the BSB. The
+   * banner still pays its points and still counts toward army uniqueness and
+   * the one-banner limit. Needs `canBeBSB` (integrity.ts).
+   */
+  bsbBannerFree?: boolean
   /**
    * Named "special character" (e.g. Zhatan, Grombrindal). Display-only: they
    * still count under their `role` for composition. When omitted it is inferred

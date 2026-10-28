@@ -73,6 +73,9 @@ export function assertArmyIntegrity(army: Army): Army {
       if (u.bsbPoints < 0) fail(`${u.id}: negative bsbPoints`)
     }
 
+    // OLD-73: a free BSB banner only means something on a character who can be the BSB.
+    if (u.bsbBannerFree && !u.canBeBSB) fail(`${u.id}: bsbBannerFree needs canBeBSB`)
+
     // Every characteristic column a unit or a mount claims to have must be
     // either a number or a book token — see `unaccountedStats`.
     if (u.statLine) {
@@ -148,6 +151,19 @@ export function assertArmyIntegrity(army: Army): Army {
       }
     }
 
+    // OLD-73: an option that needs another, or prices itself off another, must name a
+    // different option of the same unit, or the rule would never be met.
+    const ownOptionIds = new Set((u.options ?? []).map((o) => o.id))
+    for (const o of u.options ?? []) {
+      if (o.requiresOptionId && (o.requiresOptionId === o.id || !ownOptionIds.has(o.requiresOptionId))) {
+        fail(`${u.id}/${o.id}: requiresOptionId ${o.requiresOptionId} is not an option of the unit`)
+      }
+      const w = o.timesTrooperCost?.withOptionId
+      if (w !== undefined && !ownOptionIds.has(w)) {
+        fail(`${u.id}/${o.id}: timesTrooperCost.withOptionId ${w} is not an option of the unit`)
+      }
+    }
+
     for (const m of u.mounts ?? []) {
       // Mount options are toggles priced by mountOptionPoints, which has no counts.
       for (const o of m.options ?? []) {
@@ -202,6 +218,11 @@ export function assertArmyIntegrity(army: Army): Army {
       if (dupFixed.length) fail(`${u.id}: duplicate fixed magic items: ${dupFixed.join(', ')}`)
     }
     if (u.fixedExtras) {
+      // OLD-73: named apart because it would also raise magic-items-noncharacter at runtime.
+      const runes = u.fixedExtras.find((x) => x.magicItem)
+      if (runes && !u.isCharacter) {
+        fail(`${u.id}/${runes.id}: magic-item fixed extra on a unit that is not a character`)
+      }
       if (!u.isCharacter) fail(`${u.id}: has fixed extras but is not a character`)
       for (const x of u.fixedExtras) {
         if (x.points < 0) fail(`${u.id}/${x.id}: negative fixed extra points`)

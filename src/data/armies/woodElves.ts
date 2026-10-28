@@ -649,12 +649,15 @@ const units: UnitProfile[] = [
     ],
   },
 
-  // ===== Monsters (0-25%) =====
+  // ===== Treemen (Regiments, OLD-73) =====
   {
     id: 'we-treeman',
     name: 'Treeman',
     nameEs: 'Hombre Árbol',
-    role: 'monster',
+    // Elfos Silvanos p.66 and p.68 (OLD-73): a Regiment-section entry ("no es necesario organizar a
+    // los Hombres Árbol en unidades"), so a lone Treeman is legal and has no command group.
+    role: 'regiment',
+    noCommand: true,
     pointsPerModel: 280,
     statLine: { M: 6, WS: 8, BS: 3, S: 6, T: 7, W: 6, I: 2, A: 4, Ld: 9 },
     specialRules: [
@@ -664,9 +667,11 @@ const units: UnitProfile[] = [
       'Hatred of Orcs & Goblins',
       'No forest movement penalty',
       'Demolishing Blow',
-      '0-1 per 1,000 pts (max 3)',
+      '0-1 per 1,000 pts',
     ],
   },
+
+  // ===== Monsters (0-25%) =====
   {
     id: 'we-giant-eagle',
     name: 'Giant Eagle',
@@ -768,7 +773,7 @@ export const WOOD_ELVES: Army = {
   magicItems: COMMON_MAGIC_ITEMS,
   selectionRules: {
     ratioCaps: [
-      { unitId: 'we-treeman', perPoints: 1000, absoluteMax: 3, labelEn: 'Treeman', labelEs: 'Hombre Árbol' },
+      { unitId: 'we-treeman', perPoints: 1000, countModels: true, labelEn: 'Treeman', labelEs: 'Hombre Árbol' },
     ],
   },
 }

@@ -109,10 +109,11 @@ const units: UnitProfile[] = [
     options: [
       { id: 'money-lender', name: 'Money Lender', pointsPerModel: 25, flat: true },
       { id: 'bodyguard', name: 'Bodyguard (5 models)', pointsPerModel: 60, flat: true },
-      { id: 'extra-bodyguards', name: 'Extra bodyguards', pointsPerModel: 12, counted: true, maxCount: 15 },
-      { id: 'bodyguard-shields', name: 'Bodyguard shields', pointsPerModel: 1, counted: true, maxCount: 20 },
-      { id: 'bodyguard-standard', name: 'Bodyguard standard bearer', pointsPerModel: 24, flat: true },
-      { id: 'bodyguard-musician', name: 'Bodyguard musician', pointsPerModel: 24, flat: true },
+      { id: 'extra-bodyguards', name: 'Extra bodyguards', pointsPerModel: 12, counted: true, maxCount: 15, requiresOptionId: 'bodyguard' },
+      { id: 'bodyguard-shields', name: 'Bodyguard shields', pointsPerModel: 1, counted: true, maxCount: 20, requiresOptionId: 'bodyguard' },
+      // OLD-73: "double the points of a normal trooper", a trooper being 12 (+1 shielded): 24 or 26.
+      { id: 'bodyguard-standard', name: 'Bodyguard standard bearer', pointsPerModel: 0, flat: true, requiresOptionId: 'bodyguard', timesTrooperCost: { multiplier: 2, points: 12, withOptionId: 'bodyguard-shields' } },
+      { id: 'bodyguard-musician', name: 'Bodyguard musician', pointsPerModel: 0, flat: true, requiresOptionId: 'bodyguard', timesTrooperCost: { multiplier: 2, points: 12, withOptionId: 'bodyguard-shields' } },
     ],
     specialRules: [
       '0-1 — carries the army pay chest (functions as the army battle standard)',

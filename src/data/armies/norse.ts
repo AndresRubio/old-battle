@@ -273,6 +273,8 @@ const units: UnitProfile[] = [
     isCharacter: true,
     characterRank: 'lord',
     canBeGeneral: true,
+    // Norsca PDF 34 (OLD-73): "If you decide to do this, Keorl Thunderhand is the general of your army".
+    mustBeGeneral: true,
     max: 1,
     specialRules: [
       "Special character — replaces the General of the Norse (0-1); Dragon Slayer sword (+125) and Thorim's Ring (+30) are fixed magic items",

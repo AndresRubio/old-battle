@@ -59,10 +59,48 @@ export function equippedModelCost(unit: UnitProfile, optionIds: string[]): numbe
  * entry currently buys; everything else is its fixed `pointsPerModel`. Never
  * read `pointsPerModel` off a unit option directly.
  */
-export function unitOptionCost(unit: UnitProfile, option: EquipmentOption, optionIds: string[]): number {
+export function unitOptionCost(
+  unit: UnitProfile,
+  option: EquipmentOption,
+  optionIds: string[],
+  optionCounts?: Record<string, number>,
+): number {
   if (option.timesModelCost) return option.timesModelCost * equippedModelCost(unit, optionIds)
+  if (option.timesTrooperCost) {
+    const { multiplier, points, withOptionId } = option.timesTrooperCost
+    const extra = unit.options?.find((o) => o.id === withOptionId)
+    return multiplier * (points + (extra && isOptionBought(extra, optionIds, optionCounts) ? extra.pointsPerModel : 0))
+  }
   if (option.perCrewman) return option.pointsPerModel * unitCrewCount(unit, optionIds)
   return option.pointsPerModel
+}
+
+/**
+ * Whether the entry has bought the option: a toggle ticked, or a `counted`
+ * option with a count above zero. A stale id of a counted option in `optionIds`
+ * does not count, as everywhere else.
+ */
+export function isOptionBought(
+  option: EquipmentOption,
+  optionIds: string[],
+  optionCounts?: Record<string, number>,
+): boolean {
+  return option.counted ? clampOptionCount(option, optionCounts?.[option.id]) > 0 : optionIds.includes(option.id)
+}
+
+/**
+ * The option this one needs (`requiresOptionId`) when the entry has not bought
+ * it, else undefined. The picker disables the option on it and validation flags
+ * a saved roster that holds the option without it.
+ */
+export function unmetRequirement(
+  unit: UnitProfile,
+  option: EquipmentOption,
+  optionIds: string[],
+  optionCounts?: Record<string, number>,
+): EquipmentOption | undefined {
+  const required = option.requiresOptionId ? unit.options?.find((o) => o.id === option.requiresOptionId) : undefined
+  return required && !isOptionBought(required, optionIds, optionCounts) ? required : undefined
 }
 
 /**
@@ -70,11 +108,11 @@ export function unitOptionCost(unit: UnitProfile, option: EquipmentOption, optio
  * `perCrewman` ones, which carry their own multiplier and so must not be
  * multiplied by the entry's size on top.
  */
-export function flatOptionPoints(unit: UnitProfile, optionIds: string[]): number {
+export function flatOptionPoints(unit: UnitProfile, optionIds: string[], optionCounts?: Record<string, number>): number {
   if (!unit.options) return 0
   return unit.options
     .filter((o) => optionIds.includes(o.id) && !o.counted && isPerEntry(o))
-    .reduce((sum, o) => sum + unitOptionCost(unit, o, optionIds), 0)
+    .reduce((sum, o) => sum + unitOptionCost(unit, o, optionIds, optionCounts), 0)
 }
 
 /**
@@ -288,7 +326,7 @@ export function entryPoints(entry: RosterEntry, army: Army): number {
   // without this guard the whole equipped cost silently scaled with it.
   const models = unit.role === 'regiment' ? entry.size : 1
   const modelPoints = equippedModelCost(unit, entry.optionIds) * models
-  const flatPoints = flatOptionPoints(unit, entry.optionIds)
+  const flatPoints = flatOptionPoints(unit, entry.optionIds, entry.optionCounts)
   const magicPoints = carriedMagicItems(entry, unit, army).reduce((sum, c) => sum + c.points, 0)
   // A unit's magic standard (carried by its standard bearer) adds its own points.
   const standard = entry.magicStandardId ? findMagicItem(army, entry.magicStandardId) : undefined

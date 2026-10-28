@@ -286,7 +286,9 @@ const units: UnitProfile[] = [
     statLine: skaven({ WS: 5, BS: 3, S: 4, T: 5, W: 4, I: 8, A: 3, Ld: 9 }),
     isCharacter: true,
     characterRank: 'wizard4',
-    lores: ['skaven'],
+    // Skaven p.71 (OLD-73): "puede elegir libremente sus hechizos de cualquier mazo de Hechizos
+    // Mágicos, excepto del correspondiente a los hechizos de la magia ¡Waaagh!"
+    lores: ['skaven', 'battle', 'high', 'dark', 'necromantic'],
     canBeGeneral: true,
     max: 1,
     // Skaven p.71: "+25 Tormenta Demoníaca", his first magic item.
@@ -313,12 +315,15 @@ const units: UnitProfile[] = [
     characterRank: 'hero',
     canBeGeneral: false,
     max: 1,
+    // Skaven p.72 (OLD-73): "el primer objeto mágico que elija debe ser el Amuleto de Piedra de
+    // Disformidad" (+10 on top of the 70); the second item is free.
+    fixedMagicItems: [{ id: 'mi-amulet-of-warpstone-fragment' }],
     specialRules: [
       'Special character (Chieftain-level Beastmaster)',
       'Must take at least one Clan Moulder beast pack; cannot lead any other unit',
       'Heavy armour; fights with a sword & a Man-Catcher (Atrapa Hombres)',
       'Man-Catcher: extra attack — on a hit, target with T5 or less dies (no save)',
-      'May take the Warpstone Amulet (re-roll & modify one die ±1, +10 pts)',
+      'Must take the Warpstone Amulet as his first magic item (+10 pts)',
       'Up to 2 magic items',
     ],
   },

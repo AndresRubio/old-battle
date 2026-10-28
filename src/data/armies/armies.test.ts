@@ -230,7 +230,9 @@ describe('selectionRules survive army assembly', () => {
 
   it('Wood Elves: Treeman ratio cap is present', () => {
     const caps = getArmy('wood-elves')!.selectionRules?.ratioCaps
-    expect(caps?.find((c) => c.unitId === 'we-treeman')?.absoluteMax).toBe(3)
+    // Elfos Silvanos p.68 (OLD-73): one per 1,000 points, no ceiling ("hasta cinco" at 5,000).
+    expect(caps?.find((c) => c.unitId === 'we-treeman')?.perPoints).toBe(1000)
+    expect(caps?.find((c) => c.unitId === 'we-treeman')?.absoluteMax).toBeUndefined()
   })
 
   it('Lizardmen: Temple Guard per-Slann cap present and static max removed', () => {
@@ -508,7 +510,13 @@ describe('mounts & profiles', () => {
     expect(wolves.length, 'Giant Wolf profiles found').toBeGreaterThan(0)
 
     for (const b of boars) expect(b.statLine, `${b.name} @ ${b.where}`).toEqual(WAR_BOAR)
-    for (const w of wolves) expect(w.statLine, `${w.name} @ ${w.where}`).toEqual(GIANT_WOLF)
+    // Grom's own page (p.91) prints his wolves with T 4 (OLD-73); every other page prints T 3.
+    const GROM_WOLF = { ...GIANT_WOLF, T: 4 }
+    for (const w of wolves) {
+      const expected = w.where === 'og-grom.profiles' ? GROM_WOLF : GIANT_WOLF
+      expect(w.statLine, `${w.name} @ ${w.where}`).toEqual(expected)
+    }
+    expect(wolves.some((w) => w.where === 'og-grom.profiles'), "Grom's wolf found").toBe(true)
   })
 
   // OLD-19 — book printed p.78 "LISTA DE EQUIPO" (PDF page 80), the table of
@@ -3334,9 +3342,11 @@ describe('special-character rule texts match the book (OLD-68)', () => {
     expect(entryPoints(entry, getArmy('undead')!)).toBe(377)
   })
 
-  it('the generic Undead vampires keep the Nightmare (not part of this fix)', () => {
+  // OLD-73: pp.79-80 give the generic vampires the same Corcel Esquelético.
+  it('the generic Undead vampires ride the Skeletal Steed too, under the same saved-roster id', () => {
     const mounts = unitOf('undead', 'ud-vampire').mounts!
-    expect(mounts[0].name).toBe('Nightmare')
+    expect(mounts[0].id).toBe('mount-nightmare')
+    expect(mounts[0].name).toBe('Skeletal Steed')
   })
 
   // Skaven pp.71-72 (PDF 73-74): the Storm Daemon is a two-handed magic weapon, so Ikit may carry no other.
@@ -3367,7 +3377,7 @@ describe('special characters carry what their page allows (OLD-69)', () => {
     { army: 'skaven', id: 'sk-skrolk', page: 'Skaven p.70', slots: 3, free: 1 },
     { army: 'skaven', id: 'sk-snitch', page: 'Skaven p.73', slots: 3, free: 1 },
     { army: 'skaven', id: 'sk-queek', page: 'Skaven p.74', slots: 4, free: 2 },
-    { army: 'skaven', id: 'sk-throt', page: 'Skaven p.72', slots: 2, free: 2 },
+    { army: 'skaven', id: 'sk-throt', page: 'Skaven p.72', slots: 2, free: 1 },
     { army: 'skaven', id: 'sk-verminlord', page: 'Skaven p.62', slots: 0, free: 0, allowed: [] },
     { army: 'dwarfs', id: 'dw-kragg-the-grim', page: 'Enanos p.84, p.92', slots: 3, free: 0 },
     { army: 'dwarfs', id: 'dw-king-kazador', page: 'Enanos p.90', slots: 3, free: 0 },
@@ -3605,8 +3615,10 @@ describe('special characters charge their unit and option costs (OLD-71)', () =>
       expect(opt('bodyguard')).toMatchObject({ pointsPerModel: 60, flat: true })
       expect(opt('extra-bodyguards')).toMatchObject({ pointsPerModel: 12, counted: true, maxCount: 15 })
       expect(opt('bodyguard-shields')).toMatchObject({ pointsPerModel: 1, counted: true, maxCount: 20 })
-      expect(opt('bodyguard-standard')).toMatchObject({ pointsPerModel: 24, flat: true })
-      expect(opt('bodyguard-musician')).toMatchObject({ pointsPerModel: 24, flat: true })
+      // OLD-73: "each costing double the points of a normal trooper" (12, or 13 shielded).
+      for (const id of ['bodyguard-standard', 'bodyguard-musician']) {
+        expect(opt(id)).toMatchObject({ flat: true, requiresOptionId: 'bodyguard', timesTrooperCost: { multiplier: 2, points: 12, withOptionId: 'bodyguard-shields' } })
+      }
     })
 
     it.each<[string[], number, Record<string, number>?]>([
@@ -3616,7 +3628,8 @@ describe('special characters charge their unit and option costs (OLD-71)', () =>
       [['bodyguard'], 365, { 'extra-bodyguards': 15 }],
       [['bodyguard'], 190, { 'bodyguard-shields': 5 }],
       [['bodyguard', 'bodyguard-standard', 'bodyguard-musician'], 233],
-      [['money-lender', 'bodyguard', 'bodyguard-standard', 'bodyguard-musician'], 458, { 'extra-bodyguards': 15, 'bodyguard-shields': 20 }],
+      [['bodyguard', 'bodyguard-standard', 'bodyguard-musician'], 242, { 'bodyguard-shields': 5 }],
+      [['money-lender', 'bodyguard', 'bodyguard-standard', 'bodyguard-musician'], 462, { 'extra-bodyguards': 15, 'bodyguard-shields': 20 }],
     ])('with %j costs %d (counts %j)', (optionIds, expected, optionCounts) => {
       expect(entryPoints(entry('dow-paymaster', { optionIds, optionCounts }), dow())).toBe(expected)
     })
@@ -3632,13 +3645,15 @@ describe('special characters charge their unit and option costs (OLD-71)', () =>
 // OLD-71: the page requirements a special character carries. Archaon must be
 // the General (Paladines del Caos p.16); Imrik always rides a dragon (Altos
 // Elfos p.94). Owner decisions: Mazdamundi stays optional as General, and
-// Grom's chariot stays a fixed extra, so neither carries a flag.
+// Grom's chariot stays a fixed extra, so neither carries a flag. OLD-73 adds Gorthor
+// ("siempre será el General", p.44) and Keorl (Norsca PDF 34) by owner decision; Ikit Claw
+// and Manfred von Carstein stay optional.
 describe('special characters bound by their page (OLD-71)', () => {
   const flagged = (flag: 'mustBeGeneral' | 'mountRequired') =>
     ARMIES.flatMap((a) => a.units.filter((u) => u[flag]).map((u) => u.id))
 
-  it('only Archaon must be the General', () => {
-    expect(flagged('mustBeGeneral')).toEqual(['ch-archaon'])
+  it('only Archaon, Gorthor and Keorl must be the General', () => {
+    expect([...flagged('mustBeGeneral')].sort()).toEqual(['ch-archaon', 'ch-gorthor', 'no-keorl-thunderhand'])
   })
 
   it('only Imrik must ride a mount, and his mounts are the three dragons', () => {

@@ -35,11 +35,14 @@ function optionLabel(
   unit: UnitProfile,
   option: EquipmentOption,
   optionIds: string[],
+  optionCounts: Record<string, number> | undefined,
   lang: Lang,
 ): string {
   const name = isWizardLevelId(option.id) ? wizardLevelLabel(option.id, lang) : optionText(option.name, lang)
   const perModel = unit.role === 'regiment' && !option.flat && !option.perCrewman ? t('perModel', lang) : ''
-  return `${name} (${signedPoints(unitOptionCost(unit, option, optionIds))} ${t('pts', lang)}${perModel})`
+  const cost = unitOptionCost(unit, option, optionIds, optionCounts)
+  // A free option prints no price (OLD-73): "(+0 pts)" says nothing.
+  return cost === 0 ? name : `${name} (${signedPoints(cost)} ${t('pts', lang)}${perModel})`
 }
 
 /**
@@ -153,7 +156,7 @@ function unitDetailBlock(entry: RosterEntry, army: Army, lang: Lang): string[] {
   const mountOpts = (mount?.options ?? []).filter((o) => entry.optionIds.includes(o.id))
   if (opts.length > 0 || counted.length > 0 || mountOpts.length > 0) {
     const labels = [
-      ...opts.map((o) => optionLabel(unit, o, entry.optionIds, lang)),
+      ...opts.map((o) => optionLabel(unit, o, entry.optionIds, entry.optionCounts, lang)),
       ...counted,
       ...mountOpts.map((o) => optionText(o.name, lang)),
     ]
@@ -231,7 +234,7 @@ export function exportRosterText(roster: Roster, army: Army, lang: Lang = 'en'):
       lines.push(`${star}${prefix}${unitName(unit, lang)} ............ ${entryPoints(e, army)} ${t('pts', lang)}`)
 
       for (const o of toggledOptions(unit, e.optionIds)) {
-        lines.push(`    + ${optionLabel(unit, o, e.optionIds, lang)}`)
+        lines.push(`    + ${optionLabel(unit, o, e.optionIds, e.optionCounts, lang)}`)
       }
       for (const c of countedOptionLabels(unit, e, lang)) lines.push(`    + ${c}`)
       const bsb = bsbPoints(unit, e)

@@ -355,6 +355,22 @@ describe('fixed magic items and fixed extras', () => {
     expect(() => assertArmyIntegrity(withUnit(regiment))).toThrow(/r: has fixed extras but is not a character/)
   })
 
+  // OLD-73: a magic-item extra (a Dwarf rune group) counts as an item, and a
+  // non-character carrying one would raise magic-items-noncharacter.
+  it('names the magic-item extra when it sits on a non-character', () => {
+    const regiment = unit({ id: 'r', fixedExtras: [{ id: 'runes', name: 'Runes', points: 40, magicItem: true }] })
+    expect(() => assertArmyIntegrity(withUnit(regiment))).toThrow(
+      /r\/runes: magic-item fixed extra on a unit that is not a character/,
+    )
+    const hero1 = hero({ fixedExtras: [{ id: 'runes', name: 'Runes', points: 40, magicItem: true }] })
+    expect(assertArmyIntegrity(withUnit(hero1))).toBeTruthy()
+  })
+
+  it('throws when bsbBannerFree is set on a character who cannot be the BSB', () => {
+    expect(() => assertArmyIntegrity(withUnit(hero({ bsbBannerFree: true })))).toThrow(/kf: bsbBannerFree needs canBeBSB/)
+    expect(assertArmyIntegrity(withUnit(hero({ bsbBannerFree: true, canBeBSB: true, bsbPoints: 50 })))).toBeTruthy()
+  })
+
   it('throws when fixed extra ids repeat within a unit', () => {
     const u = hero({ fixedExtras: [{ id: 'x', name: 'X', points: 40 }, { id: 'x', name: 'Y', points: 10 }] })
     expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/kf: duplicate fixed extra ids: x/)
@@ -526,5 +542,33 @@ describe('assertArmyIntegrity — page requirements and option profiles (OLD-71)
       mounts: [{ id: 'm', name: 'Chariot', points: 60, options: [{ id: 'crew', name: 'Crew', pointsPerModel: 3, flat: true, profiles: [{ name: 'Crewman', statLine: { M: 4 } }] }] }],
     })
     expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/im\/m\/crew: option profiles are not supported on mounts/)
+  })
+
+  // OLD-73: an option that needs another must name one the same unit offers.
+  it('throws when requiresOptionId names an option the unit does not have', () => {
+    const u = lord({ options: [{ id: 'guard-standard', name: 'Standard', pointsPerModel: 5, flat: true, requiresOptionId: 'guard' }] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/im\/guard-standard: requiresOptionId guard is not an option of the unit/)
+  })
+
+  it('throws when an option requires itself', () => {
+    const u = lord({ options: [{ id: 'guard', name: 'Guard', pointsPerModel: 5, flat: true, requiresOptionId: 'guard' }] })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/im\/guard: requiresOptionId guard is not an option of the unit/)
+  })
+
+  it('throws when timesTrooperCost names an option the unit does not have', () => {
+    const u = lord({
+      options: [{ id: 'std', name: 'Standard', pointsPerModel: 0, flat: true, timesTrooperCost: { multiplier: 2, points: 12, withOptionId: 'shields' } }],
+    })
+    expect(() => assertArmyIntegrity(withUnit(u))).toThrow(/im\/std: timesTrooperCost.withOptionId shields is not an option of the unit/)
+  })
+
+  it('accepts a requirement on a sibling option', () => {
+    const u = lord({
+      options: [
+        { id: 'guard', name: 'Guard', pointsPerModel: 5, flat: true },
+        { id: 'std', name: 'Standard', pointsPerModel: 0, flat: true, requiresOptionId: 'guard', timesTrooperCost: { multiplier: 2, points: 12, withOptionId: 'guard' } },
+      ],
+    })
+    expect(assertArmyIntegrity(withUnit(u))).toBeTruthy()
   })
 })

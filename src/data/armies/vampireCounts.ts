@@ -60,8 +60,10 @@ const GREAT_SPECTRAL_WOLF: EquipmentOption = {
 // wargear upgrade, not a separate mount. Vampires (and Necrarchs) may instead
 // ride a Hellsteed (Corcel Infernal — a winged Nightmare, Flying), a Winged
 // Nightmare, or a Zombie Dragon; Necromancers ride only a Nightmare on foot.
-// Nightmare statline per the bestiary as used in the app (M20→8").
-const NIGHTMARE_STATS = { M: 8, WS: 3, BS: 0, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 4 } as const
+// Condes Vampiro printed p.58 and p.62 (OLD-73): "Pesadilla 20 2 0 3 3 1 2 1 5" (M20→8").
+// The book prints no row for the Hellsteed, which is built on this one. Manfred's p.73 prints
+// Ld 4; the owner chose Ld 5 for every Nightmare.
+const NIGHTMARE_STATS = { M: 8, WS: 2, BS: 0, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 5 } as const
 const NIGHTMARE_MOUNT: MountOption = {
   id: 'mount-nightmare', name: 'Nightmare', nameEs: 'Pesadilla',
   points: 2, statLine: { ...NIGHTMARE_STATS },
@@ -113,7 +115,7 @@ const MANTICORE_PROFILE: ProfileBlock = {
 }
 const MANFRED_NIGHTMARE_PROFILE: ProfileBlock = {
   name: 'Nightmare', nameEs: 'Pesadilla',
-  statLine: { M: 8, WS: 2, BS: 0, S: 3, T: 3, W: 1, I: 2, A: 1, Ld: 4 },
+  statLine: { ...NIGHTMARE_STATS },
 }
 const MELKHIOR_NIGHTMARE_PROFILE: ProfileBlock = {
   name: 'Winged Nightmare', nameEs: 'Pesadilla Alada',
