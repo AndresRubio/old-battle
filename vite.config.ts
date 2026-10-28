@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config'
+import { configDefaults, defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
@@ -26,5 +26,8 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: [],
+    // Agent worktrees live under .claude/worktrees/ with their own copy of the
+    // suite; without this, `npm test` here also runs (and fails on) theirs.
+    exclude: [...configDefaults.exclude, '**/.claude/**'],
   },
 })

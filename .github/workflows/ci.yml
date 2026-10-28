@@ -28,6 +28,5 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npx tsc --noEmit -p tsconfig.app.json
-      - run: npm test
+      - run: npm run check # type check + full test suite
       - run: npm run build
