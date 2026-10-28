@@ -81,6 +81,11 @@ const magicFixedExtraCount = (unit: UnitProfile): number =>
  * and picked) plus each fixed extra that is a magic item, such as a Dwarf rune
  * group. The Muster Check and the editor's counter both read this number; a
  * caller that already holds the carried list passes it to avoid recomputing.
+ *
+ * A unit with `bsbBannerFree` (OLD-73, the Slann General) does not count one
+ * picked magic banner while he is the army General and its Battle Standard
+ * Bearer (Hombres Lagarto p.73: "one of the General's magic items"). At most one is
+ * set aside; a second banner is a category clash and still uses a slot.
  */
 export function usedMagicItemSlots(
   entry: RosterEntry,
@@ -88,7 +93,8 @@ export function usedMagicItemSlots(
   army: Army,
   carried: CarriedMagicItem[] = carriedMagicItems(entry, unit, army),
 ): number {
-  return carried.length + magicFixedExtraCount(unit)
+  const freeBanner = entry.isBSB && entry.isGeneral && unit.bsbBannerFree && carried.some((c) => !c.fixed && c.item.category === 'banner')
+  return carried.length - (freeBanner ? 1 : 0) + magicFixedExtraCount(unit)
 }
 
 /**

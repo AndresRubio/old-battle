@@ -73,6 +73,9 @@ export function assertArmyIntegrity(army: Army): Army {
       if (u.bsbPoints < 0) fail(`${u.id}: negative bsbPoints`)
     }
 
+    // OLD-73: a free BSB banner only means something on a character who can be the BSB.
+    if (u.bsbBannerFree && !u.canBeBSB) fail(`${u.id}: bsbBannerFree needs canBeBSB`)
+
     // Every characteristic column a unit or a mount claims to have must be
     // either a number or a book token — see `unaccountedStats`.
     if (u.statLine) {
@@ -202,6 +205,11 @@ export function assertArmyIntegrity(army: Army): Army {
       if (dupFixed.length) fail(`${u.id}: duplicate fixed magic items: ${dupFixed.join(', ')}`)
     }
     if (u.fixedExtras) {
+      // OLD-73: named apart because it would also raise magic-items-noncharacter at runtime.
+      const runes = u.fixedExtras.find((x) => x.magicItem)
+      if (runes && !u.isCharacter) {
+        fail(`${u.id}/${runes.id}: magic-item fixed extra on a unit that is not a character`)
+      }
       if (!u.isCharacter) fail(`${u.id}: has fixed extras but is not a character`)
       for (const x of u.fixedExtras) {
         if (x.points < 0) fail(`${u.id}/${x.id}: negative fixed extra points`)

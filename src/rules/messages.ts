@@ -69,6 +69,10 @@ export interface RuleParams {
   'options-exclusive-group': { unit: UnitProfile; group: string; count: number }
   'mount-options-stale': { unit: UnitProfile; mount: MountOption; options: EquipmentOption[] }
   'option-requires-mount': { unit: UnitProfile; option: EquipmentOption }
+  /** OLD-73: an option the army has only one of (the Dwarf Throne of Power) taken by `count` entries. */
+  'option-one-per-army': { option: EquipmentOption; count: number }
+  /** OLD-73: an option only the army General may take, on an entry that is not the General. */
+  'option-general-only': { unit: UnitProfile; option: EquipmentOption }
   /** OLD-71: a character who always rides one of `mounts` (Imrik) has none. */
   'mount-required': { unit: UnitProfile; mounts: MountOption[] }
   'mount-requires-option': {
@@ -255,6 +259,14 @@ const MESSAGES: { [K in RuleId]: MessageBuilder<K> } = {
     lang === 'es'
       ? `${un(p, lang)}: ${optionText(p.option.name, lang)} sólo sirve a una miniatura montada — elige una montura o quita la opción.`
       : `${un(p, lang)}: ${optionText(p.option.name, lang)} is only for a mounted model — choose a mount or drop it.`,
+  'option-one-per-army': (p, lang) =>
+    lang === 'es'
+      ? `${optionText(p.option.name, lang)}: el ejército sólo tiene uno, pero ${p.count} entradas lo llevan.`
+      : `${optionText(p.option.name, lang)}: the army has only one, but ${p.count} entries take it.`,
+  'option-general-only': (p, lang) =>
+    lang === 'es'
+      ? `${un(p, lang)}: ${optionText(p.option.name, lang)} es sólo para el General del ejército, y este personaje no es el General.`
+      : `${un(p, lang)}: ${optionText(p.option.name, lang)} is only for the army General, and this character is not the General.`,
   'mount-required': (p, lang) => {
     const list = p.mounts.map((m) => mountName(m, lang)).join(' / ')
     return lang === 'es'

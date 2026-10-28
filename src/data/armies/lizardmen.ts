@@ -127,11 +127,16 @@ const units: UnitProfile[] = [
     characterRank: 'wizard2', // 2 magic items at base level (p.73)
     lores: ['battle', 'high'],
     canBeGeneral: true,
+    // Hombres Lagarto p.73 (OLD-73): "General may have Battle Standard ... +50 points"; a magic
+    // standard he takes "will not count as one of the General's magic items".
+    canBeBSB: true,
+    bsbPoints: 50,
+    bsbBannerFree: true,
     options: SLANN_LEVELS,
     specialRules: [
       'Army must include 1 Slann Mage-Priest as General',
       'Ceremonial mace (counts as hand weapon)',
-      'May carry Battle Standard (+50 pts; not a magic item)',
+      'May be the army Battle Standard Bearer (+50 pts); a magic standard he carries is not one of his magic items',
       'Wizard — Battle Magic or High Magic (1 spell at level 1; +1 per level)',
       'Cold-blooded — roll 3D6 for Leadership tests, discard highest',
       'Slann Mage-Priest Telepathy — swap one spell with another Mage-Priest at start of magic phase',

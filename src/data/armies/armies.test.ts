@@ -3377,7 +3377,7 @@ describe('special characters carry what their page allows (OLD-69)', () => {
     { army: 'skaven', id: 'sk-skrolk', page: 'Skaven p.70', slots: 3, free: 1 },
     { army: 'skaven', id: 'sk-snitch', page: 'Skaven p.73', slots: 3, free: 1 },
     { army: 'skaven', id: 'sk-queek', page: 'Skaven p.74', slots: 4, free: 2 },
-    { army: 'skaven', id: 'sk-throt', page: 'Skaven p.72', slots: 2, free: 2 },
+    { army: 'skaven', id: 'sk-throt', page: 'Skaven p.72', slots: 2, free: 1 },
     { army: 'skaven', id: 'sk-verminlord', page: 'Skaven p.62', slots: 0, free: 0, allowed: [] },
     { army: 'dwarfs', id: 'dw-kragg-the-grim', page: 'Enanos p.84, p.92', slots: 3, free: 0 },
     { army: 'dwarfs', id: 'dw-king-kazador', page: 'Enanos p.90', slots: 3, free: 0 },
@@ -3642,13 +3642,15 @@ describe('special characters charge their unit and option costs (OLD-71)', () =>
 // OLD-71: the page requirements a special character carries. Archaon must be
 // the General (Paladines del Caos p.16); Imrik always rides a dragon (Altos
 // Elfos p.94). Owner decisions: Mazdamundi stays optional as General, and
-// Grom's chariot stays a fixed extra, so neither carries a flag.
+// Grom's chariot stays a fixed extra, so neither carries a flag. OLD-73 adds Gorthor
+// ("siempre será el General", p.44) and Keorl (Norsca PDF 34) by owner decision; Ikit Claw
+// and Manfred von Carstein stay optional.
 describe('special characters bound by their page (OLD-71)', () => {
   const flagged = (flag: 'mustBeGeneral' | 'mountRequired') =>
     ARMIES.flatMap((a) => a.units.filter((u) => u[flag]).map((u) => u.id))
 
-  it('only Archaon must be the General', () => {
-    expect(flagged('mustBeGeneral')).toEqual(['ch-archaon'])
+  it('only Archaon, Gorthor and Keorl must be the General', () => {
+    expect([...flagged('mustBeGeneral')].sort()).toEqual(['ch-archaon', 'ch-gorthor', 'no-keorl-thunderhand'])
   })
 
   it('only Imrik must ride a mount, and his mounts are the three dragons', () => {

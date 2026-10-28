@@ -65,7 +65,7 @@ const units: UnitProfile[] = [
     // puntos total del Trono y sus porteadores es de 140 puntos." Same flat option as Thorgrim.
     options: [
       {
-        id: 'throne-of-power', name: 'Throne of Power', pointsPerModel: 140, flat: true, profiles: [THRONE_BEARERS_PROFILE],
+        id: 'throne-of-power', name: 'Throne of Power', pointsPerModel: 140, flat: true, profiles: [THRONE_BEARERS_PROFILE], onePerArmy: true, onlyAsGeneral: true,
         description: 'Only if the General is the High King of the Dwarfs: he enters battle on the Throne of Power with four bearers, 140 points for the Throne and bearers together (Enanos p.83).',
         descEs: 'Sólo si el General es el Alto Rey de los Enanos: entra en combate sobre el Trono del Poder acompañado por cuatro porteadores, 140 puntos por el Trono y sus porteadores (Enanos p.83).',
       },
@@ -376,7 +376,7 @@ const units: UnitProfile[] = [
     ],
     options: [
       {
-        id: 'throne-of-power', name: 'Throne of Power', pointsPerModel: 140, flat: true, profiles: [THRONE_BEARERS_PROFILE],
+        id: 'throne-of-power', name: 'Throne of Power', pointsPerModel: 140, flat: true, profiles: [THRONE_BEARERS_PROFILE], onePerArmy: true,
         description: 'Thorgrim may enter battle seated on the Throne of Power, carried by four bearers (Enanos p.94). The page reads both "is carried on the Throne" and "may enter combat seated on the Throne", so the player decides.',
         descEs: 'Thorgrim puede entrar en combate sentado en el Trono del Poder, acompañado por sus cuatro porteadores (Enanos p.94). La página dice a la vez "Es transportado sobre el Trono" y "puede entrar en combate sentado en el Trono", así que decide el jugador.',
       },

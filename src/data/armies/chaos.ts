@@ -676,6 +676,8 @@ const units: UnitProfile[] = [
     characterRank: 'wizard3',
     lores: ['tzeentch', 'nurgle', 'slaanesh', 'dark'],
     canBeGeneral: true,
+    // Paladines del Caos p.44 (OLD-73): "Si se incluye a Gorthor siempre será el General."
+    mustBeGeneral: true,
     max: 1,
     profiles: [
       // OLD-33 — Paladines del Caos printed p.44 = PDF 46: "CARRUAJE – – – 7 7 3 1 – –"
