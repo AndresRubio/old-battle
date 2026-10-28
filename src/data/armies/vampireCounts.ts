@@ -57,9 +57,10 @@ const GREAT_SPECTRAL_WOLF: EquipmentOption = {
 // Replaces the old `nightmare-mount` (+2, flat) EquipmentOption used by several
 // characters (army list pp.62–66). The Nightmare costs +2 pts; characters who
 // could also pay for barding (+2) keep that as an EquipmentOption since it is a
-// wargear upgrade, not a separate mount. Vampires (and Necrarchs) may instead
-// ride a Winged Nightmare or a Zombie Dragon from the monster list (p.62: "Pesadilla
-// (+2 puntos) o un Monstruo"); Necromancers ride only a Nightmare on foot.
+// wargear upgrade, not a separate mount. Vampires, Necromancers and the Battle
+// Standard Bearer may instead ride a monster (p.62-63: "Pesadilla (+2 puntos) o un
+// Monstruo (consulta la lista de monstruos)"). The p.67 list names no rider, and its
+// rideable monsters are the Winged Nightmare, the Zombie Dragon and the Manticore (OLD-75).
 // OLD-74: the Hellsteed (Corcel Infernal) is gone. No book we have prints it; a
 // saved roster that still holds `mount-hellsteed` prices and shows as on foot.
 // Condes Vampiro printed p.58 and p.62 (OLD-73): "Pesadilla 20 2 0 3 3 1 2 1 5" (M20→8").
@@ -93,20 +94,26 @@ const ZOMBIE_DRAGON_MOUNT: MountOption = {
   ],
 }
 
-/** Vampires & Necrarchs: a Nightmare, a Winged Nightmare or a Zombie Dragon. */
-const VAMPIRE_MOUNTS: MountOption[] = [
-  NIGHTMARE_MOUNT, WINGED_NIGHTMARE_MOUNT, ZOMBIE_DRAGON_MOUNT,
+// Condes Vampiro p.67: "MANTÍCORA 200 puntos", 15 6 0 7 7 5 4 4 8 (M15→6").
+const MANTICORE_STATS = { M: 6, WS: 6, BS: 0, S: 7, T: 7, W: 5, I: 4, A: 4, Ld: 8 } as const
+const MANTICORE_MOUNT: MountOption = {
+  id: 'mount-manticore', name: 'Manticore', nameEs: 'Mantícora',
+  points: 200, statLine: { ...MANTICORE_STATS },
+  specialRules: ['Flying', 'Causes terror', 'Large target'],
+}
+
+/** Vampires, Necromancers and the Battle Standard Bearer: a Nightmare or a p.67 monster. */
+const NIGHTMARE_OR_MONSTER_MOUNTS: MountOption[] = [
+  NIGHTMARE_MOUNT, WINGED_NIGHTMARE_MOUNT, ZOMBIE_DRAGON_MOUNT, MANTICORE_MOUNT,
 ]
-/** Necromancers (living): a Nightmare only. */
-const NECROMANCER_MOUNTS: MountOption[] = [NIGHTMARE_MOUNT]
-/** Wraith / Wight Lord: a Nightmare only (when leading Wight Cavalry). */
+/** Wraith / Wight Lord: a Nightmare only (when leading Wight Cavalry, p.63). */
 const NIGHTMARE_ONLY_MOUNTS: MountOption[] = [NIGHTMARE_MOUNT]
 
 // ── Fixed (non-selectable) mount profiles for special characters ─────────────
 // Display-only: cost already baked into the model's points.
 const MANTICORE_PROFILE: ProfileBlock = {
   name: 'Manticore', nameEs: 'Mantícora',
-  statLine: { M: 6, WS: 6, BS: 0, S: 7, T: 7, W: 5, I: 4, A: 4, Ld: 8 },
+  statLine: { ...MANTICORE_STATS },
   specialRules: ['Flying', 'Terror', 'Large target'],
 }
 const MANFRED_NIGHTMARE_PROFILE: ProfileBlock = {
@@ -148,7 +155,7 @@ const units: UnitProfile[] = [
       'May march and react to charges',
       'Level 3 wizard (Necromancy, Battle Magic or Dark Magic)',
       'Chooses vampiric powers from its Clan',
-      'May ride a Nightmare, Winged Nightmare or Zombie Dragon',
+      'May ride a Nightmare, Winged Nightmare, Zombie Dragon or Manticore',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },
@@ -160,7 +167,7 @@ const units: UnitProfile[] = [
       { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' },
       BARDING_2,
     ],
-    mounts: VAMPIRE_MOUNTS,
+    mounts: NIGHTMARE_OR_MONSTER_MOUNTS,
   },
   {
     id: 'vc-vampire-count',
@@ -181,7 +188,7 @@ const units: UnitProfile[] = [
       'May march and react to charges',
       'Level 2 wizard (Necromancy, Battle Magic or Dark Magic)',
       'Chooses two vampiric powers from its Clan',
-      'May ride a Nightmare, Winged Nightmare or Zombie Dragon',
+      'May ride a Nightmare, Winged Nightmare, Zombie Dragon or Manticore',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },
@@ -193,7 +200,7 @@ const units: UnitProfile[] = [
       { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' },
       BARDING_2,
     ],
-    mounts: VAMPIRE_MOUNTS,
+    mounts: NIGHTMARE_OR_MONSTER_MOUNTS,
   },
 
   // ── Additional Vampiros (non-General) ────────────────────────────────────
@@ -213,7 +220,7 @@ const units: UnitProfile[] = [
       'Immune to poison',
       'May march and react to charges',
       'Chooses one vampiric power from its Clan',
-      'May ride a Nightmare, Winged Nightmare or Zombie Dragon',
+      'May ride a Nightmare, Winged Nightmare, Zombie Dragon or Manticore',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },
@@ -225,7 +232,7 @@ const units: UnitProfile[] = [
       { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' },
       BARDING_2,
     ],
-    mounts: VAMPIRE_MOUNTS,
+    mounts: NIGHTMARE_OR_MONSTER_MOUNTS,
   },
 
   // ── Nigromantes (Necromancers) — living wizards; not Undead ──────────────
@@ -244,14 +251,14 @@ const units: UnitProfile[] = [
       'Living — not Undead; does not cause fear',
       'May march and react to charges',
       'Level 4 wizard (Necromancy, Battle Magic or Dark Magic)',
-      'May ride a Nightmare',
+      'May ride a Nightmare, Winged Nightmare, Zombie Dragon or Manticore',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },
       { id: 'halberd-char', name: 'Halberd', pointsPerModel: 2 },
       BARDING_2,
     ],
-    mounts: NECROMANCER_MOUNTS,
+    mounts: NIGHTMARE_OR_MONSTER_MOUNTS,
   },
   {
     id: 'vc-master-necromancer',
@@ -268,14 +275,14 @@ const units: UnitProfile[] = [
       'Living — not Undead; does not cause fear',
       'May march and react to charges',
       'Level 3 wizard (Necromancy, Battle Magic or Dark Magic)',
-      'May ride a Nightmare',
+      'May ride a Nightmare, Winged Nightmare, Zombie Dragon or Manticore',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },
       { id: 'halberd-char', name: 'Halberd', pointsPerModel: 2 },
       BARDING_2,
     ],
-    mounts: NECROMANCER_MOUNTS,
+    mounts: NIGHTMARE_OR_MONSTER_MOUNTS,
   },
   {
     id: 'vc-necromancer-paladin',
@@ -292,14 +299,14 @@ const units: UnitProfile[] = [
       'Living — not Undead; does not cause fear',
       'May march and react to charges',
       'Level 2 wizard (Necromancy, Battle Magic or Dark Magic)',
-      'May ride a Nightmare',
+      'May ride a Nightmare, Winged Nightmare, Zombie Dragon or Manticore',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },
       { id: 'halberd-char', name: 'Halberd', pointsPerModel: 2 },
       BARDING_2,
     ],
-    mounts: NECROMANCER_MOUNTS,
+    mounts: NIGHTMARE_OR_MONSTER_MOUNTS,
   },
   {
     id: 'vc-necromancer',
@@ -316,14 +323,14 @@ const units: UnitProfile[] = [
       'Living — not Undead; does not cause fear',
       'May march and react to charges',
       'Level 1 wizard (Necromancy, Battle Magic or Dark Magic)',
-      'May ride a Nightmare',
+      'May ride a Nightmare, Winged Nightmare, Zombie Dragon or Manticore',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },
       { id: 'halberd-char', name: 'Halberd', pointsPerModel: 2 },
       BARDING_2,
     ],
-    mounts: NECROMANCER_MOUNTS,
+    mounts: NIGHTMARE_OR_MONSTER_MOUNTS,
   },
 
   // ── 0-1 Portaestandartes de Batalla (Battle Standard Bearers) ────────────
@@ -347,7 +354,7 @@ const units: UnitProfile[] = [
       'May march and react to charges',
       'Carries the Army Battle Standard; may carry one magic standard',
       'Chooses one vampiric power from its Clan',
-      'May ride a Nightmare, Winged Nightmare or Zombie Dragon',
+      'May ride a Nightmare, Winged Nightmare, Zombie Dragon or Manticore',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },
@@ -359,7 +366,7 @@ const units: UnitProfile[] = [
       { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' },
       BARDING_2,
     ],
-    mounts: VAMPIRE_MOUNTS,
+    mounts: NIGHTMARE_OR_MONSTER_MOUNTS,
   },
   {
     id: 'vc-wight-bsb',
@@ -381,7 +388,7 @@ const units: UnitProfile[] = [
       'Cannot march',
       'Funerary weapons cause 1D3 wounds',
       'Carries the Army Battle Standard; may carry one magic standard',
-      'May ride a Nightmare',
+      'May ride a Nightmare, Winged Nightmare, Zombie Dragon or Manticore',
     ],
     options: [
       { id: 'great-weapon', name: 'Great weapon', pointsPerModel: 2 },
@@ -393,7 +400,7 @@ const units: UnitProfile[] = [
       { id: 'heavy-armour-char', name: 'Heavy armour', pointsPerModel: 3, exclusiveGroup: 'armour' },
       BARDING_2,
     ],
-    mounts: NIGHTMARE_ONLY_MOUNTS,
+    mounts: NIGHTMARE_OR_MONSTER_MOUNTS,
   },
 
   // ── Paladines No Muertos (Undead Paladins — regiment champions) ──────────
@@ -994,8 +1001,7 @@ const units: UnitProfile[] = [
     nameEs: 'Mantícora',
     role: 'monster',
     pointsPerModel: 200,
-    // Mantícora: M15→6" WS6 BS0 S7 T7 W5 I4 A4 Ld8
-    statLine: { M: 6, WS: 6, BS: 0, S: 7, T: 7, W: 5, I: 4, A: 4, Ld: 8 },
+    statLine: { ...MANTICORE_STATS },
     specialRules: [
       'Flying',
       'Causes terror',
